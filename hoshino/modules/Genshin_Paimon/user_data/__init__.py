@@ -1,9 +1,37 @@
-from hoshino import MessageSegment, Service
+from hoshino import MessageSegment, Service, trigger, priv, CanceledException
 from hoshino.typing import CQEvent, Message
 from ..util import update_last_query_to_qq, bind_cookie
+from nonebot import message_preprocessor
 
 sv = Service('原神绑定',visible=False,enable_on_default=True)
 
+private_prefix = []
+
+# support private message
+@message_preprocessor
+async def private_handler(bot, ev, _):
+    if ev.detail_type != 'private':
+        return
+    for t in trigger.chain:
+        for service in t.find_handler(ev):
+            sv = service.sv
+            if sv in private_prefix:
+                if priv.get_user_priv(ev) >= priv.NORMAL:
+                    try:
+                        await service.func(bot, ev)
+                    except CanceledException:
+                        raise
+                    sv.logger.info(
+                        f'Private Message {ev.message_id} triggered {service.func.__name__}.'
+                    )
+
+def support_private(sv):
+    def wrap(func):
+        private_prefix.append(sv)
+        return func
+    return wrap
+
+@support_private(sv)
 @sv.on_prefix(('原神绑定','ysb'))
 async def bind(bot,ev):
     msg = ev.message.extract_plain_text().strip().split('#')

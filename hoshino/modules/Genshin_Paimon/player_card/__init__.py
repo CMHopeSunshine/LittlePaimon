@@ -87,7 +87,11 @@ async def my_characters(bot,ev):
     uid = ''
     if len(msg[0]) == 9 and msg[0].isdigit():
         uid = msg[0]
-        chara = msg[1]
+        if len(msg) >= 2:
+            chara = msg[1]
+        else:
+            await bot.send(ev,'要把想查询的角色名告诉我哦！',at_sender=True)
+            return
     else:
         chara = msg[0]
     chara_name = get_id_by_alias(chara)
