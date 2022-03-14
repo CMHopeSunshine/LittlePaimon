@@ -3,7 +3,7 @@ from hoshino import R,MessageSegment
 from hoshino.typing import CQEvent, Message
 from hoshino.util import PriFreqLimiter
 import hoshino
-from .util import Dict
+from ..util import Dict
 from hoshino import aiorequests
 from .gacha_role import *
 from .gacha_wish import more_ten

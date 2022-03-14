@@ -180,7 +180,7 @@ async def draw_player_card(data, chara_data, uid, nickname="旅行者"):
                 bg_img.alpha_composite(chara_card.resize((180, 249)), (840 + (i - 4) * 205, 974))
             elif i > 8:
                 break
-    bg_img = pil2b64(bg_img, 75)
+    bg_img = pil2b64(bg_img, 80)
     bg_img = MessageSegment.image(bg_img)
     return bg_img
 
@@ -262,7 +262,7 @@ async def draw_all_chara_card(data, uid):
         n += 1
     bg_img.paste(bg_bottom,(0,382+col*474-50))
 
-    bg_img = pil2b64(bg_img, 50)
+    bg_img = pil2b64(bg_img, 55)
     bg_img = MessageSegment.image(bg_img)
     return bg_img
 
@@ -426,6 +426,6 @@ async def draw_chara_card(data, skill_data, chara_name, uid):
         i += 1
     
     bg_draw.text((330, 371), 'Created by 惜月の小派蒙', font=get_font(20), fill='white')
-    bg_img = pil2b64(bg_img, 65)
+    bg_img = pil2b64(bg_img, 70)
     bg_img = MessageSegment.image(bg_img)
     return bg_img

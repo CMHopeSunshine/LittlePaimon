@@ -13,6 +13,7 @@ import datetime
 import functools
 import inspect
 
+# user_cookies.json数据文件模版，如没有.json文件就会按这个模版生成文件
 user_cookies_example = {
     "通用": [
         {
@@ -50,7 +51,7 @@ def save_data():
     except:
         traceback.print_exc()
 
-# 缓存装饰器
+# 缓存装饰器 ttl为过期时间 参数use_cache决定是否使用缓存，默认为True
 def cache(ttl=datetime.timedelta(hours=1), **kwargs):
     def wrap(func):
         cache_data = {}
@@ -81,7 +82,11 @@ def cache(ttl=datetime.timedelta(hours=1), **kwargs):
 
     return wrap
 
-# 图片转b64
+class Dict(dict):
+    __setattr__ = dict.__setitem__
+    __getattr__ = dict.__getitem__
+
+# 图片转b64，q为质量（压缩比例）
 def pil2b64(data, q=85):
     bio = BytesIO()
     data = data.convert("RGB")
@@ -95,7 +100,7 @@ def md5(text: str) -> str:
     md5.update(text.encode())
     return md5.hexdigest()
 
-# 米游社headers的ds_token
+# 米游社headers的ds_token，对应版本2.11.1
 def get_ds(q="", b=None) -> str:
     if b:
         br = json.dumps(b)
@@ -122,7 +127,7 @@ def get_headers(cookie, q='',b=None):
     #print(headers)
     return headers
 
-# 检查cookie是否有效
+# 检查cookie是否有效，通过查看个人主页是否返回ok来判断
 async def check_cookie(cookie):
     url = 'https://bbs-api.mihoyo.com/user/wapi/getUserFullInfo?gids=2'
     headers ={
@@ -140,7 +145,7 @@ async def check_cookie(cookie):
     else:
         return True
 
-# 通过qq号获取cookie
+# 通过qq号获取最后查询的uid
 def get_uid_by_qq(qq):
     if qq not in user_cookies['私人']:
         return None
@@ -184,6 +189,15 @@ async def bind_cookie(qq, uid, cookie):
         save_data()
         return '绑定成功啦！'
 
+# 绑定cookie到公共cookie池
+async def bind_public_cookie(cookie):
+    if not await check_cookie(cookie):
+        return '这cookie没有用哦，检查一下是不是复制错了或者过期了(试试重新登录米游社再获取)'
+    else:
+        user_cookies['通用'].append({"cookie": cookie, "no": len(user_cookies['通用']) + 1})
+        save_data()
+        return '添加公共cookie成功'
+
 # 获取公共池可用的cookie
 async def get_public_cookie():
     for cookie in user_cookies['通用']:
@@ -195,7 +209,7 @@ async def get_public_cookie():
     logger.error('--CMgenshin：原神查询公共cookie池已全部失效--')
     return None
 
-# 获取可用的cookie
+# 获取可用的cookie，优先获取私人cookie，没有则获取公共池cookie
 async def get_cookie(qq, uid, only_private = False, only_match_uid = False):
     if qq not in user_cookies['私人']:
         if only_private:
@@ -221,4 +235,5 @@ async def get_cookie(qq, uid, only_private = False, only_match_uid = False):
             else:
                 return await get_public_cookie()
 
+# 初始化读取cookie数据
 load_data()

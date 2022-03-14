@@ -3,7 +3,7 @@ import re, copy ,json
 from enum import Enum
 from pathlib import Path
 from PIL import Image, PngImagePlugin, ImageDraw, ImageFont
-from .util import filter_list, pil2b64,dict_to_object
+from ..util import pil2b64
 import os
 
 from .gacha_role import init_user_info, user_info, save_user_info
@@ -249,5 +249,5 @@ async def more_ten(uid, gacha_data, num, sd):
         for i in range(0, num):
             item_img = await ten(uid, gacha_data, sd)
             img.paste(item_img, (0, 575 * i))
-    return pil2b64(img)
+    return pil2b64(img, 75)
 
