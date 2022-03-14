@@ -13,7 +13,7 @@ import datetime
 import functools
 import inspect
 
-user_cookies = {
+user_cookies_example = {
     "通用": [
         {
             "cookie": "",
@@ -24,20 +24,21 @@ user_cookies = {
             "no": 2
         }
     ],
-    "私人":{
-
-    }
-
+    "私人":{}
+    
 }
+user_cookies = {}
 def load_data():
     path = os.path.join(os.path.dirname(__file__), 'user_data','user_cookies.json')
     if not os.path.exists(path):
         with open(path,'w',encoding='UTF-8') as f:
-            json.dump(user_cookies,f,ensure_ascii=False)
+            json.dump(user_cookies_example,f,ensure_ascii=False)
     else:
         try:
             with open(path, encoding='utf8') as f:
-                user_cookies = json.load(f)
+                data = json.load(f)
+                for k, v in data.items():
+                    user_cookies[k] = v
         except:
             traceback.print_exc()
 

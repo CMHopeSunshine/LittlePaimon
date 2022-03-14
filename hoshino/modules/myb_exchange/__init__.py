@@ -17,7 +17,7 @@ def load_data():
     path = os.path.join(os.path.dirname(__file__), 'myb_info.json')
     if not os.path.exists(path):
         with open(path,'w',encoding='UTF-8') as f:
-            json.dump(user_cookies,f,ensure_ascii=False)
+            json.dump(myb_info,f,ensure_ascii=False)
     else:
         try:
             with open(path, encoding='utf8') as f:
