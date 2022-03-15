@@ -2,59 +2,37 @@ from hoshino import MessageSegment, Service, trigger, priv, CanceledException
 from hoshino.typing import CQEvent, Message
 from ..util import update_last_query_to_qq, bind_cookie, bind_public_cookie
 from nonebot import message_preprocessor
+from ..get_data import get_bind_game
 
 sv = Service('原神绑定',visible=False,enable_on_default=True)
 
-private_prefix = []
-
-# support private message
-# @message_preprocessor
-# async def private_handler(bot, ev, _):
-#     if ev.detail_type != 'private':
-#         return
-#     for t in trigger.chain:
-#         for service in t.find_handler(ev):
-#             sv = service.sv
-#             if sv in private_prefix:
-#                 if priv.get_user_priv(ev) >= priv.NORMAL:
-#                     try:
-#                         await service.func(bot, ev)
-#                     except CanceledException:
-#                         raise
-#                     sv.logger.info(
-#                         f'Private Message {ev.message_id} triggered {service.func.__name__}.'
-#                     )
-
-# def support_private(sv):
-#     def wrap(func):
-#         private_prefix.append(sv)
-#         return func
-#     return wrap
-
-# @support_private(sv)
 @sv.on_prefix(('原神绑定','ysb'))
 async def bind(bot,ev):
-    msg = ev.message.extract_plain_text().strip().split('#')
+    cookie = ev.message.extract_plain_text().strip()
     qq=str(ev.user_id)
-    if msg[0] == '':
-        res = '''请旅行者用[ysb+uid]指令来绑定uid哦，例如ysb100000011\n如果想看全部角色信息和实时便笺等功能，要把cookie也给派蒙\ncookie的获取方法：登录网页版米游社，在地址栏粘贴这段代码：\njavascript:(function(){prompt(document.domain,document.cookie)})();\n弹出来的一大串字符就是cookie（手机要via或chrome浏览器才行）\n然后在uid后面加#和cookie来绑定,例如ysb100000011#cookie_token=asdqwf...'''
+    if cookie == '':
+        res = '''旅行者好呀，你可以直接用ys/ysa等指令附上uid来使用派蒙\n如果想看全部角色信息和实时便笺等功能，要把cookie给派蒙哦\ncookie获取方法：登录网页版米游社，在地址栏粘贴代码：\njavascript:(function(){prompt(document.domain,document.cookie)})();\n复制弹窗出来的字符串（手机要via或chrome浏览器才行）\n然后添加派蒙私聊发送ysb接刚刚复制的字符串，例如:ysb UM_distinctid=17d131d...'''
         await bot.send(ev,res,at_sender=True)
-    elif len(msg) == 1:
-        if len(msg[0]) == 9 and msg[0].isdigit():
-            update_last_query_to_qq(qq, msg[0])
-            await bot.send(ev,'成功绑定uid',at_sender=True)
-        else:
-            await bot.send(ev,'请把要绑定的合规uid一起给派蒙',at_sender=True)
     else:
-        uid = msg[0]
-        if len(msg[0]) != 9 or not msg[0].isdigit():
-            await bot.send(ev,'uid是不是写错了呀？要9位数全数字的uid哦',at_sender=True)
-            return
-        cookie = msg[1]
-        res = await bind_cookie(qq,uid,cookie)
-        await bot.send(ev,res,at_sender=True)
+        cookie_info = await get_bind_game(cookie)
+        if cookie_info['retcode'] != 0:
+            await bot.send(ev,'这cookie没有用哦，检查一下是不是复制错了或者过期了(试试重新登录米游社再获取)',at_sender=True)
+            if ev.detail_type != 'private':
+                await bot.send(ev,'当前是在群聊里绑定，建议旅行者添加派蒙好友私聊绑定！',at_sender=True)
+        else:
+            for data in cookie_info['data']['list']:
+                if data['game_id'] == 2:
+                    uid = data['game_role_id']
+                    nickname = data['nickname']
+                    # level = data['level']
+                    break
+            if uid:
+                await bind_cookie(qq,uid,cookie)
+                await bot.send(ev, f'{nickname}绑定成功啦！使用ys/ysa等指令和派蒙互动吧！',at_sender=True)
+                if ev.detail_type != 'private':
+                    await bot.send(ev,'当前是在群聊里绑定，建议旅行者把cookie撤回哦！',at_sender=True)
+                    
 
-# @support_private(sv)
 @sv.on_prefix('添加公共cookie')
 async def bing_public(bot,ev):
     cookie = ev.message.extract_plain_text().strip()

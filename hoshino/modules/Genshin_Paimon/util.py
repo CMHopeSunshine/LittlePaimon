@@ -34,14 +34,13 @@ def load_data():
     if not os.path.exists(path):
         with open(path,'w',encoding='UTF-8') as f:
             json.dump(user_cookies_example,f,ensure_ascii=False)
-    else:
-        try:
-            with open(path, encoding='utf8') as f:
-                data = json.load(f)
-                for k, v in data.items():
-                    user_cookies[k] = v
-        except:
-            traceback.print_exc()
+    try:
+        with open(path, encoding='utf8') as f:
+            data = json.load(f)
+            for k, v in data.items():
+                user_cookies[k] = v
+    except:
+        traceback.print_exc()
 
 def save_data():
     path = os.path.join(os.path.dirname(__file__), 'user_data','user_cookies.json')
@@ -173,21 +172,17 @@ async def bind_cookie(qq, uid, cookie):
     if qq not in user_cookies['私人']:
         user_cookies['私人'][qq] = {}
         user_cookies['私人'][qq]['cookies'] = []
-    if not await check_cookie(cookie):
-        return '这cookie没有用哦，检查一下是不是复制错了或者过期了(试试重新登录米游社再获取)'
-    else:
-        f = False
-        for c in user_cookies['私人'][qq]['cookies']:
-            if c['uid'] == uid:
-                c['cookie'] = cookie
-                f = True
-                break
-        if not f:
-            c = {'cookie':cookie,'uid':uid}
-            user_cookies['私人'][qq]['cookies'].append(c)
-        user_cookies['私人'][qq]['last_query'] = uid
-        save_data()
-        return '绑定成功啦！'
+    f = False
+    for c in user_cookies['私人'][qq]['cookies']:
+        if c['uid'] == uid:
+            c['cookie'] = cookie
+            f = True
+            break
+    if not f:
+        c = {'cookie':cookie,'uid':uid}
+        user_cookies['私人'][qq]['cookies'].append(c)
+    user_cookies['私人'][qq]['last_query'] = uid
+    save_data()
 
 # 绑定cookie到公共cookie池
 async def bind_public_cookie(cookie):

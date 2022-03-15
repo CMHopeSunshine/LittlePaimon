@@ -1,6 +1,7 @@
 from hoshino import aiorequests
 from .util import get_headers, cache
 import datetime
+import re
 
 @cache(ttl=datetime.timedelta(minutes=30))
 async def get_abyss_data(uid, cookie, schedule_type = "1", use_cache=True):
@@ -94,3 +95,18 @@ async def get_monthinfo_data(uid, month, cookie, use_cache=True):
     }
     res = await aiorequests.get(url=url, headers=headers, params=params)
     return await res.json()
+
+async def get_bind_game(cookie):
+    finduid = re.search(r'account_id=(/d*);', cookie)
+    if not finduid:
+        return None
+    uid = finduid.group(1)
+    url = 'https://api-takumi.mihoyo.com/game_record/card/wapi/getGameRecordCard'
+    headers = get_headers(q='uid=' + uid, cookie = cookie)
+    params = {
+        "uid": uid
+    }
+    res = await aiorequests.get(url=url, headers=headers, params=params)
+    return await res.json()
+
+    
