@@ -5,7 +5,7 @@ from ..util import get_uid_by_qq, get_cookie, check_uid_by_qq, update_last_query
 from ..get_data import get_daily_note_data
 from .get_img import draw_daily_note_card
 
-sv = Service('原神实时便签CM')
+sv = Service('原神实时便签')
 
 @sv.on_prefix(('ssbq','实时便笺','实时便签'))
 async def main(bot,ev):

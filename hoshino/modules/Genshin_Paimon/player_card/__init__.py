@@ -6,7 +6,7 @@ from ..get_data import get_player_card_data, get_chara_detail_data, get_chara_sk
 from .get_img import draw_player_card, draw_all_chara_card, draw_chara_card
 from ..character_alias import get_id_by_alias
 
-sv = Service('原神uid查询CM')
+sv = Service('原神信息查询')
 
 @sv.on_prefix('ys')
 async def player_card(bot,ev):

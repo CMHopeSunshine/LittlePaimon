@@ -9,7 +9,7 @@ from .gacha_role import *
 from .gacha_wish import more_ten
 
 lmt = PriFreqLimiter(60)
-sv=hoshino.Service('原神抽卡-惜月')
+sv=hoshino.Service('原神模拟抽卡')
 #activity = 301  限定卡池
 #activity2 = 400  限定卡池2
 #weapon = 302  武器卡池

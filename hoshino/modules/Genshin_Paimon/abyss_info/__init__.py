@@ -5,7 +5,7 @@ from ..util import get_uid_by_qq, get_cookie, update_last_query_to_qq
 from ..get_data import get_abyss_data
 from .get_img import draw_abyss_card
 
-sv = Service('原神深渊查询CM')
+sv = Service('原神深渊查询')
 
 @sv.on_prefix(('sy','深渊查询','深境螺旋查询'))
 async def main(bot,ev):

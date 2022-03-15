@@ -5,7 +5,7 @@ from ..util import get_uid_by_qq, get_cookie, check_uid_by_qq, update_last_query
 from ..get_data import get_monthinfo_data
 from .get_img import draw_monthinfo_card
 
-sv = Service('原神每月札记CM')
+sv = Service('原神每月札记')
 
 @sv.on_prefix(('myzj','每月札记'))
 async def main(bot,ev):

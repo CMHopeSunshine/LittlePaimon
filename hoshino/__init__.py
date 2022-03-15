@@ -9,7 +9,7 @@ HoshinoBot = nonebot.NoneBot
 from . import log, config, util
 from .service import Service, sucmd
 
-__version__ = '2.2.0'
+__version__ = 'v1.0.3'
 
 _bot = None
 os.makedirs(os.path.expanduser('~/.hoshino'), exist_ok=True)
