@@ -11,7 +11,9 @@ def get_font(size):
     return ImageFont.truetype(os.path.join(res_path,'msyh.ttc'), size)
 
 def get_expl_per(percentage):
-    if percentage != 1000:
+    if percentage == 0:
+        return '0%'
+    elif percentage != 1000:
         p = list(str(percentage))
         p.insert(-1, '.')
         return ''.join(p) + '%'
