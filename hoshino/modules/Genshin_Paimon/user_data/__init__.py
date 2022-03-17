@@ -35,7 +35,7 @@ async def bind(bot,ev):
                 await bot.send(ev,msg,at_sender=True)
                     
 
-@sv.on_prefix('添加公共cookie')
+@sv.on_prefix('添加公共ck')
 async def bing_public(bot,ev):
     cookie = ev.message.extract_plain_text().strip()
     res = await bind_public_cookie(cookie)

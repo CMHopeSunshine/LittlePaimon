@@ -14,7 +14,7 @@ SUPERUSERS = []    # 填写超级用户的QQ号，可填多个用半角逗号","
 GUILDADMIN = []
 NICKNAME = ('派蒙','bot')          # 机器人的昵称。呼叫昵称等同于@bot，可用元组配置多个昵称
 
-COMMAND_START = {'#'}    # 命令前缀（空字符串匹配任何消息）
+COMMAND_START = {''}    # 命令前缀（空字符串匹配任何消息）
 COMMAND_SEP = set()     # 命令分隔符（hoshino不需要该特性，保持为set()即可）
 
 # 发送图片的协议
