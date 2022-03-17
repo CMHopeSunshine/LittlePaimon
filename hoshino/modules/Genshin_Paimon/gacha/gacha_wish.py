@@ -206,8 +206,6 @@ async def create_item(rank, item_type, name, element, count, dg_time):
 
 async def ten(uid, gacha_data, sd) -> PngImagePlugin.PngImageFile:
     gacha_list = []
-    curr_time = datetime.datetime.now()
-    time_str = datetime.datetime.strftime(curr_time,'%m-%d %H:%M')
     for i in range(0,10):
         if gacha_data['gacha_type'] == 'all_star':
             role = random.choice(gacha_data['list'])
@@ -237,11 +235,10 @@ async def ten(uid, gacha_data, sd) -> PngImagePlugin.PngImageFile:
     img.thumbnail((1024, 768))
     img2 = Image.new("RGB", img.size, (255, 255, 255))
     img2.paste(img, mask=img.split()[3])
-    draw = ImageDraw.Draw(img2)
-    draw.text((27,545),('@%s %s  Created By 频道·尘世闲游' % (str(sd['nickname']),time_str)), font=timefont, fill="#8E8E8E")
     return img2
 
 async def more_ten(uid, gacha_data, num, sd):
+    time_str = datetime.datetime.strftime(datetime.datetime.now(),'%m-%d %H:%M')
     if num == 1:
         img = await ten(uid,gacha_data, sd)
     else:
@@ -249,5 +246,7 @@ async def more_ten(uid, gacha_data, num, sd):
         for i in range(0, num):
             item_img = await ten(uid, gacha_data, sd)
             img.paste(item_img, (0, 575 * i))
+    draw = ImageDraw.Draw(img)
+    draw.text((27,575 * num - 30),('@%s %s  Created By 惜月の小派蒙' % (str(sd['nickname']),time_str)), font=timefont, fill="#8E8E8E")
     return pil2b64(img, 75)
 

@@ -16,7 +16,7 @@ async def bind(bot,ev):
     else:
         cookie_info = await get_bind_game(cookie)
         if not cookie_info or cookie_info['retcode'] != 0:
-            msg = f'这cookie没有用哦，检查一下是不是复制错了或者过期了(试试重新登录米游社再获取)，错误信息：{cookie_info["message"]}'
+            msg = '这cookie没有用哦，检查一下是不是复制错了或者过期了(试试重新登录米游社再获取)'
             if ev.detail_type != 'private':
                 msg += '\n当前是在群聊里绑定，建议旅行者添加派蒙好友私聊绑定！'
             await bot.send(ev,msg,at_sender=True)
