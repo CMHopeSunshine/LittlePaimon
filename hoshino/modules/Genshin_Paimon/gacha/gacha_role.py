@@ -9,7 +9,7 @@ ROLE_2_PATH = os.path.join(RES_PATH,"DIY_gacha_pool","role_2.json")
 WEAPON_PATH = os.path.join(RES_PATH,"DIY_gacha_pool","weapon.json")
 All_STAR_PATH = os.path.join(RES_PATH,"DIY_gacha_pool","all_star.json")
 
-
+user_info={}
 role_1_pool = {}
 role_2_pool = {}
 weapon_pool = {}
@@ -40,7 +40,7 @@ with open(All_STAR_PATH,'r',encoding='UTF-8') as f:
 
 
 def init_user_info(uid:str):
-    if not (uid in user_info):
+    if uid not in user_info:
         user_info[uid] = {}
         user_info[uid]["fate"] = 200
         user_info[uid]["gacha_list"] = {}

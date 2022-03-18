@@ -38,6 +38,5 @@ MODULES_ON = {
     'codeonline',
     'Paimonchat',
     'Genshin_Paimon',
-    'myb_exchange',
-    'check_status',
+    'myb_exchange'
 }
