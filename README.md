@@ -109,6 +109,12 @@
 ```powershell
 iwr "https://cdn.jsdelivr.net/gh/CMHopeSunshine/LittlePaimon@master/LittlePaimon-install-windows.ps1" -O .\pm.ps1 ; ./pm.ps1 ; Set-Location .. ; rm pm.ps1
 ```
+安装成功后，`powershell`运行文件夹内的`启动.ps1`来启动机器人
+完成go-cqhttp的登录后，登录米游社网页版，在地址栏粘贴：
+```
+javascript:(function(){prompt(document.domain,document.cookie)})();
+```
+复制得到的cookie，向机器人私聊发送`添加公共ck`和粘贴的内容即可开始使用
 
 #### Linux
 
