@@ -126,7 +126,6 @@ Remove-Item go-cqhttp.zip
 # 下载源码
 git clone $LittlePaimongit --depth=1
 Set-Location LittlePaimon
-py -3.8 -m pip install "matplotlib~=3.2.0" -i $pypi
 py -3.8 -m pip install -r requirements.txt -i $pypi
 Copy-Item -Recurse hoshino\config_example hoshino\config
 Set-Location ..
@@ -286,9 +285,9 @@ MODULES_ON = {
 
 # 写启动程序
 New-Item -Path .\启动.ps1 -ItemType File -Value @"
-Start-Process -FilePath py.exe -ArgumentList "-3.8 ${pwd}\LittlePaimon\run.py" -WorkingDirectory .\LittlePaimon
+Start-Process powershell.exe -ArgumentList "Set-Location .\LittlePaimon ; python run.py"
 Set-Location .\go-cqhttp
 ./go-cqhttp.exe
 "@
 
-Write-Output '用powershell运行"启动.ps1"来启动机器人吧！'
+Write-Output '安装完成！用powershell运行"启动.ps1"来启动机器人吧！'
