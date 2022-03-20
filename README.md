@@ -107,7 +107,7 @@
 在你想安装的位置打开`powershell`，输入执行：
 
 ```powershell
-iwr "https://cdn.jsdelivr.net/gh/CMHopeSunshine/LittlePaimon`@master/LittlePaimon-install-windows.ps1" -O .\pm.ps1 ; ./pm.ps1 ; Set-Location .. ; rm pm.ps1
+iwr "https://cdn.jsdelivr.net/gh/CMHopeSunshine/LittlePaimon@master/LittlePaimon-install-windows.ps1" -O .\pm.ps1 ; ./pm.ps1 ; Set-Location .. ; rm pm.ps1
 ```
 
 #### Linux
