@@ -107,9 +107,9 @@
 在你想安装的位置打开`powershell`，输入执行：
 
 ```powershell
-iwr "https://cdn.jsdelivr.net/gh/CMHopeSunshine/LittlePaimon@master/LittlePaimon-install-windows.ps1" -O .\pm.ps1 ; ./pm.ps1 ; Set-Location .. ; rm pm.ps1
+iwr "https://cdn.jsdelivr.net/gh/CMHopeSunshine/LittlePaimon@master/LittlePaimon-install.ps1" -O .\pm.ps1 ; ./pm.ps1 ; Set-Location .. ; rm pm.ps1
 ```
-安装成功后，`powershell`运行文件夹内的`启动.ps1`来启动机器人
+安装成功后，`powershell`运行文件夹内的`启动.ps1`来启动机器人  
 完成go-cqhttp的登录后，登录米游社网页版，在地址栏粘贴：
 ```
 javascript:(function(){prompt(document.domain,document.cookie)})();
