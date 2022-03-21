@@ -328,7 +328,7 @@ async def draw_chara_card(data, skill_data, chara_name, uid):
     data = data['data']['avatars']
     f = False
     for chara in data:
-        if chara['id'] == chara_name[0] or (chara_name[1][0] == '旅行者' and chara['name'] == '旅行者'):
+        if chara['id'] == chara_name[0] or (chara_name[1][-1] == '旅行者' and chara['name'] == '旅行者'):
             character = chara
             f = True
             break

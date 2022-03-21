@@ -1,6 +1,58 @@
-# LittlePaimon
+<p align="center">
+  <a href="https://github.com/CMHopeSunshine/LittlePaimon"><img src="https://raw.githubusercontent.com/CMHopeSunshine/LittlePaimon/master/readme/logo.png" width="200" height="200" alt="LittlePaimon"></a>
+</p>
+<h1 align="center">小派蒙|LittlePaimon</h1>
+<h4 align="center">✨基于<a href="https://github.com/Ice-Cirno/HoshinoBot" target="_blank">HoshinoBot</a>和<a href="https://github.com/Mrs4s/go-cqhttp" target="_blank">go-cqhttp</a>的原神Q群机器人✨</h4>
 
-小派蒙，原神qq群机器人，基于[HoshinoBot](https://github.com/Ice-Cirno/HoshinoBot)和[go-cqhttp](https://github.com/Mrs4s/go-cqhttp)开发。
+<p align="center">
+    <img src="https://img.shields.io/badge/version-v1.0.0-red" alt="version">
+    <a href="https://cdn.jsdelivr.net/gh/CMHopeSunshine/LittlePaimon@master/LICENSE"><img src="https://img.shields.io/github/license/CMHopeSunshine/LittlePaimon" alt="license"></a>
+    <img src="https://img.shields.io/badge/python-3.8+-yellow" alt="python">
+    <a href="https://github.com/Mrs4s/go-cqhttp"><img src="https://img.shields.io/badge/go--cqhttp-v1.0.0--rc1-green?style=flat-square" alt="go-cqhttp"></a>
+    <a href="https://docs.nonebot.dev/"><img src="https://img.shields.io/badge/NoneBot-1.6.0+,2.0.0---cyan?style=flat-square" alt="go-cqhttp"></a>
+    <a href="https://qm.qq.com/cgi-bin/qm/qr?k=C7QsbLOA4SNWWy8_lofoR1CPipG-aTi3&jump_from=webapi"><img src="https://img.shields.io/badge/QQ群-906635633-blue?style=flat-square" alt="QQ Chat"></a>
+    <a href="https://qun.qq.com/qqweb/qunpro/share?_wv=3&_wwv=128&inviteCode=MmWrI&from=246610&biz=ka"><img src="https://img.shields.io/badge/QQ频道-尘世闲游-purple?style=flat-square" alt="QQ guild"></a>
+</p>
+
+
+## 功能示例
+
+<img src="https://raw.githubusercontent.com/CMHopeSunshine/LittlePaimon/master/readme/ys.jpg" alt="ys">
+
+<details>
+<summary>角色背包</summary>
+<img src="https://raw.githubusercontent.com/CMHopeSunshine/LittlePaimon/master/readme/ysa.jpg" alt="ysa">
+</details>
+
+<details>
+<summary>角色详情</summary>
+<img src="https://raw.githubusercontent.com/CMHopeSunshine/LittlePaimon/master/readme/ysc.jpg" alt="ysc">
+</details>
+
+<details>
+<summary>深渊信息</summary>
+<img src="https://raw.githubusercontent.com/CMHopeSunshine/LittlePaimon/master/readme/sy12.jpg" alt="sy">
+</details>
+
+<details>
+<summary>模拟抽卡</summary>
+<img src="https://raw.githubusercontent.com/CMHopeSunshine/LittlePaimon/master/readme/%E5%8D%81%E8%BF%9E.jpg" alt="十连">
+</details>
+
+<details>
+<summary>实时便签</summary>
+<img src="https://raw.githubusercontent.com/CMHopeSunshine/LittlePaimon/master/readme/ssbq.jpg" alt="ssbq">
+</details>
+
+<details>
+<summary>每月札记</summary>
+<img src="https://raw.githubusercontent.com/CMHopeSunshine/LittlePaimon/master/readme/myzj.jpg" alt="myzj">
+</details>
+
+<details>
+<summary>角色材料</summary>
+<img src="https://raw.githubusercontent.com/CMHopeSunshine/LittlePaimon/master/readme/material.png" alt="material">
+</details>
 
 ## 指令列表
 
@@ -54,45 +106,6 @@
 | ------------------------------------------------------------ | --------------------------- | :-------- | -------------- |
 | #亲亲/贴贴/拍拍/给爷爬/吃掉/扔掉/撕掉/精神支柱/要我一直 @人/qq号/图片 | 好玩的头像图片gif表情包生成 | 要以#开头 | #精神支柱@群主 |
 
-
-
-## 指令示例
-
-<details>
-<summary>个人信息卡片</summary>
-<img src="https://raw.githubusercontent.com/CMHopeSunshine/LittlePaimon/master/readme/ys.jpg?token=GHSAT0AAAAAABSG2FHCDOJJR3Z6J6DZBQUYYR4KCBA" alt="ys">
-</details>
-
-<details>
-<summary>角色背包</summary>
-<img src="https://raw.githubusercontent.com/CMHopeSunshine/LittlePaimon/master/readme/ysa.jpg?token=GHSAT0AAAAAABSG2FHCQNM7JAMVI5MZFROYYR4KD5Q" alt="ysa">
-</details>
-
-<details>
-<summary>角色详情</summary>
-<img src="https://raw.githubusercontent.com/CMHopeSunshine/LittlePaimon/master/readme/ysc.jpg?token=GHSAT0AAAAAABSG2FHCOVL6FTKYVF5LZ27CYR4KETQ" alt="ysc">
-</details>
-
-<details>
-<summary>深渊信息</summary>
-<img src="https://raw.githubusercontent.com/CMHopeSunshine/LittlePaimon/master/readme/sy12.jpg?token=GHSAT0AAAAAABSG2FHCCFQWAW3CYBFDD4EEYR4KF7Q" alt="sy">
-</details>
-
-<details>
-<summary>模拟抽卡</summary>
-<img src="https://raw.githubusercontent.com/CMHopeSunshine/LittlePaimon/master/readme/%E5%8D%81%E8%BF%9E.jpg?token=GHSAT0AAAAAABSG2FHDJTKRZGUSNXIV6Y32YR4KHTA" alt="十连">
-</details>
-
-<details>
-<summary>实时便签</summary>
-<img src="https://raw.githubusercontent.com/CMHopeSunshine/LittlePaimon/master/readme/ssbq.jpg?token=GHSAT0AAAAAABSG2FHDZM23HAQ4UCXGHUKOYR4KG5A" alt="ssbq">
-</details>
-
-<details>
-<summary>每月札记</summary>
-<img src="https://raw.githubusercontent.com/CMHopeSunshine/LittlePaimon/master/readme/myzj.jpg?token=GHSAT0AAAAAABSG2FHDVIS6YRRTZ3C5KVGAYR4KIIQ" alt="myzj">
-</details>
-
 ## 部署方法
 
 > 本项目和HoshinoBot的部署方式一样，因此Linux可以参考：
@@ -122,10 +135,12 @@ javascript:(function(){prompt(document.domain,document.cookie)})();
 
 ## 未来计划
 
-- 实时便签树脂提醒
-- 抽卡记录导出和分析
-- ocr圣遗物评分和角色面板记录
-- 角色、武器和圣遗物wiki
+- [ ] 实时便签树脂提醒
+
+- [ ] 抽卡记录导出和分析
+- [ ] ocr圣遗物评分和角色面板记录
+- [ ] 角色、武器和圣遗物wiki
+- [ ] 派蒙AI闲聊
 
 ## 感谢
 
