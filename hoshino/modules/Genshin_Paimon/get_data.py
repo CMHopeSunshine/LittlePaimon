@@ -97,7 +97,7 @@ async def get_monthinfo_data(uid, month, cookie, use_cache=True):
     return await res.json()
 
 async def get_bind_game(cookie):
-    finduid = re.search(r'account_id=(\d{9})', cookie)
+    finduid = re.search(r'account_id=(\d{6,12})', cookie)
     if not finduid:
         return None
     uid = finduid.group(1)
