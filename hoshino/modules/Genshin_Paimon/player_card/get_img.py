@@ -138,7 +138,7 @@ async def draw_player_card(data, chara_data, uid, nickname="旅行者"):
     bg_draw = ImageDraw.Draw(bg_img)
     # 头部名片
     name_id = random.choice(data['avatars'][0:8])['id']
-    name_card = Image.open(os.path.join(res_path, 'name_card', f'{name_id}.png')).resize((846, 322))
+    name_card = Image.open(os.path.join(res_path, 'name_card', f'{name_id}.png')).crop((0, 40, 840, 360)).resize((846, 322))
     avatar = Image.open(os.path.join(res_path, 'role_profile', f'{name_id}.png')).resize((240, 240))
     bg_img.alpha_composite(name_card, (57, 27))
     bg_img.alpha_composite(avatar, (360, 25))
@@ -335,7 +335,7 @@ async def draw_chara_card(data, skill_data, chara_name, uid):
     if not f:
         return f'{chara_name[1][0]}不在你公开的8个角色中或你没有这个角色哦'
     # 立绘
-    bg_img = Image.open(os.path.join(res_path, 'name_card_full', f'{character["id"]}.png'))
+    bg_img = Image.open(os.path.join(res_path, 'name_card', f'{character["id"]}.png'))
     bg_draw = ImageDraw.Draw(bg_img)
     if character['id'] == 10000007:
         chara_img = Image.open(os.path.join(res_path, 'role_splash', '荧.png')).convert('RGBA')
