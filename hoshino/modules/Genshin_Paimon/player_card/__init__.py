@@ -110,6 +110,9 @@ async def my_characters(bot,ev):
         if not uid:
             await bot.send(ev,'请把uid给派蒙哦，比如ysc100000001 钟离',at_sender=True)
             return
+    if len(uid) != 9 or not uid.isdigit():
+        await bot.send(ev,f'uid {uid} 不合规,是不是打错了呀',at_sender=True)
+        return
     cookie = await get_cookie(qq, uid)
     update_last_query_to_qq(qq, uid)
     if not cookie:

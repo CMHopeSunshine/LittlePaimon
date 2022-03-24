@@ -228,11 +228,11 @@ servers:
   - ws-reverse:
       # 反向WS Universal 地址
       # 注意 设置了此项地址后下面两项将会被忽略
-      universal: ws://127.0.0.1:80/ws/
+      universal: ws://127.0.0.1:6660/ws/
       # 反向WS API 地址
-      api: ws://127.0.0.1:80/api/
+      api: ws://127.0.0.1:6660/api/
       # 反向WS Event 地址
-      event: ws://127.0.0.1:80/event/
+      event: ws://127.0.0.1:6660/event/
       # 重连间隔 单位毫秒
       reconnect-interval: 3000
       middlewares:
@@ -244,7 +244,7 @@ servers:
 Set-Content .\LittlePaimon\hoshino\config\__bot__.py -Value @"
 # coding=gbk
 # hoshino监听的端口与ip
-PORT = 80
+PORT = 6660
 HOST = '127.0.0.1'      # 本地部署使用此条配置（QQ客户端和bot端运行在同一台计算机）
 # HOST = '0.0.0.0'      # 开放公网访问使用此条配置（不安全）
 
