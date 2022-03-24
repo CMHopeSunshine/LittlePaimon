@@ -18,8 +18,6 @@ sv=hoshino.Service('原神模拟抽卡')
 
 @sv.on_rex(r'^抽((?P<num>\d+)|(?:.*))十连(?P<pool>.*?)$')
 async def gacha(bot, ev):
-    if ev.message_type == 'guild' and ev.channel_id != '1983536' and ev.channel_id != '1916789':
-        return
     gid = ev.group_id
     uid = ev.user_id
     init_user_info(uid)
@@ -61,10 +59,8 @@ async def gacha(bot, ev):
     save_user_info()
     await bot.send(ev, MessageSegment.image(img), at_sender=True)
 
-@sv.on_prefix('查看抽卡记录')
+@sv.on_prefix('模拟抽卡记录')
 async def gacharecord(bot, ev):
-    if ev.channel_id != '1983536' and ev.channel_id != '1916789':
-        return
     uid = ev.user_id
     init_user_info(uid)
     if user_info[uid]['gacha_list']['wish_total'] == 0:
@@ -127,10 +123,8 @@ async def getrwrecord(msg,uid):
     res = res.replace(',',' ')
     return res
 
-@sv.on_fullmatch('删除抽卡记录')
+@sv.on_fullmatch('删除模拟抽卡记录')
 async def deleterecord(bot,ev):
-    if ev.channel_id != '1983536' and ev.channel_id !='1916789':
-        return
     uid = ev.user_id
     init_user_info(uid)
     try:
@@ -142,8 +136,6 @@ async def deleterecord(bot,ev):
 
 @sv.on_prefix('选择定轨')
 async def choosedg(bot,ev):
-    if ev.channel_id != '1983536' and ev.channel_id !='1916789':
-        return
     uid = ev.user_id
     init_user_info(uid)
     dg_weapon = ev.message.extract_plain_text().strip()
@@ -161,8 +153,6 @@ async def choosedg(bot,ev):
 
 @sv.on_fullmatch('删除定轨')
 async def deletedg(bot,ev):
-    if ev.channel_id != '1983536' and ev.channel_id !='1916789':
-        return
     uid = ev.user_id
     init_user_info(uid)
     if user_info[uid]['gacha_list']['dg_name'] == '':
@@ -175,8 +165,6 @@ async def deletedg(bot,ev):
 
 @sv.on_fullmatch('查看定轨')
 async def deletedg(bot,ev):
-    if ev.channel_id != '1983536' and ev.channel_id !='1916789':
-        return
     uid = ev.user_id
     init_user_info(uid)
     weapon_up_list = await getdg_weapon()
