@@ -80,7 +80,7 @@ async def update_ckjl(bot,ev):
         if match:
             url = str(match.group(1))
         else:
-            await bot.send(ev,'你这个抽卡链接不对哦，应该是以https://webstatic.mihoyo开头的！', at_sender=True)
+            await bot.send(ev,'你这个抽卡链接不对哦，应该是以https://开头、#/log结尾的！', at_sender=True)
             return
     else:
         with open(os.path.join(data_path, 'user_gacha_log.json'), 'r', encoding="utf-8") as f:
@@ -113,7 +113,7 @@ async def update_ckjl(bot,ev):
     gacha_img = await get_gacha_log_img(gacha_data, 'all')
     await bot.send(ev, gacha_img, at_sender=True)
 
-@sv.on_prefix('抽卡记录', 'ckjl', 'gachalog')
+@sv.on_prefix('查看抽卡记录', 'ckjl', 'gachalog')
 async def get_ckjl(bot,ev):
     msg = ev.message.extract_plain_text().strip().split(' ')
     uid = ''
