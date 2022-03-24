@@ -9,7 +9,7 @@ def get_font(size):
     return ImageFont.truetype(os.path.join(res_path, 'msyh.ttc'), size)
 
 async def get_circle_avatar(avatar, size):
-    avatar = Image.open(os.path.join(res_path, 'role_avatar', f'{avatar}.png'))
+    avatar = Image.open(os.path.join(res_path, 'thumb', f'{avatar}.png'))
     w, h = avatar.size
     bg = Image.new('RGBA', (w, h), (213, 153, 77, 255))
     bg.alpha_composite(avatar, (0, 0))
@@ -63,13 +63,13 @@ async def draw_gacha_log(data):
     top_draw.text((146 - 6 * len(str(data["total_num"])), 88), f'{data["total_num"]}', font=get_font(24), fill='black')
     five_ave = round(sum([x[1] for x in five_star]) / len(five_star), 1) if five_star else ' '
     top_draw.text((321 - 10 * len(str(five_ave)), 88), f'{five_ave}', font=get_font(24), fill='black' if five_ave != ' ' and five_ave > 60 else 'red')
-    five_per = round(len(five_star) / (data['total_num'] - data['5_gacha']), 4) if five_star else -1
-    five_per_str = str(five_per * 100) + '%' if five_per > -1 else ' '
-    top_draw.text((427, 88), f'{five_per_str}', font=get_font(24), fill='black' if five_per < 0.016 else 'red')
-    five_up = round(len([x[0] for x in five_star if not x[0] in ['刻晴', '迪卢克', '七七', '莫娜', '琴']]) / len(five_star),
-                        4) if five_star else -1
-    five_up_str = str(five_up * 100) + '%' if five_per > -1 else ' '
-    top_draw.text((578 if len(five_up_str) != 6 else 569, 88), f'{five_up_str}', font=get_font(24), fill='black' if five_up < 0.75 else 'red')
+    five_per = round(len(five_star) / (data['total_num'] - data['5_gacha']) * 100, 2) if five_star else -1
+    five_per_str = str(five_per) + '%' if five_per > -1 else ' '
+    top_draw.text((427, 88), f'{five_per_str}', font=get_font(24), fill='black' if five_per < 1.7 else 'red')
+    five_up = round(len([x[0] for x in five_star if not x[0] in ['刻晴', '迪卢克', '七七', '莫娜', '琴']]) / len(five_star) * 100,
+                        1) if five_star else -1
+    five_up_str = str(five_up) + '%' if five_per > -1 else ' '
+    top_draw.text((578 if len(five_up_str) != 6 else 569, 88), f'{five_up_str}', font=get_font(24), fill='black' if five_up < 75 else 'red')
     most_five = sorted(five_star, key=lambda x: x[1], reverse=False)[0][0] if five_star else ' '
     top_draw.text((152 - 14 * len(most_five), 163), f'{most_five}', font=get_font(24), fill='red')
     four_ave = round(sum([x[1] for x in data['4_star']]) / len(data['4_star']), 1) if data['4_star'] else ' '

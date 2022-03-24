@@ -5,7 +5,7 @@
 <h4 align="center">✨基于<a href="https://github.com/Ice-Cirno/HoshinoBot" target="_blank">HoshinoBot</a>和<a href="https://github.com/Mrs4s/go-cqhttp" target="_blank">go-cqhttp</a>的原神Q群机器人✨</h4>
 
 <p align="center">
-    <img src="https://img.shields.io/badge/version-v1.0.0-red" alt="version">
+    <img src="https://img.shields.io/badge/version-v1.0.2-red" alt="version">
     <a href="https://cdn.jsdelivr.net/gh/CMHopeSunshine/LittlePaimon@master/LICENSE"><img src="https://img.shields.io/github/license/CMHopeSunshine/LittlePaimon" alt="license"></a>
     <img src="https://img.shields.io/badge/Python-3.8+-yellow" alt="python">
     <a href="https://github.com/Mrs4s/go-cqhttp"><img src="https://img.shields.io/badge/go--cqhttp-v1.0.0--rc1-green?style=flat-square" alt="go-cqhttp"></a>
@@ -13,6 +13,7 @@
     <a href="https://qm.qq.com/cgi-bin/qm/qr?k=C7QsbLOA4SNWWy8_lofoR1CPipG-aTi3&jump_from=webapi"><img src="https://img.shields.io/badge/QQ群-906635633-blue?style=flat-square" alt="QQ Chat"></a>
     <a href="https://qun.qq.com/qqweb/qunpro/share?_wv=3&_wwv=128&inviteCode=MmWrI&from=246610&biz=ka"><img src="https://img.shields.io/badge/QQ频道-尘世闲游-purple?style=flat-square" alt="QQ guild"></a>
 </p>
+
 
 
 ## 简介
@@ -58,6 +59,11 @@
 <img src="https://raw.githubusercontent.com/CMHopeSunshine/LittlePaimon/master/readme/material.png" alt="material">
 </details>
 
+<details>
+<summary>抽卡记录</summary>
+<img src="https://raw.githubusercontent.com/CMHopeSunshine/LittlePaimon/master/readme/gachalog.jpg" alt="gachalog">
+</details>
+
 ## 指令列表
 
 ### 查询功能
@@ -75,17 +81,27 @@
 | ssbq uid          | 查询uid的实时便签，包括树脂、派遣情况等 | uid必须绑定了对应私人cookie才能使用                          |
 | myzj uid (月份)   | 查询uid的该月札记                       | uid必须绑定了对应私人cookie才能使用，不写月份时默认为本月，只能看最近3个月 |
 
+### 抽卡记录导出和分析
+
+| 指令                  | 介绍                             | 备注                                   |
+| --------------------- | -------------------------------- | -------------------------------------- |
+| 查看抽卡记录 uid 池子 | 查看uid已有的抽卡记录的分析图片  | 池子有all\|角色\|武器\|常驻，默认为all |
+| 获取抽卡记录 uid 链接 | 从api获取抽卡记录，时间较长      |                                        |
+| 导出抽卡记录 uid 格式 | 导出抽卡记录的文件，上传到群文件 | 格式有xlsx和json;只能在群里导出        |
+
+抽卡记录链接的获取方式和其他工具是一样的，这里不多介绍了
+
 ### 模拟抽卡功能
 
-| 指令                   | 介绍                               | 备注                                                         |
-| ---------------------- | ---------------------------------- | ------------------------------------------------------------ |
-| 抽n十连xx              | 模拟抽n个xx池子的十连              | n必须为阿拉伯数字，最多同时5次；xx池子有角色1\|角色2\|武器\|常驻\|彩蛋，可以DIY池子 |
-| 选择定轨 武器名称      | 武器定轨                           | 武器名必须是全称                                             |
-| 查看定轨               | 查看当前定轨的武器和能量值         |                                                              |
-| 删除定轨               | 删除定轨                           |                                                              |
-| 查看抽卡记录           | 查看模拟抽卡的出货率、保底数等信息 |                                                              |
-| 查看抽卡记录 角色/武器 | 查看模拟抽卡抽到的角色/武器列表    |                                                              |
-| 删除抽卡记录           | 清空自己的模拟抽卡记录             |                                                              |
+| 指令                       | 介绍                               | 备注                                                         |
+| -------------------------- | ---------------------------------- | ------------------------------------------------------------ |
+| 抽n十连xx                  | 模拟抽n个xx池子的十连              | n必须为阿拉伯数字，最多同时5次；xx池子有角色1\|角色2\|武器\|常驻\|彩蛋，可以DIY池子 |
+| 选择定轨 武器名称          | 武器定轨                           | 武器名必须是全称                                             |
+| 查看定轨                   | 查看当前定轨的武器和能量值         |                                                              |
+| 删除定轨                   | 删除定轨                           |                                                              |
+| 查看模拟抽卡记录           | 查看模拟抽卡的出货率、保底数等信息 |                                                              |
+| 查看模拟抽卡记录 角色/武器 | 查看模拟抽卡抽到的角色/武器列表    |                                                              |
+| 删除模拟抽卡记录           | 清空自己的模拟抽卡记录             |                                                              |
 
 ### 原神WIKI
 
@@ -115,16 +131,17 @@
 ## 更新日志
 
 - 3.20 新增Windows一键部署脚本
-
 - 3.22 新增蓝佬授权提供的收益曲线和参考面板攻略图
+- 3.24 新增抽卡记录导出和分析功能，原模拟抽卡的指令更改
 
 ## 未来计划
 
 - [ ] 实时便签树脂提醒
-- [ ] 抽卡记录导出和分析
+- [x] 抽卡记录导出和分析
 - [ ] ocr圣遗物评分和角色面板记录
 - [ ] 角色、武器和圣遗物wiki
 - [ ] 派蒙AI闲聊
+- [ ] 米游社自动签到
 
 ## 部署方法
 
@@ -169,3 +186,4 @@ javascript:(function(){prompt(document.domain,document.cookie)})();
 - [西风驿站](https://bbs.mihoyo.com/ys/collection/307224) - 角色攻略一图流来源
 - [hoshino-installer](https://github.com/pcrbot/hoshino-installer) - 一键安装脚本参考
 - [bluemushoom](https://bbs.nga.cn/nuke.php?func=ucp&uid=62861898) - 全角色收益曲线和参考面板攻略图来源
+- [genshin-gacha-export](https://github.com/sunfkny/genshin-gacha-export) - 抽卡记录导出参考
