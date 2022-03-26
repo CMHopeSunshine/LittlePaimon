@@ -8,11 +8,9 @@
     <img src="https://img.shields.io/badge/version-v1.0.2-red" alt="version">
     <a href="https://cdn.jsdelivr.net/gh/CMHopeSunshine/LittlePaimon@master/LICENSE"><img src="https://img.shields.io/github/license/CMHopeSunshine/LittlePaimon" alt="license"></a>
     <img src="https://img.shields.io/badge/Python-3.8+-yellow" alt="python">
-    <a href="https://github.com/Mrs4s/go-cqhttp"><img src="https://img.shields.io/badge/go--cqhttp-v1.0.0--rc1-green?style=flat-square" alt="go-cqhttp"></a>
-    <a href="https://docs.nonebot.dev/"><img src="https://img.shields.io/badge/NoneBot-1.6.0+,2.0.0---cyan?style=flat-square" alt="go-cqhttp"></a>
-    <a href="https://qm.qq.com/cgi-bin/qm/qr?k=C7QsbLOA4SNWWy8_lofoR1CPipG-aTi3&jump_from=webapi"><img src="https://img.shields.io/badge/QQ群-906635633-blue?style=flat-square" alt="QQ Chat"></a>
-    <a href="https://qun.qq.com/qqweb/qunpro/share?_wv=3&_wwv=128&inviteCode=MmWrI&from=246610&biz=ka"><img src="https://img.shields.io/badge/QQ频道-尘世闲游-purple?style=flat-square" alt="QQ guild"></a>
+    <a href="https://qun.qq.com/qqweb/qunpro/share?_wv=3&_wwv=128&inviteCode=MmWrI&from=246610&biz=ka"><img src="https://img.shields.io/badge/QQ频道-尘世闲游-green?style=flat-square" alt="QQ guild"></a>
 </p>
+
 
 
 
@@ -89,7 +87,9 @@
 | 获取抽卡记录 uid 链接 | 从api获取抽卡记录，时间较长      |                                        |
 | 导出抽卡记录 uid 格式 | 导出抽卡记录的文件，上传到群文件 | 格式有xlsx和json;只能在群里导出        |
 
-抽卡记录链接的获取方式和其他工具是一样的，这里不多介绍了
+抽卡记录链接的获取方式和其他工具是一样的，这里不多介绍了；
+
+本派蒙导出的xlsx和json符合UIGF标准，可用于其他UIGF标准的抽卡记录分析工具。
 
 ### 模拟抽卡功能
 
