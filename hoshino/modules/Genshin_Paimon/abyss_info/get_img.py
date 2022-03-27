@@ -24,10 +24,11 @@ def get_open_time(timeStamp1, timeStamp2):
 def get_chan_time(timeStamp1, timeStamp2):
     dateArray1 = datetime.datetime.utcfromtimestamp(timeStamp1) + datetime.timedelta(hours=8)
     dateArray2 = datetime.datetime.utcfromtimestamp(timeStamp2) + datetime.timedelta(hours=8)
-    date = dateArray1.strftime("%Y.%m.%d ")
+    date = dateArray1.strftime("%Y.%m.%d")
     otherStyleTime1 = dateArray1.strftime("%H:%M:%S")
     otherStyleTime2 = dateArray2.strftime("%H:%M:%S")
-    return date + otherStyleTime1 + '-' + otherStyleTime2
+    time_consumed = timeStamp2 - timeStamp1
+    return f'{date} {otherStyleTime1}-{otherStyleTime2} {str(time_consumed//60).rjust(2,"0")}分{str(time_consumed%60).rjust(2,"0")}秒'
 
 async def draw_abyss_floor_card(floor, floor_n):
     floor_img = Image.open(os.path.join(res_path, 'abyss', f'floor{floor_n}_long.png')).convert('RGBA')
