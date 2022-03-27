@@ -116,7 +116,7 @@
 "r4_prob": "5.100%",
 "r4_prob_list": [
 {
-"is_up": 0,
+"is_up": 1,
 "item_id": -2,
 "item_name": "云堇",
 "item_type": "角色",
@@ -140,7 +140,7 @@
 "rank": 4
 },
 {
-"is_up": 1,
+"is_up": 0,
 "item_id": -10,
 "item_name": "九条裟罗",
 "item_type": "角色",
@@ -188,7 +188,7 @@
 "rank": 4
 },
 {
-"is_up": 1,
+"is_up": 0,
 "item_id": -16,
 "item_name": "辛焱",
 "item_type": "角色",
@@ -196,7 +196,7 @@
 "rank": 4
 },
 {
-"is_up": 0,
+"is_up": 1,
 "item_id": -17,
 "item_name": "砂糖",
 "item_type": "角色",
@@ -220,7 +220,7 @@
 "rank": 4
 },
 {
-"is_up": 1,
+"is_up": 0,
 "item_id": -20,
 "item_name": "班尼特",
 "item_type": "角色",
@@ -252,7 +252,7 @@
 "rank": 4
 },
 {
-"is_up": 0,
+"is_up": 1,
 "item_id": -24,
 "item_name": "香菱",
 "item_type": "角色",
@@ -424,21 +424,21 @@
 {
 "item_attr": "火",
 "item_id": -2,
-"item_name": "班尼特",
+"item_name": "香菱",
 "item_type": "角色",
 "item_type_cn": "角色"
 },
 {
-"item_attr": "火",
+"item_attr": "岩",
 "item_id": -4,
-"item_name": "辛焱",
+"item_name": "云堇",
 "item_type": "角色",
 "item_type_cn": "角色"
 },
 {
-"item_attr": "雷",
+"item_attr": "风",
 "item_id": -3,
-"item_name": "九条裟罗",
+"item_name": "砂糖",
 "item_type": "角色",
 "item_type_cn": "角色"
 }
