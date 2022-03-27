@@ -450,7 +450,7 @@
 {
 "is_up": 1,
 "item_id": -1,
-"item_name": "珊瑚宫心海",
+"item_name": "温迪",
 "item_type": "角色",
 "order_value": 1,
 "rank": 5
@@ -498,9 +498,9 @@
 ],
 "r5_up_items": [
 {
-"item_attr": "水",
+"item_attr": "风",
 "item_id": -1,
-"item_name": "珊瑚宫心海",
+"item_name": "温迪",
 "item_type": "角色",
 "item_type_cn": "角色"
 }

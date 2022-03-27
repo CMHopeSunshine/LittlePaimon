@@ -201,12 +201,12 @@ def gacha_type_by_name(gacha_type):
     #     return 'role_1_pool'
     if re.match(r'^彩蛋池?$', gacha_type):
         return 'all_star'
-    # if re.match(r'^新角色1|新限定1(?:池)$', gacha_type):
-    #     return 'role_1_pool'
-    # if re.match(r'^新角色2|新限定2(?:池)$', gacha_type):
-    #     return 'role_2_pool'
-    # if re.match(r'^新武器|新武器池$', gacha_type):
-    #     return 'weapon_pool'
+    if re.match(r'^新角色1|新限定1(?:池)$', gacha_type):
+        return 'role_1_pool'
+    if re.match(r'^新角色2|新限定2(?:池)$', gacha_type):
+        return 'role_2_pool'
+    if re.match(r'^新武器|新武器池$', gacha_type):
+        return 'weapon_pool'
     return 0
 
 

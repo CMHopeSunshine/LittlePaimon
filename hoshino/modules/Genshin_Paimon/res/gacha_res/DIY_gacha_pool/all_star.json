@@ -137,6 +137,12 @@
 "item_name": "甘雨",
 "item_type": "角色",
 "item_type_cn": "角色"
+},
+{
+"item_attr": "水",
+"item_name": "神里绫人",
+"item_type": "角色",
+"item_type_cn": "角色"
 }
     ]
 }

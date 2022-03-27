@@ -423,35 +423,35 @@
 {
 "item_attr": "",
 "item_id": -5,
-"item_name": "恶王丸",
+"item_name": "弓藏",
 "item_type": "武器",
 "item_type_cn": "武器"
 },
 {
 "item_attr": "",
 "item_id": -7,
-"item_name": "曚云之月",
+"item_name": "流浪乐章",
 "item_type": "武器",
 "item_type_cn": "武器"
 },
 {
 "item_attr": "",
 "item_id": -6,
-"item_name": "匣里龙吟",
+"item_name": "匣里灭辰",
 "item_type": "武器",
 "item_type_cn": "武器"
 },
 {
 "item_attr": "",
 "item_id": -4,
-"item_name": "西风长枪",
+"item_name": "祭礼大剑",
 "item_type": "武器",
 "item_type_cn": "武器"
 },
 {
 "item_attr": "",
 "item_id": -3,
-"item_name": "祭礼残章",
+"item_name": "笛剑",
 "item_type": "武器",
 "item_type_cn": "武器"
 }
@@ -545,16 +545,14 @@
 {
 "item_attr": "",
 "item_id": -1,
-"item_img": "https://webstatic.mihoyo.com/upload/op-public/2021/12/17/a3e11addf1e714144fd3840b9d37bf2d_4317633571603531158.png",
-"item_name": "薙草之稻光",
+"item_name": "波乱月白经津",
 "item_type": "武器",
 "item_type_cn": "武器"
 },
 {
 "item_attr": "",
 "item_id": -2,
-"item_img": "https://webstatic.mihoyo.com/upload/op-public/2021/07/09/b96f9a44a4f66f11183875d43df79e34_8725185129290866376.png",
-"item_name": "不灭月华",
+"item_name": "终末嗟叹之诗",
 "item_type": "武器",
 "item_type_cn": "武器"
 }
