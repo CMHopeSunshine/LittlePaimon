@@ -1,6 +1,7 @@
 from PIL import Image, ImageDraw, ImageFont
 import os
 from ..util import pil2b64
+from ..character_alias import get_short_name
 from hoshino.typing import MessageSegment
 
 res_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'res')
@@ -60,7 +61,7 @@ async def draw_gacha_log(data):
         col += 1
     top_draw = ImageDraw.Draw(top)
     top_draw.text((348, 30), f'{data["type"]}池', font=get_font(24), fill='#F8F5F1')
-    top_draw.text((146 - 6 * len(str(data["total_num"])), 88), f'{data["total_num"]}', font=get_font(24), fill='black')
+    top_draw.text((145 - 6 * len(str(data["total_num"])), 88), f'{data["total_num"]}', font=get_font(24), fill='black')
     five_ave = round(sum([x[1] for x in five_star]) / len(five_star), 1) if five_star else ' '
     top_draw.text((321 - 10 * len(str(five_ave)), 88), f'{five_ave}', font=get_font(24), fill='black' if five_ave != ' ' and five_ave > 60 else 'red')
     five_per = round(len(five_star) / (data['total_num'] - data['5_gacha']) * 100, 2) if five_star else -1
@@ -85,16 +86,18 @@ async def draw_gacha_log(data):
     n = 0
     for c in five_star:
         avatar = await get_circle_avatar(c[0], 45)
+        f = 10 if data['type'] == '武器' else 0
         if c[1] <= 20:
             color = 'red'
-        elif 20 < c[1] <= 50:
+        elif 20 < c[1] <= 50 - f:
             color = 'orangered'
-        elif 50 < c[1] < 70:
+        elif 50 - f < c[1] < 70 - f:
             color = 'darkorange'
         else:
             color = 'black'
         bg_img.alpha_composite(avatar, (30 + 120 * (n % 6), 298 + 80 * int(n / 6)))
-        bg_draw.text((111 + 120 * (n % 6) - 8 * len(c[0]), 298 + 80 * int(n / 6)), f'{c[0]}', font=get_font(16), fill=color)
+        name = get_short_name(c[0])
+        bg_draw.text((111 + 120 * (n % 6) - 8 * len(name), 298 + 80 * int(n / 6)), name, font=get_font(16), fill=color)
         bg_draw.text((107 - 5 * len(str(c[1])) + 120 * (n % 6), 317 + 80 * int(n / 6)), f'[{c[1]}]', font=get_font(16), fill=color)
         n += 1
     return bg_img
