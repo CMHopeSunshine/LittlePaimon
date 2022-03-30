@@ -126,7 +126,7 @@ Remove-Item go-cqhttp.zip
 # 下载源码
 git clone $LittlePaimongit --depth=1
 Set-Location LittlePaimon
-py -3.8 -m pip install -r requirements.txt -i $pypi
+pip install -r requirements.txt -i $pypi
 Copy-Item -Recurse hoshino\config_example hoshino\config
 Set-Location ..
 
