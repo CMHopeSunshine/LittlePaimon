@@ -94,11 +94,21 @@ async def draw_homes_data(bg_draw,homes):
 
 async def draw_world_data(bg_draw,data):
     # 世界探索
-    Enkanomiya = data['world_explorations'][0]
-    Daoqi = data['world_explorations'][1]
-    Dragonspine = data['world_explorations'][2]
-    Liyue = data['world_explorations'][3]
-    Mengde = data['world_explorations'][4]
+    for d in data['world_explorations']:
+        if d['name'] == '渊下宫':
+            Enkanomiya = d
+        elif d['name'] == '稻妻':
+            Daoqi = d
+        elif d['name'] == '龙脊雪山':
+            Dragonspine = d
+        elif d['name'] == '璃月':
+            Liyue = d
+        elif d['name'] == '蒙德':
+            Mengde = d
+        elif d['name'] == '璃月层岩巨渊':
+            ChasmsMawH = d
+        elif d['name'] == '璃月层岩巨渊·地下矿区':
+            ChasmsMawL = d
     # 蒙德
     bg_draw.text((1295, 148), get_expl_per(Mengde['exploration_percentage']),
                  font=get_font(30), fill='white')
@@ -120,8 +130,18 @@ async def draw_world_data(bg_draw,data):
     bg_draw.text((1746, 336), 'Lv.' + str(Daoqi['level']), font=get_font(30), fill='white')
     bg_draw.text((1746, 380), 'Lv.' + str(Daoqi['offerings'][0]['level']), font=get_font(30), fill='white')
     # 渊下宫
-    bg_draw.text((1520, 505),
+    bg_draw.text((1747, 505),
                  get_expl_per(Enkanomiya['exploration_percentage']),
+                 font=get_font(30), fill='white')
+    # 层岩巨渊
+    bg_draw.text((1295, 455),
+                 get_expl_per(ChasmsMawH['exploration_percentage']),
+                 font=get_font(30), fill='white')
+    bg_draw.text((1295, 503),
+                 get_expl_per(ChasmsMawL['exploration_percentage']),
+                 font=get_font(30), fill='white')
+    bg_draw.text((1296, 547),
+                 'Lv.' + str(ChasmsMawL['offerings'][0]['level']),
                  font=get_font(30), fill='white')
 
 async def draw_player_card(data, chara_data, uid, nickname="旅行者"):
