@@ -83,14 +83,14 @@ async def draw_daily_note_card(data, uid):
     if data["finished_task_num"] == 4:
         bg_draw.text((247, 297), '已完成', font=get_font(30), fill=bg_color[1])
     else:
-        bg_draw.text((245, 298), '委托还没打完哦！', font=get_font(25), fill=bg_color[1])
+        bg_draw.text((245, 298), '未完成', font=get_font(25), fill=bg_color[1])
     # 周本
     bg_img.alpha_composite(enemy, (120, 370))
     bg_draw.text((170, 370), f'{data["remain_resin_discount_num"]}/3', font=get_font(30), fill=bg_color[1])
     if data["remain_resin_discount_num"] == 0:
         bg_draw.text((247, 369), '已完成', font=get_font(30), fill=bg_color[1])
     else:
-        bg_draw.text((245, 372), '周本还没打完哦！', font=get_font(25), fill=bg_color[1])
+        bg_draw.text((245, 372), '未完成', font=get_font(25), fill=bg_color[1])
     # 参量质变仪
     bg_img.alpha_composite(tran, (360, 297))
     if not data['transformer']['obtained']:
@@ -99,7 +99,7 @@ async def draw_daily_note_card(data, uid):
         if data['transformer']['recovery_time']['reached']:
             bg_draw.text((415, 297), '已可用', font=get_font(30), fill=bg_color[1])
         else:
-            bg_draw.text((413, 298), f"{data['transformer']['recovery_time']['Day']} 天后", font=get_font(25), fill=bg_color[1])
+            bg_draw.text((413, 298), f"{data['transformer']['recovery_time']['Day']}天后", font=get_font(25), fill=bg_color[1])
     # 深渊
     abyss_new_month = datetime.datetime.now().month if datetime.datetime.now().day < 16 else datetime.datetime.now().month + 1
     abyss_new_day = 16 if datetime.datetime.now().day < 16 else 1

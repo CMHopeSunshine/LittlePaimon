@@ -133,15 +133,19 @@
 - 3.20 新增Windows一键部署脚本
 - 3.22 新增蓝佬授权提供的收益曲线和参考面板攻略图
 - 3.24 新增抽卡记录导出和分析功能，原模拟抽卡的指令更改
+- 3.30 个人信息卡片新增层岩巨渊和神里绫人信息
+- 3.31 实时便签加入参量质变仪信息
 
-## 未来计划
+## ToDo
 
 - [ ] 实时便签树脂提醒
 - [x] 抽卡记录导出和分析
 - [ ] ocr圣遗物评分和角色面板记录
-- [ ] 角色、武器和圣遗物wiki
+- [ ] 角色、武器和圣遗物wiki（进度30%）
 - [ ] 派蒙AI闲聊
-- [ ] 米游社自动签到
+- [ ] 米游社自动签到（进度70%）
+- [ ] 今日可刷材料
+- [ ] 角色练度统计
 
 ## 部署方法
 
@@ -187,3 +191,4 @@ javascript:(function(){prompt(document.domain,document.cookie)})();
 - [hoshino-installer](https://github.com/pcrbot/hoshino-installer) - 一键安装脚本参考
 - [bluemushoom](https://bbs.nga.cn/nuke.php?func=ucp&uid=62861898) - 全角色收益曲线和参考面板攻略图来源
 - [genshin-gacha-export](https://github.com/sunfkny/genshin-gacha-export) - 抽卡记录导出参考
+- [Adachi-BOT](https://github.com/Arondight/Adachi-BOT) - 部分资源来源
