@@ -16,8 +16,8 @@ async def genshinguide(bot,ev):
     realname = get_id_by_alias(name)
     if not realname:
         await bot.send(ev,f'没有找到{name}的攻略',at_sender=True)
-    elif realname[1][0] == '八重神子':
-        path = os.path.join(res_path, 'role_guide','八重神子.png')
+    elif realname[1][0] in ['八重神子', '神里绫华', '神里绫人', '温迪', '七七', '雷电将军']:
+        path = os.path.join(res_path, 'role_guide',f'{realname[1][0]}.png')
         cq_img = f'[CQ:image,file=file:///{path}]'
         await bot.send(ev,cq_img,at_sender=True)
     else:
