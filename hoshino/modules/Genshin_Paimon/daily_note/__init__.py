@@ -1,6 +1,7 @@
 import json,os,re
 from hoshino import R,MessageSegment,logger, Service
 from hoshino.typing import CQEvent, Message
+from hoshino.util import filt_message
 from ..util import get_uid_by_qq, get_cookie, check_uid_by_qq, update_last_query_to_qq
 from ..get_data import get_daily_note_data
 from .get_img import draw_daily_note_card
@@ -28,7 +29,7 @@ async def main(bot,ev):
             await bot.send(ev,'你还没把信息绑定给派蒙哦',at_sender=True)
             return
     if len(uid) != 9 or not uid.isdigit():
-        await bot.send(ev,f'uid {uid} 不合规,是不是打错了呀',at_sender=True)
+        await bot.send(ev,f'uid {filt_message(uid)} 不合规,是不是打错了呀',at_sender=True)
         return
     cookie = await get_cookie(qq, uid, only_private = True, only_match_uid = True)
     update_last_query_to_qq(qq, uid)

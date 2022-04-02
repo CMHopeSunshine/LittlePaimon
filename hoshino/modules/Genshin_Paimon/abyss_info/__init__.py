@@ -35,13 +35,6 @@ async def main(bot,ev):
     if match:
         uid = ''
         qq = str(match.group(1))
-        # try:
-        #     qq_info = await bot.get_group_member_info(group_id=ev.group_id,
-        #                                             user_id=qid)
-        # except:
-        #     qq_info = await bot.get_guild_member_profile(guild_id=ev.guild_id,
-        #                                             user_id=qid)
-        # nickname = qq_info['nickname']
     if not uid:
         uid = get_uid_by_qq(qq)
         if not uid:

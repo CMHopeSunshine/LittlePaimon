@@ -1,6 +1,7 @@
 import json,os,re
 from hoshino import R,MessageSegment,logger, Service
 from hoshino.typing import CQEvent, Message
+from hoshino.util import filt_message
 from ..util import get_uid_by_qq, get_cookie, check_uid_by_qq, update_last_query_to_qq
 from ..get_data import get_player_card_data, get_chara_detail_data, get_chara_skill_data
 from .get_img import draw_player_card, draw_all_chara_card, draw_chara_card
@@ -26,7 +27,7 @@ async def player_card(bot,ev):
             await bot.send(ev,'请把uid给派蒙哦，比如ys100000001',at_sender=True)
             return
     if len(uid) != 9 or not uid.isdigit():
-        await bot.send(ev,f'uid {uid} 不合规,是不是打错了呀',at_sender=True)
+        await bot.send(ev,f'uid {filt_message(uid)} 不合规,是不是打错了呀',at_sender=True)
         return
     cookie = await get_cookie(qq, uid)
     update_last_query_to_qq(qq, uid)
@@ -64,7 +65,7 @@ async def all_characters(bot,ev):
             await bot.send(ev,'请把uid给派蒙哦，比如ysa100000001',at_sender=True)
             return
     if len(uid) != 9 or not uid.isdigit():
-        await bot.send(ev,f'uid {uid} 不合规,是不是打错了呀',at_sender=True)
+        await bot.send(ev,f'uid {filt_message(uid)} 不合规,是不是打错了呀',at_sender=True)
         return
     cookie = await get_cookie(qq, uid)
     update_last_query_to_qq(qq, uid)
@@ -79,7 +80,6 @@ async def all_characters(bot,ev):
             await bot.send(ev, f'派蒙出现了问题：{e}',at_sender=True)
 
 
-#chara_list=['云堇','申鹤','荒泷一斗','五郎','优菈','阿贝多','托马','胡桃','达达利亚','雷电将军','珊瑚宫心海','埃洛伊','宵宫','神里绫华','枫原万叶','温迪','刻晴','莫娜','可莉','琴','迪卢克','七七','魈','钟离','甘雨','旅行者','早柚','九条裟罗','凝光','菲谢尔','班尼特','丽莎','行秋','迪奥娜','安柏','重云','雷泽','芭芭拉','罗莎莉亚','香菱','凯亚','北斗','诺艾尔','砂糖','辛焱','烟绯','八重神子','神里绫人']
 @sv.on_prefix('ysc')
 async def my_characters(bot,ev):
     msg = ev.message.extract_plain_text().strip().split(' ')
@@ -96,7 +96,7 @@ async def my_characters(bot,ev):
         chara = msg[0]
     chara_name = get_id_by_alias(chara)
     if not chara_name:
-        await bot.send(ev,f'没有角色名叫{chara}哦！',at_sender=True)
+        await bot.send(ev,f'没有角色名叫{filt_message(chara)}哦！',at_sender=True)
         return
     if ev.message_type == 'guild':
         rm = str(ev.message)
@@ -111,7 +111,7 @@ async def my_characters(bot,ev):
             await bot.send(ev,'请把uid给派蒙哦，比如ysc100000001 钟离',at_sender=True)
             return
     if len(uid) != 9 or not uid.isdigit():
-        await bot.send(ev,f'uid {uid} 不合规,是不是打错了呀',at_sender=True)
+        await bot.send(ev,f'uid {filt_message(uid)} 不合规,是不是打错了呀',at_sender=True)
         return
     cookie = await get_cookie(qq, uid)
     update_last_query_to_qq(qq, uid)

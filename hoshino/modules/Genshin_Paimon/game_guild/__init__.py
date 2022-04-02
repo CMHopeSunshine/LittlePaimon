@@ -5,6 +5,7 @@ from hoshino.typing import CQEvent, Message
 from ..character_alias import get_id_by_alias
 from .blue import get_blue_pic
 from ..util import pil2b64
+from hoshino.util import filt_message
 
 sv=hoshino.Service('原神角色wiki')
 res_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'res')
@@ -15,7 +16,7 @@ async def genshinguide(bot,ev):
     name = ev.message.extract_plain_text().strip()
     realname = get_id_by_alias(name)
     if not realname:
-        await bot.send(ev,f'没有找到{name}的攻略',at_sender=True)
+        await bot.send(ev,f'没有找到{filt_message(name)}的攻略',at_sender=True)
     elif realname[1][0] in ['八重神子', '神里绫华', '神里绫人', '温迪', '七七', '雷电将军']:
         path = os.path.join(res_path, 'role_guide',f'{realname[1][0]}.png')
         cq_img = f'[CQ:image,file=file:///{path}]'
@@ -30,7 +31,7 @@ async def genshinmaterial(bot,ev):
     name = ev.message.extract_plain_text().strip()
     realname = get_id_by_alias(name)
     if not realname:
-        await bot.send(ev,f'没有找到{name}的材料',at_sender=True)
+        await bot.send(ev,f'没有找到{filt_message(name)}的材料',at_sender=True)
     else:
         path = os.path.join(res_path, 'role_material',f'{realname[1][0]}材料.png')
         cq_img = f'[CQ:image,file=file:///{path}]'
@@ -43,7 +44,7 @@ async def genshinAttribute(bot,ev):
     if name not in ['风主', '岩主', '雷主']:
         realname = get_id_by_alias(name)
         if not realname:
-            await bot.send(ev,f'没有找到{name}的参考面板',at_sender=True)
+            await bot.send(ev,f'没有找到{filt_message(name)}的参考面板',at_sender=True)
             return
         realname = realname[1][0]
     else:
@@ -63,7 +64,7 @@ async def genshinAttribute2(bot,ev):
     if name not in ['风主', '岩主', '雷主']:
         realname = get_id_by_alias(name)
         if not realname:
-            await bot.send(ev,f'没有找到{name}的参考面板',at_sender=True)
+            await bot.send(ev,f'没有找到{filt_message(name)}的参考面板',at_sender=True)
             return
         realname = realname[1][0]
     else:
