@@ -30,7 +30,10 @@ async def genshinguide(bot,ev):
 async def genshinmaterial(bot,ev):
     name = ev.message.extract_plain_text().strip()
     realname = get_id_by_alias(name)
-    if not realname:
+    if name in ['夜兰', '久岐忍']:
+        cq_img = f'[CQ:image,file=file:///{os.path.join(res_path, "role_material",f"{name}材料.png")}]'
+        await bot.send(ev,cq_img,at_sender=True)
+    elif not realname:
         await bot.send(ev,f'没有找到{filt_message(name)}的材料',at_sender=True)
     else:
         path = os.path.join(res_path, 'role_material',f'{realname[1][0]}材料.png')
