@@ -5,9 +5,12 @@ from os import path
 from PIL import Image
 
 from hoshino import Service, aiorequests
-from hoshino.typing import HoshinoBot, CQEvent 
+from hoshino.typing import CQEvent
+from hoshino.util import FreqLimiter
 from .data_source import *
 from ._res import Res as R
+
+lmt = FreqLimiter(20)
 
 HELP_MSG = '''
 头像相关表情包制作
@@ -17,8 +20,6 @@ HELP_MSG = '''
 sv = Service('表情包', bundle='娱乐', help_=HELP_MSG)
 data_dir = path.join(path.dirname(__file__), 'resources')
 
-last_check = {}
-cool_down = datetime.timedelta(seconds=20)
 
 @sv.on_rex(r'^#(rua|摸摸|亲亲|吃掉|贴贴|拍拍|给爷爬|撕掉|精神支柱|扔掉|要我一直)(?P<name>.*?)$')
 async def main(bot,ev):
@@ -83,11 +84,9 @@ async def poke_back(session):
     uid = session.ctx['user_id']
     tid = session.ctx['target_id']
     gid = session.ctx['group_id']
-    if str(gid) in last_check:
-        intervals = datetime.datetime.now() - last_check[str(gid)]
-        if intervals < cool_down:
-            return
-    if random.random() <= 0.4:
+    if not lmt.check(gid):
+        return
+    if random.random() <= 0.5:
         if tid == session.ctx['self_id']:
             if random.random() <= 0.5:
                 path = data_dir + random.choice(['/这个仇.mp3','/好生气.mp3','/好气哦.mp3','/好变态.mp3','/坏蛋.mp3','/不要啊.mp3','/好过分.mp3'])
@@ -103,7 +102,7 @@ async def poke_back(session):
                 head = await get_avatar(str(tid))
                 res = await random.choice(data_source.avatarFunList2)(data_dir,head)
                 await session.send(R.image(res))
-        last_check[str(gid)] = datetime.datetime.now()
+        lmt.start_cd(gid, 20)
 
 
 async def get_avatar(qq):

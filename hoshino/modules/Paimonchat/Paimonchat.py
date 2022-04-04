@@ -1,21 +1,50 @@
 from hoshino.typing import CQEvent, Message,CQHttpError
 import hoshino
 from nonebot import scheduler
-from hoshino import Service, R, aiorequests,util
-import requests, random, os, json,datetime,re
+from hoshino import Service
+from hoshino.util import filt_message, PriFreqLimiter
+import random, os, json,datetime, re
 from os import path
+
+lmt = PriFreqLimiter(30)
 
 sv=hoshino.Service('派蒙聊天')
 res_dir = path.join(path.dirname(__file__), 'res')
 
-ban_word = ['禁言','ys','ssbq','十连']
-word_cooldown = {'确实':{},'坏了':{},'诶嘿':{},'进不去':{},'派蒙是谁':{},'大佬':{},'好色':{},'无语':{},'祝福':{},'相信':{},'憨批':{},'可爱':{},'绿茶':{},'不是吧':{},'好耶':{},'好听':{},'耽误时间':{},'不可以':{},'好意思':{},'不要啊':{},'羡慕':{},'过分':{},'不明白':{},'哪里不对':{}}
-word_cooldowntime = {'确实':60,'坏了':60,'诶嘿':180,'进不去':240,'派蒙是谁':480,'大佬':300,'好色':300,'无语':300,'祝福':480,'相信':600,'憨批':480,'可爱':480,'绿茶':600,'不是吧':300,'好耶':180,'好听':600,'耽误时间':600,'不可以':180,'好意思':300,'不要啊':180,'羡慕':180,'过分':300,'不明白':300,'哪里不对':300}
-word_pro = {'确实':0.6,'坏了':0.6,'诶嘿':0.5,'进不去':0.5,'派蒙是谁':1,'大佬':0.6,'好色':0.5,'无语':0.6,'祝福':1,'相信':0.5,'憨批':0.5,'可爱':0.5,'绿茶':1,'不是吧':0.5,'好耶':0.75,'好听':0.4,'耽误时间':0.6,'不可以':0.6,'好意思':0.5,'不要啊':0.5,'羡慕':0.6,'过分':0.5,'不明白':0.5,'哪里不对':0.5}
+# 不进行复读的关键词
+ban_word = ['禁言','ys','ssbq','十连','sy','原神']
+# 派蒙聊天关键词的配置，第一个为冷却时间，单位秒，第二个为触发概率
+word_config = {
+    '确实': (60, 0.6),
+    '坏了': (60, 0.6),
+    '诶嘿': (180, 0.5),
+    '进不去': (240, 0.5),
+    '派蒙是谁': (480, 1),
+    '大佬': (300, 0.6),
+    '好色': (300, 0.5),
+    '无语': (300, 0.6),
+    '祝福': (480, 1),
+    '相信': (600, 0.5),
+    '憨批': (480, 0.5),
+    '可爱': (480, 0.5),
+    '绿茶': (600, 1),
+    '不是吧': (300, 0.5),
+    '好耶': (180, 0.75),
+    '好听': (600, 0.4),
+    '耽误时间': (600, 0.6),
+    '不可以': (180, 0.6),
+    '好意思': (300, 0.5),
+    '不要啊': (180, 0.5),
+    '羡慕': (180, 0.5),
+    '过分': (300, 0.5),
+    '不明白': (300, 0.5),
+    '哪里不对': (300, 0.5)
+}
 
 PROB_A = 1.6
 group_stat = {}
 check_rep = {}
+
 @sv.on_message()
 async def random_repeater(bot, ev: CQEvent):
     if ev.message_type == 'group':
@@ -33,13 +62,13 @@ async def random_repeater(bot, ev: CQEvent):
         check_rep[gid] = False
 
     last_msg, is_repeated, p = group_stat[gid]
-    if last_msg == msg and msg not in ban_word:     # 群友正在复读
+    if last_msg == msg and not any(msg in w for w in ban_word):     # 群友正在复读
         check_rep[gid] = True
         if not is_repeated:     # 机器人尚未复读过，开始测试复读
             if random.random() < p:    # 概率测试通过，复读并设flag
                 try:
                     group_stat[gid] = (msg, True, 0)
-                    await bot.send(ev, util.filt_message(ev.message))
+                    await bot.send(ev, filt_message(ev.message))
                 except CQHttpError as e:
                     hoshino.logger.error(f'复读失败: {type(e)}')
                     hoshino.logger.exception(e)
@@ -60,10 +89,13 @@ async def paimonchat(bot, ev:CQEvent):
     else:
         gid = str(ev.user_id)
     msg = str(ev.message)
+
+    # 如果当前在判断复读，则不触发语音聊天
     if gid not in check_rep:
         check_rep[gid] = False
     if check_rep[gid]:
         return
+    
     if re.match(r'.*派蒙.*坏.*',msg):
         word = '坏了'
         reply = random.choice(['你才坏！','瞎说啥呢？','派蒙怎么可能会坏！']) + '[CQ:face,id=146]'
@@ -82,7 +114,7 @@ async def paimonchat(bot, ev:CQEvent):
         word = '派蒙是谁'
         path = res_dir + random.choice(['/嘿嘿你猜.mp3','/中二派蒙.mp3','/伙伴.mp3'])
         reply = f'[CQ:record,file=file:///{path}]'
-    elif re.match(r'.*((大|巨)?佬)|带带|帮帮|邦邦.*',msg):
+    elif re.match(r'.*((大|巨)佬)|带带|帮帮|邦邦.*',msg):
         word = '大佬'
         path = res_dir + '/大佬nb.mp3'
         reply = f'[CQ:record,file=file:///{path}]'
@@ -160,25 +192,11 @@ async def paimonchat(bot, ev:CQEvent):
         reply = f'[CQ:record,file=file:///{path}]'
     else:
         return
-    if gid not in word_cooldown[word]:
-        word_cooldown[word][gid] = True
-    if ev.group == 914302664:
-        p = word_pro[word]/2
-    else:
-        p = word_pro[word]
-    if word_cooldown[word][gid] and random.random() < p:
+    if not lmt.check(gid,word): # 判断是否在冷却
+        return
+    elif random.random() < word_config[word][1]: # 判断概率是否触发
         try:
             await bot.send(ev,reply)
-            word_cooldown[word][gid] = False
-            end_time = datetime.datetime.now() + datetime.timedelta(seconds=word_cooldowntime[word])#冷却时间
-            scheduler.add_job(
-                resetTime,
-                'date',
-                args=(word,gid,),
-                run_date=end_time
-            )
+            lmt.start_cd(gid, word, word_config[word][0]) # 开始冷却
         except:
-            hoshino.logger.error('派蒙聊天失败')
-
-def resetTime(word,gid):
-    word_cooldown[word][gid] = True
+            hoshino.logger.error('派蒙聊天语音发送失败，请检查是否已安装ffmpeg')
