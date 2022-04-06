@@ -105,9 +105,9 @@ async def draw_world_data(bg_draw,data):
             Liyue = d
         elif d['name'] == '蒙德':
             Mengde = d
-        elif d['name'] == '璃月层岩巨渊':
+        elif d['name'] == '层岩巨渊':
             ChasmsMawH = d
-        elif d['name'] == '璃月层岩巨渊·地下矿区':
+        elif d['name'] == '层岩巨渊·地下矿区':
             ChasmsMawL = d
     # 蒙德
     bg_draw.text((1295, 148), get_expl_per(Mengde['exploration_percentage']),
