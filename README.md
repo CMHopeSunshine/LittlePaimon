@@ -5,10 +5,10 @@
 <h4 align="center">✨基于<a href="https://github.com/Ice-Cirno/HoshinoBot" target="_blank">HoshinoBot</a>和<a href="https://github.com/Mrs4s/go-cqhttp" target="_blank">go-cqhttp</a>的原神Q群机器人✨</h4>
 
 <p align="center">
-    <img src="https://img.shields.io/badge/version-v1.0.2-red" alt="version">
+    <img src="https://img.shields.io/badge/version-v1.0.3-red" alt="version">
     <a href="https://cdn.jsdelivr.net/gh/CMHopeSunshine/LittlePaimon@master/LICENSE"><img src="https://img.shields.io/github/license/CMHopeSunshine/LittlePaimon" alt="license"></a>
     <img src="https://img.shields.io/badge/Python-3.8+-yellow" alt="python">
-    <a href="https://qun.qq.com/qqweb/qunpro/share?_wv=3&_wwv=128&inviteCode=MmWrI&from=246610&biz=ka"><img src="https://img.shields.io/badge/QQ频道-尘世闲游-green?style=flat-square" alt="QQ guild"></a>
+    <a href="https://qun.qq.com/qqweb/qunpro/share?_wv=3&_wwv=128&inviteCode=MmWrI&from=246610&biz=ka"><img src="https://img.shields.io/badge/QQ频道交流-尘世闲游-green?style=flat-square" alt="QQ guild"></a>
 </p>
 
 
@@ -128,13 +128,18 @@
 | ------------------------------------------------------------ | --------------------------- | :-------- | -------------- |
 | #亲亲/贴贴/拍拍/给爷爬/吃掉/扔掉/撕掉/精神支柱/要我一直 @人/qq号/图片 | 好玩的头像图片gif表情包生成 | 要以#开头 | #精神支柱@群主 |
 
-## 更新日志
+## 新功能更新
 
 - 3.20 新增Windows一键部署脚本
 - 3.22 新增蓝佬授权提供的收益曲线和参考面板攻略图
 - 3.24 新增抽卡记录导出和分析功能，原模拟抽卡的指令更改
 - 3.30 个人信息卡片新增层岩巨渊和神里绫人信息
 - 3.31 实时便签加入参量质变仪信息
+
+## 已知问题\待优化
+- [ ] 公共cookie达到每日30次上限时不会更换
+- [ ] 公共cookie没有复用
+- [ ] 指令参数判别不够清晰
 
 ## ToDo
 

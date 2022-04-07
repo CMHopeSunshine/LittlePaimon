@@ -14,14 +14,15 @@ async def main(bot,ev):
     uid = ''
     if len(msg[0]) == 9 and msg[0].isdigit():
         uid = msg[0]
-        month = msg[1]
+        if len(msg) >= 2:
+            month = msg[1]
+        else:
+            month = datetime.datetime.now().month
     else:
         month = msg[0]
     if month and not month.isdigit():
         await bot.send(ev,'月份是不是写错了呀，要阿拉伯数字哦',at_sender=True)
         return
-    if not month:
-        month = datetime.datetime.now().month
     qq = str(ev.user_id)
     if ev.message_type == 'guild':
         rm = str(ev.message)

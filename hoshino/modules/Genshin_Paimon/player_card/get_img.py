@@ -11,14 +11,14 @@ def get_font(size):
     return ImageFont.truetype(os.path.join(res_path,'msyh.ttc'), size)
 
 def get_expl_per(percentage):
-    if percentage == 0:
-        return '0%'
-    elif percentage != 1000:
+    if percentage < 10:
+        return f'0.{percentage}%'
+    elif percentage == 1000:
+        return '100%'
+    else:
         p = list(str(percentage))
         p.insert(-1, '.')
         return ''.join(p) + '%'
-    else:
-        return '100%'
 
 async def get_chara_card(data):
     chara_card = Image.new("RGBA", (226, 313), (255, 255, 255, 255))
@@ -94,6 +94,7 @@ async def draw_homes_data(bg_draw,homes):
 
 async def draw_world_data(bg_draw,data):
     # 世界探索
+    noneExp = {'level': 0, 'exploration_percentage': 0, 'offerings': [{'level': 0}]}
     for d in data['world_explorations']:
         if d['name'] == '渊下宫':
             Enkanomiya = d
@@ -110,30 +111,58 @@ async def draw_world_data(bg_draw,data):
         elif d['name'] == '层岩巨渊·地下矿区':
             ChasmsMawL = d
     # 蒙德
+    try:
+        type(Mengde)
+    except:
+        Mengde = noneExp
     bg_draw.text((1295, 148), get_expl_per(Mengde['exploration_percentage']),
                  font=get_font(30), fill='white')
     bg_draw.text((1296, 204), 'Lv.' + str(Mengde['level']), font=get_font(30), fill='white')
     # 雪山
+    try:
+        type(Dragonspine)
+    except:
+        Dragonspine = noneExp
     bg_draw.text((1747, 148),
                  get_expl_per(Dragonspine['exploration_percentage']),
                  font=get_font(30), fill='white')
     bg_draw.text((1746, 204), 'Lv.' + str(Dragonspine['level']), font=get_font(30), fill='white')
     # 璃月
+    try:
+        type(Liyue)
+    except:
+        Liyue = noneExp
     bg_draw.text((1295, 310),
                  get_expl_per(Liyue['exploration_percentage']),
                  font=get_font(30), fill='white')
     bg_draw.text((1296, 366), 'Lv.' + str(Liyue['level']), font=get_font(30), fill='white')
     # 稻妻
+    try:
+        type(Daoqi)
+    except:
+        Daoqi = noneExp
     bg_draw.text((1747, 291),
                  get_expl_per(Daoqi['exploration_percentage']),
                  font=get_font(30), fill='white')
     bg_draw.text((1746, 336), 'Lv.' + str(Daoqi['level']), font=get_font(30), fill='white')
     bg_draw.text((1746, 380), 'Lv.' + str(Daoqi['offerings'][0]['level']), font=get_font(30), fill='white')
     # 渊下宫
+    try:
+        type(Enkanomiya)
+    except:
+        Enkanomiya = noneExp
     bg_draw.text((1747, 505),
                  get_expl_per(Enkanomiya['exploration_percentage']),
                  font=get_font(30), fill='white')
     # 层岩巨渊
+    try:
+        type(ChasmsMawH)
+    except:
+        ChasmsMawH = noneExp
+    try:
+        type(ChasmsMawL)
+    except:
+        ChasmsMawL = noneExp
     bg_draw.text((1295, 455),
                  get_expl_per(ChasmsMawH['exploration_percentage']),
                  font=get_font(30), fill='white')
