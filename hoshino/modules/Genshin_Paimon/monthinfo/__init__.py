@@ -2,55 +2,36 @@ import json,os,re,datetime
 from hoshino import R,MessageSegment,logger, Service
 from hoshino.typing import CQEvent, Message
 from hoshino.util import filt_message
-from ..util import get_uid_by_qq, get_cookie, check_uid_by_qq, update_last_query_to_qq
+from ..util import get_uid_in_msg
 from ..get_data import get_monthinfo_data
 from .get_img import draw_monthinfo_card
 
-sv = Service('原神每月札记')
+help_msg='''
+[myzj/每月札记/zj (uid) (月份)]查看该月份获得的原石、摩拉数
+*绑定私人cookie之后才能使用,只能查看最近3个月的记录,默认为本月
+'''
+sv = Service('派蒙每月札记', bundle='派蒙', help_=help_msg)
 
-@sv.on_prefix(('myzj','每月札记'))
+@sv.on_prefix(('myzj', '每月札记', 'zj'))
 async def main(bot,ev):
-    msg = ev.message.extract_plain_text().strip().split(' ')
-    uid = ''
-    if len(msg[0]) == 9 and msg[0].isdigit():
-        uid = msg[0]
-        if len(msg) >= 2:
-            month = msg[1]
-        else:
-            month = datetime.datetime.now().month
+    uid, msg, user_id, use_cache = await get_uid_in_msg(ev)
+    # 札记只能查看最近3个月的，构造正则来获取月份
+    month_now = datetime.datetime.now().month
+    if month_now == 1:
+        month_list = ['11','12','1']
+    elif month_now == 2:
+        month_list = ['12', '1', '2']
     else:
-        month = msg[0]
-    if month and not month.isdigit():
-        await bot.send(ev,'月份是不是写错了呀，要阿拉伯数字哦',at_sender=True)
-        return
-    qq = str(ev.user_id)
-    if ev.message_type == 'guild':
-        rm = str(ev.message)
+        month_list = [str(month_now - 2), str(month_now - 1)]
+    find_month = '(?P<month>' + '|'.join(month_list) + ')'
+    match = re.search(find_month, msg)
+    month = match.group('month') if match else month_now
+    # try:
+    data = await get_monthinfo_data(uid, month, use_cache=use_cache)
+    if isinstance(data, str):
+        await bot.send(ev, data, at_sender=True)
     else:
-        rm = str(ev.raw_message)
-    match = re.search(r"\[CQ:at,qq=(.*)\]", rm)
-    if match:
-        uid = ''
-        qq = str(match.group(1))
-    if uid and not check_uid_by_qq(qq, uid):
-        await bot.send(ev,'派蒙没有这个uid的绑定信息哦',at_sender=True)
-        return
-    if not uid:
-        uid = get_uid_by_qq(qq)
-        if not uid:
-            await bot.send(ev,'你还没把信息绑定给派蒙哦',at_sender=True)
-            return
-    if len(uid) != 9 or not uid.isdigit():
-        await bot.send(ev,f'uid {filt_message(uid)} 不合规,是不是打错了呀',at_sender=True)
-        return
-    cookie = await get_cookie(qq, uid, only_private = True, only_match_uid = True)
-    update_last_query_to_qq(qq, uid)
-    if not cookie:
-        await bot.send(ev,'你没有绑定cookie或者cookie失效了噢！',at_sender=True)
-    else:
-        try:
-            data = await get_monthinfo_data(uid, month, cookie)
-            monthinfo_card = await draw_monthinfo_card(data)
-            await bot.send(ev, monthinfo_card, at_sender=True)
-        except Exception as e:
-            await bot.send(ev, f'派蒙出现了问题：{e}',at_sender=True)
+        monthinfo_card = await draw_monthinfo_card(data)
+        await bot.send(ev, monthinfo_card, at_sender=True)
+    # except Exception as e:
+    #　    await bot.send(ev, f'派蒙出现了问题：{e}',at_sender=True)

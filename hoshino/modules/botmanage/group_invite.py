@@ -14,7 +14,7 @@ async def handle_group_invite(session: RequestSession):
 async def handle_unknown_group_invite(session):
     if session.ctx['user_id'] == session.ctx['self_id']:
         try:
-            await nonebot.get_bot().send_private_msg(user_id=nonebot.get_bot().config.SUPERUSERS,message=f'群{session.ctx["group_id"]}未经允许拉了派蒙进群')
+            await nonebot.get_bot().send_private_msg(user_id=nonebot.get_bot().config.SUPERUSERS[0],message=f'群{session.ctx["group_id"]}未经允许拉了派蒙进群')
         except Exception as e:
             print('处理群聊邀请错误:',e)
     else:

@@ -1,15 +1,23 @@
 import requests, json,re
-from hoshino import R,MessageSegment
+from hoshino import MessageSegment, Service, aiorequests
 from hoshino.typing import CQEvent, Message
 from hoshino.util import PriFreqLimiter
-import hoshino
 from ..util import Dict
-from hoshino import aiorequests
 from .gacha_role import *
 from .gacha_wish import more_ten
 
-lmt = PriFreqLimiter(60)
-sv=hoshino.Service('原神模拟抽卡')
+lmt = PriFreqLimiter(30)
+help_msg='''
+1.[抽n十连xx池]抽n次xx池的十连，最多同时5次
+*池子和官方同步，有角色1|角色2|武器|常驻，默认为角色1
+2.[模拟抽卡记录]查看模拟抽卡记录总结
+3.[模拟抽卡记录 角色/武器]查看模拟抽卡抽到的五星角色/武器
+4.[删除模拟抽卡记录]顾名思义
+5.[选择定轨 武器全名]选择武器定轨
+6.[查看定轨]查看当前定轨的武器
+7.[删除定轨]删除当前定轨的武器
+'''
+sv = Service('派蒙模拟抽卡', bundle='派蒙', help_=help_msg)
 #activity = 301  限定卡池
 #activity2 = 400  限定卡池2
 #weapon = 302  武器卡池
@@ -44,7 +52,7 @@ async def gacha(bot, ev):
         if not lmt.check(gid,uid):
             await bot.finish(ev, f'模拟抽卡冷却中(剩余{int(lmt.left_time(gid,uid)) + 1}秒)', at_sender=True)
             return
-        lmt.start_cd(gid,uid,60)
+        lmt.start_cd(gid, uid, 30)
     if num >= 3:
         await bot.send(ev, '抽卡图正在生成中，请稍候')
     if isinstance(gacha_type,int):

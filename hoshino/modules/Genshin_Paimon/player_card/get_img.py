@@ -218,7 +218,7 @@ async def draw_player_card(data, chara_data, uid, nickname="旅行者"):
     # 世界探索
     await draw_world_data(bg_draw,data)
     # 角色
-    if chara_data['data']:
+    if chara_data:
         chara_data = chara_data['data']['avatars']
         w = 1045
         i = 0
@@ -428,6 +428,9 @@ async def draw_chara_card(data, skill_data, chara_name, uid):
         reli_icon = await draw_reli_icon(reli)
         bg_img.alpha_composite(reli_icon, reli_p[i])
         i += 1
+
+    if not skill_data:
+        skill_data = {'retcode' : 'error'}
 
     # 补上三命和五命的技能等级提升
     if skill_data['retcode'] == 0 and character['constellations'][2]['is_actived']:

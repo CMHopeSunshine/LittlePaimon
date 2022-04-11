@@ -7,7 +7,16 @@ from .blue import get_blue_pic
 from ..util import pil2b64
 from hoshino.util import filt_message
 
-sv=hoshino.Service('原神角色wiki')
+help_msg='''
+1.[xx角色攻略]查看西风驿站出品的角色一图流攻略
+2.[xx角色材料]查看惜月出品的角色材料统计
+3.[xx参考面板]查看blue菌hehe出品的参考面板攻略
+4.[xx收益曲线]查看blue菌hehe出品的收益曲线攻略
+*感谢来自大佬们的授权。角色支持别名查询
+'''
+sv = Service('派蒙WIKI', bundle='派蒙', help_=help_msg)
+
+
 res_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'res')
 
 @sv.on_prefix('角色攻略')

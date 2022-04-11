@@ -1,54 +1,78 @@
 import os
 import json
-import traceback
 import hashlib
+import re
 import random
 import time
-import uuid
-import requests
 from hoshino import logger, aiorequests
 from io import BytesIO
 import base64
 import datetime
 import functools
 import inspect
+from nonebot import get_bot
+from .db_util import get_private_cookie, get_cookie_cache, get_public_cookie, limit_public_cookie, update_cookie_cache,get_last_query,update_last_query,delete_cookie
 
-# user_cookies.json数据文件模版，如没有.json文件就会按这个模版生成文件
-user_cookies_example = {
-    "通用": [
-        {
-            "cookie": "",
-            "no": 1
-        },
-        {
-            "cookie": "",
-            "no": 2
-        }
-    ],
-    "私人":{}
-    
-}
-user_cookies = {}
-def load_data():
-    path = os.path.join(os.path.dirname(__file__), 'user_data','user_cookies.json')
-    if not os.path.exists(path):
-        with open(path,'w',encoding='UTF-8') as f:
-            json.dump(user_cookies_example,f,ensure_ascii=False)
-    try:
-        with open(path, encoding='utf8') as f:
-            data = json.load(f)
-            for k, v in data.items():
-                user_cookies[k] = v
-    except:
-        traceback.print_exc()
+async def get_use_cookie(user_id, uid='', mys_id='', action=''):
+    cache_cookie = await get_cookie_cache(uid, 'uid')
+    if cache_cookie:
+        if cache_cookie['type'] == 'public':
+            logger.info(f'---派蒙调用{uid}的缓存公共cookie执行{action}操作---')
+        else:
+            logger.info(f'---派蒙调用{uid}的缓存私人cookie执行{action}操作---')
+        return cache_cookie
+    cookies = await get_private_cookie(user_id, 'user_id')
+    if not cookies:
+        public_cookie = await get_public_cookie()
+        if not public_cookie:
+            return None
+        else:
+            logger.info(f'---派蒙调用{public_cookie[0]}号公共cookie执行{action}操作---')
+            return {'type':'public', 'cookie': public_cookie[1], 'no': public_cookie[0]}
+    else:
+        for user_id_, cookie, uid_, mys_id_ in cookies:
+            if (uid and uid_ == uid) or (mys_id and mys_id_ == mys_id):
+                logger.info(f'---派蒙调用用户{user_id_}的uid{uid_}私人cookie执行{action}操作---')
+                return {'type':'private', 'user_id': user_id_, 'cookie': cookie, 'uid': uid_, 'mys_id': mys_id_}
+        use_cookie = random.choice(cookies)
+        logger.info(f'---派蒙调用用户{use_cookie[0]}的uid{use_cookie[2]}私人cookie执行{action}操作---')
+        return {'type':'private', 'user_id': use_cookie[0], 'cookie': use_cookie[1], 'uid': use_cookie[2], 'mys_id': use_cookie[3]}
 
-def save_data():
-    path = os.path.join(os.path.dirname(__file__), 'user_data','user_cookies.json')
-    try:
-        with open(path, 'w', encoding='utf8') as f:
-            json.dump(user_cookies, f, ensure_ascii=False, indent=2)
-    except:
-        traceback.print_exc()
+async def get_own_cookie(uid='', mys_id='', action=''):
+    if uid:
+        cookie = (await get_private_cookie(uid, 'uid'))
+    elif mys_id:
+        cookie = (await get_private_cookie(mys_id, 'mys_id'))
+    else:
+        cookie = None
+    if not cookie:
+        return None
+    else:
+        cookie = cookie[0]
+        logger.info(f'---派蒙调用用户{cookie[0]}的uid{cookie[2]}私人cookie执行{action}操作---')
+        return {'type':'private', 'user_id': cookie[0], 'cookie': cookie[1], 'uid': cookie[2], 'mys_id': cookie[3]}
+
+# 检查数据返回状态，10001为ck过期了，10101为达到每日30次上线了
+async def check_retcode(data, cookie, uid):
+    if data['retcode'] == 10001:
+        # TODO：此处为删除cookie的操作
+        await delete_cookie(cookie['cookie'], cookie['type'])
+        # TODO: 此处为发送cookie删除信息提醒的操作
+        await send_cookie_delete_msg(cookie)
+        return False
+    elif data['retcode'] == 10101:
+        # TODO: 此处为设置cookie到30次上限的操作
+        if cookie['type'] == 'public':
+            logger.info(f'{cookie["no"]}号公共cookie达到了每日30次查询上限')
+        elif cookie['type'] == 'private':
+            logger.info(f'用户{cookie["user_id"]}的uid{cookie["uid"]}私人cookie达到了每日30次查询上限')
+        await limit_public_cookie(cookie['cookie'])
+        return False
+    else:
+        # TODO: 此处为更新最后查询的操作
+        await update_cookie_cache(cookie['cookie'], uid, 'uid')
+        return True
+
 
 # 缓存装饰器 ttl为过期时间 参数use_cache决定是否使用缓存，默认为True
 def cache(ttl=datetime.timedelta(hours=1), **kwargs):
@@ -80,6 +104,34 @@ def cache(ttl=datetime.timedelta(hours=1), **kwargs):
         return wrapped
 
     return wrap
+
+# 获取message中的艾特对象
+async def get_at_target(msg):
+    for msg_seg in msg:
+        if msg_seg.type == "at":
+            return msg_seg.data['qq']
+    return None
+
+# message预处理，获取uid、干净的msg、user_id、是否缓存
+async def get_uid_in_msg(ev):
+    msg = ev.message
+    msgt = msg.extract_plain_text().strip()
+    if not msg:
+        uid = await get_last_query(str(ev.user_id))
+        return uid, '', str(ev.user_id), True
+    user_id = await get_at_target(msg) or str(ev.user_id)
+    use_cache = False if '-r' in msgt else True
+    msgt = msgt.replace('-r', '').strip()
+    find_uid = r'(?P<uid>(1|2|5)\d{8})'
+    for msg_seg in msg:
+        if msg_seg.type == 'text':
+            match = re.search(find_uid, msg_seg.data['text'])
+            if match:
+                await update_last_query(user_id, match.group('uid'), 'uid')
+                return match.group('uid'), msgt.replace(match.group('uid'), '').strip(), user_id, use_cache
+    uid = await get_last_query(user_id)
+    return uid, msgt.strip(), user_id, use_cache
+
 
 class Dict(dict):
     __setattr__ = dict.__setitem__
@@ -123,10 +175,9 @@ def get_headers(cookie, q='',b=None):
         'x-rpc-client_type': '5',
         'Referer': 'https://webstatic.mihoyo.com/'
     }
-    #print(headers)
     return headers
 
-# 检查cookie是否有效，通过查看个人主页是否返回ok来判断
+# 检查cookie是否有效，通过查看个人主页来判断
 async def check_cookie(cookie):
     url = 'https://bbs-api.mihoyo.com/user/wapi/getUserFullInfo?gids=2'
     headers ={
@@ -144,91 +195,21 @@ async def check_cookie(cookie):
     else:
         return True
 
-# 通过qq号获取最后查询的uid
-def get_uid_by_qq(qq):
-    if qq not in user_cookies['私人']:
-        return None
-    return user_cookies['私人'][qq]['last_query']
+# 向超级用户私聊发送cookie删除信息
+async def send_cookie_delete_msg(cookie_info):
+    msg = ''
+    if cookie_info['type'] == 'public':
+        msg = f'公共池的{cookie_info["no"]}号cookie已失效'
+    elif cookie_info['type'] == 'private':
+        if cookie_info['uid']:
+            msg = f'用户{cookie_info["user_id"]}的uid{cookie_info["uid"]}的cookie已失效'
+        elif cookie_info['mys_id']:
+            msg = f'用户{cookie_info["user_id"]}的mys_id{cookie_info["mys_id"]}的cookie已失效'
+    if msg:
+        logger.info(f'---{msg}---')
+        for superuser in get_bot().config.SUPERUSERS:
+            try:
+                await get_bot().send_private_msg(user_id=superuser,message=msg + '，派蒙帮你删除啦!')
+            except Exception as e:
+                logger.error(f'发送cookie删除消息失败: {e}')
 
-# 检查qq号是否绑定uid
-def check_uid_by_qq(qq, uid):
-    if qq not in user_cookies['私人']:
-        return False
-    for cookie in user_cookies['私人'][qq]['cookies']:
-        if cookie['uid'] == uid:
-            return True
-    return False
-
-# 更新qq最后查询的uid
-def update_last_query_to_qq(qq, uid):
-    if qq not in user_cookies['私人']:
-        user_cookies['私人'][qq] = {}
-        user_cookies['私人'][qq]['cookies'] = []
-    user_cookies['私人'][qq]['last_query'] = uid
-    save_data()
-
-# 绑定uid、cookie到qq号
-async def bind_cookie(qq, uid, cookie):
-    if qq not in user_cookies['私人']:
-        user_cookies['私人'][qq] = {}
-        user_cookies['私人'][qq]['cookies'] = []
-    f = False
-    for c in user_cookies['私人'][qq]['cookies']:
-        if c['uid'] == uid:
-            c['cookie'] = cookie
-            f = True
-            break
-    if not f:
-        c = {'cookie':cookie,'uid':uid}
-        user_cookies['私人'][qq]['cookies'].append(c)
-    user_cookies['私人'][qq]['last_query'] = uid
-    save_data()
-
-# 绑定cookie到公共cookie池
-async def bind_public_cookie(cookie):
-    if not await check_cookie(cookie):
-        return '这cookie没有用哦，检查一下是不是复制错了或者过期了(试试重新登录米游社再获取)'
-    else:
-        user_cookies['通用'].append({"cookie": cookie, "no": len(user_cookies['通用']) + 1})
-        save_data()
-        return '添加公共cookie成功'
-
-# 获取公共池可用的cookie
-async def get_public_cookie():
-    for cookie in user_cookies['通用']:
-        if await check_cookie(cookie['cookie']):
-            logger.info(f'--CMgenshin：调用公共cookie池-{cookie["no"]}号执行操作==')
-            return cookie['cookie']
-        else:
-            logger.info(f'--CMgenshin：公共cookie池-{cookie["no"]}号已失效--')
-    logger.error('--CMgenshin：原神查询公共cookie池已全部失效--')
-    return None
-
-# 获取可用的cookie，优先获取私人cookie，没有则获取公共池cookie
-async def get_cookie(qq, uid, only_private = False, only_match_uid = False):
-    if qq not in user_cookies['私人']:
-        if only_private:
-            return None
-        else:
-            return await get_public_cookie()
-    else:
-        valid_cookie = []
-        for cookie in user_cookies['私人'][qq]['cookies']:
-            if not await check_cookie(cookie['cookie']):
-                logger.error(f'--CMgenshin：qq{qq}下的cookie-{cookie["uid"]}已失效--')
-            else:
-                valid_cookie.append(cookie)
-                if cookie['uid'] == uid:
-                    logger.info(f'--CMgenshin：调用qq{qq}的cookie-{cookie["uid"]}执行操作--')
-                    return cookie['cookie']
-        if valid_cookie and only_match_uid:
-            logger.info(f'--CMgenshin：调用qq{qq}的cookie-{cookie["uid"]}执行操作--')
-            return random.choice(valid_cookie)['cookie']
-        else:
-            if only_private:
-                return None
-            else:
-                return await get_public_cookie()
-
-# 初始化读取cookie数据
-load_data()
