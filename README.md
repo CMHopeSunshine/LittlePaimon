@@ -5,7 +5,7 @@
 <h4 align="center">✨基于<a href="https://github.com/Ice-Cirno/HoshinoBot" target="_blank">HoshinoBot</a>和<a href="https://github.com/Mrs4s/go-cqhttp" target="_blank">go-cqhttp</a>的原神Q群机器人✨</h4>
 
 <p align="center">
-    <img src="https://img.shields.io/badge/version-v1.0.3-red" alt="version">
+    <img src="https://img.shields.io/badge/version-v1.0.4-red" alt="version">
     <a href="https://cdn.jsdelivr.net/gh/CMHopeSunshine/LittlePaimon@master/LICENSE"><img src="https://img.shields.io/github/license/CMHopeSunshine/LittlePaimon" alt="license"></a>
     <img src="https://img.shields.io/badge/Python-3.8+-yellow" alt="python">
     <a href="https://qun.qq.com/qqweb/qunpro/share?_wv=3&_wwv=128&inviteCode=MmWrI&from=246610&biz=ka"><img src="https://img.shields.io/badge/QQ频道交流-尘世闲游-green?style=flat-square" alt="QQ guild"></a>
@@ -61,13 +61,14 @@
 <summary>抽卡记录</summary>
 <img src="https://raw.githubusercontent.com/CMHopeSunshine/LittlePaimon/master/readme/gachalog.jpg" alt="gachalog">
 </details>
-## 功能列表
+
+## 功能列表🌅
 
 详见[WIKI](https://github.com/CMHopeSunshine/LittlePaimon/wiki/%E5%8A%9F%E8%83%BD%E5%88%97%E8%A1%A8)，向派蒙发送`#帮助派蒙`可以查看指令列表
 
 ## 重要通知⚠️
 
-4.11对代码进行了一次较大幅度的重构，cookie数据存储方式改用了`sqlite`数据库，原`json`数据会在首次启动时自动导入数据库；如果您对本项目代码有修改，请确保`git pull`时能解决冲突，目前测试未有BUG，如有请发起issue，且注意备份用户数据!
+4.11对代码进行了一次较大幅度的重构，cookie数据存储方式改用了`sqlite`数据库，原`json`数据会在首次启动时自动导入数据库；如果您对本项目代码有修改，请确保`git pull`时前解决冲突，目前测试未有BUG，如有请发起issue，且注意备份用户数据!
 
 ## 新功能更新😙
 
@@ -90,6 +91,8 @@
 - [ ] 角色练度统计
 - [ ] 派蒙戳一戳集卡
 
+画大饼...
+
 ## 部署方法🖥️
 
 > 本项目和HoshinoBot的部署方式一样，因此Linux可以参考：
@@ -98,7 +101,7 @@
 
 ### 一键安装脚本
 
-⚠️一键脚本会因计算机环境不一样而可能产生各种各样的问题，出现问题的话请尝试手动部署，部署方法参考HoshinoBot
+⚠️一键脚本会因计算机环境不同而可能产生各种各样的问题，出现问题请尝试参考HoshinoBot手动部署
 
 #### Windows
 
