@@ -102,7 +102,7 @@ async def insert_public_cookie(cookie):
     (
         no int IDENTITY(1,1) PRIMARY KEY,
         cookie TEXT,
-        status TEXT,
+        status TEXT
     );''')
     cursor.execute('INSERT IGNORE INTO public_cookies (cookie, status) VALUES (?,"OK");', (cookie,))
     conn.commit()
