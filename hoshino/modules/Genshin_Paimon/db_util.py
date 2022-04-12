@@ -104,7 +104,7 @@ async def insert_public_cookie(cookie):
         cookie TEXT,
         status TEXT,
     );''')
-    cursor.execute('INSERT IGNORE INTO public_cookies (cookie, status) VALUES (?,"ok");', (cookie,))
+    cursor.execute('INSERT IGNORE INTO public_cookies (cookie, status) VALUES (?,"OK");', (cookie,))
     conn.commit()
     conn.close()
 
@@ -117,6 +117,18 @@ async def limit_public_cookie(cookie):
         cookie TEXT,
         status TEXT);''')
     cursor.execute('UPDATE public_cookies SET status="limited30" WHERE cookie=?;', (cookie,))
+    conn.commit()
+    conn.close()
+
+# 清除公共cookie上限
+async def reset_public_cookie():
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS public_cookies(
+        no int PRIMARY KEY
+        cookie TEXT,
+        status TEXT);''')
+    cursor.execute('UPDATE public_cookies SET status="OK" WHERE status="limited30";')
     conn.commit()
     conn.close()
 

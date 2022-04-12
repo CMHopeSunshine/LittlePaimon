@@ -26,15 +26,15 @@ async def main(bot,ev):
         if f.isdigit() and (9 <= int(f) <=12) and len(true_floor) < 2:
             true_floor.append(int(f))
     true_floor.sort()
-    # try:
-    data = await get_abyss_data(user_id, uid, use_cache=use_cache)
-    if isinstance(data, str):
-        await bot.send(ev, data, at_sender=True)
-    else:
-        abyss_card = await draw_abyss_card(data, uid, true_floor)
-        await bot.send(ev, abyss_card, at_sender=True)
-    # except Exception as e:
-    #     await bot.send(ev, f'派蒙出现了问题：{e}',at_sender=True)
+    try:
+        data = await get_abyss_data(user_id, uid, use_cache=use_cache)
+        if isinstance(data, str):
+            await bot.send(ev, data, at_sender=True)
+        else:
+            abyss_card = await draw_abyss_card(data, uid, true_floor)
+            await bot.send(ev, abyss_card, at_sender=True)
+    except Exception as e:
+        await bot.send(ev, f'派蒙出现了问题：{e}',at_sender=True)
 
         
     

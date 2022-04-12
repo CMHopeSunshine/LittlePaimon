@@ -64,7 +64,42 @@
 
 ## 功能列表🌅
 
-详见[WIKI](https://github.com/CMHopeSunshine/LittlePaimon/wiki/%E5%8A%9F%E8%83%BD%E5%88%97%E8%A1%A8)，向派蒙发送`#帮助派蒙`可以查看指令列表
+详见[功能列表I](https://github.com/CMHopeSunshine/LittlePaimon/wiki/%E5%8A%9F%E8%83%BD%E5%88%97%E8%A1%A8)，向派蒙发送`#帮助派蒙`可以查看指令列表。
+
+## 部署方法🖥️
+
+> 本项目基于HoshinoBot，可以使用HoshinoBot同样的部署方法。
+
+### 手动部署
+
+- [Linux](https://github.com/CMHopeSunshine/LittlePaimon/wiki/%E9%83%A8%E7%BD%B2%E6%96%B9%E6%B3%95#linux)
+- [安卓系统](https://github.com/CMHopeSunshine/LittlePaimon/wiki/%E9%83%A8%E7%BD%B2%E6%96%B9%E6%B3%95#%E5%9C%A8%E5%AE%89%E5%8D%93%E6%89%8B%E6%9C%BA%E4%B8%8A%E9%83%A8%E7%BD%B2)
+- [Windows](https://github.com/CMHopeSunshine/LittlePaimon/wiki/%E9%83%A8%E7%BD%B2%E6%96%B9%E6%B3%95#windows)
+
+### Windows一键安装脚本
+
+⚠️一键脚本会因计算机环境不同而可能产生各种各样的问题，出现问题请尝试手动部署
+
+在你想安装的位置打开`powershell`，输入执行：
+
+```powershell
+iwr "https://cdn.jsdelivr.net/gh/CMHopeSunshine/LittlePaimon@master/LittlePaimon-install.ps1" -O .\pm.ps1 ; ./pm.ps1 ; Set-Location .. ; rm pm.ps1
+```
+
+安装成功后，用`powershell`运行文件夹内的`启动.ps1`来启动机器人  
+
+### 添加公共cookie
+
+需要至少添加一条公共cookie，小派蒙才能使用查询功能。
+
+登录米游社网页版，在地址栏粘贴：
+
+```
+javascript:(function(){prompt(document.domain,document.cookie)})();
+```
+
+复制得到的cookie，向小派蒙发送`添加公共ck`和粘贴的内容即可开始使用
+
 
 ## 重要通知⚠️
 
@@ -91,38 +126,7 @@
 - [ ] 角色练度统计
 - [ ] 派蒙戳一戳集卡
 
-画大饼...
-
-## 部署方法🖥️
-
-> 本项目和HoshinoBot的部署方式一样，因此Linux可以参考：
->
-> https://cn.pcrbot.com/deploy-hoshinobot-on-centos/
-
-### 一键安装脚本
-
-⚠️一键脚本会因计算机环境不同而可能产生各种各样的问题，出现问题请尝试参考HoshinoBot手动部署
-
-#### Windows
-
-在你想安装的位置打开`powershell`，输入执行：
-
-```powershell
-iwr "https://cdn.jsdelivr.net/gh/CMHopeSunshine/LittlePaimon@master/LittlePaimon-install.ps1" -O .\pm.ps1 ; ./pm.ps1 ; Set-Location .. ; rm pm.ps1
-```
-
-安装成功后，`powershell`运行文件夹内的`启动.ps1`来启动机器人  
-完成go-cqhttp的登录后，登录米游社网页版，在地址栏粘贴：
-
-```
-javascript:(function(){prompt(document.domain,document.cookie)})();
-```
-
-复制得到的cookie，向机器人私聊发送`添加公共ck`和粘贴的内容即可开始使用
-
-#### Linux
-
-待补充...懒
+持续画大饼ing......
 
 ## 额外说明🗝️
 
@@ -132,7 +136,7 @@ javascript:(function(){prompt(document.domain,document.cookie)})();
 
 代码水平很烂，站在巨人的肩膀上努力学习ing......
 
-- [HoshinoBot](https://github.com/Ice-Cirno/HoshinoBot) - 基于nonebot1的QQ-bot框架
+- [HoshinoBot](https://github.com/Ice-Cirno/HoshinoBot) - 基于nonebot的QQ-bot框架
 - [go-cqhttp](https://github.com/Mrs4s/go-cqhttp) - Onebot标准的框架实现
 - [egenshin](https://github.com/pcrbot/erinilis-modules/tree/master/egenshin) - 参考了它的抽卡代码和资源
 - [西风驿站](https://bbs.mihoyo.com/ys/collection/307224) - 角色攻略一图流来源

@@ -2,7 +2,7 @@ from hoshino import MessageSegment, Service, trigger, priv, CanceledException,lo
 from hoshino.typing import CQEvent, Message
 from nonebot import message_preprocessor
 from ..get_data import get_bind_game
-from ..db_util import insert_public_cookie, update_private_cookie, delete_cookie_cache, delete_cookie, delete_private_cookie
+from ..db_util import insert_public_cookie, update_private_cookie, delete_cookie_cache, delete_cookie, delete_private_cookie,update_last_query, reset_public_cookie
 from ..util import check_cookie
 
 help_msg='''
@@ -35,6 +35,7 @@ async def bind(bot,ev):
                     break
             if uid:
                 await update_private_cookie(user_id=str(ev.user_id), uid=uid, mys_id=mys_id, cookie=cookie)
+                await update_last_query(str(ev.user_id), uid, 'uid')
                 await delete_cookie_cache(uid, key='uid', all=False)
                 msg = f'{nickname}绑定成功啦!使用ys/ysa等指令和派蒙互动吧!'
                 if ev.detail_type != 'private':
@@ -63,3 +64,5 @@ async def bing_public(bot, ev):
 async def delete_cache():
     logger.info('---清空今日cookie缓存---')
     await delete_cookie_cache(all=True)
+    logger.info('---清空今日cookie限制记录---')
+    await reset_public_cookie()

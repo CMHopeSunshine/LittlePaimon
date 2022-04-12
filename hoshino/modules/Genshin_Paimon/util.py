@@ -55,13 +55,10 @@ async def get_own_cookie(uid='', mys_id='', action=''):
 # 检查数据返回状态，10001为ck过期了，10101为达到每日30次上线了
 async def check_retcode(data, cookie, uid):
     if data['retcode'] == 10001:
-        # TODO：此处为删除cookie的操作
         await delete_cookie(cookie['cookie'], cookie['type'])
-        # TODO: 此处为发送cookie删除信息提醒的操作
         await send_cookie_delete_msg(cookie)
         return False
     elif data['retcode'] == 10101:
-        # TODO: 此处为设置cookie到30次上限的操作
         if cookie['type'] == 'public':
             logger.info(f'{cookie["no"]}号公共cookie达到了每日30次查询上限')
         elif cookie['type'] == 'private':
@@ -69,7 +66,6 @@ async def check_retcode(data, cookie, uid):
         await limit_public_cookie(cookie['cookie'])
         return False
     else:
-        # TODO: 此处为更新最后查询的操作
         await update_cookie_cache(cookie['cookie'], uid, 'uid')
         return True
 

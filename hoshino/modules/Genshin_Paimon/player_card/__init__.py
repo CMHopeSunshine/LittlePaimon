@@ -21,22 +21,22 @@ async def player_card(bot,ev):
     if not uid:
         await bot.send(ev,'请把正确的uid给派蒙哦,例如sy100123456!',at_sender=True)
         return 
-    # try:
-    data = await get_player_card_data(user_id, uid, use_cache=use_cache)
-    if isinstance(data, str):
-        await bot.send(ev, data, at_sender=True)
-    else:
-        if ev.message_type == 'group':
-            user_info = await bot.get_group_member_info(group_id=ev.group_id,user_id=int(user_id))
-            nickname = user_info['card'] or user_info['nickname']
+    try:
+        data = await get_player_card_data(user_id, uid, use_cache=use_cache)
+        if isinstance(data, str):
+            await bot.send(ev, data, at_sender=True)
         else:
-            nickname = ev.sender['nickname']
-        chara_data = await get_chara_detail_data(user_id, uid, use_cache=use_cache)
-        chara_data = None if isinstance(chara_data, str) else chara_data
-        player_card = await draw_player_card(data, chara_data, uid, nickname)
-        await bot.send(ev, player_card, at_sender=True)
-    # except Exception as e:
-    #     await bot.send(ev, f'派蒙出现了问题：{e}',at_sender=True)
+            if ev.message_type == 'group':
+                user_info = await bot.get_group_member_info(group_id=ev.group_id,user_id=int(user_id))
+                nickname = user_info['card'] or user_info['nickname']
+            else:
+                nickname = ev.sender['nickname']
+            chara_data = await get_chara_detail_data(user_id, uid, use_cache=use_cache)
+            chara_data = None if isinstance(chara_data, str) else chara_data
+            player_card = await draw_player_card(data, chara_data, uid, nickname)
+            await bot.send(ev, player_card, at_sender=True)
+    except Exception as e:
+        await bot.send(ev, f'派蒙出现了问题：{e}',at_sender=True)
 
 @sv.on_prefix('ysa')
 async def all_characters(bot,ev):
@@ -44,15 +44,15 @@ async def all_characters(bot,ev):
     if not uid:
         await bot.send(ev,'请把正确的uid给派蒙哦,例如sy100123456!',at_sender=True)
         return
-    #　try:
-    chara_data = await get_chara_detail_data(user_id, uid, use_cache=use_cache)
-    if isinstance(chara_data, str):
-        await bot.send(ev, chara_data, at_sender=True)
-    else:
-        player_card = await draw_all_chara_card(chara_data, uid)
-        await bot.send(ev, player_card, at_sender=True)
-    # except Exception as e:
-    #     await bot.send(ev, f'派蒙出现了问题：{e}',at_sender=True)
+    try:
+        chara_data = await get_chara_detail_data(user_id, uid, use_cache=use_cache)
+        if isinstance(chara_data, str):
+            await bot.send(ev, chara_data, at_sender=True)
+        else:
+            player_card = await draw_all_chara_card(chara_data, uid)
+            await bot.send(ev, player_card, at_sender=True)
+    except Exception as e:
+        await bot.send(ev, f'派蒙出现了问题：{e}',at_sender=True)
 
 @sv.on_prefix('ysc')
 async def my_characters(bot,ev):
@@ -68,14 +68,14 @@ async def my_characters(bot,ev):
     if not chara_name:
         await bot.send(ev,f'没有角色名叫{filt_message(chara)}哦！',at_sender=True)
         return
-    # try:
-    chara_data = await get_chara_detail_data(user_id, uid, use_cache=use_cache)
-    if isinstance(chara_data, str):
-        await bot.send(ev, chara_data, at_sender=True)
-    else:
-        skill_data = await get_chara_skill_data(uid, chara_name[0], use_cache=use_cache)
-        chara_card = await draw_chara_card(chara_data, skill_data, chara_name, uid)
-        await bot.send(ev, chara_card, at_sender=True)
-    # except Exception as e:
-    #     await bot.send(ev, f'派蒙出现了问题：{e}',at_sender=True)
+    try:
+        chara_data = await get_chara_detail_data(user_id, uid, use_cache=use_cache)
+        if isinstance(chara_data, str):
+            await bot.send(ev, chara_data, at_sender=True)
+        else:
+            skill_data = await get_chara_skill_data(uid, chara_name[0], use_cache=use_cache)
+            chara_card = await draw_chara_card(chara_data, skill_data, chara_name, uid)
+            await bot.send(ev, chara_card, at_sender=True)
+    except Exception as e:
+        await bot.send(ev, f'派蒙出现了问题：{e}',at_sender=True)
     

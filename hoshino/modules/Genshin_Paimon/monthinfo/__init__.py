@@ -26,12 +26,12 @@ async def main(bot,ev):
     find_month = '(?P<month>' + '|'.join(month_list) + ')'
     match = re.search(find_month, msg)
     month = match.group('month') if match else month_now
-    # try:
-    data = await get_monthinfo_data(uid, month, use_cache=use_cache)
-    if isinstance(data, str):
-        await bot.send(ev, data, at_sender=True)
-    else:
-        monthinfo_card = await draw_monthinfo_card(data)
-        await bot.send(ev, monthinfo_card, at_sender=True)
-    # except Exception as e:
-    #　    await bot.send(ev, f'派蒙出现了问题：{e}',at_sender=True)
+    try:
+        data = await get_monthinfo_data(uid, month, use_cache=use_cache)
+        if isinstance(data, str):
+            await bot.send(ev, data, at_sender=True)
+        else:
+            monthinfo_card = await draw_monthinfo_card(data)
+            await bot.send(ev, monthinfo_card, at_sender=True)
+    except Exception as e:
+        await bot.send(ev, f'派蒙出现了问题：{e}',at_sender=True)
