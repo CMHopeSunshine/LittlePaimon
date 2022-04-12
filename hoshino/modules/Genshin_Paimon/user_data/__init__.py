@@ -2,7 +2,8 @@ from hoshino import MessageSegment, Service, trigger, priv, CanceledException,lo
 from hoshino.typing import CQEvent, Message
 from nonebot import message_preprocessor
 from ..get_data import get_bind_game
-from ..db_util import insert_public_cookie, update_private_cookie, delete_cookie_cache, delete_cookie
+from ..db_util import insert_public_cookie, update_private_cookie, delete_cookie_cache, delete_cookie, delete_private_cookie
+from ..util import check_cookie
 
 help_msg='''
 1.[ysb cookie]绑定你的私人cookie以开启高级功能
@@ -48,7 +49,7 @@ async def delete(bot,ev):
 
 @sv.on_prefix('添加公共ck')
 async def bing_public(bot, ev):
-    if not priv.check_priv(ev, hoshino.priv.ADMIN):
+    if not priv.check_priv(ev, priv.ADMIN):
         await bot.send(ev, '只有管理员或主人才能添加公共cookie哦!')
         return
     cookie = ev.message.extract_plain_text().strip()
