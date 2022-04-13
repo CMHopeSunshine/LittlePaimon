@@ -218,7 +218,8 @@ async def draw_player_card(data, chara_data, uid, nickname="旅行者"):
     # 世界探索
     await draw_world_data(bg_draw,data)
     # 角色
-    if chara_data:
+    nocha = ''
+    if chara_data['data']:
         chara_data = chara_data['data']['avatars']
         w = 1045
         i = 0
@@ -231,8 +232,10 @@ async def draw_player_card(data, chara_data, uid, nickname="旅行者"):
                 bg_img.alpha_composite(chara_card.resize((180, 249)), (840 + (i - 4) * 205, 974))
             elif i > 8:
                 break
+    else:
+        nocha = '*这uid关闭了角色详情显示，派蒙看不到哦'
     bg_img = pil2b64(bg_img, 80)
-    bg_img = MessageSegment.image(bg_img)
+    bg_img = MessageSegment.image(bg_img) + nocha
     return bg_img
 
 

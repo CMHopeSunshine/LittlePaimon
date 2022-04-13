@@ -27,7 +27,7 @@ async def ckjl(bot,ev):
         return
     uid, msg, user_id, use_cache = await get_uid_in_msg(ev)
     if not uid:
-        await bot.send(ev,'请把uid给派蒙哦，比如获取抽卡记录100000001 链接',at_sender=True)
+        await bot.send(ev,'请把uid给派蒙哦，比如导出抽卡记录100000001 xlsx',at_sender=True)
         return
     find_filetype = r'(?P<filetype>xlsx|json)'
     match = re.search(find_filetype, msg)

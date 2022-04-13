@@ -15,16 +15,17 @@ from .db_util import get_private_cookie, get_cookie_cache, get_public_cookie, li
 
 async def get_use_cookie(user_id, uid='', mys_id='', action=''):
     cache_cookie = await get_cookie_cache(uid, 'uid')
-    if cache_cookie:
-        if cache_cookie['type'] == 'public':
-            logger.info(f'---派蒙调用{uid}的缓存公共cookie执行{action}操作---')
-        else:
-            logger.info(f'---派蒙调用{uid}的缓存私人cookie执行{action}操作---')
-        return cache_cookie
     cookies = await get_private_cookie(user_id, 'user_id')
     if not cookies:
+        if cache_cookie:
+            if cache_cookie['type'] == 'public':
+                logger.info(f'---派蒙调用{uid}的缓存公共cookie执行{action}操作---')
+            else:
+                logger.info(f'---派蒙调用{uid}的缓存私人cookie执行{action}操作---')
+            return cache_cookie
         public_cookie = await get_public_cookie()
         if not public_cookie:
+            logger.info(f'---派蒙当前没有可用的公共cookie，可能是都达到了上限或没有公共cookie---')
             return None
         else:
             logger.info(f'---派蒙调用{public_cookie[0]}号公共cookie执行{action}操作---')
@@ -34,6 +35,12 @@ async def get_use_cookie(user_id, uid='', mys_id='', action=''):
             if (uid and uid_ == uid) or (mys_id and mys_id_ == mys_id):
                 logger.info(f'---派蒙调用用户{user_id_}的uid{uid_}私人cookie执行{action}操作---')
                 return {'type':'private', 'user_id': user_id_, 'cookie': cookie, 'uid': uid_, 'mys_id': mys_id_}
+        if cache_cookie:
+            if cache_cookie['type'] == 'public':
+                logger.info(f'---派蒙调用{uid}的缓存公共cookie执行{action}操作---')
+            else:
+                logger.info(f'---派蒙调用{uid}的缓存私人cookie执行{action}操作---')
+            return cache_cookie
         use_cookie = random.choice(cookies)
         logger.info(f'---派蒙调用用户{use_cookie[0]}的uid{use_cookie[2]}私人cookie执行{action}操作---')
         return {'type':'private', 'user_id': use_cookie[0], 'cookie': use_cookie[1], 'uid': use_cookie[2], 'mys_id': use_cookie[3]}
@@ -54,7 +61,7 @@ async def get_own_cookie(uid='', mys_id='', action=''):
 
 # 检查数据返回状态，10001为ck过期了，10101为达到每日30次上线了
 async def check_retcode(data, cookie, uid):
-    if data['retcode'] == 10001:
+    if data['retcode'] == 10001 or data['retcode'] == -100:
         await delete_cookie(cookie['cookie'], cookie['type'])
         await send_cookie_delete_msg(cookie)
         return False

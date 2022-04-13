@@ -19,7 +19,7 @@ sv = Service('派蒙原神信息查询', bundle='派蒙', help_=help_msg)
 async def player_card(bot,ev):
     uid, msg, user_id, use_cache = await get_uid_in_msg(ev)
     if not uid:
-        await bot.send(ev,'请把正确的uid给派蒙哦,例如sy100123456!',at_sender=True)
+        await bot.send(ev,'请把正确的uid给派蒙哦,例如ys100123456!',at_sender=True)
         return 
     try:
         data = await get_player_card_data(user_id, uid, use_cache=use_cache)
@@ -42,7 +42,7 @@ async def player_card(bot,ev):
 async def all_characters(bot,ev):
     uid, msg, user_id, use_cache = await get_uid_in_msg(ev)
     if not uid:
-        await bot.send(ev,'请把正确的uid给派蒙哦,例如sy100123456!',at_sender=True)
+        await bot.send(ev,'请把正确的uid给派蒙哦,例如ysa100123456!',at_sender=True)
         return
     try:
         chara_data = await get_chara_detail_data(user_id, uid, use_cache=use_cache)
@@ -58,7 +58,7 @@ async def all_characters(bot,ev):
 async def my_characters(bot,ev):
     uid, msg, user_id, use_cache = await get_uid_in_msg(ev)
     if not uid:
-        await bot.send(ev,'请把正确的uid给派蒙哦,例如sy100123456!',at_sender=True)
+        await bot.send(ev,'请把正确的uid给派蒙哦,例如ysc100123456钟离',at_sender=True)
         return
     if not msg:
         await bot.send(ev,f'要把角色名给派蒙呀!例如ysc100123456钟离',at_sender=True)
