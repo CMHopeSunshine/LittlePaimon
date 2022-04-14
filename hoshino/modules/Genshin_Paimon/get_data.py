@@ -5,7 +5,6 @@ import datetime
 import re
 import random
 
-# TODO：注意每处参数顺序的更改
 @cache(ttl=datetime.timedelta(hours=1))
 async def get_abyss_data(user_id, uid, schedule_type = "1", use_cache=True):
     server_id = "cn_qd01" if uid[0] == '5' else "cn_gf01"
@@ -30,7 +29,7 @@ async def get_daily_note_data(uid):
     url ="https://api-takumi.mihoyo.com/game_record/app/genshin/api/dailyNote"
     cookie = await get_own_cookie(uid, action='查询实时便签')
     if not cookie:
-            return f'你的uid{uid}没有绑定对应的cookie,使用ysb绑定才能用实时便签哦!'
+        return f'你的uid{uid}没有绑定对应的cookie,使用ysb绑定才能用实时便签哦!'
     await update_cookie_cache(cookie['cookie'], uid, 'uid')
     headers = get_headers(q=f'role_id={uid}&server={server_id}', cookie=cookie['cookie'])
     params = {
