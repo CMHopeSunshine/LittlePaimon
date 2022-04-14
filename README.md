@@ -16,7 +16,7 @@
 
 ## 简介✨
 
-通过米游社接口，查询uid的游戏信息，并附带各种娱乐功能。
+原神多功能机器人，通过米游社接口查询uid的游戏信息，并提供WIKI查询和各种各样的好玩的功能。
 
 ## 功能示例💖
 
@@ -113,6 +113,7 @@ javascript:(function(){prompt(document.domain,document.cookie)})();
 - 3.30 个人信息卡片新增层岩巨渊和神里绫人信息
 - 3.31 实时便签加入参量质变仪信息
 - 4.11 改用数据库进行数据存储，优化代码
+- 4.14 新增每日天赋突破材料表查询
 
 ## ToDo🕛
 
@@ -143,4 +144,4 @@ javascript:(function(){prompt(document.domain,document.cookie)})();
 - [hoshino-installer](https://github.com/pcrbot/hoshino-installer) - 一键安装脚本参考
 - [bluemushoom](https://bbs.nga.cn/nuke.php?func=ucp&uid=62861898) - 全角色收益曲线和参考面板攻略图来源
 - [genshin-gacha-export](https://github.com/sunfkny/genshin-gacha-export) - 抽卡记录导出参考
-- [Adachi-BOT](https://github.com/Arondight/Adachi-BOT) - 部分资源来源
+- [Adachi-BOT](https://github.com/SilveryStar/Adachi-BOT) - 部分资源来源

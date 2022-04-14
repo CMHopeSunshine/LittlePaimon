@@ -17,7 +17,7 @@ async def get_abyss_data(user_id, uid, schedule_type = "1", use_cache=True):
     while True:
         cookie = await get_use_cookie(user_id, uid=uid, action='查询深渊')
         if not cookie:
-            return '现在派蒙没有可以用的cookie哦,请让主人 添加公共ck 吧!'
+            return '现在派蒙没有可以用的cookie哦，可能是:\n1.公共cookie全都达到了每日30次上限\n2.公共池全都失效了或没有cookie\n让管理员使用 添加公共ck 吧!'
         headers = get_headers(q=f'role_id={uid}&schedule_type={schedule_type}&server={server_id}', cookie=cookie['cookie'])
         res = await aiorequests.get(url=url, headers=headers, params=params)
         data = await res.json()
@@ -30,7 +30,7 @@ async def get_daily_note_data(uid):
     url ="https://api-takumi.mihoyo.com/game_record/app/genshin/api/dailyNote"
     cookie = await get_own_cookie(uid, action='查询实时便签')
     if not cookie:
-        return f'你的uid{uid}没有绑定对应的cookie哦,先用ysb给派蒙绑定吧!'
+            return f'你的uid{uid}没有绑定对应的cookie,使用ysb绑定才能用实时便签哦!'
     await update_cookie_cache(cookie['cookie'], uid, 'uid')
     headers = get_headers(q=f'role_id={uid}&server={server_id}', cookie=cookie['cookie'])
     params = {
@@ -51,7 +51,7 @@ async def get_player_card_data(user_id, uid, use_cache=True):
     while True:
         cookie = await get_use_cookie(user_id, uid=uid, action='查询原神卡片')
         if not cookie:
-            return '现在派蒙没有可以用的cookie哦,请让主人 添加公共ck 吧!'
+            return '现在派蒙没有可以用的cookie哦，可能是:\n1.公共cookie全都达到了每日30次上限\n2.公共池全都失效了或没有cookie\n让管理员使用 添加公共ck 吧!'
         headers = get_headers(q=f'role_id={uid}&server={server_id}', cookie=cookie['cookie'])
         res = await aiorequests.get(url=url, headers=headers, params=params)
         data =  await res.json()
@@ -70,7 +70,7 @@ async def get_chara_detail_data(user_id, uid, use_cache=True):
     while True:
         cookie = await get_use_cookie(user_id, uid=uid, action='查询角色详情')
         if not cookie:
-            return '现在派蒙没有可以用的cookie哦,请让主人 添加公共ck 吧!'
+            return '现在派蒙没有可以用的cookie哦，可能是:\n1.公共cookie全都达到了每日30次上限\n2.公共池全都失效了或没有cookie\n让管理员使用 添加公共ck 吧!'
         headers = get_headers(b=json_data, cookie=cookie['cookie'])
         res = await aiorequests.post(url=url, headers=headers, json=json_data)
         data =  await res.json()
@@ -102,7 +102,7 @@ async def get_monthinfo_data(uid, month, use_cache=True):
     url = 'https://hk4e-api.mihoyo.com/event/ys_ledger/monthInfo'
     cookie = await get_own_cookie(uid, action='查询每月札记')
     if not cookie:
-        return f'你的uid{uid}没有绑定对应的cookie哦,先用ysb给派蒙绑定吧!'
+        return f'你的uid{uid}没有绑定对应的cookie,使用ysb绑定才能用每月札记哦!'
     await update_cookie_cache(cookie['cookie'], uid, 'uid')
     headers = get_headers(q=f'month={month}&bind_uid={uid}&bind_region={server_id}', cookie=cookie['cookie'])
     params = {

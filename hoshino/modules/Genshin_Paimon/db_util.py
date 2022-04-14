@@ -22,7 +22,7 @@ def reload_public_cookie(is_drop=True):
         with open(os.path.join(os.path.dirname(__file__), 'user_data', 'user_cookies.json'), 'r', encoding='utf-8') as f:
             data = json.load(f)
         for d in data['通用']:
-            cursor.execute('INSERT IGNORE INTO public_cookies VALUES (?, ?, "OK");', (d['no'], d['cookie']))
+            cursor.execute('INSERT OR IGNORE INTO public_cookies VALUES (?, ?, "OK");', (d['no'], d['cookie']))
         conn.commit()
         conn.close()
         logger.info('---公共cookie池载入成功!---')
@@ -104,7 +104,7 @@ async def insert_public_cookie(cookie):
         cookie TEXT,
         status TEXT
     );''')
-    cursor.execute('INSERT IGNORE INTO public_cookies (cookie, status) VALUES (?,"OK");', (cookie,))
+    cursor.execute('INSERT OR IGNORE INTO public_cookies (cookie, status) VALUES (?,"OK");', (cookie,))
     conn.commit()
     conn.close()
 
