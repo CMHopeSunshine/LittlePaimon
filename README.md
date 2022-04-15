@@ -64,7 +64,7 @@
 
 ## 功能列表🌅
 
-详见[功能列表I](https://github.com/CMHopeSunshine/LittlePaimon/wiki/%E5%8A%9F%E8%83%BD%E5%88%97%E8%A1%A8)，向派蒙发送`#帮助派蒙`可以查看指令列表。
+详见[功能列表](https://github.com/CMHopeSunshine/LittlePaimon/wiki/%E5%8A%9F%E8%83%BD%E5%88%97%E8%A1%A8)，向派蒙发送`#帮助派蒙`可以查看指令列表。
 
 ## 部署方法🖥️
 
@@ -107,6 +107,8 @@ javascript:(function(){prompt(document.domain,document.cookie)})();
 
 ## 新功能更新😙
 
+> 更新涉及的功能指令前往[功能列表](https://github.com/CMHopeSunshine/LittlePaimon/wiki/%E5%8A%9F%E8%83%BD%E5%88%97%E8%A1%A8)查看哦
+
 - 3.20 新增Windows一键部署脚本
 - 3.22 新增蓝佬授权提供的收益曲线和参考面板攻略图
 - 3.24 新增抽卡记录导出和分析功能，原模拟抽卡的指令更改
@@ -114,16 +116,17 @@ javascript:(function(){prompt(document.domain,document.cookie)})();
 - 3.31 实时便签加入参量质变仪信息
 - 4.11 改用数据库进行数据存储，优化代码
 - 4.14 新增每日天赋突破材料表查询
+- 4.15 新增实时便签树脂提醒功能
 
 ## ToDo🕛
 
-- [ ] 实时便签树脂提醒
+- [x] 实时便签树脂提醒
 - [x] 抽卡记录导出和分析
 - [ ] ocr圣遗物评分和角色面板记录
 - [ ] 角色、武器和圣遗物wiki
 - [ ] 派蒙AI闲聊
 - [ ] 米游社自动签到
-- [ ] 今日可刷材料
+- [x] 今日可刷材料
 - [ ] 角色练度统计
 - [ ] 派蒙戳一戳集卡
 

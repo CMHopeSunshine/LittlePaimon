@@ -248,7 +248,102 @@ async def update_last_query(user_id, value, key='uid'):
     conn.commit()
     conn.close()
 
+# 获取树脂提醒信息
+async def get_note_remind():
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS note_remind
+    (
+        user_id TEXT NOT NULL,
+        uid TEXT NOT NULL,
+        count INTEGER,
+        remind_group TEXT,
+        enable bool,
+        last_remind_time datetime,
+        today_remind_count INTEGER,
+        PRIMARY KEY (user_id, uid)
+    );''')
+    cursor.execute('SELECT * FROM note_remind;')
+    res = cursor.fetchall()
+    conn.close()
+    return res
 
+# 更新树脂提醒信息
+async def update_note_remind(user_id, uid, count, remind_group, enable, last_remind_time, today_remind_count):
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS note_remind
+    (
+        user_id TEXT NOT NULL,
+        uid TEXT NOT NULL,
+        count INTEGER,
+        remind_group TEXT,
+        enable boolean,
+        last_remind_time datetime,
+        today_remind_count INTEGER,
+        PRIMARY KEY (user_id, uid)
+    );''')
+    cursor.execute('REPLACE INTO note_remind VALUES (?, ?, ?, ?, ?, ?, ?);', (user_id, uid, count, remind_group, enable, last_remind_time, today_remind_count))
+    conn.commit()
+    conn.close()
+
+async def update_note_remind2(user_id, uid, remind_group, enable=True, count=''):
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS note_remind
+    (
+        user_id TEXT NOT NULL,
+        uid TEXT NOT NULL,
+        count INTEGER,
+        remind_group TEXT,
+        enable boolean,
+        last_remind_time datetime,
+        today_remind_count INTEGER,
+        PRIMARY KEY (user_id, uid)
+    );''')
+    if count:
+        cursor.execute(f'REPLACE INTO note_remind (user_id, uid, remind_group, count, enable) VALUES ("{user_id}", "{uid}", "{remind_group}", {count}, {enable});')
+    else:
+        cursor.execute(f'UPDATE note_remind SET enable={enable}, remind_group={remind_group} WHERE user_id="{user_id}" AND uid="{uid}"')
+    conn.commit()
+    conn.close()
+
+async def update_day_remind_count():
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS note_remind
+    (
+        user_id TEXT NOT NULL,
+        uid TEXT NOT NULL,
+        count INTEGER,
+        remind_group TEXT,
+        enable bool,
+        last_remind_time datetime,
+        today_remind_count INTEGER,
+        PRIMARY KEY (user_id, uid)
+    );''')
+    cursor.execute('UPDATE note_remind SET today_remind_count=0 WHERE today_remind_count!=0')
+    conn.commit()
+    conn.close()
+
+# 删除树脂提醒信息
+async def delete_note_remind(user_id, uid):
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS note_remind
+    (
+        user_id TEXT NOT NULL,
+        uid TEXT NOT NULL,
+        count INTEGER,
+        remind_group TEXT,
+        enable bool,
+        last_remind_time datetime,
+        today_remind_count INTEGER,
+        PRIMARY KEY (user_id, uid)
+    );''')
+    cursor.execute('DELETE FROM note_remind WHERE user_id=? AND uid=?;', (user_id, uid))
+    conn.commit()
+    conn.close()
 
 
 init_db()
