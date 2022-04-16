@@ -23,7 +23,7 @@ async def main(bot,ev):
     else:
         gid = str(ev.user_id)
     uid, msg, user_id, use_cache = await get_uid_in_msg(ev)
-    find_remind_enable = re.search(r'(?P<action>开启提醒|关闭提醒|删除提醒)(.*)((?P<num>\d{1,3})|(?:.*))', msg)
+    find_remind_enable = re.search(r'(?P<action>开启提醒|关闭提醒|删除提醒)\s*((?P<num>\d{1,3})|(?:.*))', msg)
     if find_remind_enable:
         if ev.message_type == 'guild':
             await bot.send(ev, '实时便签提醒功能暂时无法在频道内使用哦')
