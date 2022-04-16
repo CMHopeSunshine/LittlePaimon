@@ -5,8 +5,9 @@ from hoshino.util import PriFreqLimiter
 from ..util import Dict
 from .gacha_role import *
 from .gacha_wish import more_ten
+from ..config import gacha_cooldown
 
-lmt = PriFreqLimiter(30)
+lmt = PriFreqLimiter(gacha_cooldown)
 help_msg='''
 1.[抽n十连xx池]抽n次xx池的十连，最多同时5次
 *池子和官方同步，有角色1|角色2|武器|常驻，默认为角色1
@@ -52,7 +53,7 @@ async def gacha(bot, ev):
         if not lmt.check(gid,uid):
             await bot.finish(ev, f'模拟抽卡冷却中(剩余{int(lmt.left_time(gid,uid)) + 1}秒)', at_sender=True)
             return
-        lmt.start_cd(gid, uid, 30)
+        lmt.start_cd(gid, uid, gacha_cooldown)
     if num >= 3:
         await bot.send(ev, '抽卡图正在生成中，请稍候')
     if isinstance(gacha_type,int):

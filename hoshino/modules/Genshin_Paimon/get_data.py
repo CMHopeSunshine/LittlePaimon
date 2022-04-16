@@ -1,5 +1,5 @@
 from hoshino import aiorequests
-from .util import get_headers, cache, get_use_cookie, get_own_cookie, check_retcode
+from .util import get_headers, get_sign_headers, cache, get_use_cookie, get_own_cookie, check_retcode
 from .db_util import update_cookie_cache
 import datetime
 import re
@@ -37,7 +37,11 @@ async def get_daily_note_data(uid):
         "role_id": uid
     }
     res = await aiorequests.get(url=url, headers=headers, params=params)
-    return await res.json()
+    data = await res.json()
+    if await check_retcode(data, cookie, uid):
+        return data
+    else:
+        return f'你的uid{uid}的cookie已过期,需要重新绑定哦!'
 
 @cache(ttl=datetime.timedelta(hours=1))
 async def get_player_card_data(user_id, uid, use_cache=True):
@@ -113,11 +117,15 @@ async def get_monthinfo_data(uid, month, use_cache=True):
     data =  await res.json()
     if await check_retcode(data, cookie, uid):
         return data
+    else:
+        return f'你的uid{uid}的cookie已过期,需要重新绑定哦!'
 
 async def get_bind_game(cookie):
     finduid = re.search(r'account_id=(\d{6,12})', cookie)
     if not finduid:
-        return None
+        finduid = re.search(r'ltuid=(\d{6,12})', cookie)
+        if not finduid:
+            return None, None
     uid = finduid.group(1)
     url = 'https://api-takumi.mihoyo.com/game_record/card/wapi/getGameRecordCard'
     headers = get_headers(q=f'uid={uid}', cookie = cookie)
@@ -127,6 +135,69 @@ async def get_bind_game(cookie):
     res = await aiorequests.get(url=url, headers=headers, params=params)
     return (await res.json()), uid
 
+# 获取今日签到信息
+async def get_sign_info(uid):
+    server_id = "cn_qd01" if uid[0] == '5' else "cn_gf01"
+    url = 'https://api-takumi.mihoyo.com/event/bbs_sign_reward/info'
+    cookie = await get_own_cookie(uid, action='查询米游社签到')
+    if not cookie:
+        return f'你的uid{uid}没有绑定对应的cookie,使用ysb绑定才能用米游社签到哦!'
+    headers = {
+        'x-rpc-app_version': '2.11.1',
+        'x-rpc-client_type': '5',
+        'Origin': 'https://webstatic.mihoyo.com',
+        'Referer': 'https://webstatic.mihoyo.com/',
+        'Cookie': cookie['cookie'],
+        'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS '
+            'X) AppleWebKit/605.1.15 (KHTML, like Gecko) miHoYoBBS/2.11.1',
+        
+    }
+    params = {
+        'act_id': 'e202009291139501', 
+        'region': server_id,
+        'uid': uid
+    }
+    res = await aiorequests.get(url=url, headers=headers, params=params)
+    data = await res.json()
+    if await check_retcode(data, cookie, uid):
+        return data
+
+# 执行签到操作
+async def sign(uid):
+    server_id = "cn_qd01" if uid[0] == '5' else "cn_gf01"
+    url = 'https://api-takumi.mihoyo.com/event/bbs_sign_reward/sign'
+    cookie = await get_own_cookie(uid, action='米游社签到')
+    if not cookie:
+        return f'你的uid{uid}没有绑定对应的cookie,使用ysb绑定才能用米游社签到哦!'
+    headers = get_sign_headers(cookie['cookie'])
+    json_data = {
+        'act_id': 'e202009291139501',
+        'uid': uid,
+        'region': server_id
+    }
+    res = await aiorequests.post(url=url, headers=headers, json=json_data)
+    data =  await res.json()
+    print(res)
+    if await check_retcode(data, cookie, uid):
+        return data
+    else:
+        return f'你的uid{uid}的cookie已过期,需要重新绑定哦!'
+
+# 获取签到奖励列表
+async def get_sign_list():
+    url = 'https://api-takumi.mihoyo.com/event/bbs_sign_reward/home'
+    headers = {
+        'x-rpc-app_version': '2.11.1',
+        'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 ('
+             'KHTML, like Gecko) miHoYoBBS/2.11.1',
+        'x-rpc-client_type': '5',
+        'Referer'          : 'https://webstatic.mihoyo.com/'
+    }
+    params = {
+        'act_id': 'e202009291139501'
+    }
+    res = await aiorequests.get(url=url, headers=headers, params=params)
+    return await res.json()
 
 
     

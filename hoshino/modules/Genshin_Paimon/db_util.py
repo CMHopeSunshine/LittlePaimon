@@ -258,7 +258,7 @@ async def get_note_remind():
         uid TEXT NOT NULL,
         count INTEGER,
         remind_group TEXT,
-        enable bool,
+        enable boolean,
         last_remind_time datetime,
         today_remind_count INTEGER,
         PRIMARY KEY (user_id, uid)
@@ -317,7 +317,7 @@ async def update_day_remind_count():
         uid TEXT NOT NULL,
         count INTEGER,
         remind_group TEXT,
-        enable bool,
+        enable boolean,
         last_remind_time datetime,
         today_remind_count INTEGER,
         PRIMARY KEY (user_id, uid)
@@ -336,7 +336,7 @@ async def delete_note_remind(user_id, uid):
         uid TEXT NOT NULL,
         count INTEGER,
         remind_group TEXT,
-        enable bool,
+        enable boolean,
         last_remind_time datetime,
         today_remind_count INTEGER,
         PRIMARY KEY (user_id, uid)
@@ -345,6 +345,48 @@ async def delete_note_remind(user_id, uid):
     conn.commit()
     conn.close()
 
+async def get_auto_sign():
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS bbs_sign
+    (
+        user_id TEXT NOT NULL,
+        uid TEXT NOT NULL,
+        group_id TEXT,
+        PRIMARY KEY (user_id, uid)
+    );''')
+    cursor.execute('SELECT * FROM bbs_sign;')
+    res = cursor.fetchall()
+    conn.close()
+    return res
+
+async def add_auto_sign(user_id, uid, group_id):
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS bbs_sign
+    (
+        user_id TEXT NOT NULL,
+        uid TEXT NOT NULL,
+        group_id TEXT,
+        PRIMARY KEY (user_id, uid)
+    );''')
+    cursor.execute('REPLACE INTO bbs_sign VALUES (?, ?, ?);', (user_id, uid, group_id))
+    conn.commit()
+    conn.close()
+
+async def delete_auto_sign(user_id, uid):
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS bbs_sign
+    (
+        user_id TEXT NOT NULL,
+        uid TEXT NOT NULL,
+        group_id TEXT,
+        PRIMARY KEY (user_id, uid)
+    );''')
+    cursor.execute('DELETE FROM bbs_sign WHERE user_id=? AND uid=?;', (user_id, uid))
+    conn.commit()
+    conn.close()
 
 init_db()
 

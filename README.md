@@ -117,6 +117,7 @@ javascript:(function(){prompt(document.domain,document.cookie)})();
 - 4.11 改用数据库进行数据存储，优化代码
 - 4.14 新增每日天赋突破材料表查询
 - 4.15 新增实时便签树脂提醒功能
+- 4.16 新增米游社原神自动签到功能
 
 ## ToDo🕛
 
@@ -125,7 +126,7 @@ javascript:(function(){prompt(document.domain,document.cookie)})();
 - [ ] ocr圣遗物评分和角色面板记录
 - [ ] 角色、武器和圣遗物wiki
 - [ ] 派蒙AI闲聊
-- [ ] 米游社自动签到
+- [x] 米游社自动签到
 - [x] 今日可刷材料
 - [ ] 角色练度统计
 - [ ] 派蒙戳一戳集卡

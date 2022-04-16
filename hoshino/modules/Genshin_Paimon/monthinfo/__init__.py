@@ -1,6 +1,5 @@
 import json,os,re,datetime
 from hoshino import R,MessageSegment,logger, Service
-from hoshino.typing import CQEvent, Message
 from hoshino.util import filt_message
 from ..util import get_uid_in_msg
 from ..get_data import get_monthinfo_data
