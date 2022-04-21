@@ -1,6 +1,4 @@
-from hoshino import MessageSegment, Service, trigger, priv, CanceledException,logger
-from hoshino.typing import CQEvent, Message
-from nonebot import message_preprocessor
+from hoshino import Service, priv, CanceledException, logger
 from ..get_data import get_bind_game
 from ..db_util import insert_public_cookie, update_private_cookie, delete_cookie_cache, delete_cookie, delete_private_cookie,update_last_query, reset_public_cookie
 from ..util import check_cookie

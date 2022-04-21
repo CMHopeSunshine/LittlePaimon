@@ -5,8 +5,12 @@ remind_time_end = 8
 # 树脂提醒检查时间,8即为每八分钟检查一次
 remind_check_time = 8
 
+# 树脂提醒的每日上限次数,3即为每天最多提醒3次
+remind_limit_count = 3
+
 # 自动签到执行开始时间,0即为每天0点执行
 auto_sign_time = 0
+
 
 # 模拟抽卡的冷却时间,单位秒
 gacha_cooldown = 30

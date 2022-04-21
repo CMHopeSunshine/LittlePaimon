@@ -196,24 +196,24 @@ async def getdg_weapon():
     return weapon_up_list
 
 def gacha_type_by_name(gacha_type):
-    # if re.match(r'^角色1|限定1|角色2|限定2(?:池)$', gacha_type):
-        # return 301
-    if re.match(r'^角色1|限定1(?:池)$', gacha_type):
+    if re.match(r'^角色1|限定1|角色2|限定2(?:池)$', gacha_type):
         return 301
-    if re.match(r'^角色2|限定2(?:池)$', gacha_type):
-        return 400
+    # if re.match(r'^角色1|限定1(?:池)$', gacha_type):
+    #     return 301
+    # if re.match(r'^角色2|限定2(?:池)$', gacha_type):
+    #     return 400
     if re.match(r'^武器|武器池$', gacha_type):
         return 302
     if re.match(r'^常驻|普(?:池)$', gacha_type):
         return 200
-    # if re.match(r'^新角色|新限定(?:池)$', gacha_type):
-    #     return 'role_1_pool'
+    if re.match(r'^新角色1|新限定1|新角色2|新限定2(?:池)$', gacha_type):
+        return 'role_1_pool'
     if re.match(r'^彩蛋池?$', gacha_type):
         return 'all_star'
-    if re.match(r'^新角色1|新限定1(?:池)$', gacha_type):
-        return 'role_1_pool'
-    if re.match(r'^新角色2|新限定2(?:池)$', gacha_type):
-        return 'role_2_pool'
+    # if re.match(r'^新角色1|新限定1(?:池)$', gacha_type):
+    #     return 'role_1_pool'
+    # if re.match(r'^新角色2|新限定2(?:池)$', gacha_type):
+    #     return 'role_2_pool'
     if re.match(r'^新武器|新武器池$', gacha_type):
         return 'weapon_pool'
     return 0

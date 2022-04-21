@@ -1,6 +1,4 @@
-import json,os,re
-from hoshino import R,MessageSegment,logger, Service
-from hoshino.typing import CQEvent, Message
+from hoshino import logger, Service
 from hoshino.util import filt_message
 from ..util import get_uid_in_msg, get_at_target
 from ..get_data import get_player_card_data, get_chara_detail_data, get_chara_skill_data
@@ -35,8 +33,16 @@ async def player_card(bot,ev):
             chara_data = None if isinstance(chara_data, str) else chara_data
             player_card = await draw_player_card(data, chara_data, uid, nickname)
             await bot.send(ev, player_card, at_sender=True)
+    except ActionFailed:
+        await bot.send(ev, '派蒙可能被风控，发不出消息')
+    except TypeError or AttributeError:
+        await bot.send(ev, '派蒙好像没有该UID的绑定信息')
+    except IndexError or KeyError:
+        await bot.send(ev, '派蒙获取信息失败，可能是米游社API有变动，请联系开发者')
+    except JSONDecodeError:
+        await bot.send(ev, '派蒙获取信息失败，重试一下吧')
     except Exception as e:
-        await bot.send(ev, f'派蒙出现了问题：{e}',at_sender=True)
+        await bot.send(ev, f'派蒙出现了问题：{e}')
 
 @sv.on_prefix('ysa')
 async def all_characters(bot,ev):
@@ -51,8 +57,16 @@ async def all_characters(bot,ev):
         else:
             player_card = await draw_all_chara_card(chara_data, uid)
             await bot.send(ev, player_card, at_sender=True)
+    except ActionFailed:
+        await bot.send(ev, '派蒙可能被风控，发不出消息')
+    except TypeError or AttributeError:
+        await bot.send(ev, '派蒙好像没有该UID的绑定信息')
+    except IndexError or KeyError:
+        await bot.send(ev, '派蒙获取信息失败，可能是米游社API有变动，请联系开发者')
+    except JSONDecodeError:
+        await bot.send(ev, '派蒙获取信息失败，重试一下吧')
     except Exception as e:
-        await bot.send(ev, f'派蒙出现了问题：{e}',at_sender=True)
+        await bot.send(ev, f'派蒙出现了问题：{e}')
 
 @sv.on_prefix('ysc')
 async def my_characters(bot,ev):
@@ -76,6 +90,15 @@ async def my_characters(bot,ev):
             skill_data = await get_chara_skill_data(uid, chara_name[0], use_cache=use_cache)
             chara_card = await draw_chara_card(chara_data, skill_data, chara_name, uid)
             await bot.send(ev, chara_card, at_sender=True)
+    except ActionFailed:
+        logger.exception('账号可能被风控')
+        await bot.send(ev, '派蒙可能被风控，发不出消息')
+    except TypeError or AttributeError:
+        await bot.send(ev, '派蒙好像没有该UID的绑定信息')
+    except IndexError or KeyError:
+        await bot.send(ev, '派蒙获取信息失败，可能是米游社API有变动，请联系开发者')
+    except JSONDecodeError:
+        await bot.send(ev, '派蒙获取信息失败，重试一下吧')
     except Exception as e:
-        await bot.send(ev, f'派蒙出现了问题：{e}',at_sender=True)
+        await bot.send(ev, f'派蒙出现了问题：{e}')
     

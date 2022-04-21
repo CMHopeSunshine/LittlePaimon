@@ -1,5 +1,5 @@
-import json,os,re,datetime
-from hoshino import R,MessageSegment,logger, Service
+import re, datetime
+from hoshino import logger, Service
 from hoshino.util import filt_message
 from ..util import get_uid_in_msg
 from ..get_data import get_monthinfo_data
@@ -32,5 +32,14 @@ async def main(bot,ev):
         else:
             monthinfo_card = await draw_monthinfo_card(data)
             await bot.send(ev, monthinfo_card, at_sender=True)
+    except ActionFailed:
+        logger.exception('账号可能被风控')
+        await bot.send(ev, '派蒙可能被风控，发不出消息')
+    except TypeError or AttributeError:
+        await bot.send(ev, '派蒙好像没有该UID的绑定信息')
+    except IndexError or KeyError:
+        await bot.send(ev, '派蒙获取信息失败，可能是米游社API有变动，请联系开发者')
+    except JSONDecodeError:
+        await bot.send(ev, '派蒙获取信息失败，重试一下吧')
     except Exception as e:
-        await bot.send(ev, f'派蒙出现了问题：{e}',at_sender=True)
+        await bot.send(ev, f'派蒙出现了问题：{e}')

@@ -1,13 +1,12 @@
 import re
-from hoshino import Service
+from hoshino import Service,get_bot, logger
 from ..util import get_uid_in_msg
 from ..get_data import get_daily_note_data
 from .get_img import draw_daily_note_card
 from ..db_util import update_note_remind2, update_note_remind, get_note_remind, delete_note_remind, update_day_remind_count
-from hoshino import get_bot, logger
 from datetime import datetime, timedelta
 from asyncio import sleep
-from ..config import remind_time_start, remind_time_end, remind_check_time
+from ..config import remind_time_start, remind_time_end, remind_check_time, remind_limit_count
 
 help_msg='''
 [ssbq/实时便签 (uid)]查询当前树脂、洞天宝钱、派遣状况等
@@ -49,8 +48,17 @@ async def main(bot,ev):
             else:
                 daily_note_card = await draw_daily_note_card(data, uid)
                 await bot.send(ev, daily_note_card, at_sender=True)
+        except ActionFailed:
+            logger.exception('账号可能被风控')
+            await bot.send(ev, '派蒙可能被风控，发不出消息')
+        except TypeError or AttributeError:
+            await bot.send(ev, '派蒙好像没有该UID的绑定信息')
+        except IndexError or KeyError:
+            await bot.send(ev, '派蒙获取信息失败，可能是米游社API有变动，请联系开发者')
+        except JSONDecodeError:
+            await bot.send(ev, '派蒙获取信息失败，重试一下吧')
         except Exception as e:
-            await bot.send(ev, f'派蒙出现了问题：{e}',at_sender=True)
+            await bot.send(ev, f'派蒙出现了问题：{e}')
 
 @sv.scheduled_job('cron', minute=f'*/{remind_check_time}')
 async def check_note():
@@ -71,7 +79,7 @@ async def check_note():
                     time_e = False
             else:
                 time_e = True
-            if enable and ((today_remind_count and today_remind_count < 3) or not today_remind_count) and time_e:
+            if enable and ((today_remind_count and today_remind_count < remind_limit_count) or not today_remind_count) and time_e:
                 now_data = await get_daily_note_data(uid)
                 if isinstance(now_data, str):
                     try:

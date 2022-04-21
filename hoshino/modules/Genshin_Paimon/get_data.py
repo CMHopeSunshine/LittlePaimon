@@ -176,8 +176,10 @@ async def sign(uid):
         'region': server_id
     }
     res = await aiorequests.post(url=url, headers=headers, json=json_data)
-    data =  await res.json()
-    print(res)
+    try:
+        data = await res.json()
+    except:
+        return await res.text
     if await check_retcode(data, cookie, uid):
         return data
     else:
