@@ -1,4 +1,5 @@
 import re
+from aiocqhttp.exceptions import ActionFailed
 from hoshino import Service,get_bot, logger
 from ..util import get_uid_in_msg
 from ..get_data import get_daily_note_data

@@ -1,4 +1,4 @@
-from hoshino import Service, priv, CanceledException, logger
+from hoshino import Service, priv, logger
 from ..get_data import get_bind_game
 from ..db_util import insert_public_cookie, update_private_cookie, delete_cookie_cache, delete_cookie, delete_private_cookie,update_last_query, reset_public_cookie
 from ..util import check_cookie
@@ -10,7 +10,7 @@ help_msg='''
 '''
 sv = Service('派蒙绑定', visible=False, enable_on_default=True, bundle='派蒙', help_=help_msg)
 
-cookie_error_msg = '这个cookie无效哦，请旅行者确认是否正确\n1.ck要登录mys帐号后获取\n2.获取ck后不能退出登录\n3.ck至少要包含cookie_token和account_id两个参数\n4.建议在无痕模式下取'
+cookie_error_msg = '这个cookie无效哦，请旅行者确认是否正确\n1.ck要登录mys帐号后获取,且不能退出登录\n2.ck中要有cookie_token和account_id两个参数\n3.建议在无痕模式下取'
 
 @sv.on_prefix(('原神绑定','ysb'))
 async def bind(bot,ev):
