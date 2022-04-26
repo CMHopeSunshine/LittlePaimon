@@ -1,5 +1,6 @@
 from hoshino import logger, Service
 from aiocqhttp.exceptions import ActionFailed
+from json import JSONDecodeError
 from ..util import get_uid_in_msg
 from ..get_data import get_abyss_data
 from .get_img import draw_abyss_card

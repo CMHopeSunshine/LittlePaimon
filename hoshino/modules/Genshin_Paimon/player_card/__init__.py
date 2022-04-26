@@ -1,4 +1,5 @@
 from aiocqhttp.exceptions import ActionFailed
+from json import JSONDecodeError
 from hoshino import logger, Service
 from hoshino.util import filt_message
 from ..util import get_uid_in_msg, get_at_target

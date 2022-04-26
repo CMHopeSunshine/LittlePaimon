@@ -4,6 +4,7 @@ from ..util import pil2b64
 from hoshino.typing import MessageSegment
 from hoshino import logger, aiorequests
 from io import BytesIO
+import copy
 
 res_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'res')
 
@@ -433,29 +434,31 @@ async def draw_chara_card(data, skill_data, chara_name, uid):
         i += 1
 
     if not skill_data:
-        skill_data = {'retcode' : 'error'}
+        skill_data_ = {'retcode' : 'error'}
+    else:
+        skill_data_ = copy.deepcopy(skill_data)
 
     # 补上三命和五命的技能等级提升
-    if skill_data['retcode'] == 0 and character['constellations'][2]['is_actived']:
+    if skill_data_['retcode'] == 0 and character['constellations'][2]['is_actived']:
         skill_name = re.search(r'>(.*)</color>', character['constellations'][2]['effect'])
         if skill_name:
             skill_name = skill_name.group(1)
-            for skill in skill_data['data']['skill_list']:
+            for skill in skill_data_['data']['skill_list']:
                 if skill['name'] == skill_name:
                     skill['level_current'] += 3
-    if skill_data['retcode'] == 0 and character['constellations'][4]['is_actived']:
+    if skill_data_['retcode'] == 0 and character['constellations'][4]['is_actived']:
         skill_name = re.search(r'>(.*)</color>', character['constellations'][4]['effect'])
         if skill_name:
             skill_name = skill_name.group(1)
-            for skill in skill_data['data']['skill_list']:
+            for skill in skill_data_['data']['skill_list']:
                 if skill['name'] == skill_name:
                     skill['level_current'] += 3
 
     # 天赋等级
     i = 0
-    if skill_data['retcode'] == 0:
+    if skill_data_['retcode'] == 0:
         skill_p = [(621, 98), (621, 168), (621, 238)]
-        skill_data_t = skill_data['data']['skill_list']
+        skill_data_t = skill_data_['data']['skill_list']
         for skill in skill_data_t[0:2]:
             skill_icon = await draw_const_skill_icon(skill, character['name'])
             bg_img.alpha_composite(skill_icon, skill_p[i])
@@ -473,7 +476,7 @@ async def draw_chara_card(data, skill_data, chara_name, uid):
         bg_draw.text((skill_p[i][0]+73+(6 if skill["level_current"] < 10 else 0),skill_p[i][1]+22), f'Lv.{skill["level_current"]}', font=get_font(18), fill='white')
     # 命座
     i = 0
-    if skill_data['retcode'] == 0:
+    if skill_data_['retcode'] == 0:
         const_p = [(669, 8), (734, 60), (757, 130), (757, 207), (734, 277), (669, 329)]
     else:
         const_p = [(626, 8), (691, 60), (714, 130), (714, 207), (691, 277), (626, 329)]
