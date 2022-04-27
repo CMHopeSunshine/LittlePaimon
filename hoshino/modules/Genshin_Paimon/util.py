@@ -12,7 +12,7 @@ import datetime
 import functools
 import inspect
 from nonebot import get_bot
-from .db_util import get_private_cookie, get_cookie_cache, get_public_cookie, limit_public_cookie, update_cookie_cache,get_last_query,update_last_query,delete_cookie
+from .db_util import get_private_cookie, get_cookie_cache, get_public_cookie, limit_public_cookie, update_cookie_cache,get_last_query,update_last_query,delete_cookie, delete_cookie_cache
 
 async def get_use_cookie(user_id, uid='', mys_id='', action=''):
     cache_cookie = await get_cookie_cache(uid, 'uid')
@@ -69,9 +69,10 @@ async def check_retcode(data, cookie, uid):
     elif data['retcode'] == 10101:
         if cookie['type'] == 'public':
             logger.info(f'{cookie["no"]}号公共cookie达到了每日30次查询上限')
+            await limit_public_cookie(cookie['cookie'])
+            await delete_cookie_cache(cookie['cookie'], key='cookie')
         elif cookie['type'] == 'private':
             logger.info(f'用户{cookie["user_id"]}的uid{cookie["uid"]}私人cookie达到了每日30次查询上限')
-        await limit_public_cookie(cookie['cookie'])
         return False
     else:
         await update_cookie_cache(cookie['cookie'], uid, 'uid')
