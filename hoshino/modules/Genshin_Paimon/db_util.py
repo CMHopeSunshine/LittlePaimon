@@ -113,7 +113,7 @@ async def limit_public_cookie(cookie):
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     cursor.execute('''CREATE TABLE IF NOT EXISTS public_cookies(
-        no int PRIMARY KEY
+        no int IDENTITY(1,1) PRIMARY KEY,
         cookie TEXT,
         status TEXT);''')
     cursor.execute('UPDATE public_cookies SET status="limited30" WHERE cookie=?;', (cookie,))
@@ -125,7 +125,7 @@ async def reset_public_cookie():
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     cursor.execute('''CREATE TABLE IF NOT EXISTS public_cookies(
-        no int PRIMARY KEY
+        no int IDENTITY(1,1) PRIMARY KEY,
         cookie TEXT,
         status TEXT);''')
     cursor.execute('UPDATE public_cookies SET status="OK" WHERE status="limited30";')
