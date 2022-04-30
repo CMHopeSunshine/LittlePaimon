@@ -1,0 +1,18 @@
+from pydantic import BaseModel
+from nonebot import get_driver
+
+
+class PluginConfig(BaseModel):
+    paimon_gacha_cd_group: int = 30
+    paimon_gacha_cd_user: int = 60
+    paimon_remind_start: int = 0
+    paimon_remind_end: int = 8
+    paimon_check_interval: int = 16
+    paimon_remind_limit: int = 3
+    paimon_sign_hour: int = 0
+    paimon_sign_minute: int = 0
+
+
+driver = get_driver()
+global_config = driver.config
+config: PluginConfig = PluginConfig.parse_obj(global_config.dict())
