@@ -94,13 +94,13 @@ class FreqLimiter:
         self.default_cd = default_cd_seconds
 
     def check(self, key) -> bool:
-        return bool(time.time() >= self.next_time[key])
+        return bool(time() >= self.next_time[key])
 
     def start_cd(self, key, cd_time=0):
-        self.next_time[key] = time.time() + (cd_time if cd_time > 0 else self.default_cd)
+        self.next_time[key] = time() + (cd_time if cd_time > 0 else self.default_cd)
 
     def left_time(self, key) -> int:
-        return int(self.next_time[key] - time.time()) + 1
+        return int(self.next_time[key] - time()) + 1
 
 
 # 获取可用的cookie
