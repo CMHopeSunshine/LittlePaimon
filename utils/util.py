@@ -197,6 +197,7 @@ async def get_uid_in_msg(event: MessageEvent, msg: Message):
         uid = await get_last_query(str(event.user_id))
         return uid, '', str(event.user_id), True
     user_id = await get_at_target(event.message) or str(event.user_id)
+    msg = re.sub(r'\[CQ.*?\]', '', msg)
     use_cache = False if '-r' in msg else True
     msg = msg.replace('-r', '').strip()
     find_uid = r'(?P<uid>(1|2|5)\d{8})'
