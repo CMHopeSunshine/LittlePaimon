@@ -20,7 +20,10 @@ async def get_abyss_data(user_id, uid, schedule_type = "1", use_cache=True):
         headers = get_headers(q=f'role_id={uid}&schedule_type={schedule_type}&server={server_id}', cookie=cookie['cookie'])
         res = await aiorequests.get(url=url, headers=headers, params=params)
         data = await res.json()
-        if await check_retcode(data, cookie, uid):
+        check = await check_retcode(data, cookie, uid)
+        if check == '私人cookie达到了每日30次查询上限':
+            return check
+        elif check:
             return data
         
 
@@ -43,6 +46,7 @@ async def get_daily_note_data(uid):
     else:
         return f'你的uid{uid}的cookie已过期,需要重新绑定哦!'
 
+
 @cache(ttl=datetime.timedelta(hours=1))
 async def get_player_card_data(user_id, uid, use_cache=True):
     server_id = "cn_qd01" if uid[0] == '5' else "cn_gf01"
@@ -57,8 +61,11 @@ async def get_player_card_data(user_id, uid, use_cache=True):
             return '现在派蒙没有可以用的cookie哦，可能是:\n1.公共cookie全都达到了每日30次上限\n2.公共池全都失效了或没有cookie\n让管理员使用 添加公共ck 吧!'
         headers = get_headers(q=f'role_id={uid}&server={server_id}', cookie=cookie['cookie'])
         res = await aiorequests.get(url=url, headers=headers, params=params)
-        data =  await res.json()
-        if await check_retcode(data, cookie, uid):
+        data = await res.json()
+        check = await check_retcode(data, cookie, uid)
+        if check == '私人cookie达到了每日30次查询上限':
+            return check
+        elif check:
             return data
 
 @cache(ttl=datetime.timedelta(hours=1))
@@ -77,7 +84,10 @@ async def get_chara_detail_data(user_id, uid, use_cache=True):
         headers = get_headers(b=json_data, cookie=cookie['cookie'])
         res = await aiorequests.post(url=url, headers=headers, json=json_data)
         data =  await res.json()
-        if await check_retcode(data, cookie, uid):
+        check = await check_retcode(data, cookie, uid)
+        if check == '私人cookie达到了每日30次查询上限':
+            return check
+        elif check:
             return data
 
 @cache(ttl=datetime.timedelta(hours=1))
@@ -96,7 +106,6 @@ async def get_chara_skill_data(uid, chara_id, use_cache=True):
     }
     res = await aiorequests.get(url=url, headers=headers, params=params)
     data =  await res.json()
-    # TODO:待定，未知cookie对技能的影响
     return data
 
 @cache(ttl=datetime.timedelta(hours=1))
@@ -115,7 +124,10 @@ async def get_monthinfo_data(uid, month, use_cache=True):
     }
     res = await aiorequests.get(url=url, headers=headers, params=params)
     data =  await res.json()
-    if await check_retcode(data, cookie, uid):
+    check = await check_retcode(data, cookie, uid)
+    if check == '私人cookie达到了每日30次查询上限':
+        return check
+    elif check:
         return data
     else:
         return f'你的uid{uid}的cookie已过期,需要重新绑定哦!'
@@ -161,6 +173,8 @@ async def get_sign_info(uid):
     data = await res.json()
     if await check_retcode(data, cookie, uid):
         return data
+    else:
+        return f'你的uid{uid}的cookie已过期,需要重新绑定哦!'
 
 # 执行签到操作
 async def sign(uid):
