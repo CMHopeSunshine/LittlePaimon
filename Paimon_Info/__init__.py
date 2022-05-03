@@ -51,9 +51,9 @@ __usage__ = '''
 
 __help_version__ = '1.1.0'
 
-sy = on_command('sy', aliases={'深渊', '深境螺旋'}, priority=7, block=True)
+sy = on_command('sy', aliases={'深渊信息', '深境螺旋信息'}, priority=7, block=True)
 ssbq = on_command('ssbq', aliases={'实时便笺', '实时便签', '当前树脂'}, priority=7, block=True)
-myzj = on_command('myzj', aliases={'札记', '每月札记'}, priority=7, block=True)
+myzj = on_command('myzj', aliases={'札记信息', '每月札记'}, priority=7, block=True)
 ys = on_command('ys', aliases={'原神卡片', '个人卡片'}, priority=7, block=True)
 ysa = on_command('ysa', aliases={'角色背包'}, priority=7, block=True)
 ysc = on_command('ysc', aliases={'角色卡片', '角色详情'}, priority=7, block=True)
@@ -242,7 +242,7 @@ async def ysb_handler(event: MessageEvent, msg: Message = CommandArg()):
 
 @add_public_ck.handle()
 @exception_handler()
-async def add_public_ck_handler(msg: Message = CommandArg()):
+async def add_public_ck_handler(event: MessageEvent, msg: Message = CommandArg()):
     cookie = str(msg).strip()
     if await check_cookie(cookie):
         await insert_public_cookie(cookie)

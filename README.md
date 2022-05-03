@@ -6,6 +6,10 @@ nonebot2版本的小派蒙
 - Paimon_Wiki 派蒙wiki查询插件
 - Paimon_Gacha 派蒙模拟抽卡插件
 - Paimon_Gacha_Log 派蒙抽卡记录获取插件
+- Paimon_Plugins 派蒙其他娱乐插件
+  * 对联
+  * 来点猫片
+  * 来点二次元
 
 具体插件命令与hoshino版一致<br>
 nonebot2刚上手，测试时间较短，如有bug，请及时反馈。
@@ -17,11 +21,12 @@ nonebot2刚上手，测试时间较短，如有bug，请及时反馈。
 不多说了，看wiki的部署教程
 
 ### 2. 安装nonebot2
-先安装脚手架以及依赖
+先安装脚手架以及相关依赖
 ```
 pip install nb-cli
 pip install matplotlib
 pip install aiohttp
+pip install xlsxwriter
 ```
 创建nonebot2项目
 `nb create`
@@ -48,7 +53,7 @@ pip install aiohttp
 编辑`.env`，把`dev`改成`prod`<br>
 编辑`.env.prod`，修改以下内容
 ```
-HOST=127.0.0.1 # Nonebot监听的IP
+HOST=127.0.0.1 # Nonebot监听的IP，如需外网访问，改为0.0.0.0
 PORT=6789 # Nonebot监听的端口，和go-cqhttp的端口一致
 LOG_LEVEL=INFO # 日志等级
 SUPERUSERS=["123456"] # 超级用户
@@ -58,7 +63,17 @@ COMMAND_SEP=[""] # 命令分隔符
 ```
 
 ### 3. 安装go-cqhttp
-也不多说了，看wiki的部署教程的go-cqhttp部分
+也不多说了，看wiki的部署教程的go-cqhttp部分<br>
+servers部分修改如下：
+```
+servers:
+  - ws-reverse:
+      universal: "ws://127.0.0.1:6789/onebot/v11/ws"
+      reconnect-interval: 3000
+      middlewares:
+        <<: *default
+        access-token: ""
+```
 
 ### 4. 安装插件
 ```

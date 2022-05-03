@@ -167,6 +167,7 @@ async def check_retcode(data, cookie, uid):
             await delete_cookie_cache(cookie['cookie'], key='cookie')
         elif cookie['type'] == 'private':
             logger.info(f'用户{cookie["user_id"]}的uid{cookie["uid"]}私人cookie达到了每日30次查询上限')
+            return '私人cookie达到了每日30次查询上限'
         return False
     else:
         await update_cookie_cache(cookie['cookie'], uid, 'uid')

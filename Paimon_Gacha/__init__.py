@@ -53,7 +53,6 @@ async def gacha(event: Union[MessageEvent, GroupMessageEvent], reGroup: Dict = R
     gacha_type = gacha_type_by_name(pool)
     if gacha_type == 0:
         await sim_gacha.finish('卡池名称出错,请选择角色1|角色2|武器|常驻', at_sender=True)
-    # TODO 冷却时间
     if event.message_type == 'group':
         if not lmt_group.check(event.group_id):
             await sim_gacha.finish(f'本群模拟抽卡冷却中(剩余{lmt_group.left_time(event.group_id)}秒)')

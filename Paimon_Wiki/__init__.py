@@ -1,11 +1,13 @@
 import os
 from PIL import Image
 from pathlib import Path
-from nonebot import on_endswith
+from nonebot import on_endswith, on_command, on_regex
+from nonebot.params import RegexDict
 from nonebot.adapters.onebot.v11 import MessageSegment, MessageEvent
 from ..utils.character_alias import get_id_by_alias
+from ..utils.util import pil2b64, exception_handler
 from .blue import get_blue_pic
-from ..utils.util import pil2b64
+from .abyss_rate_draw import draw_rate_rank, draw_teams_rate
 import re
 import time
 
@@ -16,6 +18,8 @@ __usage__ = '''
 4.[xx收益曲线]查看blue菌hehe出品的收益曲线攻略
 *感谢来自大佬们的授权。角色支持别名查询
 5.[今日/明日/周x材料]查看每日角色天赋材料和武器突破材料表
+6.[深渊登场率]查看2.6深渊角色登场率
+7.[深渊上半/下半阵容出场率]查看2.6深渊阵容出场率
 '''
 __help_version__ = '1.0.2'
 
@@ -27,9 +31,12 @@ material = on_endswith('角色材料', priority=6, block=True)
 attribute = on_endswith('参考面板', priority=6, block=True)
 attribute2 = on_endswith('收益曲线', priority=6, block=True)
 daily_material = on_endswith(('材料', '天赋材料', '突破材料'), priority=6, block=True)
+abyss_rate = on_command('syrate', aliases={'深渊登场率', '深境螺旋登场率', '深渊登场率排行', '深渊排行'}, priority=6, block=True)
+abyss_team = on_regex(r'^(深渊|深境螺旋)(?P<floor>上半|下半)阵容(排行|出场率)?$', priority=5, block=True)
 
 
 @guide.handle()
+@exception_handler()
 async def genshin_guide(event: MessageEvent):
     name: str = event.message.extract_plain_text().replace('角色攻略', '').strip()
     realname = get_id_by_alias(name)
@@ -45,6 +52,7 @@ async def genshin_guide(event: MessageEvent):
 
 
 @material.handle()
+@exception_handler()
 async def genshin_material(event: MessageEvent):
     name: str = event.message.extract_plain_text().replace('角色材料', '').strip()
     realname = get_id_by_alias(name)
@@ -61,6 +69,7 @@ async def genshin_material(event: MessageEvent):
 
 
 @attribute.handle()
+@exception_handler()
 async def genshinAttribute(event: MessageEvent):
     name: str = event.message.extract_plain_text().replace('参考面板', '').strip()
     if name not in ['风主', '岩主', '雷主']:
@@ -79,6 +88,7 @@ async def genshinAttribute(event: MessageEvent):
 
 
 @attribute2.handle()
+@exception_handler()
 async def genshinAttribute2(event: MessageEvent):
     name: str = event.message.extract_plain_text().replace('收益曲线', '').strip()
     if name not in ['风主', '岩主', '雷主']:
@@ -94,6 +104,7 @@ async def genshinAttribute2(event: MessageEvent):
 
 
 @daily_material.handle()
+@exception_handler()
 async def daily_material_handle(event: MessageEvent):
     week: str = event.message.extract_plain_text().replace('材料', '').replace('天赋材料', '').replace('突破材料', '').strip()
     if week:
@@ -122,3 +133,17 @@ async def daily_material_handle(event: MessageEvent):
             else:
                 path = os.path.join(res_path, "daily_material", "周三周六.jpg")
             await daily_material.finish(MessageSegment.image(file=Path(path)), at_sender=True)
+
+
+@abyss_rate.handle()
+@exception_handler()
+async def abyss_rate_handler(event: MessageEvent):
+    abyss_img = await draw_rate_rank()
+    await abyss_rate.finish(abyss_img)
+
+
+@abyss_team.handle()
+@exception_handler()
+async def abyss_team_handler(event: MessageEvent, reGroup=RegexDict()):
+    abyss_img = await draw_teams_rate(reGroup['floor'])
+    await abyss_team.finish(abyss_img)

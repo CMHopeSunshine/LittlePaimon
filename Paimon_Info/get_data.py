@@ -22,7 +22,10 @@ async def get_abyss_data(user_id, uid, schedule_type="1", use_cache=True):
         async with ClientSession() as session:
             res = await session.get(url=url, headers=headers, params=params)
             data = await res.json()
-            if await check_retcode(data, cookie, uid):
+            check = await check_retcode(data, cookie, uid)
+            if check == '私人cookie达到了每日30次查询上限':
+                return check
+            elif check:
                 return data
 
 
@@ -63,7 +66,10 @@ async def get_player_card_data(user_id, uid, use_cache=True):
         async with ClientSession() as session:
             res = await session.get(url=url, headers=headers, params=params)
             data = await res.json()
-            if await check_retcode(data, cookie, uid):
+            check = await check_retcode(data, cookie, uid)
+            if check == '私人cookie达到了每日30次查询上限':
+                return check
+            elif check:
                 return data
 
 
@@ -84,7 +90,10 @@ async def get_chara_detail_data(user_id, uid, use_cache=True):
         async with ClientSession() as session:
             res = await session.post(url=url, headers=headers, json=json_data)
             data = await res.json()
-            if await check_retcode(data, cookie, uid):
+            check = await check_retcode(data, cookie, uid)
+            if check == '私人cookie达到了每日30次查询上限':
+                return check
+            elif check:
                 return data
 
 
@@ -105,7 +114,6 @@ async def get_chara_skill_data(uid, chara_id, use_cache=True):
     async with ClientSession() as session:
         res = await session.get(url=url, headers=headers, params=params)
         data = await res.json()
-        # TODO:待定，未知cookie对技能的影响
         return data
 
 
@@ -176,6 +184,8 @@ async def get_sign_info(uid):
         data = await res.json()
         if await check_retcode(data, cookie, uid):
             return data
+        else:
+            return f'你的uid{uid}的cookie已过期,需要重新绑定哦!'
 
 
 # 执行签到操作
