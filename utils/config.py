@@ -11,6 +11,10 @@ class PluginConfig(BaseModel):
     paimon_remind_limit: int = 3
     paimon_sign_hour: int = 0
     paimon_sign_minute: int = 0
+    paimon_duilian_cd: int = 6
+    paimon_cat_cd: int = 12
+    paimon_ecy_cd: int = 6
+    paimon_ysp_cd: int = 10
 
 
 driver = get_driver()
