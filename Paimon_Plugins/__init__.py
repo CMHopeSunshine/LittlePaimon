@@ -1,12 +1,17 @@
 from aiohttp import ClientSession
 from urllib.parse import quote
-from nonebot import on_command
-from nonebot.params import CommandArg
 from typing import Union
-from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageEvent, MessageSegment
+from nonebot import on_command, get_driver
+from nonebot.params import CommandArg
+from nonebot.message import event_preprocessor
+from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, MessageEvent, MessageSegment, FriendRequestEvent, \
+    GroupRequestEvent
 from ..utils.util import FreqLimiter
 from ..utils.config import config
-import random
+from asyncio import sleep
+from .chat import *
+
+superuser = int(list(get_driver().config.superusers)[0])
 
 duilian = on_command('对联', aliases={'对对联'}, priority=15, block=True)
 cat_pic = on_command('猫图', aliases={'来点猫片', '看看猫猫', '来个猫猫'}, priority=15, block=True)
@@ -91,3 +96,37 @@ async def ys_pic_handler(event: Union[GroupMessageEvent, MessageEvent]):
             res = await session.get(random.choice(urls))
             res = await res.read()
             await ys_pic.finish(MessageSegment.image(res))
+
+
+@event_preprocessor
+async def addFriend(bot: Bot, event: FriendRequestEvent):
+    superuser_msg = f'{event.user_id}请求添加派蒙为好友, 验证信息为：{event.comment}'
+    if config.paimon_add_friend == 1:
+        superuser_msg += '，已自动同意'
+        await event.approve()
+        await sleep(random.randint(3, 6))
+        await bot.send_private_msg(user_id=event.user_id, message=f'旅行者你好呀，这里是小派蒙，发送/help查看帮助哦')
+    elif config.paimon_add_friend == 2:
+        superuser_msg += '，已自动拒绝'
+        await event.reject()
+    else:
+        superuser_msg += '，请主人自行处理哦'
+    await bot.send_private_msg(user_id=superuser, message=superuser_msg)
+
+
+@event_preprocessor
+async def addFriend(bot: Bot, event: GroupRequestEvent):
+    if event.sub_type != 'invite':
+        return
+    superuser_msg = f'{event.user_id}邀请派蒙加入群{event.group_id}'
+    if config.paimon_add_group == 1 or event.user_id == superuser:
+        superuser_msg += '，已自动同意'
+        await event.approve()
+        await sleep(random.randint(3, 6))
+        await bot.send_group_msg(group_id=event.group_id, message=f'旅行者们大家好呀，这里是小派蒙，发送/help查看帮助哦')
+    elif config.paimon_add_group == 2:
+        superuser_msg += '，已自动拒绝'
+        await event.reject()
+    else:
+        superuser_msg += '，请主人自行处理哦'
+    await bot.send_private_msg(user_id=superuser, message=superuser_msg)

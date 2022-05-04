@@ -14,7 +14,6 @@ from json import JSONDecodeError
 from aiohttp import ClientSession
 from nonebot import get_bot
 from nonebot import logger
-from nonebot.matcher import Matcher
 from nonebot.exception import FinishedException
 from nonebot.adapters.onebot.v11 import MessageEvent, Message
 from nonebot.adapters.onebot.v11.exception import ActionFailed
@@ -101,6 +100,22 @@ class FreqLimiter:
 
     def left_time(self, key) -> int:
         return int(self.next_time[key] - time()) + 1
+
+
+# 双参数冷却时间限制器
+class FreqLimiter2:
+    def __init__(self, default_cd_seconds: int = 60):
+        self.next_time = defaultdict(lambda: defaultdict(float))
+        self.default_cd = default_cd_seconds
+
+    def check(self, key1, key2) -> bool:
+        return bool(time() >= self.next_time[key1][key2])
+
+    def start_cd(self, key1, key2, cd_time=0):
+        self.next_time[key1][key2] = time() + (cd_time if cd_time > 0 else self.default_cd)
+
+    def left_time(self, key1, key2) -> int:
+        return int(self.next_time[key1][key2] - time()) + 1
 
 
 # 获取可用的cookie

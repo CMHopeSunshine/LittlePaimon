@@ -15,6 +15,8 @@ class PluginConfig(BaseModel):
     paimon_cat_cd: int = 12
     paimon_ecy_cd: int = 6
     paimon_ysp_cd: int = 10
+    paimon_add_friend: int = 0
+    paimon_add_group: int = 0
 
 
 driver = get_driver()
