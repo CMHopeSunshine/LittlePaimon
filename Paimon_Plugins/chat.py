@@ -39,7 +39,7 @@ chat_lmt = FreqLimiter2(60)
 
 
 def create_matcher(chat_word: str, pattern: str, cooldown: int, pro: float, responses):
-    hammer = on_regex(pattern, priority=16, temp=True)
+    hammer = on_regex(pattern, priority=14, temp=True)
 
     @hammer.handle()
     async def handler(event: GroupMessageEvent):
@@ -55,7 +55,6 @@ def create_matcher(chat_word: str, pattern: str, cooldown: int, pro: float, resp
                     if '.mp3' not in response:
                         await hammer.finish(response)
                     else:
-                        print(os.path.join(res_path, response))
                         await hammer.finish(MessageSegment.record(file=Path(os.path.join(res_path, response))))
                 except FinishedException:
                     raise
