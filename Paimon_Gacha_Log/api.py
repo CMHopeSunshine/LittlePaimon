@@ -32,14 +32,12 @@ async def checkApi(url):
     try:
         async with ClientSession() as session:
             r = await session.get(url)
-            s = (await r.read()).decode("utf-8")
-            j = json.loads(s)
+            j = await r.json()
     except Exception as e:
-        # print("API请求解析出错：\n", traceback.format_exc())
         return f'API请求解析出错：{e}'
 
     if not j["data"]:
-        if j["message"] == "authkey valid error":
+        if j["message"] == "authkey error":
             return "authkey错误，请重新获取链接给派蒙！"
         elif j["message"] == "authkey timeout":
             return "authkey已过期，请重新获取链接给派蒙！"

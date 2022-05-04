@@ -53,16 +53,19 @@ async def ckjl(bot: Bot, event: Union[MessageEvent, GroupMessageEvent], msg: Mes
 
 @gacha_log_update.handle()
 async def update_ckjl(event: MessageEvent, msg: Message = CommandArg()):
+    url = None
+    if msg:
+        msg = str(msg)
+        match = re.search(r'(https://webstatic.mihoyo.com/.*#/log)', msg)
+        if match:
+            url = match.group(1)
+            msg = msg.replace(url, '')
     uid, msg, user_id, use_cache = await get_uid_in_msg(event, msg)
     if not uid:
         await gacha_log_update.finish('请把uid给派蒙哦，比如获取抽卡记录100000001 链接', at_sender=True)
-    if msg:
-        match = re.search(r'(https://webstatic.mihoyo.com/.*#/log)', msg)
-        if match:
-            url = str(match.group(1))
-        else:
-            await gacha_log_update.finish('你这个抽卡链接不对哦，应该是以https://开头、#/log结尾的！', at_sender=True)
-    else:
+    if msg and not url:
+        await gacha_log_update.finish('你这个抽卡链接不对哦，应该是以https://开头、#/log结尾的！', at_sender=True)
+    if not msg and not url:
         with open(os.path.join(data_path, 'user_gacha_log.json'), 'r', encoding="utf-8") as f:
             user_data = json.load(f)
             if user_id in user_data and uid in user_data[user_id]:

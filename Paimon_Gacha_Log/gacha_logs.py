@@ -18,8 +18,7 @@ async def getGachaLogs(url, gachaTypeId):
         api = getApi(url, gachaTypeId, size, page, end_id)
         async with ClientSession() as session:
             r = await session.get(api)
-            s = (await r.read()).decode("utf-8")
-            j = json.loads(s)
+            j = await r.json()
             gacha = j["data"]["list"]
             if not len(gacha):
                 break
@@ -53,7 +52,6 @@ def mergeDataFunc(localData, gachaData):
                 if flaglist[i] == 0:
                     gachaGet = bannerGet[i]
                     tempData.insert(0, gachaGet)
-            # print("追加", len(tempData), "条记录", flush=True)
             for i in tempData:
                 localData["gachaLog"][banner].insert(0, i)
 

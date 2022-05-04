@@ -39,7 +39,7 @@ chat_lmt = FreqLimiter2(60)
 
 
 def create_matcher(chat_word: str, pattern: str, cooldown: int, pro: float, responses):
-    hammer = on_regex(pattern, priority=14, temp=True)
+    hammer = on_regex(pattern, priority=10)
 
     @hammer.handle()
     async def handler(event: GroupMessageEvent):
