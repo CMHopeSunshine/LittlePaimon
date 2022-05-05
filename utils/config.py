@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from nonebot import get_driver
+from typing import List
 
 
 class PluginConfig(BaseModel):
@@ -15,8 +16,9 @@ class PluginConfig(BaseModel):
     paimon_cat_cd: int = 12
     paimon_ecy_cd: int = 6
     paimon_ysp_cd: int = 10
-    paimon_add_friend: int = 0
-    paimon_add_group: int = 0
+    paimon_add_friend: bool = False
+    paimon_add_group: bool = False
+    paimon_chat_group: List[int] = []
 
 
 driver = get_driver()

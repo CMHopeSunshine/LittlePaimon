@@ -1,11 +1,3 @@
-from nonebot import on_regex, logger
-from nonebot.exception import FinishedException
-from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageSegment
-from ..utils.util import FreqLimiter2
-from pathlib import Path
-import random
-import os
-
 chat_list = {
     '确实':   {'pattern': r'.*(雀食|确实).*', 'cooldown': 60, 'pro': 0.6, 'files': ['雀食', '确实']},
     '坏了':   {'pattern': r'.*派蒙.*坏.*', 'cooldown': 60, 'pro': 0.6, 'files': ['你才坏！', '瞎说啥呢？', '派蒙怎么可能会坏！']},
@@ -33,35 +25,3 @@ chat_list = {
     '不明白':  {'pattern': r'.*明白.*', 'cooldown': 300, 'pro': 0.5, 'files': ['不明白.mp3']},
     '哪里不对': {'pattern': r'(是|对)(吧|吗)', 'cooldown': 300, 'pro': 0.5, 'files': ['哪里不对.mp3']}
 }
-
-res_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'res', 'voice')
-chat_lmt = FreqLimiter2(60)
-
-
-def create_matcher(chat_word: str, pattern: str, cooldown: int, pro: float, responses):
-    hammer = on_regex(pattern, priority=10)
-
-    @hammer.handle()
-    async def handler(event: GroupMessageEvent):
-        if not chat_lmt.check(event.group_id, chat_word):
-            return
-        else:
-            if not random.random() < pro:
-                return
-            else:
-                try:
-                    chat_lmt.start_cd(event.group_id, chat_word, cooldown)
-                    response = random.choice(responses)
-                    if '.mp3' not in response:
-                        await hammer.finish(response)
-                    else:
-                        await hammer.finish(MessageSegment.record(file=Path(os.path.join(res_path, response))))
-                except FinishedException:
-                    raise
-                except Exception as e:
-                    logger.error('派蒙发送语音失败', e)
-
-
-for k, v in chat_list.items():
-    create_matcher(k, v['pattern'], v['cooldown'], v['pro'], v['files'])
-
