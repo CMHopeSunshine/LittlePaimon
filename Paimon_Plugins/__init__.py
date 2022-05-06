@@ -1,8 +1,8 @@
 from aiohttp import ClientSession
 from urllib.parse import quote
 from typing import Union
-from nonebot import on_command, get_driver
-from nonebot.params import CommandArg
+from nonebot import on_command, on_regex, get_driver
+from nonebot.params import CommandArg, RegexGroup
 from nonebot.message import event_preprocessor
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, MessageEvent, MessageSegment, FriendRequestEvent, \
     GroupRequestEvent
@@ -15,7 +15,7 @@ superuser = int(list(get_driver().config.superusers)[0])
 
 duilian = on_command('对联', aliases={'对对联'}, priority=15, block=True)
 cat_pic = on_command('猫图', aliases={'来点猫片', '看看猫猫', '来个猫猫'}, priority=15, block=True)
-ecy_pic = on_command('二次元图', aliases={'来点二次元', '来点二刺螈'}, priority=15, block=True)
+ecy_pic = on_regex(r'^来点(二次元|二刺螈|银发|兽耳|星空|竖屏|横屏)图?$', priority=15, block=True)
 ys_pic = on_command('原神壁纸', aliases={'来点原神图', '来点原神壁纸'}, priority=15, block=True)
 
 duilian_limit = FreqLimiter(config.paimon_duilian_cd)
@@ -55,29 +55,41 @@ async def cat_pic_handler(event: Union[GroupMessageEvent, MessageEvent]):
     if not cat_lmt.check(event.group_id or event.user_id):
         await cat_pic.finish(f'猫片冷却ing(剩余{cat_lmt.left_time(event.group_id or event.user_id)}秒)')
     else:
+        await cat_pic.send('派蒙努力找图ing..请稍候...')
         cat_lmt.start_cd(event.group_id or event.user_id, config.paimon_cat_cd)
         url = 'http://edgecats.net/'
-        async with ClientSession() as session:
-            res = await session.get(url)
-            res = await res.read()
-            await cat_pic.finish(MessageSegment.image(res))
+        await cat_pic.finish(MessageSegment.image(file=url))
 
 
 @ecy_pic.handle()
-async def ecy_pic_handler(event: Union[GroupMessageEvent, MessageEvent]):
+async def ecy_pic_handler(event: Union[GroupMessageEvent, MessageEvent], regexGroup=RegexGroup()):
     urls = [
         'https://www.dmoe.cc/random.php',
         'https://acg.toubiec.cn/random.php',
-        'https://api.ixiaowai.cn/api/api.php'
+        'https://api.ixiaowai.cn/api/api.php',
+        'https://iw233.cn/api.php?sort=iw233'
     ]
+    img_type = regexGroup[0]
+    if img_type in ['二次元', '二刺螈']:
+        url = random.choice(urls)
+    elif img_type == '银发':
+        url = 'https://iw233.cn/api.php?sort=yin'
+    elif img_type == '兽耳':
+        url = 'https://iw233.cn/api.php?sort=cat'
+    elif img_type == '星空':
+        url = 'https://iw233.cn/api.php?sort=xing'
+    elif img_type == '竖屏':
+        url = 'https://iw233.cn/api.php?sort=mp'
+    elif img_type == '横屏':
+        url = 'https://iw233.cn/api.php?sort=pc'
+    else:
+        url = ''
     if not ecy_lmt.check(event.group_id or event.user_id):
         await ecy_pic.finish(f'二次元图片冷却ing(剩余{ecy_lmt.left_time(event.group_id or event.user_id)}秒)')
-    else:
+    elif url:
+        await cat_pic.send('派蒙努力找图ing..请稍候...')
         ecy_lmt.start_cd(event.group_id or event.user_id, config.paimon_ecy_cd)
-        async with ClientSession() as session:
-            res = await session.get(random.choice(urls))
-            res = await res.read()
-            await cat_pic.finish(MessageSegment.image(res))
+        await cat_pic.finish(MessageSegment.image(file=url))
 
 
 @ys_pic.handle()
@@ -91,11 +103,9 @@ async def ys_pic_handler(event: Union[GroupMessageEvent, MessageEvent]):
     if not ys_lmt.check(event.group_id or event.user_id):
         await ys_pic.finish(f'原神壁纸冷却ing(剩余{ys_lmt.left_time(event.group_id or event.user_id)}秒)')
     else:
+        await cat_pic.send('派蒙努力找图ing..请稍候...')
         ys_lmt.start_cd(event.group_id or event.user_id, config.paimon_ysp_cd)
-        async with ClientSession() as session:
-            res = await session.get(random.choice(urls))
-            res = await res.read()
-            await ys_pic.finish(MessageSegment.image(res))
+        await ys_pic.finish(MessageSegment.image(file=random.choice(urls)))
 
 
 @event_preprocessor
