@@ -6,7 +6,7 @@ from nonebot.params import CommandArg, RegexGroup
 from nonebot.message import event_preprocessor
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, MessageEvent, MessageSegment, FriendRequestEvent, \
     GroupRequestEvent
-from ..utils.util import FreqLimiter
+from ..utils.util import FreqLimiter, auto_withdraw
 from ..utils.config import config
 from asyncio import sleep
 import random
@@ -62,7 +62,8 @@ async def cat_pic_handler(event: Union[GroupMessageEvent, MessageEvent]):
 
 
 @ecy_pic.handle()
-async def ecy_pic_handler(event: Union[GroupMessageEvent, MessageEvent], regexGroup=RegexGroup()):
+@auto_withdraw(15)
+async def ecy_pic_handler(bot: Bot, event: Union[GroupMessageEvent, MessageEvent], regexGroup=RegexGroup()):
     urls = [
         'https://www.dmoe.cc/random.php',
         'https://acg.toubiec.cn/random.php',
@@ -89,10 +90,11 @@ async def ecy_pic_handler(event: Union[GroupMessageEvent, MessageEvent], regexGr
     elif url:
         await cat_pic.send('派蒙努力找图ing..请稍候...')
         ecy_lmt.start_cd(event.group_id or event.user_id, config.paimon_ecy_cd)
-        await cat_pic.finish(MessageSegment.image(file=url))
+        return await cat_pic.send(MessageSegment.image(file=url))
 
 
 @ys_pic.handle()
+@auto_withdraw(30)
 async def ys_pic_handler(event: Union[GroupMessageEvent, MessageEvent]):
     urls = [
         'https://api.r10086.com/img-api.php?type=%E5%8E%9F%E7%A5%9E%E6%A8%AA%E5%B1%8F%E7%B3%BB%E5%88%971',

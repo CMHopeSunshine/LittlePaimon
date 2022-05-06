@@ -10,6 +10,7 @@ import string
 import functools
 import inspect
 import json
+import asyncio
 from json import JSONDecodeError
 from aiohttp import ClientSession
 from nonebot import get_bot
@@ -21,6 +22,24 @@ from .db_util import get_private_cookie, delete_cookie
 from .db_util import get_public_cookie, limit_public_cookie
 from .db_util import get_cookie_cache, update_cookie_cache, delete_cookie_cache
 from .db_util import get_last_query, update_last_query
+
+
+def auto_withdraw(seconds: int = -1):
+    def wrapper(func):
+
+        @functools.wraps(func)
+        async def wrapped(**kwargs):
+            try:
+                message_id = await func(**kwargs)
+                if message_id and seconds >= 1:
+                    await asyncio.sleep(seconds)
+                    await get_bot().delete_msg(message_id=message_id['message_id'])
+            except Exception as e:
+                raise e
+
+        return wrapped
+
+    return wrapper
 
 
 # 缓存装饰器 ttl为过期时间 参数use_cache决定是否使用缓存，默认为True
@@ -149,7 +168,7 @@ async def get_use_cookie(user_id, uid='', mys_id='', action=''):
             return cache_cookie
         use_cookie = random.choice(cookies)
         logger.info(f'---派蒙调用用户{use_cookie[0]}的uid{use_cookie[2]}私人cookie执行{action}操作---')
-        return {'type': 'private', 'user_id': use_cookie[0], 'cookie': use_cookie[1], 'uid': use_cookie[2],
+        return {'type':   'private', 'user_id': use_cookie[0], 'cookie': use_cookie[1], 'uid': use_cookie[2],
                 'mys_id': use_cookie[3]}
 
 
@@ -258,14 +277,14 @@ def get_ds(q="", b=None) -> str:
 # 米游社爬虫headers
 def get_headers(cookie, q='', b=None):
     headers = {
-        'DS': get_ds(q, b),
-        'Origin': 'https://webstatic.mihoyo.com',
-        'Cookie': cookie,
+        'DS':                get_ds(q, b),
+        'Origin':            'https://webstatic.mihoyo.com',
+        'Cookie':            cookie,
         'x-rpc-app_version': "2.11.1",
-        'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS '
-                      'X) AppleWebKit/605.1.15 (KHTML, like Gecko) miHoYoBBS/2.11.1',
+        'User-Agent':        'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS '
+                             'X) AppleWebKit/605.1.15 (KHTML, like Gecko) miHoYoBBS/2.11.1',
         'x-rpc-client_type': '5',
-        'Referer': 'https://webstatic.mihoyo.com/'
+        'Referer':           'https://webstatic.mihoyo.com/'
     }
     return headers
 
@@ -280,17 +299,17 @@ def get_old_version_ds() -> str:
 
 def get_sign_headers(cookie):
     headers = {
-        'User_Agent': 'Mozilla/5.0 (Linux; Android 10; MIX 2 Build/QKQ1.190825.002; wv) AppleWebKit/537.36 ('
-                      'KHTML, like Gecko) Version/4.0 Chrome/83.0.4103.101 Mobile Safari/537.36 '
-                      'miHoYoBBS/2.3.0',
-        'Cookie': cookie,
-        'x-rpc-device_id': random_hex(32),
-        'Origin': 'https://webstatic.mihoyo.com',
-        'X_Requested_With': 'com.mihoyo.hyperion',
-        'DS': get_old_version_ds(),
+        'User_Agent':        'Mozilla/5.0 (Linux; Android 10; MIX 2 Build/QKQ1.190825.002; wv) AppleWebKit/537.36 ('
+                             'KHTML, like Gecko) Version/4.0 Chrome/83.0.4103.101 Mobile Safari/537.36 '
+                             'miHoYoBBS/2.3.0',
+        'Cookie':            cookie,
+        'x-rpc-device_id':   random_hex(32),
+        'Origin':            'https://webstatic.mihoyo.com',
+        'X_Requested_With':  'com.mihoyo.hyperion',
+        'DS':                get_old_version_ds(),
         'x-rpc-client_type': '5',
-        'Referer': 'https://webstatic.mihoyo.com/bbs/event/signin-ys/index.html?bbs_auth_required=true&act_id'
-                   '=e202009291139501&utm_source=bbs&utm_medium=mys&utm_campaign=icon',
+        'Referer':           'https://webstatic.mihoyo.com/bbs/event/signin-ys/index.html?bbs_auth_required=true&act_id'
+                             '=e202009291139501&utm_source=bbs&utm_medium=mys&utm_campaign=icon',
         'x-rpc-app_version': '2.3.0'
     }
     return headers
@@ -300,12 +319,12 @@ def get_sign_headers(cookie):
 async def check_cookie(cookie):
     url = 'https://bbs-api.mihoyo.com/user/wapi/getUserFullInfo?gids=2'
     headers = {
-        'DS': get_ds(),
-        'Origin': 'https://webstatic.mihoyo.com',
-        'Cookie': cookie,
+        'DS':                get_ds(),
+        'Origin':            'https://webstatic.mihoyo.com',
+        'Cookie':            cookie,
         'x-rpc-app_version': "2.11.1",
         'x-rpc-client_type': '5',
-        'Referer': 'https://webstatic.mihoyo.com/'
+        'Referer':           'https://webstatic.mihoyo.com/'
     }
     async with ClientSession() as session:
         res = await session.get(url=url, headers=headers)
