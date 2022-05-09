@@ -88,7 +88,7 @@ async def update_ckjl(bot,ev):
 
 @sv.on_prefix('查看抽卡记录', 'ckjl', 'gachalog')
 async def get_ckjl(bot,ev):
-    uid, msg, user_id, use_cache = get_uid_in_msg(ev)
+    uid, msg, user_id, use_cache = await get_uid_in_msg(ev)
     if not uid:
         await bot.send(ev,'请把uid给派蒙哦，比如获取抽卡记录100000001 链接',at_sender=True)
         return 
