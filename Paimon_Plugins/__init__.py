@@ -13,10 +13,10 @@ import random
 
 superuser = int(list(get_driver().config.superusers)[0])
 
-duilian = on_command('对联', aliases={'对对联'}, priority=15, block=True)
-cat_pic = on_command('猫图', aliases={'来点猫片', '看看猫猫', '来个猫猫'}, priority=15, block=True)
-ecy_pic = on_regex(r'^来点(二次元|二刺螈|银发|兽耳|星空|竖屏|横屏)图?$', priority=15, block=True)
-ys_pic = on_command('原神壁纸', aliases={'来点原神图', '来点原神壁纸'}, priority=15, block=True)
+duilian = on_command('对联', aliases={'对对联'}, priority=13, block=True)
+cat_pic = on_command('猫图', aliases={'来点猫片', '看看猫猫', '来个猫猫'}, priority=13, block=True)
+ecy_pic = on_regex(r'^来点(二次元|二刺螈|银发|兽耳|星空|竖屏|横屏)图?$', priority=13, block=True)
+ys_pic = on_command('原神壁纸', aliases={'来点原神图', '来点原神壁纸'}, priority=13, block=True)
 
 duilian_limit = FreqLimiter(config.paimon_duilian_cd)
 cat_lmt = FreqLimiter(config.paimon_cat_cd)
