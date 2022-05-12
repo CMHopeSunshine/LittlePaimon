@@ -207,9 +207,9 @@ async def draw_daily_note_card(data, uid):
         recover_time_str = f'将于{recover_time_day}{recover_time.strftime("%H:%M")}回满'
         bg_draw.text((780, 480), recover_time_str, fill='white', font=get_font(40, '优设标题黑.ttf'))
     # 宝钱文字
-    bg_draw.text((337, 701), f"{data['current_home_coin']}/2400", fill='white', font=get_font(48, 'number.ttf'))
-    bg_img.alpha_composite(await draw_ring(data['current_home_coin'] / 2400), (98, 593))
-    if data['current_home_coin'] == 2400:
+    bg_draw.text((337, 701), f"{data['current_home_coin']}/{data['max_home_coin']}", fill='white', font=get_font(48, 'number.ttf'))
+    bg_img.alpha_composite(await draw_ring(data['current_home_coin'] / data['max_home_coin']), (98, 593))
+    if data['current_home_coin'] == data['max_home_coin']:
         bg_draw.text((820, 701), f"洞天宝钱满了哦~", fill='white', font=get_font(40, '优设标题黑.ttf'))
     else:
         recover_time = datetime.datetime.now() + datetime.timedelta(seconds=int(data['home_coin_recovery_time']))
@@ -273,22 +273,25 @@ async def draw_daily_note_card(data, uid):
         if role['status'] == 'Ongoing':
             bg_img.alpha_composite(circle_img, (i * 200 + 172, 1559))
             hour = int(role['remained_time']) // 3600
-            bg_draw.text((i * 200 + 205, 1580), f"{hour}h", fill='white', font=get_font(40, 'number.ttf'))
+            bg_draw.text((i * 200 + 212, 1580), f"{hour}h", fill='white', font=get_font(40, 'number.ttf'))
             minute = int(role['remained_time']) % 3600 // 60
-            bg_draw.text((i * 200 + 200, 1620), f"{minute}m", fill='white', font=get_font(40, 'number.ttf'))
+            bg_draw.text((i * 200 + 197, 1620), f"{minute}m", fill='white', font=get_font(40, 'number.ttf'))
         else:
             bg_img.alpha_composite(finished_icon, (i * 200 + 191, 1576))
         i += 1
 
-    bg_draw.text((1210, 1580), "距离派遣全", fill="#5680d2", font=get_font(40, '优设标题黑.ttf'))
-    bg_draw.text((1210, 1620), "部完成还有", fill="#5680d2", font=get_font(40, '优设标题黑.ttf'))
-    max_time = int(max(exp, key=lambda x: x['remained_time'])['remained_time'])
+    bg_draw.text((1220, 1580), "派遣全部", fill="#5680d2", font=get_font(40, '优设标题黑.ttf'))
+    bg_draw.text((1220, 1620), "完成时间", fill="#5680d2", font=get_font(40, '优设标题黑.ttf'))
+    max_time = int(max([s['remained_time'] for s in exp]))
     if max_time == 0:
         bg_draw.text((1410, 1583), "已全部完成~", fill="#5680d2",
                      font=get_font(60, '优设标题黑.ttf'))
     else:
-        bg_draw.text((1410, 1593), f"{max_time // 3600}h{max_time % 3600 // 60}m{max_time & 60}s", fill="#5680d2",
-                     font=get_font(60, 'number.ttf'))
+        last_finish_time = datetime.datetime.now() + datetime.timedelta(seconds=max_time)
+        last_finish_day = last_finish_time.day > datetime.datetime.now().day and '明天' or '今天'
+        last_finish_str = f'{last_finish_day}{last_finish_time.strftime("%H:%M")}'
+        bg_draw.text((1408, 1588), last_finish_str, fill="#5680d2",
+                     font=get_font(60, '优设标题黑.ttf'))
 
     role_img = random.choice(os.listdir(os.path.join(res_path, 'emoticons')))
     role_img = Image.open(os.path.join(res_path, 'emoticons', role_img)).convert('RGBA')
@@ -296,7 +299,7 @@ async def draw_daily_note_card(data, uid):
     bg_img.alpha_composite(role_img, (1220, 200))
     now = datetime.datetime.now().strftime('%m月%d日%H:%M')
     bg_draw.text((554, 1794), 'Created by LittlePaimon·' + now, fill='#5680d2', font=get_font(40, '优设标题黑.ttf'))
-    bg_img = bg_img.resize((int(bg_img.size[0] * 0.4), int(bg_img.size[1] * 0.4)), Image.ANTIALIAS)
+    bg_img = bg_img.resize((int(bg_img.size[0] * 0.37), int(bg_img.size[1] * 0.37)), Image.ANTIALIAS)
     bg_img = pil2b64(bg_img)
     bg_img = MessageSegment.image(bg_img)
     return bg_img
