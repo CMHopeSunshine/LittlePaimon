@@ -11,6 +11,7 @@ import functools
 import inspect
 import json
 import asyncio
+from PIL import Image
 from json import JSONDecodeError
 from aiohttp import ClientSession
 from nonebot import get_bot
@@ -83,15 +84,15 @@ def exception_handler():
                 await func(**kwargs)
             except FinishedException:
                 raise
-            except ActionFailed as e:
+            except ActionFailed:
                 logger.exception('账号可能被风控，消息发送失败')
-                await get_bot().send(event, f'派蒙可能被风控，消息发送失败，{e.info["wording"]}')
+                await get_bot().send(event, f'派蒙可能被风控，也可能是没有该图片资源，消息发送失败')
             except JSONDecodeError:
                 await get_bot().send(event, '派蒙获取信息失败，重试一下吧')
-            except IndexError or KeyError as e:
-                await get_bot().send(event, f'派蒙获取信息失败，请确认参数无误，{e}')
-            except TypeError or AttributeError as e:
-                await get_bot().send(event, f'派蒙好像没有该UID的绑定信息， {e}')
+            # except IndexError or KeyError as e:
+            #     await get_bot().send(event, f'派蒙获取信息失败，请确认参数无误，{e}')
+            # except TypeError or AttributeError as e:
+            #     await get_bot().send(event, f'派蒙好像没有该UID的绑定信息， {e}')
             except FileNotFoundError as e:
                 file_name = re.search(r'\'(.*)\'', str(e)).group(1)
                 file_name = file_name.replace('\\\\', '/').split('/')
@@ -135,6 +136,14 @@ class FreqLimiter2:
 
     def left_time(self, key1, key2) -> int:
         return int(self.next_time[key1][key2] - time()) + 1
+
+
+async def get_pic(url):
+    async with ClientSession() as session:
+        res = await session.get(url)
+        res = await res.read()
+        img = Image.open(BytesIO(res))
+        return img
 
 
 # 获取可用的cookie

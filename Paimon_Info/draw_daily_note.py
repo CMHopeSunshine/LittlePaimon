@@ -299,7 +299,7 @@ async def draw_daily_note_card(data, uid):
     bg_img.alpha_composite(role_img, (1220, 200))
     now = datetime.datetime.now().strftime('%m月%d日%H:%M')
     bg_draw.text((554, 1794), 'Created by LittlePaimon·' + now, fill='#5680d2', font=get_font(40, '优设标题黑.ttf'))
-    bg_img = bg_img.resize((int(bg_img.size[0] * 0.37), int(bg_img.size[1] * 0.37)), Image.ANTIALIAS)
-    bg_img = pil2b64(bg_img)
+    bg_img = bg_img.resize((int(bg_img.size[0] * 0.35), int(bg_img.size[1] * 0.35)), Image.ANTIALIAS)
+    bg_img = pil2b64(bg_img, 70)
     bg_img = MessageSegment.image(bg_img)
     return bg_img

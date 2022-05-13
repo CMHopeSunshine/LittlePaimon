@@ -42,3 +42,4 @@ def create_matcher(chat_word: str, pattern: str, cooldown: int, pro: float, resp
 for k, v in chat_list.items():
     create_matcher(k, v['pattern'], v['cooldown'], v['pro'], v['files'])
 
+

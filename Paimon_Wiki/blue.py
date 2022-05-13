@@ -1,3 +1,5 @@
+from ..utils.util import get_pic, pil2b64
+
 blue = {
     '胡桃': ['火', (0, 1886)],
     '托马': ['火', (1886, 2420)],
@@ -54,8 +56,11 @@ blue = {
 }
 
 
-def get_blue_pic(name):
+async def get_blue_pic(name):
     for c in blue.items():
         if c[0] == name:
-            return c[1]
+            img = await get_pic(f'https://cherishmoon.oss-cn-shenzhen.aliyuncs.com/LittlePaimon/blue/{c[1][0]}.jpg')
+            img = img.crop((0, c[1][1][0], 1080, c[1][1][1]))
+            img = pil2b64(img, 100)
+            return img
     return None
