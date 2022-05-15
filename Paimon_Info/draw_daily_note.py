@@ -1,12 +1,12 @@
 import random
 import datetime
-from io import BytesIO
+# from io import BytesIO
 import os
 from PIL import Image, ImageDraw, ImageFont
 import matplotlib.pyplot as plt
-from aiohttp import ClientSession
+# from aiohttp import ClientSession
 from nonebot.adapters.onebot.v11 import MessageSegment
-from ..utils.util import pil2b64
+from ..utils.util import pil2b64, get_pic
 
 res_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'res')
 
@@ -157,14 +157,6 @@ def get_font(size, font='msyhbd.ttc'):
     return ImageFont.truetype(os.path.join(res_path, font), size)
 
 
-async def get_avatar_pic(avatar_url):
-    async with ClientSession() as session:
-        res = await session.get(avatar_url)
-        res = await res.read()
-        avatar = Image.open(BytesIO(res)).convert("RGBA").resize((135, 135))
-        return avatar
-
-
 async def draw_ring(per):
     per_list = [per, 1 - per]
     colors = ['#507bd0', '#FFFFFF']
@@ -267,7 +259,7 @@ async def draw_daily_note_card(data, uid):
     exp = data['expeditions']
     i = 0
     for role in exp:
-        role_avatar = await get_avatar_pic(role['avatar_side_icon'])
+        role_avatar = await get_pic(role['avatar_side_icon'], (135, 135), 'RGBA')
         bg_img.alpha_composite(role_avatar, (i * 200 + 168, 1537))
         bg_img.alpha_composite(await draw_ring(1 - int(role['remained_time']) / 72000), (i * 201 + 101, 1490))
         if role['status'] == 'Ongoing':
@@ -293,8 +285,7 @@ async def draw_daily_note_card(data, uid):
         bg_draw.text((1408, 1588), last_finish_str, fill="#5680d2",
                      font=get_font(60, '优设标题黑.ttf'))
 
-    role_img = random.choice(os.listdir(os.path.join(res_path, 'emoticons')))
-    role_img = Image.open(os.path.join(res_path, 'emoticons', role_img)).convert('RGBA')
+    role_img = Image.open(os.path.join(res_path, 'emoticons', random.choice(os.listdir(os.path.join(res_path, 'emoticons'))))).convert('RGBA')
     role_img = role_img.resize((int(role_img.size[0] * 3.5), int(role_img.size[1] * 3.5)), Image.ANTIALIAS)
     bg_img.alpha_composite(role_img, (1220, 200))
     now = datetime.datetime.now().strftime('%m月%d日%H:%M')

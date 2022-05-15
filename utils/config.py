@@ -20,7 +20,7 @@ class PluginConfig(BaseModel):
     # 自动签到开始时间（分钟）
     paimon_sign_minute: int = 0
     # 对联冷却（秒）
-    paimon_duilian_cd: int = 6
+    paimon_couplets_cd: int = 6
     # 猫图冷却（秒）
     paimon_cat_cd: int = 12
     # 二次元图冷却（秒）
@@ -33,6 +33,8 @@ class PluginConfig(BaseModel):
     paimon_add_group: bool = False
     # 派蒙聊天开启群组
     paimon_chat_group: List[int] = []
+    # 派蒙猜语音持续时间
+    paimon_guess_voice: int = 30
 
 
 driver = get_driver()

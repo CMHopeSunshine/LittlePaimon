@@ -2,7 +2,7 @@ import random
 from PIL import Image, ImageDraw, ImageFont
 import os
 import matplotlib.pyplot as plt
-from io import BytesIO
+# from io import BytesIO
 from ..utils.util import pil2b64
 from nonebot.adapters.onebot.v11 import MessageSegment
 
@@ -30,31 +30,17 @@ async def get_box(t, num):
     return box
 
 
-async def draw_circle(per, colors):
+async def draw_ring(per, colors):
     plt.pie(per, startangle=90, colors=colors)
     fig, ax = plt.subplots(figsize=(6, 6))
     ax.pie(per,
            wedgeprops={'width': 0.29},
            startangle=90,
            colors=colors)
-
-    buffer = BytesIO()
-    canvas = plt.get_current_fig_manager().canvas
-    canvas.draw()
-    pil_image = Image.frombytes('RGB', canvas.get_width_height(),
-                                canvas.tostring_rgb())
-    pil_image.save(buffer, 'PNG')
-    plt.close()
-    pil_image = pil_image.convert('RGBA')
-    w, h = pil_image.size
-    array = pil_image.load()
-    for i in range(w):
-        for j in range(h):
-            pos = array[i, j]
-            isEdit = (sum([1 for x in pos[0:3] if x > 240]) == 3)
-            if isEdit:
-                array[i, j] = (255, 255, 255, 0)
-    return pil_image.resize((378, 378))
+    plt.savefig('temp.png', transparent=True)
+    img = Image.open('temp.png').resize((378, 378)).convert('RGBA')
+    os.remove('temp.png')
+    return img
 
 
 async def draw_monthinfo_card(data):
@@ -87,11 +73,10 @@ async def draw_monthinfo_card(data):
     bg_img.alpha_composite(await get_box('原石', data['day_data']['current_primogems']), (40, 328))
     bg_img.alpha_composite(await get_box('摩拉', data['day_data']['current_mora']), (40, 388))
     # 表情
-    emoticons_list = ['丽莎-干得漂亮', '九条裟罗-开心', '五郎-开心', '优菈-赞扬', '刻晴-点赞', '可莉-好耶', '宵宫-得意', '枫原万叶-偷笑', '派蒙-出货吧', '温迪-期待',
-                      '珊瑚宫心海-祈祷', '琴-赞扬', '神里绫华-偷笑', '胡桃-爱心', '荒泷一斗-大笑', '钟离-我全都要', '雷电将军-轻笑']
-    emoticon1 = Image.open(os.path.join(res_path, 'emoticons', f'{random.choice(emoticons_list)}.png')).convert('RGBA')
+
+    emoticon1 = Image.open(os.path.join(res_path, 'emoticons', random.choice(os.listdir(os.path.join(res_path, 'emoticons'))))).convert('RGBA')
     bg_img.alpha_composite(emoticon1, (360, 140))
-    emoticon2 = Image.open(os.path.join(res_path, 'emoticons', f'{random.choice(emoticons_list)}.png')).convert('RGBA')
+    emoticon2 = Image.open(os.path.join(res_path, 'emoticons', random.choice(os.listdir(os.path.join(res_path, 'emoticons'))))).convert('RGBA')
     bg_img.alpha_composite(emoticon2, (360, 317))
 
     bg_img.alpha_composite(line, (64, 480))
@@ -106,7 +91,7 @@ async def draw_monthinfo_card(data):
     name_list = [x['action'] for x in data['month_data']['group_by']]
     num_list = [x['num'] for x in data['month_data']['group_by']]
     color_list = [color[x] for x in name_list]
-    bg_img.alpha_composite(await draw_circle(per_list, color_list), (-12, 489))
+    bg_img.alpha_composite(await draw_ring(per_list, color_list), (-12, 489))
     # 百分比描述
     h = 550
     for name in name_list:

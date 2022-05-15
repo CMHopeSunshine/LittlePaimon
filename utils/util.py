@@ -1,11 +1,13 @@
 import hashlib
 from collections import defaultdict
 from io import BytesIO
+from pathlib import Path
 import random
 import base64
 import datetime
 from time import time
 import re
+import os
 import string
 import functools
 import inspect
@@ -138,11 +140,16 @@ class FreqLimiter2:
         return int(self.next_time[key1][key2] - time()) + 1
 
 
-async def get_pic(url):
+# 从网络url中获取图片
+async def get_pic(url: str, size: tuple = None, mode: str = None):
     async with ClientSession() as session:
         res = await session.get(url)
         res = await res.read()
         img = Image.open(BytesIO(res))
+        if size:
+            img = img.resize(size)
+        if mode:
+            img = img.convert(mode)
         return img
 
 
@@ -361,3 +368,25 @@ async def send_cookie_delete_msg(cookie_info):
                 await get_bot().send_private_msg(user_id=superuser, message=msg + '，派蒙帮你删除啦!')
             except Exception as e:
                 logger.error(f'发送cookie删除消息失败: {e}')
+
+
+def load_data(data_file):
+    data_path = Path() / 'data' / 'LittlePaimon' / data_file
+    if not data_path.exists():
+        save_data({}, data_file)
+    return json.load(data_path.open('r', encoding='utf-8'))
+
+
+def save_data(data, data_file):
+    data_path = Path() / 'data' / 'LittlePaimon' / data_file
+    data_path.parent.mkdir(parents=True, exist_ok=True)
+    json.dump(data, data_path.open('w', encoding='utf-8'), ensure_ascii=False, indent=2)
+
+
+def get_id(event):
+    if event.message_type == 'private':
+        return event.user_id
+    elif event.message_type == 'group':
+        return event.group_id
+    elif event.message_type == 'guild':
+        return event.channel_id

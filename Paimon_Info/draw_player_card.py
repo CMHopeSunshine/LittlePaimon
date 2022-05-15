@@ -1,9 +1,9 @@
 import os, random, re
 from PIL import Image, ImageDraw, ImageFont
-from ..utils.util import pil2b64
+from ..utils.util import pil2b64, get_pic
 from nonebot.adapters.onebot.v11 import MessageSegment
-from aiohttp import ClientSession
-from io import BytesIO
+# from aiohttp import ClientSession
+# from io import BytesIO
 import copy
 
 res_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'res')
@@ -43,13 +43,14 @@ async def get_chara_card(data):
     weapon_bg = Image.open(os.path.join(res_path, 'player_card', f'{data["weapon"]["rarity"]}星武器.png'))
     chara_card.alpha_composite(weapon_bg, (0, 227))
     # 武器图标
-    weapon_name = data['weapon']['icon'].split('/')[-1]
-    if not os.path.exists(os.path.join(res_path, 'weapon', weapon_name)):
-        async with ClientSession() as session:
-            weapon_icon = await (await session.get(data['weapon']['icon'])).read()
-            weapon_icon = Image.open(BytesIO(weapon_icon)).convert("RGBA")
-            weapon_icon.save(os.path.join(res_path, 'weapon', weapon_name))
-    weapon_icon = Image.open(os.path.join(res_path, 'weapon', weapon_name)).resize((63, 63))
+    # weapon_name = data['weapon']['icon'].split('/')[-1]
+    # if not os.path.exists(os.path.join(res_path, 'weapon', weapon_name)):
+    #     async with ClientSession() as session:
+    #         weapon_icon = await (await session.get(data['weapon']['icon'])).read()
+    #         weapon_icon = Image.open(BytesIO(weapon_icon)).convert("RGBA")
+    #         weapon_icon.save(os.path.join(res_path, 'weapon', weapon_name))
+    # weapon_icon = Image.open(os.path.join(res_path, 'weapon', weapon_name)).resize((63, 63))
+    weapon_icon = await get_pic(data['weapon']['icon'], (63, 63), 'RGBA')
     chara_card.alpha_composite(weapon_icon, (0, 230))
     # 等级信息
     chara_draw = ImageDraw.Draw(chara_card)
@@ -273,13 +274,14 @@ async def get_chara_card_long(data):
     weapon_bg = Image.open(os.path.join(res_path, 'player_card', f'{data["weapon"]["rarity"]}星武器.png'))
     chara_card.alpha_composite(weapon_bg, (3, 288))
     # 武器图标
-    weapon_name = data['weapon']['icon'].split('/')[-1]
-    if not os.path.exists(os.path.join(res_path, 'weapon', weapon_name)):
-        async with ClientSession() as session:
-            weapon_icon = await (await session.get(data['weapon']['icon'])).read()
-            weapon_icon = Image.open(BytesIO(weapon_icon)).convert("RGBA")
-            weapon_icon.save(os.path.join(res_path, 'weapon', weapon_name))
-    weapon_icon = Image.open(os.path.join(res_path, 'weapon', weapon_name)).resize((62, 62))
+    # weapon_name = data['weapon']['icon'].split('/')[-1]
+    # if not os.path.exists(os.path.join(res_path, 'weapon', weapon_name)):
+    #     async with ClientSession() as session:
+    #         weapon_icon = await (await session.get(data['weapon']['icon'])).read()
+    #         weapon_icon = Image.open(BytesIO(weapon_icon)).convert("RGBA")
+    #         weapon_icon.save(os.path.join(res_path, 'weapon', weapon_name))
+    # weapon_icon = Image.open(os.path.join(res_path, 'weapon', weapon_name)).resize((62, 62))
+    weapon_icon = await get_pic(data['weapon']['icon'], (62, 62), 'RGBA')
     chara_card.alpha_composite(weapon_icon, (3, 291))
     # 等级信息
     chara_draw = ImageDraw.Draw(chara_card)
@@ -345,13 +347,14 @@ shadow = Image.open(os.path.join(res_path, 'other', 'shadow.png'))
 
 async def draw_reli_icon(data):
     base_icon = Image.open(os.path.join(res_path, 'other', f'star{data["rarity"]}.png')).resize((80, 80))
-    if not os.path.exists(os.path.join(res_path, 'reliquaries', f'{data["id"]}.png')):
-        async with ClientSession() as session:
-            icon = await (await session.get(data["icon"])).read()
-            icon = Image.open(BytesIO(icon)).convert("RGBA").resize((80, 80))
-            icon.save(os.path.join(res_path, 'reliquaries', f'{data["id"]}.png'))
-    else:
-        icon = Image.open(os.path.join(res_path, 'reliquaries', f'{data["id"]}.png')).resize((80, 80))
+    # if not os.path.exists(os.path.join(res_path, 'reliquaries', f'{data["id"]}.png')):
+    #     async with ClientSession() as session:
+    #         icon = await (await session.get(data["icon"])).read()
+    #         icon = Image.open(BytesIO(icon)).convert("RGBA").resize((80, 80))
+    #         icon.save(os.path.join(res_path, 'reliquaries', f'{data["id"]}.png'))
+    # else:
+    #     icon = Image.open(os.path.join(res_path, 'reliquaries', f'{data["id"]}.png')).resize((80, 80))
+    icon = await get_pic(data["icon"], (80, 80), 'RGBA')
     base_icon.alpha_composite(icon, (0, 0))
     base_icon.alpha_composite(shadow, (40, 60))
     base_icon_draw = ImageDraw.Draw(base_icon)
@@ -361,13 +364,14 @@ async def draw_reli_icon(data):
 
 async def draw_const_skill_icon(data, name):
     base_icon = Image.open(os.path.join(res_path, 'other', '命座.png')).resize((65, 65))
-    if not os.path.exists(os.path.join(res_path, 'skill_constellations', f'{name}{data["id"]}.png')):
-        async with ClientSession() as session:
-            icon = await (await session.get(data["icon"])).read()
-            icon = Image.open(BytesIO(icon)).convert("RGBA").resize((65, 65))
-            icon.save(os.path.join(res_path, 'reliquaries', f'{name}{data["id"]}.png'))
-    else:
-        icon = Image.open(os.path.join(res_path, 'reliquaries', f'{name}{data["id"]}.png')).resize((65, 65))
+    # if not os.path.exists(os.path.join(res_path, 'skill_constellations', f'{name}{data["id"]}.png')):
+    #     async with ClientSession() as session:
+    #         icon = await (await session.get(data["icon"])).read()
+    #         icon = Image.open(BytesIO(icon)).convert("RGBA").resize((65, 65))
+    #         icon.save(os.path.join(res_path, 'reliquaries', f'{name}{data["id"]}.png'))
+    # else:
+    #     icon = Image.open(os.path.join(res_path, 'reliquaries', f'{name}{data["id"]}.png')).resize((65, 65))
+    icon = await get_pic(data["icon"], (65, 65), 'RGBA')
     base_icon.alpha_composite(icon, (0, 0))
     if 'is_actived' in data and not data['is_actived']:
         unlock_icon = Image.open(os.path.join(res_path, 'other', '命座未解锁.png')).resize((65, 65))
