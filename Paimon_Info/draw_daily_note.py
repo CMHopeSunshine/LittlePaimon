@@ -245,8 +245,8 @@ async def draw_daily_note_card(data, uid):
                      font=get_font(40, '优设标题黑.ttf'))
         bg_draw.text((965, 1167), "周本减半", fill='white', font=get_font(40, '优设标题黑.ttf'))
     # 深渊文字
-    abyss_new_month = datetime.datetime.now().month if datetime.datetime.now().day < 16 else datetime.datetime.now().month + 1
-    abyss_new_day = 16 if datetime.datetime.now().day < 16 else 1
+    abyss_new_month = datetime.datetime.now().month if datetime.datetime.now().day <= 16 else datetime.datetime.now().month + 1
+    abyss_new_day = 16 if datetime.datetime.now().day <= 16 else 1
     abyss_new = datetime.datetime.strptime('2022.' + str(abyss_new_month) + '.' + str(abyss_new_day) + '.04:00',
                                            '%Y.%m.%d.%H:%M') - datetime.datetime.now()
     bg_draw.text((337, 1358), f"{abyss_new.days}/15", fill='white',
