@@ -35,7 +35,7 @@ def init_db(db_dir, db_name='db.sqlite', tablename='unnamed') -> SqliteDict:
     db_cache_key = db_name + tablename
     if db.get(db_cache_key):
         return db[db_cache_key]
-    db[db_cache_key] = SqliteDict(get_path(db_dir, db_name),
+    db[db_cache_key] = SqliteDict(str(get_path(db_dir, db_name)),
                                   tablename=tablename,
                                   encode=json.dumps,
                                   decode=json.loads,

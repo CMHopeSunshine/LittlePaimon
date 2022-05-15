@@ -25,9 +25,11 @@ update_ys_voice = on_command('更新原神语音资源', priority=12, permission
 
 
 async def download_voice(bot: Bot, event: Union[PrivateMessageEvent, GroupMessageEvent]):
-    await bot.send(event, '资源尚未初始化，现在开始下载资源，这需要较长的时间，请耐心等待')
-    await download_data.update_voice_data()
-    await bot.send(event, '资源下载完成，请重新发送指令开始游戏')
+    if not dir_name.exists():
+        dir_name.mkdir(parents=True, exist_ok=True)
+        await bot.send(event, '资源尚未初始化，现在开始下载资源，这需要较长的时间，请耐心等待')
+        await download_data.update_voice_data()
+        await bot.send(event, '资源下载完成，请重新发送指令开始游戏')
 
 
 @guess_game.handle()

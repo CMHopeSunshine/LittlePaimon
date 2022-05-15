@@ -36,7 +36,7 @@ dir_data.mkdir(parents=True, exist_ok=True)
 ############
 
 def init_db(db_dir, db_name='db.sqlite') -> SqliteDict:
-    return SqliteDict(get_path(db_dir, db_name),
+    return SqliteDict(str(get_path(db_dir, db_name)),
                       encode=json.dumps,
                       decode=json.loads,
                       autocommit=True)
