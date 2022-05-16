@@ -34,7 +34,7 @@ async def genshinguide(bot,ev):
         cq_img = f'[CQ:image,file=file:///{path}]'
         await bot.send(ev,cq_img,at_sender=True)
     else:
-        img = f'[CQ:image,file=https://adachi-bot.oss-cn-beijing.aliyuncs.com/Version2/guide/{realname[1][0]}.png]'
+        img = f'[CQ:image,file=https://cherishmoon.oss-cn-shenzhen.aliyuncs.com/LittlePaimon/XFGuide/{realname[1][0]}.png]'
         await bot.send(ev,img)
 
 @sv.on_prefix('角色材料')
