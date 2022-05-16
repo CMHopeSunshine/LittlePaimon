@@ -245,8 +245,8 @@ async def draw_daily_note_card(data, uid):
                      font=get_font(40, '优设标题黑.ttf'))
         bg_draw.text((965, 1167), "周本减半", fill='white', font=get_font(40, '优设标题黑.ttf'))
     # 深渊文字
-    abyss_new_month = datetime.datetime.now().month if datetime.datetime.now().day <= 16 else datetime.datetime.now().month + 1
-    abyss_new_day = 16 if datetime.datetime.now().day <= 16 else 1
+    abyss_new_month = datetime.datetime.now().month if datetime.datetime.now().day < 16 else datetime.datetime.now().month + 1
+    abyss_new_day = 15 if datetime.datetime.now().day < 16 else 1
     abyss_new = datetime.datetime.strptime('2022.' + str(abyss_new_month) + '.' + str(abyss_new_day) + '.04:00',
                                            '%Y.%m.%d.%H:%M') - datetime.datetime.now()
     bg_draw.text((337, 1358), f"{abyss_new.days}/15", fill='white',
@@ -263,7 +263,7 @@ async def draw_daily_note_card(data, uid):
         bg_img.alpha_composite(role_avatar, (i * 200 + 168, 1537))
         bg_img.alpha_composite(await draw_ring(1 - int(role['remained_time']) / 72000), (i * 201 + 101, 1490))
         if role['status'] == 'Ongoing':
-            bg_img.alpha_composite(circle_img, (i * 200 + 172, 1559))
+            bg_img.alpha_composite(circle_img, (i * 201 + 172, 1559))
             hour = int(role['remained_time']) // 3600
             bg_draw.text((i * 200 + 212, 1580), f"{hour}h", fill='white', font=get_font(40, 'number.ttf'))
             minute = int(role['remained_time']) % 3600 // 60
