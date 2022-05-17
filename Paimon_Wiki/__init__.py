@@ -31,6 +31,7 @@ attribute2 = on_endswith('收益曲线', priority=6, block=True)
 daily_material = on_endswith(('材料', '天赋材料', '突破材料'), priority=6, block=True)
 abyss_rate = on_command('syrate', aliases={'深渊登场率', '深境螺旋登场率', '深渊登场率排行', '深渊排行'}, priority=6, block=True)
 abyss_team = on_regex(r'^(深渊|深境螺旋)(?P<floor>上半|下半)阵容(排行|出场率)?$', priority=5, block=True)
+weapon_guide = on_endswith('武器攻略', priority=6, block=True)
 
 
 @guide.handle()
@@ -40,7 +41,7 @@ async def genshin_guide(event: MessageEvent):
     realname = get_id_by_alias(name)
     if name in ['风主', '岩主', '雷主'] or realname:
         name = realname[1][0] if name not in ['风主', '岩主', '雷主'] else name
-        img = MessageSegment.image(file=f'https://cherishmoon.oss-cn-shenzhen.aliyuncs.com/LittlePaimon/XFGuide/{name}.jpg')
+        img = MessageSegment.image(file=f'https://static.cherishmoon.fun/LittlePaimon/XFGuide/{name}.jpg')
         await guide.finish(img)
     else:
         await guide.finish(f'没有找到{name}的攻略', at_sender=True)
@@ -55,7 +56,7 @@ async def genshin_material(event: MessageEvent):
         name = realname[1][0] if realname else name
         print(name)
         img = MessageSegment.image(
-            file=f'https://cherishmoon.oss-cn-shenzhen.aliyuncs.com/LittlePaimon/RoleMaterials/{name}材料.jpg')
+            file=f'https://static.cherishmoon.fun/LittlePaimon/RoleMaterials/{name}材料.jpg')
         await material.finish(img)
     else:
         await material.finish(f'没有找到{name}的材料', at_sender=True)
@@ -81,7 +82,7 @@ async def genshinAttribute2(event: MessageEvent):
     realname = get_id_by_alias(name)
     if name in ['风主', '岩主', '雷主'] or realname:
         name = realname[1][0] if name not in ['风主', '岩主', '雷主'] else name
-        img = MessageSegment.image(file=f'https://cherishmoon.oss-cn-shenzhen.aliyuncs.com/LittlePaimon/blue/{name}.jpg')
+        img = MessageSegment.image(file=f'https://static.cherishmoon.fun/LittlePaimon/blue/{name}.jpg')
         await attribute2.finish(img)
     else:
         await attribute2.finish(f'没有找到{name}的收益曲线', at_sender=True)
@@ -111,13 +112,13 @@ async def daily_material_handle(event: MessageEvent):
             if week == "0":
                 await daily_material.finish('周日所有材料都可以刷哦!', at_sender=True)
             elif week in ['1', '4']:
-                img = MessageSegment.image(file='https://cherishmoon.oss-cn-shenzhen.aliyuncs.com/LittlePaimon'
+                img = MessageSegment.image(file='https://static.cherishmoon.fun/LittlePaimon'
                                                 '/DailyMaterials/周一周四.jpg')
             elif week in ['2', '5']:
-                img = MessageSegment.image(file='https://cherishmoon.oss-cn-shenzhen.aliyuncs.com/LittlePaimon'
+                img = MessageSegment.image(file='https://static.cherishmoon.fun/LittlePaimon'
                                                 '/DailyMaterials/周二周五.jpg')
             else:
-                img = MessageSegment.image(file='https://cherishmoon.oss-cn-shenzhen.aliyuncs.com/LittlePaimon'
+                img = MessageSegment.image(file='https://static.cherishmoon.fun/LittlePaimon'
                                                 '/DailyMaterials/周三周六.jpg')
             await daily_material.finish(img)
 
@@ -134,3 +135,10 @@ async def abyss_rate_handler(event: MessageEvent):
 async def abyss_team_handler(event: MessageEvent, reGroup=RegexDict()):
     abyss_img = await draw_teams_rate(reGroup['floor'])
     await abyss_team.finish(abyss_img)
+
+
+@weapon_guide.handle()
+@exception_handler()
+async def weapon_guide_handler(event: MessageEvent):
+    name: str = event.message.extract_plain_text().replace('武器攻略', '').strip()
+    await weapon_guide.finish(MessageSegment.image(file=f'https://static.cherishmoon.fun/LittlePaimon/WeaponGuild/{name}.png'))

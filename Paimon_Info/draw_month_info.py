@@ -110,7 +110,7 @@ async def draw_monthinfo_card(data):
         mlstr = f'多了{data["month_data"]["mora_rate"]}%'
     bg_img.alpha_composite(line, (64, 840))
     bg_draw.text((49, 857), f'本月相比上个月，原石{ysstr}，摩拉{mlstr}', font=get_font(23), fill='#27384C')
-    bg_draw.text((165, 900), 'Created by 惜月の小派蒙', font=get_font(21), fill='#27384C')
+    bg_draw.text((167, 900), 'Created by LittlePaimon', font=get_font(21), fill='#27384C')
 
     bg_img = pil2b64(bg_img, 70)
     bg_img = MessageSegment.image(bg_img)

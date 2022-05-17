@@ -3,11 +3,10 @@ import re
 import random
 from collections import defaultdict
 from asyncio import sleep
-from typing import Union
 from nonebot import on_command, require, logger, get_bot
 from nonebot.params import CommandArg
 from nonebot.permission import SUPERUSER
-from nonebot.adapters.onebot.v11 import MessageEvent, GroupMessageEvent, Message, Bot
+from nonebot.adapters.onebot.v11 import MessageEvent, Message, Bot
 from .get_data import get_bind_game, get_sign_info, sign, get_sign_list, get_abyss_data, get_daily_note_data
 from .get_data import get_monthinfo_data, get_player_card_data, get_chara_detail_data, get_chara_skill_data
 from .draw_abyss_info import draw_abyss_card
@@ -89,7 +88,7 @@ async def sy_handler(event: MessageEvent, msg: Message = CommandArg()):
 
 @ssbq.handle()
 @exception_handler()
-async def ssbq_handler(event: Union[MessageEvent, GroupMessageEvent], msg: Message = CommandArg()):
+async def ssbq_handler(event: MessageEvent, msg: Message = CommandArg()):
     if event.message_type == 'group':
         gid = str(event.group_id)
     else:
@@ -148,7 +147,7 @@ async def myzj_handler(event: MessageEvent, msg: Message = CommandArg()):
 
 @ys.handle()
 @exception_handler()
-async def ys_handler(bot: Bot, event: Union[MessageEvent, GroupMessageEvent], msg: Message = CommandArg()):
+async def ys_handler(bot: Bot, event: MessageEvent, msg: Message = CommandArg()):
     uid, msg, user_id, use_cache = await get_uid_in_msg(event, msg)
     if not uid:
         await ys.finish('请把正确的uid给派蒙哦,例如ys100123456!', at_sender=True)
@@ -284,7 +283,7 @@ async def mys_sign_handler(event: MessageEvent, msg: Message = CommandArg()):
 
 @mys_sign_auto.handle()
 @exception_handler()
-async def mys_sign_auto_handler(event: Union[MessageEvent, GroupMessageEvent], msg: Message = CommandArg()):
+async def mys_sign_auto_handler(event: MessageEvent, msg: Message = CommandArg()):
     if event.message_type != 'group':
         await mys_sign_auto.finish('自动签到功能暂时只限Q群内使用哦')
     msg = str(msg).strip()

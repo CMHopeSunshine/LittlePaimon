@@ -59,7 +59,7 @@ blue = {
 async def get_blue_pic(name):
     for c in blue.items():
         if c[0] == name:
-            img = await get_pic(f'https://cherishmoon.oss-cn-shenzhen.aliyuncs.com/LittlePaimon/blue/{c[1][0]}.jpg')
+            img = await get_pic(f'https://static.cherishmoon.fun/LittlePaimon/blue/{c[1][0]}.jpg')
             img = img.crop((0, c[1][1][0], 1080, c[1][1][1]))
             img = pil2b64(img, 100)
             return img

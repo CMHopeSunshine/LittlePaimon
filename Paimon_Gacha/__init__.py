@@ -83,7 +83,7 @@ async def show_log_handler(event: MessageEvent):
     gacha_list = user_info[uid]['gacha_list']
     if user_info[uid]['gacha_list']['wish_total'] == 0:
         await show_log.finish('你此前并没有抽过卡哦', at_sender=True)
-    msg = event.message.extract_plain_text().strip()
+    msg = event.message.extract_plain_text().replace('模拟抽卡记录').strip()
     if msg == '角色' or msg == '武器':
         res = get_rw_record(msg, uid)
     else:

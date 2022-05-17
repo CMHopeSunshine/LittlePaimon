@@ -15,7 +15,6 @@ from ..utils.config import config
 setting_time = config.paimon_guess_voice  # 游戏持续时间
 
 dir_name = Path() / 'LittlePaimon' / 'LittlePaimon' / 'Guess_voice' / 'voice'
-dir_name.mkdir(parents=True, exist_ok=True)
 
 
 guess_game = on_command('原神猜语音', priority=12, block=True)

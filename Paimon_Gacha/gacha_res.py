@@ -244,6 +244,6 @@ async def more_ten(uid, gacha_data, num, sd):
             item_img = await ten(uid, gacha_data, sd)
             img.paste(item_img, (0, 575 * i))
     draw = ImageDraw.Draw(img)
-    draw.text((27, 575 * num - 30), ('@%s %s  Created By 惜月の小派蒙' % (str(sd.nickname), time_str)), font=time_font,
+    draw.text((27, 575 * num - 30), ('@%s %s  Created By LittlePaimon' % (str(sd.nickname), time_str)), font=time_font,
               fill="#8E8E8E")
     return pil2b64(img, 75)

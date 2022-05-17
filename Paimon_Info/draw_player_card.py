@@ -516,7 +516,7 @@ async def draw_chara_card(data, skill_data, chara_name, uid):
         bg_img.alpha_composite(const_icon, const_p[i])
         i += 1
 
-    bg_draw.text((330, 371), 'Created by 惜月の小派蒙', font=get_font(20), fill='white')
+    bg_draw.text((330, 371), 'Created by LittlePaimon', font=get_font(20), fill='white')
     bg_img = pil2b64(bg_img, 70)
     bg_img = MessageSegment.image(bg_img)
     return bg_img

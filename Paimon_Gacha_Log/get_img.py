@@ -138,7 +138,7 @@ async def get_gacha_log_img(gacha_data, pool):
             now_height += (i.size)[1]
     img_draw = ImageDraw.Draw(img)
     img_draw.text((595, 44), f'UID:{gacha_data["uid"]}', font=get_font(16), fill='black')
-    img_draw.text((530, total_height - 45), 'Created by 惜月の小派蒙', font=get_font(16), fill='black')
+    img_draw.text((530, total_height - 45), 'Created by LittlePaimon', font=get_font(16), fill='black')
 
     img = pil2b64(img, 95)
     img = MessageSegment.image(img)
