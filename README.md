@@ -113,9 +113,9 @@ javascript:(function(){prompt(document.domain,document.cookie)})();
 
 - [NoneBot2](https://github.com/nonebot/nonebot2) - 跨平台异步机器人框架
 - [go-cqhttp](https://github.com/Mrs4s/go-cqhttp) - Onebot标准的框架实现
-- 西北一枝花 - 部分图片的美工大大
+- [Nwflower](https://github.com/Nwflower) - 部分图片的美工大大和武器攻略图提供
 - [egenshin](https://github.com/pcrbot/erinilis-modules/tree/master/egenshin) - 参考了它的抽卡代码和资源
-- [西风驿站](https://bbs.mihoyo.com/ys/collection/307224) - 角色攻略一图流来源
 - [bluemushoom](https://bbs.nga.cn/nuke.php?func=ucp&uid=62861898) - 全角色收益曲线和参考面板攻略图来源
 - [genshin-gacha-export](https://github.com/sunfkny/genshin-gacha-export) - 抽卡记录导出参考
+- [西风驿站](https://bbs.mihoyo.com/ys/collection/307224) - 角色攻略一图流来源
 - [游创工坊](https://space.bilibili.com/176858937) - 深渊排行榜数据来源
