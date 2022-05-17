@@ -9,6 +9,7 @@
     <img src="https://img.shields.io/badge/Python-3.8+-yellow" alt="python">
     <a href="https://qun.qq.com/qqweb/qunpro/share?_wv=3&_wwv=128&inviteCode=MmWrI&from=246610&biz=ka"><img src="https://img.shields.io/badge/QQ频道交流-尘世闲游-green?style=flat-square" alt="QQ guild"></a>
 </p>
+
 ## 简介
 
 原神多功能机器人，通过米游社接口查询uid的游戏信息，并提供WIKI查询和各种各样的好玩的功能。
@@ -90,9 +91,9 @@
 ### 我不熟悉NoneBot2：
 **详细部署教程：**
 
-- [Linux](https://blog.cherishmoon.fun/bot/HoshinoDeploy.html#linux)
-- [安卓系统](https://blog.cherishmoon.fun/bot/HoshinoDeploy.html#%E5%9C%A8%E5%AE%89%E5%8D%93%E6%89%8B%E6%9C%BA%E4%B8%8A%E9%83%A8%E7%BD%B2)
-- [Windows](https://blog.cherishmoon.fun/bot/HoshinoDeploy.html#windows)
+- [Linux](https://blog.cherishmoon.fun/bot/NoneBot2Deploy.html#linux)
+- [安卓系统](https://blog.cherishmoon.fun/bot/NoneBot2Deploy.html#%E5%9C%A8%E5%AE%89%E5%8D%93%E6%89%8B%E6%9C%BA%E4%B8%8A%E9%83%A8%E7%BD%B2)
+- [Windows](https://blog.cherishmoon.fun/bot/NoneBot2Deploy.html#windows)
 
 ### 添加公共cookie
 
