@@ -100,7 +100,7 @@ async def get_chara_detail_data(user_id, uid, use_cache=True):
 @cache(ttl=datetime.timedelta(hours=1))
 async def get_chara_skill_data(uid, chara_id, use_cache=True):
     server_id = "cn_qd01" if uid[0] == '5' else "cn_gf01"
-    url = 'https://api-takumi-record.mihoyo.com/event/e20200928calculate/v1/sync/avatar/detail'
+    url = 'https://api-takumi.mihoyo.com/event/e20200928calculate/v1/sync/avatar/detail'
     cookie = await get_own_cookie(uid, action='查询角色天赋')
     if not cookie:
         return None
@@ -120,7 +120,7 @@ async def get_chara_skill_data(uid, chara_id, use_cache=True):
 @cache(ttl=datetime.timedelta(hours=1))
 async def get_monthinfo_data(uid, month, use_cache=True):
     server_id = "cn_qd01" if uid[0] == '5' else "cn_gf01"
-    url = 'https://hk4e-api-record.mihoyo.com/event/ys_ledger/monthInfo'
+    url = 'https://hk4e-api.mihoyo.com/event/ys_ledger/monthInfo'
     cookie = await get_own_cookie(uid, action='查询每月札记')
     if not cookie:
         return f'你的uid{uid}没有绑定对应的cookie,使用ysb绑定才能用每月札记哦!'
