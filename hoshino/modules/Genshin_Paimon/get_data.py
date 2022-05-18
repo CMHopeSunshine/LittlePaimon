@@ -8,7 +8,7 @@ import random
 @cache(ttl=datetime.timedelta(hours=1))
 async def get_abyss_data(user_id, uid, schedule_type = "1", use_cache=True):
     server_id = "cn_qd01" if uid[0] == '5' else "cn_gf01"
-    url ="https://api-takumi.mihoyo.com/game_record/app/genshin/api/spiralAbyss"
+    url ="https://api-takumi-record.mihoyo.com/game_record/app/genshin/api/spiralAbyss"
     params ={
         "schedule_type": schedule_type,
         "role_id": uid,
@@ -29,7 +29,7 @@ async def get_abyss_data(user_id, uid, schedule_type = "1", use_cache=True):
 
 async def get_daily_note_data(uid):
     server_id = "cn_qd01" if uid[0] == '5' else "cn_gf01"
-    url ="https://api-takumi.mihoyo.com/game_record/app/genshin/api/dailyNote"
+    url ="https://api-takumi-record.mihoyo.com/game_record/app/genshin/api/dailyNote"
     cookie = await get_own_cookie(uid, action='查询实时便签')
     if not cookie:
         return f'你的uid{uid}没有绑定对应的cookie,使用ysb绑定才能用实时便签哦!'
@@ -50,7 +50,7 @@ async def get_daily_note_data(uid):
 @cache(ttl=datetime.timedelta(hours=1))
 async def get_player_card_data(user_id, uid, use_cache=True):
     server_id = "cn_qd01" if uid[0] == '5' else "cn_gf01"
-    url ="https://api-takumi.mihoyo.com/game_record/app/genshin/api/index"
+    url ="https://api-takumi-record.mihoyo.com/game_record/app/genshin/api/index"
     params = {
         "server": server_id,
         "role_id": uid
@@ -76,7 +76,7 @@ async def get_chara_detail_data(user_id, uid, use_cache=True):
         "role_id": uid,
         "character_ids": []
     }
-    url = 'https://api-takumi.mihoyo.com/game_record/app/genshin/api/character'
+    url = 'https://api-takumi-record.mihoyo.com/game_record/app/genshin/api/character'
     while True:
         cookie = await get_use_cookie(user_id, uid=uid, action='查询角色详情')
         if not cookie:
@@ -93,7 +93,7 @@ async def get_chara_detail_data(user_id, uid, use_cache=True):
 @cache(ttl=datetime.timedelta(hours=1))
 async def get_chara_skill_data(uid, chara_id, use_cache=True):
     server_id = "cn_qd01" if uid[0] == '5' else "cn_gf01"
-    url = 'https://api-takumi.mihoyo.com/event/e20200928calculate/v1/sync/avatar/detail'
+    url = 'https://api-takumi-record.mihoyo.com/event/e20200928calculate/v1/sync/avatar/detail'
     cookie = await get_own_cookie(uid, action='查询角色天赋')
     if not cookie:
         return None
@@ -139,7 +139,7 @@ async def get_bind_game(cookie):
         if not finduid:
             return None, None
     uid = finduid.group(1)
-    url = 'https://api-takumi.mihoyo.com/game_record/card/wapi/getGameRecordCard'
+    url = 'https://api-takumi-record.mihoyo.com/game_record/card/wapi/getGameRecordCard'
     headers = get_headers(q=f'uid={uid}', cookie = cookie)
     params = {
         "uid": uid
