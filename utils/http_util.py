@@ -3,7 +3,6 @@ from typing import Dict, Optional, Any, Union, Tuple
 from pathlib import Path
 from io import BytesIO
 from PIL import Image
-from retrying import retry
 import httpx
 
 
@@ -44,7 +43,6 @@ class aiorequests:
                                      **kwargs)
 
     @classmethod
-    @retry(stop_max_attempt_number=3, wait_fixed=300)
     async def get_img(cls,
                       url: str,
                       *,
