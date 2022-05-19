@@ -62,13 +62,12 @@ async def guess_genshin_voice(bot: Bot, event: GroupMessageEvent, msg=CommandArg
             await guess_game.finish(await guess.start2())
         else:
             res = await guess.start(keyword.split())
-            print(res)
             await guess_game.finish(res)
     except FinishedException:
         pass
     except Exception as e:
         guess.set_end()
-        await guess_game.finish(str(e))
+        await guess_game.finish('出错了，可能是该角色缺少语音资源：' + str(e))
 
 
 @ys_voice.handle()
