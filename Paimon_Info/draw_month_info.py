@@ -2,7 +2,6 @@ import random
 from PIL import Image, ImageDraw, ImageFont
 import os
 import matplotlib.pyplot as plt
-# from io import BytesIO
 from ..utils.util import pil2b64
 from nonebot.adapters.onebot.v11 import MessageSegment
 

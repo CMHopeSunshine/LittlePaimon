@@ -1,10 +1,10 @@
-from aiohttp import ClientSession
 from urllib.parse import quote
 from nonebot import on_command
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import MessageEvent
 from ..utils.util import FreqLimiter, get_id
 from ..utils.config import config
+from ..utils.http_util import aiorequests
 
 couplets = on_command('对联', aliases={'对对联'}, priority=13, block=True)
 
@@ -28,10 +28,9 @@ async def couplets_handler(event: MessageEvent, msg=CommandArg()):
         couplets_limit.start_cd(get_id(event), config.paimon_couplets_cd)
         text = quote(str(word))
         url = f'https://ai-backend.binwang.me/v0.2/couplet/{text}'
-        async with ClientSession() as session:
-            res = await session.get(url)
-            res = await res.json()
-            result = ''
-            for n in range(0, num):
-                result += res['output'][n] + '\n'
-            await couplets.finish(f'上联：{word}\n下联：{result}')
+        res = await aiorequests.get(url=url)
+        res = res.json()
+        result = ''
+        for n in range(0, num):
+            result += res['output'][n] + '\n'
+        await couplets.finish(f'上联：{word}\n下联：{result}')

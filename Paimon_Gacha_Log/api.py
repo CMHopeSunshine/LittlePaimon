@@ -1,6 +1,5 @@
-import json
 from urllib import parse
-from aiohttp import ClientSession
+from ..utils.http_util import aiorequests
 
 
 def toApi(url):
@@ -30,9 +29,8 @@ def getApi(url, gachaType, size, page, end_id=""):
 
 async def checkApi(url):
     try:
-        async with ClientSession() as session:
-            r = await session.get(url)
-            j = await r.json()
+        j = await aiorequests.get(url=url)
+        j = j.json()
     except Exception as e:
         return f'API请求解析出错：{e}'
 
@@ -59,8 +57,6 @@ async def getGachaInfo(url):
     region = getQueryVariable(url, "region")
     lang = getQueryVariable(url, "lang")
     gachaInfoUrl = "https://webstatic.mihoyo.com/hk4e/gacha_info/{}/items/{}.json".format(region, lang)
-    async with ClientSession() as session:
-        r = await session.get(gachaInfoUrl)
-        s = (await r.read()).decode("utf-8")
-        gachaInfo = json.loads(s)
-        return gachaInfo
+    resp = await aiorequests.get(url=gachaInfoUrl)
+    gachaInfo = resp.json()
+    return gachaInfo

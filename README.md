@@ -1,5 +1,5 @@
 <p align="center" >
-  <a href="https://github.com/CMHopeSunshine/LittlePaimon/tree/nonebot2"><img src="https://cherishmoon.oss-cn-shenzhen.aliyuncs.com/LittlePaimon/readme/logo.png" width="256" height="256" alt="LittlePaimon"></a>
+  <a href="https://github.com/CMHopeSunshine/LittlePaimon/tree/nonebot2"><img src="https://static.cherishmoon.fun/LittlePaimon/readme/logo.png" width="256" height="256" alt="LittlePaimon"></a>
 </p>
 <h1 align="center">小派蒙|LittlePaimon</h1>
 <h4 align="center">✨基于<a href="https://github.com/Ice-Cirno/HoshinoBot" target="_blank">HoshinoBot</a>|<a href="https://github.com/nonebot/nonebot2" target="_blank">NoneBot2</a>和<a href="https://github.com/Mrs4s/go-cqhttp" target="_blank">go-cqhttp</a>的原神Q群机器人✨</h4>
@@ -21,47 +21,54 @@
 
 ## 功能示例
 
-<img src="https://cherishmoon.oss-cn-shenzhen.aliyuncs.com/LittlePaimon/readme/ys.jpg" alt="ys">
+<img src="https://static.cherishmoon.fun/LittlePaimon/readme/ys.jpg" alt="ys">
 
 <details>
 <summary>角色背包</summary>
-<img src="https://cherishmoon.oss-cn-shenzhen.aliyuncs.com/LittlePaimon/readme/ysa.jpg" alt="ysa">
+<img src="https://static.cherishmoon.fun/LittlePaimon/readme/ysa.jpg" alt="ysa">
 </details>
 
 <details>
 <summary>角色详情</summary>
-<img src="https://cherishmoon.oss-cn-shenzhen.aliyuncs.com/LittlePaimon/readme/ysc.jpg" alt="ysc">
+<img src="https://static.cherishmoon.fun/LittlePaimon/readme/ysc.jpg" alt="ysc">
 </details>
 
 <details>
 <summary>深渊信息</summary>
-<img src="https://cherishmoon.oss-cn-shenzhen.aliyuncs.com/LittlePaimon/readme/sy12.jpg" alt="sy">
+<img src="https://static.cherishmoon.fun/LittlePaimon/readme/sy12.jpg" alt="sy">
 </details>
 
 <details>
 <summary>模拟抽卡</summary>
-<img src="https://cherishmoon.oss-cn-shenzhen.aliyuncs.com/LittlePaimon/readme/十连.jpg" alt="十连">
+<img src="https://static.cherishmoon.fun/LittlePaimon/readme/十连.jpg" alt="十连">
 </details>
 
 <details>
 <summary>实时便签</summary>
-<img src="https://cherishmoon.oss-cn-shenzhen.aliyuncs.com/LittlePaimon/readme/ssbq.jpg" alt="ssbq">
+<img src="https://static.cherishmoon.fun/LittlePaimon/readme/ssbq.jpg" alt="ssbq">
 </details>
 
 <details>
 <summary>每月札记</summary>
-<img src="https://cherishmoon.oss-cn-shenzhen.aliyuncs.com/LittlePaimon/readme/myzj.jpg" alt="myzj">
+<img src="https://static.cherishmoon.fun/LittlePaimon/readme/myzj.jpg" alt="myzj">
 </details>
 
 <details>
 <summary>角色材料</summary>
-<img src="https://cherishmoon.oss-cn-shenzhen.aliyuncs.com/LittlePaimon/readme/material.png" alt="material">
+<img src="https://static.cherishmoon.fun/LittlePaimon/readme/material.png" alt="material">
 </details>
 
 <details>
 <summary>抽卡记录</summary>
-<img src="https://cherishmoon.oss-cn-shenzhen.aliyuncs.com/LittlePaimon/readme/gachalog.jpg" alt="gachalog">
+<img src="https://static.cherishmoon.fun/LittlePaimon/readme/gachalog.jpg" alt="gachalog">
 </details>
+
+## 更新日志
++ 5.19
+  - 米游社签到新增`全部重签`，仅限超级管理员使用，需@机器人
+  - `原神猜语音`不再需要`我猜`，直接回答角色别名即可参与猜猜看
+  - 异步请求库从`aiohttp`改用`httpx`，需安装依赖库`pip install httpx`
+  - 修复`60秒读世界`在频道无法关闭推送的BUG
 
 ## 功能列表
 
@@ -113,8 +120,8 @@ javascript:(function(){prompt(document.domain,document.cookie)})();
 
 - [NoneBot2](https://github.com/nonebot/nonebot2) - 跨平台异步机器人框架
 - [go-cqhttp](https://github.com/Mrs4s/go-cqhttp) - Onebot标准的框架实现
-- [Nwflower](https://github.com/Nwflower) - 部分图片的美工大大和武器攻略图提供
-- [egenshin](https://github.com/pcrbot/erinilis-modules/tree/master/egenshin) - 参考了它的抽卡代码和资源
+- [西北一枝花](https://github.com/Nwflower) - 部分图片的美工大大和武器攻略图提供
+- [egenshin](https://github.com/pcrbot/erinilis-modules/tree/master/egenshin) - 参考了它的代码和资源
 - [bluemushoom](https://bbs.nga.cn/nuke.php?func=ucp&uid=62861898) - 全角色收益曲线和参考面板攻略图来源
 - [genshin-gacha-export](https://github.com/sunfkny/genshin-gacha-export) - 抽卡记录导出参考
 - [西风驿站](https://bbs.mihoyo.com/ys/collection/307224) - 角色攻略一图流来源

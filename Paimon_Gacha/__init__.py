@@ -1,9 +1,9 @@
-from aiohttp import ClientSession
 import re
 from .gacha_info import *
 from .gacha_res import more_ten
 from ..utils.config import config
 from ..utils.util import FreqLimiter
+from ..utils.http_util import aiorequests
 from typing import Dict, Union
 from nonebot import on_command, on_regex
 from nonebot.params import RegexDict
@@ -80,10 +80,10 @@ async def gacha(event: Union[MessageEvent, GroupMessageEvent], reGroup: Dict = R
 async def show_log_handler(event: MessageEvent):
     uid = str(event.user_id)
     init_user_info(uid)
-    gacha_list = user_info[uid]['gacha_list']
+    # gacha_list = user_info[uid]['gacha_list']
     if user_info[uid]['gacha_list']['wish_total'] == 0:
         await show_log.finish('你此前并没有抽过卡哦', at_sender=True)
-    msg = event.message.extract_plain_text().replace('模拟抽卡记录').strip()
+    msg = event.message.extract_plain_text().replace('模拟抽卡记录', '').strip()
     if msg == '角色' or msg == '武器':
         res = get_rw_record(msg, uid)
     else:
@@ -247,13 +247,11 @@ BASE_URL = 'https://webstatic.mihoyo.com/hk4e/gacha_info/cn_gf01/%s'
 
 
 async def gacha_info_list():
-    async with ClientSession() as session:
-        res = await session.get(BASE_URL % 'gacha/list.json')
-        json_data = await res.json()
-        return json_data['data']['list']
+    res = await aiorequests.get(url=BASE_URL % 'gacha/list.json')
+    json_data = res.json()
+    return json_data['data']['list']
 
 
 async def gacha_info(gacha_id):
-    async with ClientSession() as session:
-        res = await session.get(BASE_URL % gacha_id + '/zh-cn.json')
-        return await res.json()
+    res = await aiorequests.get(url=BASE_URL % gacha_id + '/zh-cn.json')
+    return res.json()

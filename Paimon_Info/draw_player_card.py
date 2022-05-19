@@ -1,10 +1,9 @@
 import os, random, re
 from PIL import Image, ImageDraw, ImageFont
-from ..utils.util import pil2b64, get_pic
+from ..utils.util import pil2b64
 from nonebot.adapters.onebot.v11 import MessageSegment
-# from aiohttp import ClientSession
-# from io import BytesIO
 import copy
+from ..utils.http_util import aiorequests
 
 res_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'res')
 
@@ -50,7 +49,7 @@ async def get_chara_card(data):
     #         weapon_icon = Image.open(BytesIO(weapon_icon)).convert("RGBA")
     #         weapon_icon.save(os.path.join(res_path, 'weapon', weapon_name))
     # weapon_icon = Image.open(os.path.join(res_path, 'weapon', weapon_name)).resize((63, 63))
-    weapon_icon = await get_pic(data['weapon']['icon'], (63, 63), 'RGBA')
+    weapon_icon = await aiorequests.get_img(url=data['weapon']['icon'], size=(63, 63), mode='RGBA')
     chara_card.alpha_composite(weapon_icon, (0, 230))
     # 等级信息
     chara_draw = ImageDraw.Draw(chara_card)
@@ -281,7 +280,7 @@ async def get_chara_card_long(data):
     #         weapon_icon = Image.open(BytesIO(weapon_icon)).convert("RGBA")
     #         weapon_icon.save(os.path.join(res_path, 'weapon', weapon_name))
     # weapon_icon = Image.open(os.path.join(res_path, 'weapon', weapon_name)).resize((62, 62))
-    weapon_icon = await get_pic(data['weapon']['icon'], (62, 62), 'RGBA')
+    weapon_icon = await aiorequests.get_img(url=data['weapon']['icon'], size=(62, 62), mode='RGBA')
     chara_card.alpha_composite(weapon_icon, (3, 291))
     # 等级信息
     chara_draw = ImageDraw.Draw(chara_card)
@@ -354,7 +353,7 @@ async def draw_reli_icon(data):
     #         icon.save(os.path.join(res_path, 'reliquaries', f'{data["id"]}.png'))
     # else:
     #     icon = Image.open(os.path.join(res_path, 'reliquaries', f'{data["id"]}.png')).resize((80, 80))
-    icon = await get_pic(data["icon"], (80, 80), 'RGBA')
+    icon = await aiorequests.get_img(url=data["icon"], size=(80, 80), mode='RGBA')
     base_icon.alpha_composite(icon, (0, 0))
     base_icon.alpha_composite(shadow, (40, 60))
     base_icon_draw = ImageDraw.Draw(base_icon)
@@ -371,7 +370,7 @@ async def draw_const_skill_icon(data, name):
     #         icon.save(os.path.join(res_path, 'reliquaries', f'{name}{data["id"]}.png'))
     # else:
     #     icon = Image.open(os.path.join(res_path, 'reliquaries', f'{name}{data["id"]}.png')).resize((65, 65))
-    icon = await get_pic(data["icon"], (65, 65), 'RGBA')
+    icon = await aiorequests.get_img(url=data["icon"], size=(65, 65), mode='RGBA')
     base_icon.alpha_composite(icon, (0, 0))
     if 'is_actived' in data and not data['is_actived']:
         unlock_icon = Image.open(os.path.join(res_path, 'other', '命座未解锁.png')).resize((65, 65))

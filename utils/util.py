@@ -7,15 +7,12 @@ import base64
 import datetime
 from time import time
 import re
-import os
 import string
 import functools
 import inspect
 import json
 import asyncio
-from PIL import Image
 from json import JSONDecodeError
-from aiohttp import ClientSession
 from nonebot import get_bot
 from nonebot import logger
 from nonebot.exception import FinishedException
@@ -25,6 +22,7 @@ from .db_util import get_private_cookie, delete_cookie
 from .db_util import get_public_cookie, limit_public_cookie
 from .db_util import get_cookie_cache, update_cookie_cache, delete_cookie_cache
 from .db_util import get_last_query, update_last_query
+from .http_util import aiorequests
 
 
 def auto_withdraw(seconds: int = -1):
@@ -140,17 +138,17 @@ class FreqLimiter2:
         return int(self.next_time[key1][key2] - time()) + 1
 
 
-# 从网络url中获取图片
-async def get_pic(url: str, size: tuple = None, mode: str = None):
-    async with ClientSession() as session:
-        res = await session.get(url)
-        res = await res.read()
-        img = Image.open(BytesIO(res))
-        if size:
-            img = img.resize(size)
-        if mode:
-            img = img.convert(mode)
-        return img
+# # 从网络url中获取图片
+# async def get_pic(url: str, size: tuple = None, mode: str = None):
+#     async with ClientSession() as session:
+#         res = await session.get(url)
+#         res = await res.read()
+#         img = Image.open(BytesIO(res))
+#         if size:
+#             img = img.resize(size)
+#         if mode:
+#             img = img.convert(mode)
+#         return img
 
 
 # 获取可用的cookie
@@ -342,13 +340,12 @@ async def check_cookie(cookie):
         'x-rpc-client_type': '5',
         'Referer':           'https://webstatic.mihoyo.com/'
     }
-    async with ClientSession() as session:
-        res = await session.get(url=url, headers=headers)
-        res = await res.json()
-        if res['retcode'] != 0:
-            return False
-        else:
-            return True
+    res = await aiorequests.get(url=url, headers=headers)
+    res = res.json()
+    if res['retcode'] != 0:
+        return False
+    else:
+        return True
 
 
 # 向超级用户私聊发送cookie删除信息
@@ -390,3 +387,4 @@ def get_id(event):
         return event.group_id
     elif event.message_type == 'guild':
         return event.channel_id
+

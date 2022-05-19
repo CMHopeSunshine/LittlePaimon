@@ -1,10 +1,9 @@
 import datetime
-# from io import BytesIO
 import os
 from PIL import Image, ImageDraw, ImageFont
-# from aiohttp import ClientSession
 from nonebot.adapters.onebot.v11 import MessageSegment
-from ..utils.util import pil2b64, get_pic
+from ..utils.util import pil2b64
+from ..utils.http_util import aiorequests
 
 res_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'res')
 
@@ -120,7 +119,7 @@ async def draw_abyss_card(data, uid, floor_num):
     #         defeat_rank_img.save(os.path.join(res_path, 'role_side_card', f"{defeat_rank['avatar_id']}.png"))
     # else:
     #     defeat_rank_img = Image.open(os.path.join(res_path, 'role_side_card', f"{defeat_rank['avatar_id']}.png"))
-    defeat_rank_img = await get_pic(defeat_rank['avatar_icon'], (60, 60), 'RGBA')
+    defeat_rank_img = await aiorequests.get_img(url=defeat_rank['avatar_icon'], size=(60, 60), mode='RGBA')
     top_draw.text((160, 343), str(defeat_rank['value']), font=get_font(21), fill='white')
     top_img.alpha_composite(defeat_rank_img, (280, 320))
 
@@ -132,7 +131,7 @@ async def draw_abyss_card(data, uid, floor_num):
     #         damage_rank_img.save(os.path.join(res_path, 'role_side_card', f"{damage_rank['avatar_id']}.png"))
     # else:
     #     damage_rank_img = Image.open(os.path.join(res_path, 'role_side_card', f"{damage_rank['avatar_id']}.png"))
-    damage_rank_img = await get_pic(damage_rank['avatar_icon'], (60, 60), 'RGBA')
+    damage_rank_img = await aiorequests.get_img(url=damage_rank['avatar_icon'], size=(60, 60), mode='RGBA')
     top_draw.text((495, 343), str(damage_rank['value']), font=get_font(21), fill='white')
     top_img.alpha_composite(damage_rank_img, (590, 320))
 
@@ -145,7 +144,7 @@ async def draw_abyss_card(data, uid, floor_num):
     # else:
     #     take_damage_rank_img = Image.open(
     #         os.path.join(res_path, 'role_side_card', f"{take_damage_rank['avatar_id']}.png"))
-    take_damage_rank_img = await get_pic(take_damage_rank['avatar_icon'], (60, 60), 'RGBA')
+    take_damage_rank_img = await aiorequests.get_img(url=take_damage_rank['avatar_icon'], size=(60, 60), mode='RGBA')
     top_draw.text((180, 389), str(take_damage_rank['value']), font=get_font(21), fill='white')
     top_img.alpha_composite(take_damage_rank_img, (280, 365))
 
@@ -158,7 +157,7 @@ async def draw_abyss_card(data, uid, floor_num):
     # else:
     #     energy_skill_rank_img = Image.open(
     #         os.path.join(res_path, 'role_side_card', f"{energy_skill_rank['avatar_id']}.png"))
-    energy_skill_rank_img = await get_pic(energy_skill_rank['avatar_icon'], (60, 60), 'RGBA')
+    energy_skill_rank_img = await aiorequests.get_img(url=energy_skill_rank['avatar_icon'], size=(60, 60), mode='RGBA')
     top_draw.text((530, 389), str(energy_skill_rank['value']), font=get_font(21), fill='white')
     top_img.alpha_composite(energy_skill_rank_img, (590, 365))
 
@@ -171,7 +170,7 @@ async def draw_abyss_card(data, uid, floor_num):
     # else:
     #     normal_skill_rank_img = Image.open(
     #         os.path.join(res_path, 'role_side_card', f"{normal_skill_rank['avatar_id']}.png"))
-    normal_skill_rank_img = await get_pic(normal_skill_rank['avatar_icon'], (60, 60), 'RGBA')
+    normal_skill_rank_img = await aiorequests.get_img(url=normal_skill_rank['avatar_icon'], size=(60, 60), mode='RGBA')
     top_draw.text((195, 435), str(normal_skill_rank['value']), font=get_font(21), fill='white')
     top_img.alpha_composite(normal_skill_rank_img, (280, 410))
 

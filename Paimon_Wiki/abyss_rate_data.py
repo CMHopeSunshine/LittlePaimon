@@ -1,5 +1,4 @@
-from aiohttp import ClientSession
-
+from ..utils.http_util import aiorequests
 
 # 数据源自微信公众号原神创意工坊
 headers = {
@@ -16,9 +15,8 @@ async def get_rate(type: str = 'role'):
     json_data = {
         "version": "2.6"
     }
-    async with ClientSession() as session:
-        res = await session.post(url=url, headers=headers, json=json_data)
-        return await res.json()
+    res = await aiorequests.post(url=url, headers=headers, json=json_data)
+    return res.json()
 
 
 async def get_formation_rate(layer: int = 1):
@@ -27,9 +25,8 @@ async def get_formation_rate(layer: int = 1):
         "version": "2.6",
         "layer": layer
     }
-    async with ClientSession() as session:
-        res = await session.post(url=url, headers=headers, json=json_data)
-        return await res.json()
+    res = await aiorequests.post(url=url, headers=headers, json=json_data)
+    return res.json()
 
 
 async def get_teammates_rate(name: str):
@@ -38,9 +35,8 @@ async def get_teammates_rate(name: str):
         "name": name,
         "version": "2.6"
     }
-    async with ClientSession() as session:
-        res = await session.post(url=url, headers=headers, json=json_data)
-        return await res.json()
+    res = await aiorequests.post(url=url, headers=headers, json=json_data)
+    return res.json()
 
 
 async def get_weapon_rate(name: str):
@@ -49,6 +45,5 @@ async def get_weapon_rate(name: str):
         "name": name,
         "version": "2.6"
     }
-    async with ClientSession() as session:
-        res = await session.post(url=url, headers=headers, json=json_data)
-        return await res.json()
+    res = await aiorequests.post(url=url, headers=headers, json=json_data)
+    return res.json()

@@ -1,4 +1,5 @@
-from ..utils.util import get_pic, pil2b64
+from ..utils.util import pil2b64
+from ..utils.http_util import aiorequests
 
 blue = {
     '胡桃': ['火', (0, 1886)],
@@ -59,8 +60,8 @@ blue = {
 async def get_blue_pic(name):
     for c in blue.items():
         if c[0] == name:
-            img = await get_pic(f'https://static.cherishmoon.fun/LittlePaimon/blue/{c[1][0]}.jpg')
-            img = img.crop((0, c[1][1][0], 1080, c[1][1][1]))
+            img = await aiorequests.get_img(url=f'https://static.cherishmoon.fun/LittlePaimon/blue/{c[1][0]}.jpg')
+            img = img.crop((0, int(c[1][1][0]), 1080, int(c[1][1][1])))
             img = pil2b64(img, 100)
             return img
     return None

@@ -1,10 +1,10 @@
 import os
 import json
 from asyncio import sleep
-from aiohttp import ClientSession
 from .api import getApi
 from .meta_data import gachaQueryTypeIds, gachaQueryTypeDict
 from .UIGF_and_XLSX import convertUIGF, writeXLSX
+from ..utils.http_util import aiorequests
 
 data_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'user_data', 'gacha_log_data')
 
@@ -16,15 +16,14 @@ async def getGachaLogs(url, gachaTypeId):
     end_id = "0"
     for page in range(1, 9999):
         api = getApi(url, gachaTypeId, size, page, end_id)
-        async with ClientSession() as session:
-            r = await session.get(api)
-            j = await r.json()
-            gacha = j["data"]["list"]
-            if not len(gacha):
-                break
-            for i in gacha:
-                gachaList.append(i)
-            end_id = j["data"]["list"][-1]["id"]
+        resp = await aiorequests.get(url=api)
+        j = resp.json()
+        gacha = j["data"]["list"]
+        if not len(gacha):
+            break
+        for i in gacha:
+            gachaList.append(i)
+        end_id = j["data"]["list"][-1]["id"]
         await sleep(0.5)
 
     return gachaList

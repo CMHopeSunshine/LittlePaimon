@@ -14,11 +14,10 @@ from ..utils.config import config
 
 setting_time = config.paimon_guess_voice  # 游戏持续时间
 
-dir_name = Path() / 'LittlePaimon' / 'LittlePaimon' / 'Guess_voice' / 'voice'
+dir_name = Path() / 'data' / 'LittlePaimon' / 'guess_voice' / 'voice'
 
 
 guess_game = on_command('原神猜语音', priority=12, block=True)
-running_guess_game = on_command('我猜', aliases={'guess', 'ig'}, priority=12, permission=permission.GROUP, block=True)
 ys_voice = on_command('原神语音', priority=12, block=True)
 update_ys_voice = on_command('更新原神语音资源', priority=12, permission=SUPERUSER, block=True)
 
@@ -70,14 +69,6 @@ async def guess_genshin_voice(bot: Bot, event: GroupMessageEvent, msg=CommandArg
     except Exception as e:
         guess.set_end()
         await guess_game.finish(str(e))
-
-
-@running_guess_game.handle()
-async def on_input_chara_name(event: GroupMessageEvent, msg=CommandArg()):
-    msg = str(msg).strip()
-    guess = Guess(event.group_id, time=setting_time)
-    if guess.is_start():
-        await guess.add_answer(event.user_id, msg)
 
 
 @ys_voice.handle()

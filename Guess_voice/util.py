@@ -1,11 +1,9 @@
 import os
-from aiohttp import ClientSession
 from pathlib import Path
 import aiofiles
+from ..utils.http_util import aiorequests
 
 
-# def get_path(*paths):
-#     return os.path.join(os.path.dirname(__file__), *paths)
 def get_path(dirname, filename):
     return Path() / 'data' / 'LittlePaimon' / 'guess_voice' / dirname / filename
 
@@ -32,13 +30,12 @@ async def require_file(file=None,
     if not url:
         raise ValueError('url not null')
 
-    async with ClientSession() as session:
-        res = await session.get(url, timeout=timeout)
-        content = await res.read()
+    res = await aiorequests.get(url, timeout=timeout)
+    content = res.read()
 
-        if file:
-            os.makedirs(os.path.dirname(file), exist_ok=True)
-            async with aiofiles.open(file, w_mode, encoding=encoding) as fp:
-                await fp.write(content)
-                return content
-        return await read()
+    if file:
+        os.makedirs(os.path.dirname(file), exist_ok=True)
+        async with aiofiles.open(file, w_mode, encoding=encoding) as fp:
+            await fp.write(content)
+            return content
+    return await read()

@@ -5,6 +5,7 @@ from collections import defaultdict
 from asyncio import sleep
 from nonebot import on_command, require, logger, get_bot
 from nonebot.params import CommandArg
+from nonebot.rule import to_me
 from nonebot.permission import SUPERUSER
 from nonebot.adapters.onebot.v11 import MessageEvent, Message, Bot
 from .get_data import get_bind_game, get_sign_info, sign, get_sign_list, get_abyss_data, get_daily_note_data
@@ -59,6 +60,7 @@ ysc = on_command('ysc', aliases={'角色卡片', '角色详情'}, priority=7, bl
 ysb = on_command('ysb', aliases={'原神绑定', '绑定cookie'}, priority=7, block=True)
 mys_sign = on_command('mys_sign', aliases={'mys签到', '米游社签到'}, priority=7, block=True)
 mys_sign_auto = on_command('mys_sign_auto', aliases={'mys自动签到', '米游社自动签到'}, priority=7, block=True)
+mys_sign_all = on_command('mys_sign_all', aliases={'全部重签'}, priority=7, permission=SUPERUSER, rule=to_me(), block=True)
 add_public_ck = on_command('add_ck', aliases={'添加公共cookie', '添加公共ck'}, permission=SUPERUSER, priority=7, block=True)
 delete_ck = on_command('delete_ck', aliases={'删除ck', '删除cookie'}, priority=7, block=True)
 
@@ -306,6 +308,11 @@ async def mys_sign_auto_handler(event: MessageEvent, msg: Message = CommandArg()
         else:
             await add_auto_sign(str(event.user_id), uid, str(event.group_id))
             await mys_sign_auto.finish('开启米游社自动签到成功,派蒙会在每日0点帮你签到', at_sender=True)
+
+
+@mys_sign_all.handle()
+async def sign_all():
+    await auto_sign()
 
 
 @scheduler.scheduled_job('cron', hour=config.paimon_sign_hour, minute=config.paimon_sign_minute)

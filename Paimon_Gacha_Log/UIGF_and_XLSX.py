@@ -14,8 +14,7 @@ def id_generator():
 
 
 def convertUIGF(gachaLog, uid):
-    UIGF_data = {}
-    UIGF_data["info"] = {}
+    UIGF_data = {"info": {}}
     UIGF_data["info"]["uid"] = uid
     UIGF_data["info"]["lang"] = "zh-cn"
     UIGF_data["info"]["export_time"] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())

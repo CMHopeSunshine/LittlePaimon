@@ -9,6 +9,9 @@ from nonebot import get_bot, require, logger
 from nonebot.adapters.onebot.v11 import MessageSegment, escape
 from sqlitedict import SqliteDict
 from .util import get_path, require_file
+from nonebot.rule import Rule
+from nonebot import on_regex
+from nonebot.adapters.onebot.v11 import GroupMessageEvent
 
 from .download_data import voice_list_by_mys, voice_detail_by_mys
 
@@ -50,6 +53,23 @@ process = {}
 
 with open(os.path.join(os.path.dirname(__file__), 'character.json'), 'r', encoding="utf-8") as f:
     character_json: dict = json.loads(f.read())
+
+
+def create_guess_matcher(role_name, second, group_id):
+    def check_group(event: GroupMessageEvent):
+        if event.group_id == group_id:
+            return True
+        return False
+
+    alias_list = character_json[role_name]
+    re_str = role_name + '|' + '|'.join(alias_list)
+    guess_matcher = on_regex(re_str, temp=True, rule=Rule(check_group))
+
+    @guess_matcher.handle()
+    async def _(event: GroupMessageEvent):
+        guess = Guess(event.group_id, time=second)
+        if guess.is_start():
+            await guess.add_answer(event.user_id, event.message.extract_plain_text())
 
 
 def get_voice_by_language(data, language_name):
@@ -200,7 +220,7 @@ class Guess:
                           coalesce=True,
                           jobstore='default',
                           max_instances=1)
-
+        create_guess_matcher(answer, self.time, self.group_id)
         return MessageSegment.record(file=Path(path))
 
     async def start2(self):
@@ -282,7 +302,7 @@ class Guess:
 
     # 只添加正确的答案
     async def add_answer(self, qq: int, msg: str):
-        if self.group.get('answer') and char_name_by_name(msg) == self.group['answer']:
+        if self.group.get('answer'):
             process[self.group_id]['ok'].add(qq)
             job_id = str(self.group_id) + '_guess_voice'
             if scheduler.get_job(job_id, 'default'):
