@@ -1,5 +1,5 @@
 <p align="center" >
-  <a href="https://github.com/CMHopeSunshine/LittlePaimon"><img src="https://cherishmoon.oss-cn-shenzhen.aliyuncs.com/LittlePaimon/readme/logo.png" width="256" height="256" alt="LittlePaimon"></a>
+  <a href="https://github.com/CMHopeSunshine/LittlePaimon"><img src="https://static.cherishmoon.fun/LittlePaimon/readme/logo.png" width="256" height="256" alt="LittlePaimon"></a>
 </p>
 <h1 align="center">小派蒙|LittlePaimon</h1>
 <h4 align="center">✨基于<a href="https://github.com/Ice-Cirno/HoshinoBot" target="_blank">HoshinoBot</a>|<a href="https://github.com/nonebot/nonebot2" target="_blank">NoneBot2</a>和<a href="https://github.com/Mrs4s/go-cqhttp" target="_blank">go-cqhttp</a>的原神Q群机器人✨</h4>
@@ -9,7 +9,8 @@
     <img src="https://img.shields.io/badge/Python-3.8+-yellow" alt="python">
     <a href="https://qun.qq.com/qqweb/qunpro/share?_wv=3&_wwv=128&inviteCode=MmWrI&from=246610&biz=ka"><img src="https://img.shields.io/badge/QQ频道交流-尘世闲游-green?style=flat-square" alt="QQ guild"></a>
 </p>
-## 简介
+
+## 丨简介
 
 原神多功能机器人，通过米游社接口查询uid的游戏信息，并提供WIKI查询和各种各样的好玩的功能。
 
@@ -20,56 +21,56 @@
 
 本人已经转用NoneBot2，Hoshino版停止新功能的更新（有BUG请提[issue](https://github.com/CMHopeSunshine/LittlePaimon/issues)），**强烈建议您使用NoneBot2版体验最新功能！**
 
-## 功能示例
+## 丨功能示例
 
-<img src="https://cherishmoon.oss-cn-shenzhen.aliyuncs.com/LittlePaimon/readme/ys.jpg" alt="ys">
+<img src="https://static.cherishmoon.fun/LittlePaimon/readme/ys.jpg" alt="ys">
 
 <details>
 <summary>角色背包</summary>
-<img src="https://cherishmoon.oss-cn-shenzhen.aliyuncs.com/LittlePaimon/readme/ysa.jpg" alt="ysa">
+<img src="https://static.cherishmoon.fun/LittlePaimon/readme/ysa.jpg" alt="ysa">
 </details>
 
 <details>
 <summary>角色详情</summary>
-<img src="https://cherishmoon.oss-cn-shenzhen.aliyuncs.com/LittlePaimon/readme/ysc.jpg" alt="ysc">
+<img src="https://static.cherishmoon.fun/LittlePaimon/readme/ysc.jpg" alt="ysc">
 </details>
 
 <details>
 <summary>深渊信息</summary>
-<img src="https://cherishmoon.oss-cn-shenzhen.aliyuncs.com/LittlePaimon/readme/sy12.jpg" alt="sy">
+<img src="https://static.cherishmoon.fun/LittlePaimon/readme/sy12.jpg" alt="sy">
 </details>
 
 <details>
 <summary>模拟抽卡</summary>
-<img src="https://cherishmoon.oss-cn-shenzhen.aliyuncs.com/LittlePaimon/readme/十连.jpg" alt="十连">
+<img src="https://static.cherishmoon.fun/LittlePaimon/readme/十连.jpg" alt="十连">
 </details>
 
 <details>
 <summary>实时便签</summary>
-<img src="https://cherishmoon.oss-cn-shenzhen.aliyuncs.com/LittlePaimon/readme/ssbq.jpg" alt="ssbq">
+<img src="https://static.cherishmoon.fun/LittlePaimon/readme/ssbq.jpg" alt="ssbq">
 </details>
 
 <details>
 <summary>每月札记</summary>
-<img src="https://cherishmoon.oss-cn-shenzhen.aliyuncs.com/LittlePaimon/readme/myzj.jpg" alt="myzj">
+<img src="https://static.cherishmoon.fun/LittlePaimon/readme/myzj.jpg" alt="myzj">
 </details>
 
 <details>
 <summary>角色材料</summary>
-<img src="https://cherishmoon.oss-cn-shenzhen.aliyuncs.com/LittlePaimon/readme/material.png" alt="material">
+<img src="https://static.cherishmoon.fun/LittlePaimon/readme/material.png" alt="material">
 </details>
 
 <details>
 <summary>抽卡记录</summary>
-<img src="https://cherishmoon.oss-cn-shenzhen.aliyuncs.com/LittlePaimon/readme/gachalog.jpg" alt="gachalog">
+<img src="https://static.cherishmoon.fun/LittlePaimon/readme/gachalog.jpg" alt="gachalog">
 </details>
 
 
-## 功能列表
+## 丨功能列表
 
 详见[功能列表](https://blog.cherishmoon.fun/bot/hoshinoFuncList.html)
 
-## 部署方法
+## 丨部署方法
 
 > 本项目基于HoshinoBot，可以使用HoshinoBot同样的部署方法。
 
@@ -104,11 +105,11 @@ javascript:(function(){prompt(document.domain,document.cookie)})();
 复制得到的cookie，向小派蒙发送**`添加公共ck`**和粘贴的内容，即可开始使用
 
 
-## 额外说明
+## 丨额外说明
 
 本项目也可作为HoshinoBot的插件来使用，移植`hoshino\modules`内模块即可，另外还需在`hoshino\util\__init__.py`中添加`PriFreqLimiter`方法用于模拟抽卡和派蒙聊天的冷却限制。
 
-## 感谢
+## 丨感谢
 
 代码水平很烂，站在巨人的肩膀上努力学习ing......
 
@@ -120,3 +121,19 @@ javascript:(function(){prompt(document.domain,document.cookie)})();
 - [bluemushoom](https://bbs.nga.cn/nuke.php?func=ucp&uid=62861898) - 全角色收益曲线和参考面板攻略图来源
 - [genshin-gacha-export](https://github.com/sunfkny/genshin-gacha-export) - 抽卡记录导出参考
 - [Adachi-BOT](https://github.com/SilveryStar/Adachi-BOT) - 部分资源来源
+
+## 丨赞助
+- 如果本项目对你有帮助，给个star~~求求啦
+- 部分资源使用了云存储，如果想赞助流量费用，欢迎来[爱发电](https://afdian.net/@cherishmoon)，十分感谢！
+
+### 赞助支持
+
+| 赞助者 | 金额 | 日期 |
+| ------ | ---- | ---- |
+| 深海   | 10   | 5.20 |
+
+## 丨其他
+
+- 本项目仅供学习使用，禁止用于商业用途
+
+- 如果您使用修改了本项目源码，请遵循[GPL-3.0](https://github.com/CMHopeSunshine/LittlePaimon/blob/master/LICENSE)开源
