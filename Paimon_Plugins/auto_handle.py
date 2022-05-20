@@ -1,6 +1,6 @@
 import random
 from asyncio import sleep
-from ..utils.config import config
+from utils.config import config
 from nonebot import get_driver
 from nonebot.message import event_preprocessor
 from nonebot.adapters.onebot.v11 import Bot, FriendRequestEvent, GroupRequestEvent

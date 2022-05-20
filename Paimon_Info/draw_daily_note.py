@@ -1,11 +1,12 @@
-import random
 import datetime
 import os
-from PIL import Image, ImageDraw, ImageFont
+import random
+
 import matplotlib.pyplot as plt
-from nonebot.adapters.onebot.v11 import MessageSegment
-from ..utils.util import pil2b64
-from ..utils.http_util import aiorequests
+from PIL import Image, ImageDraw, ImageFont
+
+from utils import aiorequests
+from utils.message_util import MessageBuild
 
 res_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'res')
 
@@ -147,7 +148,4 @@ async def draw_daily_note_card(data, uid):
     bg_img.alpha_composite(role_img, (1220, 200))
     now = datetime.datetime.now().strftime('%m月%d日%H:%M')
     bg_draw.text((554, 1794), 'Created by LittlePaimon·' + now, fill='#5680d2', font=get_font(40, '优设标题黑.ttf'))
-    bg_img = bg_img.resize((int(bg_img.size[0] * 0.35), int(bg_img.size[1] * 0.35)), Image.ANTIALIAS)
-    bg_img = pil2b64(bg_img, 70)
-    bg_img = MessageSegment.image(bg_img)
-    return bg_img
+    return MessageBuild.Image(bg_img, size=0.35, quality=70)

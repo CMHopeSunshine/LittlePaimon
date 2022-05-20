@@ -2,8 +2,8 @@ import random
 from nonebot import on_command
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import Message, MessageEvent, MessageSegment
-from ..utils.util import FreqLimiter
-from ..utils.http_util import aiorequests
+from utils.auth_util import FreqLimiter
+from utils import aiorequests
 
 order_pic = on_command('点菜', aliases={'点餐', '食谱', '我想吃'}, priority=13, block=True)
 order_lmt = FreqLimiter(10)

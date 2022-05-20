@@ -1,9 +1,10 @@
-from PIL import Image, ImageDraw, ImageFont
 import os
-from nonebot.adapters.onebot.v11 import MessageSegment
+
+from PIL import Image, ImageDraw, ImageFont
+
+from utils.character_alias import get_id_by_alias
+from utils.message_util import MessageBuild
 from .abyss_rate_data import get_rate, get_formation_rate
-from ..utils.util import pil2b64
-from ..utils.character_alias import get_id_by_alias
 
 res_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'res')
 
@@ -73,7 +74,6 @@ async def draw_teams_rate(floor='上半半'):
             bg_img.alpha_composite(role_img, (130 + 204 * r, 180 + 240 * n))
             r += 1
         n += 1
-    bg_img = pil2b64(bg_img, 75)
-    bg_img = MessageSegment.image(bg_img)
-    return bg_img
+
+    return MessageBuild.Image(bg_img, quality=75)
 

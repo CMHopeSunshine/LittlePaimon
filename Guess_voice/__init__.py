@@ -1,16 +1,17 @@
 import asyncio
-from . import util
-from typing import Union
 from pathlib import Path
-from nonebot import on_command
-from nonebot.permission import SUPERUSER
-from nonebot.params import CommandArg
-from nonebot.exception import FinishedException
-from nonebot.adapters.onebot.v11 import PrivateMessageEvent, GroupMessageEvent, MessageSegment, Bot, permission
-from .handler import Guess, get_random_voice
-from . import download_data
-from ..utils.config import config
+from typing import Union
 
+from nonebot import on_command
+from nonebot.adapters.onebot.v11 import PrivateMessageEvent, GroupMessageEvent, MessageSegment, Bot
+from nonebot.exception import FinishedException
+from nonebot.params import CommandArg
+from nonebot.permission import SUPERUSER
+
+from utils.config import config
+from . import download_data
+from . import util
+from .handler import Guess, get_random_voice
 
 setting_time = config.paimon_guess_voice  # 游戏持续时间
 

@@ -1,13 +1,14 @@
-from nonebot import on_regex, logger
-from nonebot.exception import FinishedException
-from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageSegment
-from ..utils.util import FreqLimiter2
-from ..utils.config import config
-from .chat_list import chat_list
-from pathlib import Path
-import random
 import os
+import random
+from pathlib import Path
 
+from nonebot import on_regex, logger
+from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageSegment
+from nonebot.exception import FinishedException
+
+from utils.config import config
+from utils.auth_util import FreqLimiter2
+from .chat_list import chat_list
 
 res_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'res', 'voice')
 chat_lmt = FreqLimiter2(60)

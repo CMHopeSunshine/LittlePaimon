@@ -1,9 +1,12 @@
-import os, random, re
-from PIL import Image, ImageDraw, ImageFont
-from ..utils.util import pil2b64
-from nonebot.adapters.onebot.v11 import MessageSegment
 import copy
-from ..utils.http_util import aiorequests
+import os
+import random
+import re
+
+from PIL import Image, ImageDraw, ImageFont
+
+from utils import aiorequests
+from utils.message_util import MessageBuild
 
 res_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'res')
 
@@ -248,9 +251,7 @@ async def draw_player_card(data, chara_data, uid, nickname="旅行者"):
                 break
     else:
         nocha = '*这uid关闭了角色详情显示，派蒙看不到哦'
-    bg_img = pil2b64(bg_img, 80)
-    bg_img = MessageSegment.image(bg_img) + nocha
-    return bg_img
+    return MessageBuild.Image(bg_img, quality=80) + MessageBuild.Text(nocha)
 
 
 # ysa
@@ -335,9 +336,7 @@ async def draw_all_chara_card(data, uid):
         n += 1
     bg_img.paste(bg_bottom, (0, 382 + col * 474 - 50))
 
-    bg_img = pil2b64(bg_img, 55)
-    bg_img = MessageSegment.image(bg_img)
-    return bg_img
+    return MessageBuild.Image(bg_img, size=0.9, quality=70)
 
 
 # ysc
@@ -443,8 +442,7 @@ async def draw_chara_card(data, skill_data, chara_name, uid):
     # 武器
     weapon_bg = Image.open(os.path.join(res_path, 'other', f'star{character["weapon"]["rarity"]}.png')).resize(
         (100, 100))
-    weapon_name = character['weapon']['icon'].split('/')[-1]
-    weapon_icon = Image.open(os.path.join(res_path, 'weapon', weapon_name)).resize((100, 100))
+    weapon_icon = await aiorequests.get_img(url=character['weapon']['icon'], size=(100, 100), mode='RGBA')
     bg_img.alpha_composite(weapon_bg, (293, 175))
     bg_img.alpha_composite(weapon_icon, (293, 175))
     bg_img.alpha_composite(shadow.resize((50, 25)), (344, 250))
@@ -516,6 +514,5 @@ async def draw_chara_card(data, skill_data, chara_name, uid):
         i += 1
 
     bg_draw.text((330, 371), 'Created by LittlePaimon', font=get_font(20), fill='white')
-    bg_img = pil2b64(bg_img, 70)
-    bg_img = MessageSegment.image(bg_img)
-    return bg_img
+
+    return MessageBuild.Image(bg_img, size=0.95, quality=80)

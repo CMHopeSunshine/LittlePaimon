@@ -1,9 +1,9 @@
-import random
-from PIL import Image, ImageDraw, ImageFont
 import os
+import random
+
 import matplotlib.pyplot as plt
-from ..utils.util import pil2b64
-from nonebot.adapters.onebot.v11 import MessageSegment
+from PIL import Image, ImageDraw, ImageFont
+from utils.message_util import MessageBuild
 
 res_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'res')
 
@@ -111,6 +111,4 @@ async def draw_monthinfo_card(data):
     bg_draw.text((49, 857), f'本月相比上个月，原石{ysstr}，摩拉{mlstr}', font=get_font(23), fill='#27384C')
     bg_draw.text((167, 900), 'Created by LittlePaimon', font=get_font(21), fill='#27384C')
 
-    bg_img = pil2b64(bg_img, 70)
-    bg_img = MessageSegment.image(bg_img)
-    return bg_img
+    return MessageBuild.Image(bg_img, quality=70)

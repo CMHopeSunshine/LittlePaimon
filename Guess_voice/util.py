@@ -1,7 +1,9 @@
 import os
 from pathlib import Path
+
 import aiofiles
-from ..utils.http_util import aiorequests
+
+from utils import aiorequests
 
 
 def get_path(dirname, filename):

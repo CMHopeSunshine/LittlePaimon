@@ -1,9 +1,10 @@
 import datetime
 import os
+
 from PIL import Image, ImageDraw, ImageFont
-from nonebot.adapters.onebot.v11 import MessageSegment
-from ..utils.util import pil2b64
-from ..utils.http_util import aiorequests
+
+from utils import aiorequests
+from utils.message_util import MessageBuild
 
 res_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'res')
 
@@ -189,6 +190,4 @@ async def draw_abyss_card(data, uid, floor_num):
         total_img.alpha_composite(floor_img, (5, 5 + 524 + 5 + h))
         h += 1210
 
-    total_img = pil2b64(total_img, 75)
-    total_img = MessageSegment.image(total_img)
-    return total_img
+    return MessageBuild.Image(total_img, quality=75)

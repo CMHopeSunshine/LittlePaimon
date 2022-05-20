@@ -1,13 +1,13 @@
+import datetime
 import json
 import os
-
-import datetime
-import numpy
 import random
+
+import numpy
 from PIL import Image, PngImagePlugin, ImageDraw, ImageFont
 
+from utils.message_util import MessageBuild
 from .gacha_info import init_user_info, user_info, save_user_info
-from ..utils.util import pil2b64
 
 RES_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'res', 'gacha_res')
 font_path = os.path.join(RES_PATH, 'zh-cn.ttf')
@@ -117,7 +117,6 @@ def once(uid, gacha_data):
             user_info[uid]["gacha_list"]["wish_%s_up" % rank] += 1
             role['rank'] = rank
         else:
-            role = random.choice(gacha_data['r%s_prob_list' % rank])
             while True:
                 role = random.choice(gacha_data['r%s_prob_list' % rank])
                 if role['is_up'] == 0:
@@ -246,4 +245,5 @@ async def more_ten(uid, gacha_data, num, sd):
     draw = ImageDraw.Draw(img)
     draw.text((27, 575 * num - 30), ('@%s %s  Created By LittlePaimon' % (str(sd.nickname), time_str)), font=time_font,
               fill="#8E8E8E")
-    return pil2b64(img, 75)
+
+    return MessageBuild.Image(img, quality=75)

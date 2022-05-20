@@ -1,10 +1,11 @@
-import os
 import json
+import os
 from asyncio import sleep
+
+from utils import aiorequests
+from .UIGF_and_XLSX import convertUIGF, writeXLSX
 from .api import getApi
 from .meta_data import gachaQueryTypeIds, gachaQueryTypeDict
-from .UIGF_and_XLSX import convertUIGF, writeXLSX
-from ..utils.http_util import aiorequests
 
 data_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'user_data', 'gacha_log_data')
 

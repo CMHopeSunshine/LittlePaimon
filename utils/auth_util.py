@@ -1,109 +1,18 @@
-import hashlib
-from collections import defaultdict
-from io import BytesIO
-from pathlib import Path
-import random
 import base64
-import datetime
-from time import time
-import re
-import string
-import functools
-import inspect
+import hashlib
 import json
-import asyncio
-from json import JSONDecodeError
-from nonebot import get_bot
+import random
+import string
+from collections import defaultdict
+from time import time
+
 from nonebot import logger
-from nonebot.exception import FinishedException
-from nonebot.adapters.onebot.v11 import MessageEvent, Message
-from nonebot.adapters.onebot.v11.exception import ActionFailed
+
+from . import aiorequests
+from .db_util import get_cookie_cache, update_cookie_cache, delete_cookie_cache
 from .db_util import get_private_cookie, delete_cookie
 from .db_util import get_public_cookie, limit_public_cookie
-from .db_util import get_cookie_cache, update_cookie_cache, delete_cookie_cache
-from .db_util import get_last_query, update_last_query
-from .http_util import aiorequests
-
-
-def auto_withdraw(seconds: int = -1):
-    def wrapper(func):
-
-        @functools.wraps(func)
-        async def wrapped(**kwargs):
-            try:
-                message_id = await func(**kwargs)
-                if message_id and seconds >= 1:
-                    await asyncio.sleep(seconds)
-                    await get_bot().delete_msg(message_id=message_id['message_id'])
-            except Exception as e:
-                raise e
-
-        return wrapped
-
-    return wrapper
-
-
-# 缓存装饰器 ttl为过期时间 参数use_cache决定是否使用缓存，默认为True
-def cache(ttl=datetime.timedelta(hours=1), **kwargs):
-    def wrap(func):
-        cache_data = {}
-
-        @functools.wraps(func)
-        async def wrapped(*args, **kw):
-            nonlocal cache_data
-            bound = inspect.signature(func).bind(*args, **kw)
-            bound.apply_defaults()
-            ins_key = '|'.join(['%s_%s' % (k, v) for k, v in bound.arguments.items()])
-            default_data = {"time": None, "value": None}
-            data = cache_data.get(ins_key, default_data)
-            now = datetime.datetime.now()
-            if 'use_cache' not in kw:
-                kw['use_cache'] = True
-            if not kw['use_cache'] or not data['time'] or now - data['time'] > ttl:
-                try:
-                    data['value'] = await func(*args, **kw)
-                    data['time'] = now
-                    cache_data[ins_key] = data
-                except Exception as e:
-                    raise e
-            return data['value']
-
-        return wrapped
-
-    return wrap
-
-
-# 异常处理装饰器
-def exception_handler():
-    def wrapper(func):
-
-        @functools.wraps(func)
-        async def wrapped(**kwargs):
-            event = kwargs['event']
-            try:
-                await func(**kwargs)
-            except FinishedException:
-                raise
-            except ActionFailed:
-                logger.exception('账号可能被风控，消息发送失败')
-                await get_bot().send(event, f'派蒙可能被风控，也可能是没有该图片资源，消息发送失败')
-            except JSONDecodeError:
-                await get_bot().send(event, '派蒙获取信息失败，重试一下吧')
-            # except IndexError or KeyError as e:
-            #     await get_bot().send(event, f'派蒙获取信息失败，请确认参数无误，{e}')
-            # except TypeError or AttributeError as e:
-            #     await get_bot().send(event, f'派蒙好像没有该UID的绑定信息， {e}')
-            except FileNotFoundError as e:
-                file_name = re.search(r'\'(.*)\'', str(e)).group(1)
-                file_name = file_name.replace('\\\\', '/').split('/')
-                file_name = file_name[-2] + '\\' + file_name[-1]
-                await get_bot().send(event, f"派蒙缺少{file_name}资源，请联系开发者补充")
-            except Exception as e:
-                await get_bot().send(event, f'派蒙好像出了点问题，{e}')
-
-        return wrapped
-
-    return wrapper
+from .message_util import send_cookie_delete_msg
 
 
 # 冷却时间限制器
@@ -136,19 +45,6 @@ class FreqLimiter2:
 
     def left_time(self, key1, key2) -> int:
         return int(self.next_time[key1][key2] - time()) + 1
-
-
-# # 从网络url中获取图片
-# async def get_pic(url: str, size: tuple = None, mode: str = None):
-#     async with ClientSession() as session:
-#         res = await session.get(url)
-#         res = await res.read()
-#         img = Image.open(BytesIO(res))
-#         if size:
-#             img = img.resize(size)
-#         if mode:
-#             img = img.convert(mode)
-#         return img
 
 
 # 获取可用的cookie
@@ -220,44 +116,6 @@ async def check_retcode(data, cookie, uid):
     else:
         await update_cookie_cache(cookie['cookie'], uid, 'uid')
         return True
-
-
-# 图片转b64，q为质量（压缩比例）
-def pil2b64(data, q=85):
-    bio = BytesIO()
-    data = data.convert("RGB")
-    data.save(bio, format='JPEG', quality=q)
-    base64_str = base64.b64encode(bio.getvalue()).decode()
-    return 'base64://' + base64_str
-
-
-# 获取message中的艾特对象
-async def get_at_target(msg):
-    for msg_seg in msg:
-        if msg_seg.type == "at":
-            return msg_seg.data['qq']
-    return None
-
-
-# message预处理，获取uid、干净的msg、user_id、是否缓存
-async def get_uid_in_msg(event: MessageEvent, msg: Message):
-    msg = str(msg).strip()
-    if not msg:
-        uid = await get_last_query(str(event.user_id))
-        return uid, '', str(event.user_id), True
-    user_id = await get_at_target(event.message) or str(event.user_id)
-    msg = re.sub(r'\[CQ.*?\]', '', msg)
-    use_cache = False if '-r' in msg else True
-    msg = msg.replace('-r', '').strip()
-    find_uid = r'(?P<uid>(1|2|5)\d{8})'
-    for msg_seg in event.message:
-        if msg_seg.type == 'text':
-            match = re.search(find_uid, msg_seg.data['text'])
-            if match:
-                await update_last_query(user_id, match.group('uid'), 'uid')
-                return match.group('uid'), msg.replace(match.group('uid'), '').strip(), user_id, use_cache
-    uid = await get_last_query(user_id)
-    return uid, msg.strip(), user_id, use_cache
 
 
 # md5加密
@@ -348,43 +206,5 @@ async def check_cookie(cookie):
         return True
 
 
-# 向超级用户私聊发送cookie删除信息
-async def send_cookie_delete_msg(cookie_info):
-    msg = ''
-    if cookie_info['type'] == 'public':
-        msg = f'公共池的{cookie_info["no"]}号cookie已失效'
-    elif cookie_info['type'] == 'private':
-        if cookie_info['uid']:
-            msg = f'用户{cookie_info["user_id"]}的uid{cookie_info["uid"]}的cookie已失效'
-        elif cookie_info['mys_id']:
-            msg = f'用户{cookie_info["user_id"]}的mys_id{cookie_info["mys_id"]}的cookie已失效'
-    if msg:
-        logger.info(f'---{msg}---')
-        for superuser in get_bot().config.superusers:
-            try:
-                await get_bot().send_private_msg(user_id=superuser, message=msg + '，派蒙帮你删除啦!')
-            except Exception as e:
-                logger.error(f'发送cookie删除消息失败: {e}')
 
-
-def load_data(data_file):
-    data_path = Path() / 'data' / 'LittlePaimon' / data_file
-    if not data_path.exists():
-        save_data({}, data_file)
-    return json.load(data_path.open('r', encoding='utf-8'))
-
-
-def save_data(data, data_file):
-    data_path = Path() / 'data' / 'LittlePaimon' / data_file
-    data_path.parent.mkdir(parents=True, exist_ok=True)
-    json.dump(data, data_path.open('w', encoding='utf-8'), ensure_ascii=False, indent=2)
-
-
-def get_id(event):
-    if event.message_type == 'private':
-        return event.user_id
-    elif event.message_type == 'group':
-        return event.group_id
-    elif event.message_type == 'guild':
-        return event.channel_id
 

@@ -1,8 +1,9 @@
-from PIL import Image, ImageDraw, ImageFont
 import os
-from ..utils.util import pil2b64
-from ..utils.character_alias import get_short_name
-from nonebot.adapters.onebot.v11 import MessageSegment
+
+from PIL import Image, ImageDraw, ImageFont
+
+from utils.character_alias import get_short_name
+from utils.message_util import MessageBuild
 
 res_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'res')
 
@@ -120,7 +121,7 @@ async def get_gacha_log_img(gacha_data, pool):
                 break
         if not img:
             return '这个池子没有抽卡记录哦'
-        total_height = (img.size)[1]
+        total_height = img.size[1]
     else:
         img_list = []
         total_height = 0
@@ -129,17 +130,15 @@ async def get_gacha_log_img(gacha_data, pool):
             p_img = await draw_gacha_log(pd)
             if p_img:
                 img_list.append(p_img)
-                total_height += (p_img.size)[1]
+                total_height += p_img.size[1]
         if not img_list:
             return '没有找到任何抽卡记录诶！'
         img = Image.new('RGBA', (768, total_height), (0, 0, 0, 255))
         for i in img_list:
             img.paste(i, (0, now_height))
-            now_height += (i.size)[1]
+            now_height += i.size[1]
     img_draw = ImageDraw.Draw(img)
     img_draw.text((595, 44), f'UID:{gacha_data["uid"]}', font=get_font(16), fill='black')
     img_draw.text((530, total_height - 45), 'Created by LittlePaimon', font=get_font(16), fill='black')
 
-    img = pil2b64(img, 95)
-    img = MessageSegment.image(img)
-    return img
+    return MessageBuild.Image(img)

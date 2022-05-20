@@ -1,4 +1,4 @@
-from ..utils.http_util import aiorequests
+from utils import aiorequests
 
 # 数据源自微信公众号原神创意工坊
 headers = {

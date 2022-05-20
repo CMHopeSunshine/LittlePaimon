@@ -1,5 +1,6 @@
 from urllib import parse
-from ..utils.http_util import aiorequests
+
+from utils import aiorequests
 
 
 def toApi(url):

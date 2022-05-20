@@ -1,5 +1,5 @@
-from ..utils.util import pil2b64
-from ..utils.http_util import aiorequests
+from utils import aiorequests
+from utils.message_util import MessageBuild
 
 blue = {
     '胡桃': ['火', (0, 1886)],
@@ -62,6 +62,5 @@ async def get_blue_pic(name):
         if c[0] == name:
             img = await aiorequests.get_img(url=f'https://static.cherishmoon.fun/LittlePaimon/blue/{c[1][0]}.jpg')
             img = img.crop((0, int(c[1][1][0]), 1080, int(c[1][1][1])))
-            img = pil2b64(img, 100)
-            return img
+            return MessageBuild.Image(img)
     return None

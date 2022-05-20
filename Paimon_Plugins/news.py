@@ -2,8 +2,9 @@ import re
 from nonebot import on_command, require, get_bot, logger
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
-from ..utils.util import load_data, save_data, get_id
-from ..utils.http_util import aiorequests
+from utils import aiorequests
+from utils.file_handler import load_json, save_json
+from utils.message_util import get_message_id
 
 news60s_pic = on_command('早报', aliases={'今日早报', '今日新闻', '60s读世界'}, priority=13, block=True)
 
@@ -22,8 +23,8 @@ async def news60s_pic_handler(event: MessageEvent, msg=CommandArg()):
         # 匹配msg中的xx:xx时间
         time_str = re.search(r'(\d{1,2}):(\d{2})', msg)
         if time_str:
-            push_data = load_data('news60s_push.json')
-            push_id = str(get_id(event))
+            push_data = load_json('news60s_push.json')
+            push_id = str(get_message_id(event))
             push_data[push_id] = {
                 'type':   event.message_type,
                 'hour':   int(time_str.group(1)),
@@ -31,26 +32,27 @@ async def news60s_pic_handler(event: MessageEvent, msg=CommandArg()):
             }
             if event.message_type == 'guild':
                 push_data[push_id]['guild_id'] = event.guild_id
-            if scheduler.get_job('60sNews' + str(get_id(event))):
-                scheduler.remove_job('60sNews' + str(get_id(event)))
+            if scheduler.get_job('60sNews' + str(get_message_id(event))):
+                scheduler.remove_job('60sNews' + str(get_message_id(event)))
             scheduler.add_job(
                 func=news60s_push_task,
                 trigger='cron',
                 hour=int(time_str.group(1)),
                 minute=int(time_str.group(2)),
-                id='60sNews' + str(get_id(event)),
-                args=(str(get_id(event)),
-                      push_data[str(get_id(event))])
+                id='60sNews' + str(get_message_id(event)),
+                args=(str(get_message_id(event)),
+                      push_data[str(get_message_id(event))])
             )
-            save_data(push_data, 'news60s_push.json')
+            save_json(push_data, 'news60s_push.json')
             await news60s_pic.finish('开启60s读世界推送成功', at_sender=True)
         else:
             await news60s_pic.finish('请给出正确的时间，格式为12:00', at_sender=True)
     elif msg.startswith('关闭推送'):
-        push_data = load_data('news60s_push.json')
-        del push_data[str(get_id(event))]
-        scheduler.remove_job('60sNews' + str(get_id(event)))
-        save_data(push_data, 'news60s_push.json')
+        push_data = load_json('news60s_push.json')
+        del push_data[str(get_message_id(event))]
+        if scheduler.get_job('60sNews' + str(get_message_id(event))):
+            scheduler.remove_job('60sNews' + str(get_message_id(event)))
+        save_json(push_data, 'news60s_push.json')
         await news60s_pic.finish('关闭60s读世界推送成功', at_sender=True)
 
 
@@ -71,7 +73,7 @@ async def news60s_push_task(push_id, push_data: dict):
         logger.exception(f'{push_data["type"]}的{push_id}的60秒读世界推送失败：{e}')
 
 
-for push_id, push_data in load_data('news60s_push.json').items():
+for push_id, push_data in load_json('news60s_push.json').items():
     scheduler.add_job(
         func=news60s_push_task,
         trigger='cron',

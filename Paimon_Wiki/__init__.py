@@ -1,13 +1,15 @@
 import os
-from nonebot import on_endswith, on_command, on_regex
-from nonebot.params import RegexDict
-from nonebot.adapters.onebot.v11 import MessageSegment, MessageEvent
-from ..utils.character_alias import get_id_by_alias
-from ..utils.util import exception_handler
-from .blue import get_blue_pic
-from .abyss_rate_draw import draw_rate_rank, draw_teams_rate
 import re
 import time
+
+from nonebot import on_endswith, on_command, on_regex
+from nonebot.adapters.onebot.v11 import MessageSegment, MessageEvent
+from nonebot.params import RegexDict
+
+from utils.character_alias import get_id_by_alias
+from utils.decorator import exception_handler
+from .abyss_rate_draw import draw_rate_rank, draw_teams_rate
+from .blue import get_blue_pic
 
 __usage__ = '''
 1.[xx角色攻略]查看西风驿站出品的角色一图流攻略
@@ -70,7 +72,7 @@ async def genshinAttribute(event: MessageEvent):
     if name in ['风主', '岩主', '雷主'] or realname:
         name = realname[1][0] if name not in ['风主', '岩主', '雷主'] else name
         img = await get_blue_pic(name)
-        await attribute.finish(MessageSegment.image(file=img))
+        await attribute.finish(img)
     else:
         await attribute.finish(f'没有找到{name}的参考面板', at_sender=True)
 

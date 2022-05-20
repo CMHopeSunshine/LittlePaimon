@@ -2,13 +2,16 @@ import json
 import os
 import re
 from typing import Union
+
 from nonebot import on_command
-from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import Bot, Message, MessageEvent, GroupMessageEvent
-from ..utils.util import get_uid_in_msg
+from nonebot.params import CommandArg
+
+from utils.message_util import get_uid_in_msg
+from .api import toApi, checkApi
 from .gacha_logs import get_data
 from .get_img import get_gacha_log_img
-from .api import toApi, checkApi
+from pathlib import Path
 
 __usage__ = '''
 1.[获取抽卡记录 (uid) (url)]提供url，获取原神抽卡记录，需要一定时间

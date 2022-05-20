@@ -6,12 +6,13 @@
 import json
 import os
 from pathlib import Path
-from bs4 import BeautifulSoup
-from sqlitedict import SqliteDict  # TODO 加入requirements
-from .util import get_path
-from nonebot import logger
-from ..utils.http_util import aiorequests
 
+from bs4 import BeautifulSoup
+from nonebot import logger
+from sqlitedict import SqliteDict  # TODO 加入requirements
+
+from utils import aiorequests
+from .util import get_path
 
 # OUT_PUT = Path(__file__).parent / 'voice'
 OUT_PUT = Path() / 'data' / 'LittlePaimon' / 'guess_voice' / 'voice'
