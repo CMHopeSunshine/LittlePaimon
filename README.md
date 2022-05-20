@@ -10,7 +10,7 @@
     <a href="https://qun.qq.com/qqweb/qunpro/share?_wv=3&_wwv=128&inviteCode=MmWrI&from=246610&biz=ka"><img src="https://img.shields.io/badge/QQ频道交流-尘世闲游-green?style=flat-square" alt="QQ guild"></a>
 </p>
 
-## 简介
+## 丨简介
 
 原神多功能机器人，通过米游社接口查询uid的游戏信息，并提供WIKI查询和各种各样的好玩的功能。
 
@@ -19,7 +19,7 @@
 + [Github主页](https://github.com/CMHopeSunshine/LittlePaimon)
 + [README博客](https://blog.cherishmoon.fun/bot/LittlePaimon-hoshino.html)
 
-## 功能示例
+## 丨功能示例
 
 <img src="https://static.cherishmoon.fun/LittlePaimon/readme/ys.jpg" alt="ys">
 
@@ -63,7 +63,7 @@
 <img src="https://static.cherishmoon.fun/LittlePaimon/readme/gachalog.jpg" alt="gachalog">
 </details>
 
-## 更新日志
+## 丨更新日志
 + 5.19
   - 米游社签到新增`全部重签`，仅限超级管理员使用，需@机器人
   - `原神猜语音`不再需要`我猜`，直接回答角色别名即可参与猜猜看
@@ -74,11 +74,11 @@
   - 封装部分常用方法，优化导包
   - `Paimon_Chat`新增`更新派蒙语音`，实时更新语音
 
-## 功能列表
+## 丨功能列表
 
 详见[功能列表](https://blog.cherishmoon.fun/bot/NoneBot2FuncList.html)
 
-## 部署方法
+## 丨部署方法
 ### 我很熟悉NoneBot2：
 
  + 部署NoneBot2和go-cqhttp
@@ -118,7 +118,7 @@ javascript:(function(){prompt(document.domain,document.cookie)})();
 
 复制得到的cookie，向小派蒙发送**`添加公共ck`**和粘贴的内容，即可开始使用
 
-## 感谢
+## 丨感谢
 
 代码水平很烂，站在巨人的肩膀上努力学习ing......
 
@@ -130,3 +130,19 @@ javascript:(function(){prompt(document.domain,document.cookie)})();
 - [genshin-gacha-export](https://github.com/sunfkny/genshin-gacha-export) - 抽卡记录导出参考
 - [西风驿站](https://bbs.mihoyo.com/ys/collection/307224) - 角色攻略一图流来源
 - [游创工坊](https://space.bilibili.com/176858937) - 深渊排行榜数据来源
+
+## 丨赞助
+- 如果本项目对你有帮助，给个star~~求求啦
+- 部分资源使用了云存储，如果想赞助流量费用，欢迎来[爱发电](https://afdian.net/@cherishmoon)，十分感谢！
+
+### 赞助支持
+
+| 赞助者 | 金额 | 日期 |
+| ------ | ---- | ---- |
+| 深海   | 10   | 5.20 |
+
+## 丨其他
+
+- 本项目仅供学习使用，禁止用于商业用途
+
+- 如果您使用修改了本项目源码，请遵循[GPL-3.0](https://github.com/CMHopeSunshine/LittlePaimon/blob/master/LICENSE)开源
