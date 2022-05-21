@@ -5,17 +5,13 @@ from typing import Union, Optional, Tuple
 from ssl import SSLCertVerificationError
 from PIL import Image
 
-from .decorator import cache
 
-
-@cache()
 def load_image(
         path: Union[Path, str],
         *,
         size: Optional[Union[Tuple[int, int], float]] = None,
         crop: Optional[Tuple[int, int, int, int]] = None,
         mode: Optional[str] = None,
-        use_cache: bool = True
 ):
     img = Image.open(path)
     if size:

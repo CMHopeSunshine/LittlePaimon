@@ -1,12 +1,12 @@
 from utils.auth_util import get_headers, get_sign_headers, get_use_cookie, get_own_cookie, check_retcode
 from utils.db_util import update_cookie_cache
-from utils.decorator import AsyncCache
+from utils.decorator import cache
 from utils import aiorequests
 import datetime
 import re
 
 
-@AsyncCache(ttl=datetime.timedelta(hours=1))
+@cache(ttl=datetime.timedelta(hours=1))
 async def get_abyss_data(user_id, uid, schedule_type="1", use_cache=True):
     server_id = "cn_qd01" if uid[0] == '5' else "cn_gf01"
     url = "https://api-takumi-record.mihoyo.com/game_record/app/genshin/api/spiralAbyss"
@@ -50,7 +50,7 @@ async def get_daily_note_data(uid):
         return f'你的uid{uid}的cookie已过期,需要重新绑定哦!'
 
 
-@AsyncCache(ttl=datetime.timedelta(hours=1))
+@cache(ttl=datetime.timedelta(hours=1))
 async def get_player_card_data(user_id, uid, use_cache=True):
     server_id = "cn_qd01" if uid[0] == '5' else "cn_gf01"
     url = "https://api-takumi-record.mihoyo.com/game_record/app/genshin/api/index"
@@ -72,7 +72,7 @@ async def get_player_card_data(user_id, uid, use_cache=True):
             return data
 
 
-@AsyncCache(ttl=datetime.timedelta(hours=1))
+@cache(ttl=datetime.timedelta(hours=1))
 async def get_chara_detail_data(user_id, uid, use_cache=True):
     server_id = "cn_qd01" if uid[0] == '5' else "cn_gf01"
     json_data = {
@@ -95,7 +95,7 @@ async def get_chara_detail_data(user_id, uid, use_cache=True):
             return data
 
 
-@AsyncCache(ttl=datetime.timedelta(hours=1))
+@cache(ttl=datetime.timedelta(hours=1))
 async def get_chara_skill_data(uid, chara_id, use_cache=True):
     server_id = "cn_qd01" if uid[0] == '5' else "cn_gf01"
     url = 'https://api-takumi.mihoyo.com/event/e20200928calculate/v1/sync/avatar/detail'
@@ -114,7 +114,7 @@ async def get_chara_skill_data(uid, chara_id, use_cache=True):
     return data
 
 
-@AsyncCache(ttl=datetime.timedelta(hours=1))
+@cache(ttl=datetime.timedelta(hours=1))
 async def get_monthinfo_data(uid, month, use_cache=True):
     server_id = "cn_qd01" if uid[0] == '5' else "cn_gf01"
     url = 'https://hk4e-api.mihoyo.com/event/ys_ledger/monthInfo'

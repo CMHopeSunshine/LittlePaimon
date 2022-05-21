@@ -75,7 +75,7 @@ async def gacha(event: Union[MessageEvent, GroupMessageEvent], reGroup: Dict = R
         gacha_data = globals()[gacha_type]
     img = await more_ten(uid, gacha_data, num, sender)
     save_user_info()
-    await sim_gacha.finish(MessageSegment.image(img), at_sender=True)
+    await sim_gacha.finish(img, at_sender=True)
 
 
 @show_log.handle()
