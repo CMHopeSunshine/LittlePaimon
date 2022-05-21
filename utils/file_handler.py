@@ -8,6 +8,7 @@ def load_image(
         path: Union[Path, str],
         *,
         size: Optional[Union[Tuple[int, int], float]] = None,
+        crop: Optional[Tuple[int, int, int, int]] = None,
         mode: Optional[str] = 'RGB'
 ):
     img = Image.open(path)
@@ -16,6 +17,8 @@ def load_image(
             img = img.resize((int(img.size[0] * size), int(img.size[1] * size)), Image.ANTIALIAS)
         elif isinstance(size, tuple):
             img = img.resize(size, Image.ANTIALIAS)
+    if crop:
+        img = img.crop(crop)
     img = img.convert(mode)
     return img
 

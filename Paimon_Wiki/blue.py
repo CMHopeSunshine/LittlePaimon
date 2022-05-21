@@ -60,7 +60,6 @@ blue = {
 async def get_blue_pic(name):
     for c in blue.items():
         if c[0] == name:
-            img = await aiorequests.get_img(url=f'https://static.cherishmoon.fun/LittlePaimon/blue/{c[1][0]}.jpg')
-            img = img.crop((0, int(c[1][1][0]), 1080, int(c[1][1][1])))
+            img = await aiorequests.get_img(url=f'https://static.cherishmoon.fun/LittlePaimon/blue/{c[1][0]}.jpg', crop=(0, int(c[1][1][0]), 1080, int(c[1][1][1])))
             return MessageBuild.Image(img)
     return None

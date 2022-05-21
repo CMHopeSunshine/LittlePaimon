@@ -1,5 +1,5 @@
 <p align="center" >
-  <a href="https://github.com/CMHopeSunshine/LittlePaimon/tree/nonebot2"><img src="https://static.cherishmoon.fun/LittlePaimon/readme/logo.png" width="256" height="256" alt="LittlePaimon"></a>
+  <a href="https://github.com/CMHopeSunshine/LittlePaimon/tree/nonebot2"><img src="http://static.cherishmoon.fun/LittlePaimon/readme/logo.png" width="256" height="256" alt="LittlePaimon"></a>
 </p>
 <h1 align="center">小派蒙|LittlePaimon</h1>
 <h4 align="center">✨基于<a href="https://github.com/Ice-Cirno/HoshinoBot" target="_blank">HoshinoBot</a>|<a href="https://github.com/nonebot/nonebot2" target="_blank">NoneBot2</a>和<a href="https://github.com/Mrs4s/go-cqhttp" target="_blank">go-cqhttp</a>的原神Q群机器人✨</h4>
@@ -21,46 +21,46 @@
 
 ## 丨功能示例
 
-<img src="https://static.cherishmoon.fun/LittlePaimon/readme/ys.jpg" alt="ys">
+<img src="http://static.cherishmoon.fun/LittlePaimon/readme/ys.jpg" alt="ys">
 
 <details>
 <summary>角色背包</summary>
-<img src="https://static.cherishmoon.fun/LittlePaimon/readme/ysa.jpg" alt="ysa">
+<img src="http://static.cherishmoon.fun/LittlePaimon/readme/ysa.jpg" alt="ysa">
 </details>
 
 <details>
 <summary>角色详情</summary>
-<img src="https://static.cherishmoon.fun/LittlePaimon/readme/ysc.jpg" alt="ysc">
+<img src="http://static.cherishmoon.fun/LittlePaimon/readme/ysc.jpg" alt="ysc">
 </details>
 
 <details>
 <summary>深渊信息</summary>
-<img src="https://static.cherishmoon.fun/LittlePaimon/readme/sy12.jpg" alt="sy">
+<img src="http://static.cherishmoon.fun/LittlePaimon/readme/sy12.jpg" alt="sy">
 </details>
 
 <details>
 <summary>模拟抽卡</summary>
-<img src="https://static.cherishmoon.fun/LittlePaimon/readme/十连.jpg" alt="十连">
+<img src="http://static.cherishmoon.fun/LittlePaimon/readme/十连.jpg" alt="十连">
 </details>
 
 <details>
 <summary>实时便签</summary>
-<img src="https://static.cherishmoon.fun/LittlePaimon/readme/ssbq.jpg" alt="ssbq">
+<img src="http://static.cherishmoon.fun/LittlePaimon/readme/ssbq.jpg" alt="ssbq">
 </details>
 
 <details>
 <summary>每月札记</summary>
-<img src="https://static.cherishmoon.fun/LittlePaimon/readme/myzj.jpg" alt="myzj">
+<img src="http://static.cherishmoon.fun/LittlePaimon/readme/myzj.jpg" alt="myzj">
 </details>
 
 <details>
 <summary>角色材料</summary>
-<img src="https://static.cherishmoon.fun/LittlePaimon/readme/material.png" alt="material">
+<img src="http://static.cherishmoon.fun/LittlePaimon/readme/material.png" alt="material">
 </details>
 
 <details>
 <summary>抽卡记录</summary>
-<img src="https://static.cherishmoon.fun/LittlePaimon/readme/gachalog.jpg" alt="gachalog">
+<img src="http://static.cherishmoon.fun/LittlePaimon/readme/gachalog.jpg" alt="gachalog">
 </details>
 
 ## 丨更新日志
@@ -73,6 +73,8 @@
   - 修复`ysc`缺少资源问题
   - 封装部分常用方法，优化导包
   - `Paimon_Chat`新增`更新派蒙语音`，实时更新语音
++ 5.21
+  - 修复可能因ssl证书导致的静态资源下载问题
 
 ## 丨功能列表
 

@@ -1,6 +1,7 @@
 import random
 import requests
 
+from ssl import SSLCertVerificationError
 from nonebot import on_regex, on_command, logger
 from nonebot.matcher import matchers
 from nonebot.rule import Rule
@@ -27,7 +28,10 @@ async def update_paimon_voice(event: MessageEvent):
     try:
         old_len = len([m for m in matchers[10] if m.plugin_name == 'Paimon_Chat'])
         matchers[10] = [m for m in matchers[10] if m.plugin_name != 'Paimon_Chat']
-        voice_list = requests.get('https://static.cherishmoon.fun/LittlePaimon/voice/voice_list.json').json()
+        try:
+            voice_list = requests.get('https://static.cherishmoon.fun/LittlePaimon/voice/voice_list.json').json()
+        except SSLCertVerificationError:
+            voice_list = requests.get('http://static.cherishmoon.fun/LittlePaimon/voice/voice_list.json').json()
         for key, value in voice_list.items():
             create_matcher(key, value['pattern'], value['cooldown'], value['pro'], value['files'])
         new_len = len(voice_list) - old_len
@@ -39,30 +43,37 @@ async def update_paimon_voice(event: MessageEvent):
 
 
 def create_matcher(chat_word: str, pattern: str, cooldown: int, pro: float, responses):
-    hammer = on_regex(pattern, priority=10, rule=Rule(check_group))
+
+    def check_pro() -> bool:
+        return random.random() < pro
+
+    def check_cooldown(event: GroupMessageEvent) -> bool:
+        return chat_lmt.check(event.group_id, chat_word)
+
+    hammer = on_regex(pattern, priority=10, rule=Rule(check_group, check_pro, check_cooldown))
     hammer.plugin_name = 'Paimon_Chat'
 
     @hammer.handle()
     async def handler(event: GroupMessageEvent):
-        if not chat_lmt.check(event.group_id, chat_word):
-            return
-        else:
-            if not random.random() < pro:
-                return
+        try:
+            chat_lmt.start_cd(event.group_id, chat_word, cooldown)
+            response = random.choice(responses)
+            if '.mp3' not in response:
+                await hammer.finish(response)
             else:
                 try:
-                    chat_lmt.start_cd(event.group_id, chat_word, cooldown)
-                    response = random.choice(responses)
-                    if '.mp3' not in response:
-                        await hammer.finish(response)
-                    else:
-                        await hammer.finish(MessageSegment.record(file=voice_url + response))
-                except FinishedException:
-                    raise
-                except Exception as e:
-                    logger.error('派蒙发送语音失败', e)
+                    await hammer.finish(MessageSegment.record(file=voice_url + response))
+                except SSLCertVerificationError:
+                    await hammer.finish(MessageSegment.record(file=voice_url.replace('https', 'http') + response))
+        except FinishedException:
+            raise
+        except Exception as e:
+            logger.error('派蒙发送语音失败', e)
 
 
-chat_list = requests.get('https://static.cherishmoon.fun/LittlePaimon/voice/voice_list.json').json()
-for k, v in chat_list.items():
+try:
+    voice_list = requests.get('https://static.cherishmoon.fun/LittlePaimon/voice/voice_list.json').json()
+except SSLCertVerificationError:
+    voice_list = requests.get('http://static.cherishmoon.fun/LittlePaimon/voice/voice_list.json').json()
+for k, v in voice_list.items():
     create_matcher(k, v['pattern'], v['cooldown'], v['pro'], v['files'])

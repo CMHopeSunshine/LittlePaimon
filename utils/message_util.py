@@ -1,4 +1,3 @@
-# 获取message中的艾特对象
 import re
 import base64
 
@@ -12,6 +11,7 @@ from nonebot.adapters.onebot.v11 import MessageEvent, Message, MessageSegment
 
 from .db_util import get_last_query, update_last_query
 from .file_handler import load_image
+from . import aiorequests
 
 
 class MessageBuild:
@@ -21,13 +21,13 @@ class MessageBuild:
               img: Union[Image.Image, Path, str],
               *,
               size: Optional[Union[Tuple[int, int], float]] = None,
+              crop: Optional[Tuple[int, int, int, int]] = None,
               quality: Optional[int] = 100,
               mode: Optional[str] = 'RGB'
               ) -> MessageSegment:
         if isinstance(img, str) or isinstance(img, Path):
-            img = load_image(path=img, size=size, mode=mode)
+            img = load_image(path=img, size=size, mode=mode, crop=crop)
         bio = BytesIO()
-        img = img.convert(mode)
         img.save(bio, format='JPEG' if mode == 'RGB' else 'PNG', quality=quality)
         img_b64 = 'base64://' + base64.b64encode(bio.getvalue()).decode()
         return MessageSegment.image(img_b64)
