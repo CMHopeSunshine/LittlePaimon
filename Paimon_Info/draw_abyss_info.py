@@ -5,6 +5,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 from utils import aiorequests
 from utils.message_util import MessageBuild
+from utils.file_handler import load_image
 
 res_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'res')
 
@@ -33,12 +34,12 @@ def get_chan_time(timeStamp1, timeStamp2):
 
 
 async def draw_abyss_floor_card(floor, floor_n):
-    floor_img = Image.open(os.path.join(res_path, 'abyss', f'floor{floor_n}_long.png')).convert('RGBA')
+    floor_img = load_image(os.path.join(res_path, 'abyss', f'floor{floor_n}_long.png'), mode='RGBA')
     floor_draw = ImageDraw.Draw(floor_img)
     floor_draw.text((590, 68), f"{floor['star']}/9", font=get_font(30), fill='white')
     h, h1, h2 = 188.3, 230, 360
     for j in floor['levels']:
-        star = Image.open(os.path.join(res_path, 'abyss', 'star.png')).convert('RGBA')
+        star = load_image(os.path.join(res_path, 'abyss', 'star.png'), mode='RGBA')
         star_w = 500
         for i in range(0, j['star']):
             floor_img.alpha_composite(star, (star_w, h1 + 94))
@@ -54,8 +55,7 @@ async def draw_abyss_floor_card(floor, floor_n):
             for role in battles[0]['avatars']:
                 id = role['id']
                 level = role['level']
-                role_img = Image.open(os.path.join(res_path, 'role_card', f'{id}.png')).convert('RGBA')
-                role_img = role_img.resize((90, 110))
+                role_img = load_image(os.path.join(res_path, 'role_card', f'{id}.png'), size=(90, 110), mode='RGBA')
                 role_draw = ImageDraw.Draw(role_img)
                 role_draw.text((25, 86), f'Lv.{level}', font=get_font(18), fill='black')
                 floor_img.alpha_composite(role_img, (w, h1))
@@ -66,8 +66,7 @@ async def draw_abyss_floor_card(floor, floor_n):
             for role in battles[1]['avatars']:
                 id = role['id']
                 level = role['level']
-                role_img = Image.open(os.path.join(res_path, 'role_card', f'{id}.png')).convert('RGBA')
-                role_img = role_img.resize((90, 110))
+                role_img = load_image(os.path.join(res_path, 'role_card', f'{id}.png'), size=(90, 110), mode='RGBA')
                 role_draw = ImageDraw.Draw(role_img)
                 role_draw.text((25, 86), f'Lv.{level}', font=get_font(18), fill='black')
                 floor_img.alpha_composite(role_img, (w, h2))
@@ -95,7 +94,7 @@ async def draw_abyss_card(data, uid, floor_num):
         total_star += str(d['star']) + '-'
     total_star = total_star.strip('-') + ']'
     time = (get_open_time(int(data['start_time']), int(data['end_time'])))
-    top_img = Image.open(os.path.join(res_path, 'abyss', 'abyss_total.png')).convert('RGBA')
+    top_img = load_image(os.path.join(res_path, 'abyss', 'abyss_total.png'), mode='RGBA')
     top_draw = ImageDraw.Draw(top_img)
     top_draw.text((15, 22), f'UID：{uid}', font=get_font(21), fill='white')
     top_draw.text((510, 22), time, font=get_font(21), fill='white')
@@ -106,71 +105,32 @@ async def draw_abyss_card(data, uid, floor_num):
     for role in data['reveal_rank']:
         id = role['avatar_id']
         times = role['value']
-        role_img = Image.open(os.path.join(res_path, 'role_card', f'{id}.png')).convert('RGBA')
-        role_img = role_img.resize((90, 110))
+        role_img = load_image(os.path.join(res_path, 'role_card', f'{id}.png'), size=(90, 110), mode='RGBA')
         role_draw = ImageDraw.Draw(role_img)
         role_draw.text((25, 86), f'{times}次', font=get_font(18), fill='black')
         top_img.alpha_composite(role_img, (width, 165))
         width += 150
     defeat_rank = data['defeat_rank'][0]
-    # if not os.path.exists(os.path.join(res_path, 'role_side_card', f"{defeat_rank['avatar_id']}.png")):
-    #     async with ClientSession() as session:
-    #         defeat_rank_img = await (await session.get(defeat_rank['avatar_icon'])).read()
-    #         defeat_rank_img = Image.open(BytesIO(defeat_rank_img)).convert("RGBA").resize((60, 60))
-    #         defeat_rank_img.save(os.path.join(res_path, 'role_side_card', f"{defeat_rank['avatar_id']}.png"))
-    # else:
-    #     defeat_rank_img = Image.open(os.path.join(res_path, 'role_side_card', f"{defeat_rank['avatar_id']}.png"))
     defeat_rank_img = await aiorequests.get_img(url=defeat_rank['avatar_icon'], size=(60, 60), mode='RGBA')
     top_draw.text((160, 343), str(defeat_rank['value']), font=get_font(21), fill='white')
     top_img.alpha_composite(defeat_rank_img, (280, 320))
 
     damage_rank = data['damage_rank'][0]
-    # if not os.path.exists(os.path.join(res_path, 'role_side_card', f"{damage_rank['avatar_id']}.png")):
-    #     async with ClientSession() as session:
-    #         damage_rank_img = await (await session.get(damage_rank['avatar_icon'])).read()
-    #         damage_rank_img = Image.open(BytesIO(damage_rank_img)).convert("RGBA").resize((60, 60))
-    #         damage_rank_img.save(os.path.join(res_path, 'role_side_card', f"{damage_rank['avatar_id']}.png"))
-    # else:
-    #     damage_rank_img = Image.open(os.path.join(res_path, 'role_side_card', f"{damage_rank['avatar_id']}.png"))
     damage_rank_img = await aiorequests.get_img(url=damage_rank['avatar_icon'], size=(60, 60), mode='RGBA')
     top_draw.text((495, 343), str(damage_rank['value']), font=get_font(21), fill='white')
     top_img.alpha_composite(damage_rank_img, (590, 320))
 
     take_damage_rank = data['take_damage_rank'][0]
-    # if not os.path.exists(os.path.join(res_path, 'role_side_card', f"{take_damage_rank['avatar_id']}.png")):
-    #     async with ClientSession() as session:
-    #         take_damage_rank_img = await (await session.get(take_damage_rank['avatar_icon'])).read()
-    #         take_damage_rank_img = Image.open(BytesIO(take_damage_rank_img)).convert("RGBA").resize((60, 60))
-    #         take_damage_rank_img.save(os.path.join(res_path, 'role_side_card', f"{take_damage_rank['avatar_id']}.png"))
-    # else:
-    #     take_damage_rank_img = Image.open(
-    #         os.path.join(res_path, 'role_side_card', f"{take_damage_rank['avatar_id']}.png"))
     take_damage_rank_img = await aiorequests.get_img(url=take_damage_rank['avatar_icon'], size=(60, 60), mode='RGBA')
     top_draw.text((180, 389), str(take_damage_rank['value']), font=get_font(21), fill='white')
     top_img.alpha_composite(take_damage_rank_img, (280, 365))
 
     energy_skill_rank = data['energy_skill_rank'][0]
-    # if not os.path.exists(os.path.join(res_path, 'role_side_card', f"{energy_skill_rank['avatar_id']}.png")):
-    #     async with ClientSession() as session:
-    #         energy_skill_rank_img = await (await session.get(energy_skill_rank['avatar_icon'])).read()
-    #         energy_skill_rank_img = Image.open(BytesIO(energy_skill_rank_img)).convert("RGBA").resize((60, 60))
-    #         energy_skill_rank_img.save(os.path.join(res_path, 'role_side_card', f"{energy_skill_rank['avatar_id']}.png"))
-    # else:
-    #     energy_skill_rank_img = Image.open(
-    #         os.path.join(res_path, 'role_side_card', f"{energy_skill_rank['avatar_id']}.png"))
     energy_skill_rank_img = await aiorequests.get_img(url=energy_skill_rank['avatar_icon'], size=(60, 60), mode='RGBA')
     top_draw.text((530, 389), str(energy_skill_rank['value']), font=get_font(21), fill='white')
     top_img.alpha_composite(energy_skill_rank_img, (590, 365))
 
     normal_skill_rank = data['normal_skill_rank'][0]
-    # if not os.path.exists(os.path.join(res_path, 'role_side_card', f"{normal_skill_rank['avatar_id']}.png")):
-    #     async with ClientSession() as session:
-    #         normal_skill_rank_img = await (await session.get(normal_skill_rank['avatar_icon'])).read()
-    #         normal_skill_rank_img = Image.open(BytesIO(normal_skill_rank_img)).convert("RGBA").resize((60, 60))
-    #         normal_skill_rank_img.save(os.path.join(res_path, 'role_side_card', f"{normal_skill_rank['avatar_id']}.png"))
-    # else:
-    #     normal_skill_rank_img = Image.open(
-    #         os.path.join(res_path, 'role_side_card', f"{normal_skill_rank['avatar_id']}.png"))
     normal_skill_rank_img = await aiorequests.get_img(url=normal_skill_rank['avatar_icon'], size=(60, 60), mode='RGBA')
     top_draw.text((195, 435), str(normal_skill_rank['value']), font=get_font(21), fill='white')
     top_img.alpha_composite(normal_skill_rank_img, (280, 410))

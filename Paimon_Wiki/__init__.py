@@ -2,7 +2,6 @@ import os
 import re
 import time
 
-from ssl import SSLCertVerificationError
 
 from nonebot import on_endswith, on_command, on_regex
 from nonebot.adapters.onebot.v11 import MessageSegment, MessageEvent
@@ -10,6 +9,7 @@ from nonebot.params import RegexDict
 
 from utils.character_alias import get_id_by_alias
 from utils.decorator import exception_handler
+from utils.message_util import MessageBuild
 from .abyss_rate_draw import draw_rate_rank, draw_teams_rate
 from .blue import get_blue_pic
 
@@ -45,12 +45,7 @@ async def genshin_guide(event: MessageEvent):
     realname = get_id_by_alias(name)
     if name in ['风主', '岩主', '雷主'] or realname:
         name = realname[1][0] if name not in ['风主', '岩主', '雷主'] else name
-        try:
-            await guide.finish(
-                MessageSegment.image(file=f'https://static.cherishmoon.fun/LittlePaimon/XFGuide/{name}.jpg'))
-        except SSLCertVerificationError:
-            await guide.finish(
-                MessageSegment.image(file=f'http://static.cherishmoon.fun/LittlePaimon/XFGuide/{name}.jpg'))
+        await guide.finish(await MessageBuild.StaticImage(url=f'LittlePaimon/XFGuide/{name}.jpg'))
     else:
         await guide.finish(f'没有找到{name}的攻略', at_sender=True)
 
@@ -62,12 +57,7 @@ async def genshin_material(event: MessageEvent):
     realname = get_id_by_alias(name)
     if name in ['夜兰', '久岐忍'] or realname:
         name = realname[1][0] if realname else name
-        try:
-            await material.finish(
-                MessageSegment.image(file=f'https://static.cherishmoon.fun/LittlePaimon/RoleMaterials/{name}材料.jpg'))
-        except SSLCertVerificationError:
-            await material.finish(
-                MessageSegment.image(file=f'http://static.cherishmoon.fun/LittlePaimon/RoleMaterials/{name}材料.jpg'))
+        await material.finish(await MessageBuild.StaticImage(f'LittlePaimon/RoleMaterials/{name}材料.jpg'))
     else:
         await material.finish(f'没有找到{name}的材料', at_sender=True)
 
@@ -92,13 +82,7 @@ async def genshinAttribute2(event: MessageEvent):
     realname = get_id_by_alias(name)
     if name in ['风主', '岩主', '雷主'] or realname:
         name = realname[1][0] if name not in ['风主', '岩主', '雷主'] else name
-        try:
-            await attribute2.finish(
-                MessageSegment.image(file=f'https://static.cherishmoon.fun/LittlePaimon/blue/{name}.jpg'))
-        except SSLCertVerificationError:
-            await attribute2.finish(
-                MessageSegment.image(file=f'http://static.cherishmoon.fun/LittlePaimon/blue/{name}.jpg'))
-
+        await attribute2.finish(await MessageBuild.StaticImage(url=f'LittlePaimon/blue/{name}.jpg'))
     else:
         await attribute2.finish(f'没有找到{name}的收益曲线', at_sender=True)
 
@@ -127,15 +111,12 @@ async def daily_material_handle(event: MessageEvent):
             if week == "0":
                 await daily_material.finish('周日所有材料都可以刷哦!', at_sender=True)
             elif week in ['1', '4']:
-                url = 'https://static.cherishmoon.fun/LittlePaimon/DailyMaterials/周一周四.jpg'
+                url = 'LittlePaimon/DailyMaterials/周一周四.jpg'
             elif week in ['2', '5']:
-                url = 'https://static.cherishmoon.fun/LittlePaimon/DailyMaterials/周二周五.jpg'
+                url = 'LittlePaimon/DailyMaterials/周二周五.jpg'
             else:
-                url = 'https://static.cherishmoon.fun/LittlePaimon/DailyMaterials/周三周六.jpg'
-            try:
-                await daily_material.finish(MessageSegment.image(file=url))
-            except SSLCertVerificationError:
-                await daily_material.finish(MessageSegment.image(file=url.replace('https', 'http')))
+                url = 'LittlePaimon/DailyMaterials/周三周六.jpg'
+            await daily_material.finish(await MessageBuild.StaticImage(url=url))
 
 
 @abyss_rate.handle()
@@ -156,9 +137,4 @@ async def abyss_team_handler(event: MessageEvent, reGroup=RegexDict()):
 @exception_handler()
 async def weapon_guide_handler(event: MessageEvent):
     name: str = event.message.extract_plain_text().replace('武器攻略', '').strip()
-    try:
-        await weapon_guide.finish(
-            MessageSegment.image(file=f'https://static.cherishmoon.fun/LittlePaimon/WeaponGuild/{name}.png'))
-    except SSLCertVerificationError:
-        await weapon_guide.finish(
-            MessageSegment.image(file=f'http://static.cherishmoon.fun/LittlePaimon/WeaponGuild/{name}.png'))
+    await weapon_guide.finish(await MessageBuild.StaticImage(url=f'LittlePaimon/WeaponGuild/{name}.png'))

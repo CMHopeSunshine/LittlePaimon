@@ -34,6 +34,30 @@ class MessageBuild:
         return MessageSegment.image(img_b64)
 
     @classmethod
+    async def StaticImage(cls,
+                          url: str,
+                          size: Optional[Tuple[int, int]] = None,
+                          crop: Optional[Tuple[int, int, int, int]] = None,
+                          quality: Optional[int] = 100,
+                          mode: Optional[str] = 'RGB'
+                          ):
+        path = Path() / 'data' / url
+        if not path.exists():
+            path.parent.mkdir(parents=True, exist_ok=True)
+            img = await aiorequests.get_img(url='https://static.cherishmoon.fun/' + url, save_path=path)
+        else:
+            img = Image.open(path)
+        if size:
+            img = img.resize(size)
+        if crop:
+            img = img.crop(crop)
+        bio = BytesIO()
+        img = img.convert(mode)
+        img.save(bio, format='JPEG' if mode == 'RGB' else 'PNG', quality=quality)
+        img_b64 = 'base64://' + base64.b64encode(bio.getvalue()).decode()
+        return MessageSegment.image(img_b64)
+
+    @classmethod
     def Text(cls, text: str) -> MessageSegment:
         # TODO 过滤负面文本
         return MessageSegment.text(text)
@@ -42,6 +66,16 @@ class MessageBuild:
     def Record(cls, path: str) -> MessageSegment:
         # TODO 网络语音
         return MessageSegment.record(path)
+
+    @classmethod
+    async def StaticRecord(cls, url: str) -> MessageSegment:
+        path = Path() / 'data' / url
+        if not path.exists():
+            path.parent.mkdir(parents=True, exist_ok=True)
+            resp = await aiorequests.get(url='https://static.cherishmoon.fun/' + url)
+            content = resp.content
+            path.write_bytes(content)
+        return MessageSegment.record(file=path)
 
 
 async def get_at_target(msg):

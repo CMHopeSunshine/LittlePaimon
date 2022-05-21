@@ -4,6 +4,7 @@ import random
 import matplotlib.pyplot as plt
 from PIL import Image, ImageDraw, ImageFont
 from utils.message_util import MessageBuild
+from utils.file_handler import load_image
 
 res_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'res')
 
@@ -17,8 +18,8 @@ def get_font_bd(size):
 
 
 async def get_box(t, num):
-    box = Image.open(os.path.join(res_path, 'monthinfo', 'box.png')).convert('RGBA')
-    img = Image.open(os.path.join(res_path, 'monthinfo', f'{t}.png')).convert('RGBA')
+    box = load_image(os.path.join(res_path, 'monthinfo', 'box.png'), mode='RGBA')
+    img = load_image(os.path.join(res_path, 'monthinfo', f'{t}.png'), mode='RGBA')
     box.alpha_composite(img, (11, 11))
     box_draw = ImageDraw.Draw(box)
     box_draw.text((83, 18), f'{t}：', font=get_font(25), fill='black')
@@ -56,9 +57,9 @@ async def draw_monthinfo_card(data):
     elif data['retcode'] != 0:
         return f'派蒙获取数据失败了，获取状态：\n{data["message"]},{data["retcode"]}'
     data = data['data']
-    bg_img = Image.open(os.path.join(res_path, 'monthinfo', 'bg.png')).convert('RGBA')
+    bg_img = load_image(os.path.join(res_path, 'monthinfo', 'bg.png'), mode='RGBA')
     bg_draw = ImageDraw.Draw(bg_img)
-    line = Image.open(os.path.join(res_path, 'monthinfo', 'line.png')).convert('RGBA')
+    line = load_image(os.path.join(res_path, 'monthinfo', 'line.png'), mode='RGBA')
     # 顶标题
     bg_draw.text((60, 42), f'旅行者{data["data_month"]}月札记', font=get_font_bd(30), fill='#27384C')
     bg_draw.text((300, 52), f'{data["nickname"]} {data["uid"]}', font=get_font(21), fill='#27384C')
@@ -73,15 +74,15 @@ async def draw_monthinfo_card(data):
     bg_img.alpha_composite(await get_box('摩拉', data['day_data']['current_mora']), (40, 388))
     # 表情
 
-    emoticon1 = Image.open(os.path.join(res_path, 'emoticons', random.choice(os.listdir(os.path.join(res_path, 'emoticons'))))).convert('RGBA')
+    emoticon1 = load_image(os.path.join(res_path, 'emoticons', random.choice(os.listdir(os.path.join(res_path, 'emoticons')))), mode='RGBA')
     bg_img.alpha_composite(emoticon1, (360, 140))
-    emoticon2 = Image.open(os.path.join(res_path, 'emoticons', random.choice(os.listdir(os.path.join(res_path, 'emoticons'))))).convert('RGBA')
+    emoticon2 = load_image(os.path.join(res_path, 'emoticons', random.choice(os.listdir(os.path.join(res_path, 'emoticons')))), mode='RGBA')
     bg_img.alpha_composite(emoticon2, (360, 317))
 
     bg_img.alpha_composite(line, (64, 480))
     # 圆环比例图
     bg_draw.text((60, 495), '原石收入组成：', font=get_font_bd(25), fill='#27384C')
-    circle = Image.open(os.path.join(res_path, 'monthinfo', 'circle.png')).convert('RGBA')
+    circle = load_image(os.path.join(res_path, 'monthinfo', 'circle.png'), mode='RGBA')
 
     bg_img.alpha_composite(circle, (50, 550))
     color = {'每日活跃': '#BD9A5A', '深境螺旋': '#739970', '活动奖励': '#5A7EA0', '邮件奖励': '#7A6CA7', '冒险奖励': '#D56564',

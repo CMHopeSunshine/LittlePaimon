@@ -7,6 +7,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 from utils import aiorequests
 from utils.message_util import MessageBuild
+from utils.file_handler import load_image
 
 res_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'res')
 
@@ -40,9 +41,10 @@ async def draw_daily_note_card(data, uid):
     elif data['retcode'] != 0:
         return f'派蒙获取数据失败了，获取状态：\n{data["message"]},{data["retcode"]}'
     data = data['data']
-    circle_img = Image.open(os.path.join(res_path, 'daily_note', '透明圆.png'))
-    finished_icon = Image.open(os.path.join(res_path, 'daily_note', 'finished.png'))
-    bg_img = Image.open(os.path.join(res_path, 'daily_note', 'ssbq.png')).convert("RGBA")
+    circle_img = load_image(os.path.join(res_path, 'daily_note', '透明圆.png'))
+    finished_icon = load_image(os.path.join(res_path, 'daily_note', 'finished.png'))
+    bg_img = load_image(os.path.join(res_path, 'daily_note', 'ssbq.png'), mode='RGBA')
+
     bg_draw = ImageDraw.Draw(bg_img)
     # uid文字
     bg_draw.text((152, 251), f"uid{uid}", fill='#5680d2', font=get_font(60, 'number.ttf'))
@@ -143,8 +145,8 @@ async def draw_daily_note_card(data, uid):
         bg_draw.text((1408, 1588), last_finish_str, fill="#5680d2",
                      font=get_font(60, '优设标题黑.ttf'))
 
-    role_img = Image.open(os.path.join(res_path, 'emoticons', random.choice(os.listdir(os.path.join(res_path, 'emoticons'))))).convert('RGBA')
-    role_img = role_img.resize((int(role_img.size[0] * 3.5), int(role_img.size[1] * 3.5)), Image.ANTIALIAS)
+
+    role_img = load_image(os.path.join(res_path, 'emoticons', random.choice(os.listdir(os.path.join(res_path, 'emoticons')))), size=3.5, mode='RGBA')
     bg_img.alpha_composite(role_img, (1220, 200))
     now = datetime.datetime.now().strftime('%m月%d日%H:%M')
     bg_draw.text((554, 1794), 'Created by LittlePaimon·' + now, fill='#5680d2', font=get_font(40, '优设标题黑.ttf'))

@@ -1,7 +1,5 @@
 import random
-import requests
 
-from ssl import SSLCertVerificationError
 from nonebot import on_regex, on_command, logger
 from nonebot.matcher import matchers
 from nonebot.rule import Rule
@@ -10,6 +8,8 @@ from nonebot.exception import FinishedException
 
 from utils.config import config
 from utils.auth_util import FreqLimiter2
+from utils.message_util import MessageBuild
+from utils.file_handler import load_json_from_url
 
 voice_url = 'https://static.cherishmoon.fun/LittlePaimon/voice/'
 chat_lmt = FreqLimiter2(60)
@@ -28,10 +28,7 @@ async def update_paimon_voice(event: MessageEvent):
     try:
         old_len = len([m for m in matchers[10] if m.plugin_name == 'Paimon_Chat'])
         matchers[10] = [m for m in matchers[10] if m.plugin_name != 'Paimon_Chat']
-        try:
-            voice_list = requests.get('https://static.cherishmoon.fun/LittlePaimon/voice/voice_list.json').json()
-        except SSLCertVerificationError:
-            voice_list = requests.get('http://static.cherishmoon.fun/LittlePaimon/voice/voice_list.json').json()
+        voice_list = load_json_from_url('https://static.cherishmoon.fun/LittlePaimon/voice/voice_list.json')
         for key, value in voice_list.items():
             create_matcher(key, value['pattern'], value['cooldown'], value['pro'], value['files'])
         new_len = len(voice_list) - old_len
@@ -61,19 +58,13 @@ def create_matcher(chat_word: str, pattern: str, cooldown: int, pro: float, resp
             if '.mp3' not in response:
                 await hammer.finish(response)
             else:
-                try:
-                    await hammer.finish(MessageSegment.record(file=voice_url + response))
-                except SSLCertVerificationError:
-                    await hammer.finish(MessageSegment.record(file=voice_url.replace('https', 'http') + response))
+                await hammer.finish(await MessageBuild.StaticRecord(url=f'LittlePaimon/voice/{response}'))
         except FinishedException:
             raise
         except Exception as e:
             logger.error('派蒙发送语音失败', e)
 
 
-try:
-    voice_list = requests.get('https://static.cherishmoon.fun/LittlePaimon/voice/voice_list.json').json()
-except SSLCertVerificationError:
-    voice_list = requests.get('http://static.cherishmoon.fun/LittlePaimon/voice/voice_list.json').json()
+voice_list = load_json_from_url('https://static.cherishmoon.fun/LittlePaimon/voice/voice_list.json')
 for k, v in voice_list.items():
     create_matcher(k, v['pattern'], v['cooldown'], v['pro'], v['files'])

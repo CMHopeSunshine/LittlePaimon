@@ -34,6 +34,36 @@ def cache(ttl=datetime.timedelta(hours=1)):
         cache_data = {}
 
         @functools.wraps(func)
+        def wrapped(*args, **kw):
+            nonlocal cache_data
+            bound = inspect.signature(func).bind(*args, **kw)
+            bound.apply_defaults()
+            ins_key = '|'.join(['%s_%s' % (k, v) for k, v in bound.arguments.items()])
+            default_data = {"time": None, "value": None}
+            data = cache_data.get(ins_key, default_data)
+            now = datetime.datetime.now()
+            if 'use_cache' not in kw:
+                kw['use_cache'] = True
+            if not kw['use_cache'] or not data['time'] or now - data['time'] > ttl:
+                try:
+                    data['value'] = func(*args, **kw)
+                    data['time'] = now
+                    cache_data[ins_key] = data
+                except Exception as e:
+                    raise e
+            return data['value']
+
+        return wrapped
+
+    return wrap
+
+
+# 缓存装饰异步版
+def AsyncCache(ttl=datetime.timedelta(hours=1)):
+    def wrap(func):
+        cache_data = {}
+
+        @functools.wraps(func)
         async def wrapped(*args, **kw):
             nonlocal cache_data
             bound = inspect.signature(func).bind(*args, **kw)

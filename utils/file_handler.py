@@ -1,15 +1,21 @@
-from pathlib import Path
-from PIL import Image
-from typing import Union, Optional, Tuple
 import json
+import requests
+from pathlib import Path
+from typing import Union, Optional, Tuple
+from ssl import SSLCertVerificationError
+from PIL import Image
+
+from .decorator import cache
 
 
+@cache()
 def load_image(
         path: Union[Path, str],
         *,
         size: Optional[Union[Tuple[int, int], float]] = None,
         crop: Optional[Tuple[int, int, int, int]] = None,
-        mode: Optional[str] = 'RGB'
+        mode: Optional[str] = None,
+        use_cache: bool = True
 ):
     img = Image.open(path)
     if size:
@@ -19,7 +25,8 @@ def load_image(
             img = img.resize(size, Image.ANTIALIAS)
     if crop:
         img = img.crop(crop)
-    img = img.convert(mode)
+    if mode:
+        img = img.convert(mode)
     return img
 
 
@@ -32,6 +39,14 @@ def load_json(file: str = None, path: Union[Path, str] = None, encoding: str = '
     if not path.exists():
         save_json({}, file, path, encoding)
     return json.load(path.open('r', encoding=encoding))
+
+
+def load_json_from_url(url: str):
+    try:
+        resp = requests.get(url)
+    except SSLCertVerificationError:
+        resp = requests.get(url.replace('https', 'http'))
+    return resp.json()
 
 
 def save_json(data, file: str = None, path: Union[Path, str] = None, encoding: str = 'utf-8'):
