@@ -28,6 +28,7 @@ class MessageBuild:
         if isinstance(img, str) or isinstance(img, Path):
             img = load_image(path=img, size=size, mode=mode, crop=crop)
         bio = BytesIO()
+        img = img.convert(mode)
         img.save(bio, format='JPEG' if mode == 'RGB' else 'PNG', quality=quality)
         img_b64 = 'base64://' + base64.b64encode(bio.getvalue()).decode()
         return MessageSegment.image(img_b64)
