@@ -17,7 +17,7 @@
 本README为Hoshino版的介绍，NoneBot2版详见：
 
 + [Github主页](https://github.com/CMHopeSunshine/LittlePaimon/tree/nonebot2)
-+ [README博客](https://blog.cherishmoon.fun/bot/LittlePaimon-nonebot2.html)
++ [README博客](https://blog.cherishmoon.fun/posts/LittlePaimon-nonebot2.html)
 
 本人已经转用NoneBot2，Hoshino版停止新功能的更新（有BUG请提[issue](https://github.com/CMHopeSunshine/LittlePaimon/issues)），**强烈建议您使用NoneBot2版体验最新功能！**
 
@@ -68,7 +68,7 @@
 
 ## 丨功能列表
 
-详见[功能列表](https://blog.cherishmoon.fun/bot/hoshinoFuncList.html)
+详见[功能列表](https://blog.cherishmoon.fun/posts/hoshinoFuncList.html)
 
 ## 丨部署方法
 
@@ -76,9 +76,9 @@
 
 ### 手动部署
 
-- [Linux](https://blog.cherishmoon.fun/bot/HoshinoDeploy.html#linux)
-- [安卓系统](https://blog.cherishmoon.fun/bot/HoshinoDeploy.html#%E5%9C%A8%E5%AE%89%E5%8D%93%E6%89%8B%E6%9C%BA%E4%B8%8A%E9%83%A8%E7%BD%B2)
-- [Windows]https://blog.cherishmoon.fun/bot/HoshinoDeploy.html#windows)
+- [Linux](https://blog.cherishmoon.fun/posts/HoshinoDeploy.html#linux)
+- [安卓系统](https://blog.cherishmoon.fun/posts/HoshinoDeploy.html#%E5%9C%A8%E5%AE%89%E5%8D%93%E6%89%8B%E6%9C%BA%E4%B8%8A%E9%83%A8%E7%BD%B2)
+- [Windows]https://blog.cherishmoon.fun/posts/HoshinoDeploy.html#windows)
 
 ### Windows一键安装脚本
 
@@ -128,9 +128,13 @@ javascript:(function(){prompt(document.domain,document.cookie)})();
 
 ### 赞助支持
 
-| 赞助者 | 金额 | 日期 |
-| ------ | ---- | ---- |
-| 深海   | 10   | 5.20 |
+十分感谢！
+
+| 赞助者  | 金额 | 日期 |
+| ------- | ---- | ---- |
+| 深海    | 10   | 5.20 |
+| 夜空koi | 30   | 5.22 |
+| 情话    | 20   | 5.23 |
 
 ## 丨其他
 
