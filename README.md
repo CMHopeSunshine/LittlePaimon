@@ -17,7 +17,7 @@
 本README为NoneBot2版的介绍，Hoshino版详见：
 
 + [Github主页](https://github.com/CMHopeSunshine/LittlePaimon)
-+ [README博客](https://blog.cherishmoon.fun/posts/LittlePaimon-hoshino.html)
++ [README博客](https://blog.cherishmoon.fun/posts/littlepaimon-hoshino.html)
 
 ## 丨功能示例
 
@@ -80,7 +80,7 @@
 
 ## 丨功能列表
 
-详见[功能列表](https://blog.cherishmoon.fun/posts/NoneBot2FuncList.html)
+详见[功能列表](https://blog.cherishmoon.fun/posts/nonebot2funclist.html)
 
 ## 丨部署方法
 ### 我很熟悉NoneBot2
@@ -106,9 +106,9 @@
 ### 我不熟悉NoneBot2
 **详细部署教程：**
 
-- [Linux](https://blog.cherishmoon.fun/posts/NoneBot2Deploy.html#linux)
-- [安卓系统](https://blog.cherishmoon.fun/posts/NoneBot2Deploy.html#%E5%9C%A8%E5%AE%89%E5%8D%93%E6%89%8B%E6%9C%BA%E4%B8%8A%E9%83%A8%E7%BD%B2)
-- [Windows](https://blog.cherishmoon.fun/posts/NoneBot2Deploy.html#windows)
+- [Linux](https://blog.cherishmoon.fun/posts/nonebot2deploy.html#linux)
+- [安卓系统](https://blog.cherishmoon.fun/posts/nonebot2deploy.html#%E5%9C%A8%E5%AE%89%E5%8D%93%E6%89%8B%E6%9C%BA%E4%B8%8A%E9%83%A8%E7%BD%B2)
+- [Windows](https://blog.cherishmoon.fun/posts/nonebot2deploy.html#windows)
 
 ### 添加公共cookie
 
