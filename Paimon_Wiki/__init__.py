@@ -2,7 +2,6 @@ import os
 import re
 import time
 
-
 from nonebot import on_endswith, on_command, on_regex
 from nonebot.adapters.onebot.v11 import MessageSegment, MessageEvent
 from nonebot.params import RegexDict
@@ -25,7 +24,6 @@ __usage__ = '''
 '''
 __help_version__ = '1.0.2'
 
-
 res_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'res')
 
 guide = on_endswith('角色攻略', priority=8)
@@ -36,6 +34,7 @@ daily_material = on_endswith(('材料', '天赋材料', '突破材料'), priorit
 abyss_rate = on_command('syrate', aliases={'深渊登场率', '深境螺旋登场率', '深渊登场率排行', '深渊排行'}, priority=6, block=True)
 abyss_team = on_regex(r'^(深渊|深境螺旋)(?P<floor>上半|下半)阵容(排行|出场率)?$', priority=5, block=True)
 weapon_guide = on_endswith('武器攻略', priority=6, block=True)
+monster_map = on_endswith('原魔图鉴', priority=6, block=True)
 
 
 @guide.handle()
@@ -138,3 +137,10 @@ async def abyss_team_handler(event: MessageEvent, reGroup=RegexDict()):
 async def weapon_guide_handler(event: MessageEvent):
     name: str = event.message.extract_plain_text().replace('武器攻略', '').strip()
     await weapon_guide.finish(await MessageBuild.StaticImage(url=f'LittlePaimon/WeaponGuild/{name}.png'))
+
+
+@monster_map.handle()
+@exception_handler()
+async def monster_map_handler(event: MessageEvent):
+    name = event.message.extract_plain_text().replace('原魔图鉴', '').strip()
+    await monster_map.finish(await MessageBuild.StaticImage(url=f'LittlePaimon/MonsterMaps/{name}.jpg'))

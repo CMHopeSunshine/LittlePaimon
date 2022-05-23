@@ -17,7 +17,7 @@
 本README为NoneBot2版的介绍，Hoshino版详见：
 
 + [Github主页](https://github.com/CMHopeSunshine/LittlePaimon)
-+ [README博客](https://blog.cherishmoon.fun/bot/LittlePaimon-hoshino.html)
++ [README博客](https://blog.cherishmoon.fun/posts/LittlePaimon-hoshino.html)
 
 ## 丨功能示例
 
@@ -75,38 +75,40 @@
   - `Paimon_Chat`新增`更新派蒙语音`，实时更新语音
 + 5.21
   - 修复可能因ssl证书导致的静态资源下载问题
++ 5.23
+  - 新增`xx原魔图鉴`
 
 ## 丨功能列表
 
-详见[功能列表](https://blog.cherishmoon.fun/bot/NoneBot2FuncList.html)
+详见[功能列表](https://blog.cherishmoon.fun/posts/NoneBot2FuncList.html)
 
 ## 丨部署方法
-### 我很熟悉NoneBot2：
+### 我很熟悉NoneBot2
 
  + 部署NoneBot2和go-cqhttp
 
- + 克隆本项目
-   - `git clone -b nonebot2 https://github.com/CMHopeSunshine/LittlePaimon `
+ + 在NoneBot2根目录，克隆本项目
+   `git clone -b nonebot2 https://github.com/CMHopeSunshine/LittlePaimon `
    
  + 安装依赖
-   - ```shell
-     # 定时任务插件
-     nb plugin install nonebot-plugin-apscheduler
-     # 需要的依赖库
-     pip install aiohttp xlsxwriter sqlitedict matplotlib aiofiles
-     ```
+   ```shell
+   # 定时任务插件
+   nb plugin install nonebot-plugin-apscheduler
+   # 需要的依赖库
+   pip install aiohttp xlsxwriter sqlitedict matplotlib aiofiles
+   ```
  + 启用插件
-   - ```python
-     # 编辑bot.py，添加：
-     nonebot.load_plugins("LittlePaimon")
-     ```
-     
-### 我不熟悉NoneBot2：
+   ```python
+   # 编辑bot.py，添加：
+   nonebot.load_plugins("LittlePaimon")
+   ```
+   
+### 我不熟悉NoneBot2
 **详细部署教程：**
 
-- [Linux](https://blog.cherishmoon.fun/bot/NoneBot2Deploy.html#linux)
-- [安卓系统](https://blog.cherishmoon.fun/bot/NoneBot2Deploy.html#%E5%9C%A8%E5%AE%89%E5%8D%93%E6%89%8B%E6%9C%BA%E4%B8%8A%E9%83%A8%E7%BD%B2)
-- [Windows](https://blog.cherishmoon.fun/bot/NoneBot2Deploy.html#windows)
+- [Linux](https://blog.cherishmoon.fun/posts/NoneBot2Deploy.html#linux)
+- [安卓系统](https://blog.cherishmoon.fun/posts/NoneBot2Deploy.html#%E5%9C%A8%E5%AE%89%E5%8D%93%E6%89%8B%E6%9C%BA%E4%B8%8A%E9%83%A8%E7%BD%B2)
+- [Windows](https://blog.cherishmoon.fun/posts/NoneBot2Deploy.html#windows)
 
 ### 添加公共cookie
 
@@ -139,9 +141,13 @@ javascript:(function(){prompt(document.domain,document.cookie)})();
 
 ### 赞助支持
 
-| 赞助者 | 金额 | 日期 |
-| ------ | ---- | ---- |
-| 深海   | 10   | 5.20 |
+十分感谢！
+
+| 赞助者  | 金额 | 日期 |
+| ------- | ---- | ---- |
+| 深海    | 10   | 5.20 |
+| 夜空koi | 30   | 5.22 |
+| 情话    | 20   | 5.23 |
 
 ## 丨其他
 
