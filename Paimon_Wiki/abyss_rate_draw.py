@@ -37,9 +37,8 @@ async def draw_rate_rank(type: str = 'role', mode: str = 'used'):
         role_draw.text((28 if len(role['rate']) == 6 else 38, 158), role['rate'], font=get_font(30), fill='black')
         bg_img.alpha_composite(role_img, (50 + 204 * (n % 5), 180 + 240 * int(n / 5)))
         n += 1
-    bg_img = pil2b64(bg_img, 75)
-    bg_img = MessageSegment.image(bg_img)
-    return bg_img
+
+    return MessageBuild.Image(bg_img, quality=75)
 
 
 async def draw_teams_rate(floor='上半半'):

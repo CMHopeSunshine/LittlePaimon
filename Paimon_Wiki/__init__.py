@@ -3,12 +3,13 @@ import re
 import time
 
 from nonebot import on_endswith, on_command, on_regex
-from nonebot.adapters.onebot.v11 import MessageSegment, MessageEvent
+from nonebot.adapters.onebot.v11 import MessageEvent, Message, MessageSegment
 from nonebot.params import RegexDict
+from nonebot.typing import T_State
 
 from utils.character_alias import get_id_by_alias
 from utils.decorator import exception_handler
-from utils.message_util import MessageBuild
+from utils.message_util import MessageBuild, match_alias
 from .abyss_rate_draw import draw_rate_rank, draw_teams_rate
 from .blue import get_blue_pic
 
@@ -54,7 +55,7 @@ async def genshin_guide(event: MessageEvent):
 async def genshin_material(event: MessageEvent):
     name: str = event.message.extract_plain_text().replace('角色材料', '').strip()
     realname = get_id_by_alias(name)
-    if name in ['夜兰', '久岐忍'] or realname:
+    if name in ['夜兰', '久岐忍', '鹿野院平藏'] or realname:
         name = realname[1][0] if realname else name
         await material.finish(await MessageBuild.StaticImage(f'LittlePaimon/RoleMaterials/{name}材料.jpg'))
     else:
@@ -132,15 +133,55 @@ async def abyss_team_handler(event: MessageEvent, reGroup=RegexDict()):
     await abyss_team.finish(abyss_img)
 
 
-@weapon_guide.handle()
-@exception_handler()
-async def weapon_guide_handler(event: MessageEvent):
-    name: str = event.message.extract_plain_text().replace('武器攻略', '').strip()
-    await weapon_guide.finish(await MessageBuild.StaticImage(url=f'LittlePaimon/WeaponGuild/{name}.png'))
+def create_choice_command(endswith: str, type_: str, url: str, file_type: str = 'jpg'):
+    command = on_endswith(endswith, priority=6, block=False)
+
+    @command.handle()
+    async def _(event: MessageEvent, state: T_State):
+        name = event.message.extract_plain_text().replace(endswith, '').strip()
+        if name:
+            state['name'] = name
+
+    @command.got('name', prompt=f'请把要查询的{endswith[0:2]}告诉我哦~')
+    async def _(event: MessageEvent, state: T_State):
+        name = state['name']
+        if isinstance(name, Message):
+            name = name.extract_plain_text().strip()
+            if name == 'q':
+                await command.finish()
+        finally_name = await match_alias(name, type_)
+        if isinstance(finally_name, str):
+            await command.finish(await MessageBuild.StaticImage(url=url + finally_name + '.' + file_type))
+        elif isinstance(finally_name, list):
+            if not finally_name:
+                await command.finish(f'没有该{endswith[0:2]}的信息哦，问一个别的吧~')
+            else:
+                if 'choice' not in state:
+                    msg = f'你要找的{endswith[0:2]}是哪个呀：\n'
+                    msg += '\n'.join([f'{int(i) + 1}. {name}' for i, name in enumerate(finally_name)])
+                    await command.send(msg + '\n回答\"q\"可以取消查询')
+                state['match_alias'] = finally_name
+
+    @command.got('choice')
+    async def _(event: MessageEvent, state: T_State):
+        match_alias = state['match_alias']
+        choice = state['choice']
+        choice = choice.extract_plain_text().strip()
+        if choice == 'q':
+            await command.finish()
+        if choice.isdigit() and (1 <= int(choice) <= len(match_alias)):
+            await command.finish(
+                await MessageBuild.StaticImage(url=url + match_alias[int(choice) - 1] + '.' + file_type))
+        if choice not in match_alias:
+            state['times'] = state['times'] + 1 if 'times' in state else 1
+            if state['times'] >= 3:
+                await command.finish(f'看来旅行者您有点神志不清哦(，下次再问派蒙吧' + MessageSegment.face(146))
+            elif state['times'] == 1:
+                await command.reject(f'请旅行者从上面的{endswith[0:2]}中选一个问派蒙\n回答\"q\"可以取消查询')
+            elif state['times'] == 2:
+                await command.reject(f'别调戏派蒙啦，快选一个吧，不想问了麻烦回答\"q\"！')
+        await command.finish(await MessageBuild.StaticImage(url=url + choice + '.' + file_type))
 
 
-@monster_map.handle()
-@exception_handler()
-async def monster_map_handler(event: MessageEvent):
-    name = event.message.extract_plain_text().replace('原魔图鉴', '').strip()
-    await monster_map.finish(await MessageBuild.StaticImage(url=f'LittlePaimon/MonsterMaps/{name}.jpg'))
+create_choice_command('原魔图鉴', 'monsters', 'LittlePaimon/MonsterMaps/', 'jpg')
+create_choice_command('武器攻略', 'weapons', 'LittlePaimon/WeaponGuild/', 'png')

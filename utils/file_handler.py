@@ -1,9 +1,9 @@
 import json
-import requests
 from pathlib import Path
 from typing import Union, Optional, Tuple
 from ssl import SSLCertVerificationError
 from PIL import Image
+from utils import aiorequests
 
 
 def load_image(
@@ -37,12 +37,18 @@ def load_json(file: str = None, path: Union[Path, str] = None, encoding: str = '
     return json.load(path.open('r', encoding=encoding))
 
 
-def load_json_from_url(url: str):
-    try:
-        resp = requests.get(url)
-    except SSLCertVerificationError:
-        resp = requests.get(url.replace('https', 'http'))
-    return resp.json()
+async def load_json_from_url(url: str, encoding: str = 'utf-8', refresh: bool = False):
+    if 'static.cherishmoon.fun' in url:
+        url_path = Path() / 'data' / url.split('static.cherishmoon.fun/')[1]
+        if refresh or not url_path.exists():
+            try:
+                resp = await aiorequests.get(url)
+            except SSLCertVerificationError:
+                resp = await aiorequests.get(url.replace('https', 'http'))
+            save_json(resp.json(), path=url_path, encoding=encoding)
+            return resp.json()
+        else:
+            return load_json(path=url_path, encoding=encoding)
 
 
 def save_json(data, file: str = None, path: Union[Path, str] = None, encoding: str = 'utf-8'):

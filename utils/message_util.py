@@ -1,5 +1,6 @@
 import re
 import base64
+import difflib
 
 from PIL import Image
 from pathlib import Path
@@ -10,7 +11,7 @@ from nonebot import get_bot, logger
 from nonebot.adapters.onebot.v11 import MessageEvent, Message, MessageSegment
 
 from .db_util import get_last_query, update_last_query
-from .file_handler import load_image
+from .file_handler import load_image, load_json_from_url
 from . import aiorequests
 
 
@@ -132,3 +133,21 @@ def get_message_id(event):
         return event.group_id
     elif event.message_type == 'guild':
         return event.channel_id
+
+
+async def match_alias(msg: str, type: str = 'weapons') -> Union[str, list]:
+    alias_file = await load_json_from_url(url='https://static.cherishmoon.fun/LittlePaimon/alias.json')
+    alias_list = alias_file[type]
+    if type == 'weapons':
+        possible = []
+        for name, alias in alias_list.items():
+            match_list = difflib.get_close_matches(msg, alias, cutoff=0.4, n=5)
+            if msg in match_list:
+                return name
+            elif match_list:
+                possible.append(name)
+        return possible
+    elif type == 'monsters':
+        match_list = difflib.get_close_matches(msg, alias_list, cutoff=0.4, n=5)
+        return match_list[0] if len(match_list) == 1 else match_list
+
