@@ -2,7 +2,7 @@ import os
 
 from PIL import Image, ImageDraw, ImageFont
 
-from utils.character_alias import get_id_by_alias
+from utils.alias_handler import get_id_by_alias
 from utils.message_util import MessageBuild
 from .abyss_rate_data import get_rate, get_formation_rate
 

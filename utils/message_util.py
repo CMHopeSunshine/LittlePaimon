@@ -1,6 +1,5 @@
 import re
 import base64
-import difflib
 
 from PIL import Image
 from pathlib import Path
@@ -11,7 +10,7 @@ from nonebot import get_bot, logger
 from nonebot.adapters.onebot.v11 import MessageEvent, Message, MessageSegment
 
 from .db_util import get_last_query, update_last_query
-from .file_handler import load_image, load_json_from_url
+from .file_handler import load_image
 from . import aiorequests
 
 
@@ -135,19 +134,41 @@ def get_message_id(event):
         return event.channel_id
 
 
-async def match_alias(msg: str, type: str = 'weapons') -> Union[str, list]:
-    alias_file = await load_json_from_url(url='https://static.cherishmoon.fun/LittlePaimon/alias.json')
-    alias_list = alias_file[type]
-    if type == 'weapons':
-        possible = []
-        for name, alias in alias_list.items():
-            match_list = difflib.get_close_matches(msg, alias, cutoff=0.4, n=5)
-            if msg in match_list:
-                return name
-            elif match_list:
-                possible.append(name)
-        return possible
-    elif type == 'monsters':
-        match_list = difflib.get_close_matches(msg, alias_list, cutoff=0.4, n=5)
-        return match_list[0] if len(match_list) == 1 else match_list
+def uid_userId_to_dict(uid, user_id) -> Tuple[dict, Message]:
+    total_result = Message()
+    query_dict = {}
+    if isinstance(uid, str) and isinstance(user_id, str):
+        query_dict[uid] = user_id
+    elif isinstance(uid, list) and isinstance(user_id, str):
+        for u in uid:
+            query_dict[u] = user_id
+    elif isinstance(uid, list) and isinstance(user_id, list):
+        for u, us in zip(uid, user_id):
+            if u is not None:
+                query_dict[u] = us
+            else:
+                total_result += MessageSegment.text(f'派蒙没有{us}的{u}信息哦，请把uid给派蒙吧~')
+    return query_dict, total_result
 
+
+def replace_all(raw_text: str, text_list: Union[str, list]):
+    if not text_list:
+        return raw_text
+    else:
+        if isinstance(text_list, str):
+            text_list = [text_list]
+        for text in text_list:
+            raw_text = raw_text.replace(text, '')
+        return raw_text
+
+
+def transform_uid(msg):
+    if isinstance(msg, Message):
+        msg = msg.extract_plain_text().strip()
+    check_uid = msg.split(' ')
+    uid_list = []
+    for check in check_uid:
+        uid = re.search(r'(?P<uid>(1|2|5)\d{8})', check)
+        if uid:
+            uid_list.append(uid.group('uid'))
+    return uid_list if len(uid_list) > 1 else uid_list[0] if uid_list else None

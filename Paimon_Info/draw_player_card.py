@@ -186,11 +186,11 @@ async def draw_player_card(data, chara_data, uid, nickname="旅行者"):
     if not data:
         return '数据出错'
     if data['retcode'] == 10102:
-        return '这uid没有在米游社公开信息哦,请到 个人主页-管理 中打开'
+        return f'uid{uid}没有在米游社公开信息哦,请到 个人主页-管理 中打开'
     elif data['retcode'] == 10104:
-        return 'uid有误哦，检查一下或再手动输入一次uid吧'
+        return f'uid{uid}有误哦，检查一下吧'
     elif data['retcode'] != 0:
-        return f'派蒙获取数据失败了，获取状态：\n{data["message"]},{data["retcode"]}'
+        return f'派蒙获取{uid}数据失败了，获取状态：\n{data["message"]},{data["retcode"]}'
     data = data['data']
     bg_img = load_image(os.path.join(res_path, 'player_card', '背景.png'), mode='RGBA')
     bg_draw = ImageDraw.Draw(bg_img)
@@ -243,7 +243,7 @@ async def draw_player_card(data, chara_data, uid, nickname="旅行者"):
             elif i > 8:
                 break
     else:
-        nocha = '*这uid关闭了角色详情显示，派蒙看不到哦'
+        nocha = f'*uid{uid}关闭了角色详情显示，派蒙看不到哦'
     return MessageBuild.Image(bg_img, quality=80) + MessageBuild.Text(nocha)
 
 
@@ -285,11 +285,11 @@ async def draw_all_chara_card(data, uid):
     if not data:
         return '数据出错'
     if data['retcode'] == 10102:
-        return '这uid没有在米游社公开信息哦,请到 个人主页-管理 中打开'
+        return f'uid{uid}没有在米游社公开信息哦,请到 个人主页-管理 中打开'
     elif data['retcode'] == 10104:
-        return 'uid有误哦，检查一下或再手动输入一次uid吧'
+        return f'uid{uid}有误哦，检查一下吧'
     elif data['retcode'] != 0:
-        return f'派蒙获取数据失败了，获取状态：\n{data["message"]},{data["retcode"]}'
+        return f'派蒙获取{uid}数据失败了，获取状态：\n{data["message"]},{data["retcode"]}'
     data = data['data']['avatars']
     chara_num = len(data)
     col = int(chara_num / 4)
@@ -368,22 +368,22 @@ async def draw_line(p):
 
 async def draw_chara_card(data, skill_data, chara_name, uid):
     if not data:
-        return '数据出错'
+        return f'{uid}数据出错'
     if data['retcode'] == 10102:
-        return '这uid没有在米游社公开信息哦,请到 个人主页-管理 中打开'
+        return f'uid{uid}没有在米游社公开信息哦,请到 个人主页-管理 中打开'
     elif data['retcode'] == 10104:
-        return 'uid有误哦，检查一下或再手动输入一次uid吧'
+        return f'uid{uid}有误哦，检查一下吧'
     elif data['retcode'] != 0:
-        return f'派蒙获取数据失败了，获取状态:\n{data["message"]},{data["retcode"]}'
+        return f'派蒙获取{uid}数据失败了，获取状态:\n{data["message"]},{data["retcode"]}'
     data = data['data']['avatars']
     f = False
     for chara in data:
-        if chara['id'] == chara_name[0] or (chara_name[1][-1] == '旅行者' and chara['name'] == '旅行者'):
+        if chara['id'] == int(chara_name[1]) or (chara_name[0] in ['空', '荧'] and chara['name'] == '旅行者'):
             character = chara
             f = True
             break
     if not f:
-        return f'{chara_name[1][0]}不在你公开的8个角色中或你没有这个角色哦'
+        return f'{chara_name[0]}不在{uid}公开的8个角色中或没有这个角色哦'
     # 立绘
     bg_img = load_image(os.path.join(res_path, 'name_card', f'{character["id"]}.png'))
     bg_draw = ImageDraw.Draw(bg_img)

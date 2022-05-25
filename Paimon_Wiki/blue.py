@@ -57,7 +57,7 @@ blue = {
 
 
 async def get_blue_pic(name):
-    for c in blue.items():
-        if c[0] == name:
-            return await MessageBuild.StaticImage(url=f'LittlePaimon/blue/{c[1][0]}.jpg', crop=(0, int(c[1][1][0]), 1080, int(c[1][1][1])))
+    if name in blue.keys():
+        return await MessageBuild.StaticImage(url=f'LittlePaimon/blue/{blue[name][0]}.jpg',
+                                              crop=(0, int(blue[name][1][0]), 1080, int(blue[name][1][1])))
     return None

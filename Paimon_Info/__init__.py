@@ -5,21 +5,22 @@ from asyncio import sleep
 from collections import defaultdict
 
 from nonebot import on_command, require, logger, get_bot
-from nonebot.adapters.onebot.v11 import MessageEvent, Message, Bot
+from nonebot.adapters.onebot.v11 import MessageEvent, Message, Bot, MessageSegment
 from nonebot.params import CommandArg
+from nonebot.typing import T_State
 from nonebot.permission import SUPERUSER
 from nonebot.rule import to_me
 
-from utils.character_alias import get_id_by_alias
+from utils.alias_handler import get_match_alias
 from utils.config import config
-from utils.db_util import get_auto_sign, delete_auto_sign
+from utils.db_util import get_auto_sign, delete_auto_sign, get_last_query
 from utils.db_util import insert_public_cookie, update_private_cookie, delete_cookie_cache, delete_private_cookie, \
     update_last_query, reset_public_cookie
 from utils.db_util import update_note_remind2, update_note_remind, get_note_remind, delete_note_remind, \
     update_day_remind_count, get_private_cookie, add_auto_sign
 from utils.auth_util import check_cookie
 from utils.decorator import exception_handler
-from utils.message_util import get_uid_in_msg
+from utils.message_util import get_uid_in_msg, uid_userId_to_dict, replace_all, transform_uid
 from .draw_abyss_info import draw_abyss_card
 from .draw_daily_note import draw_daily_note_card
 from .draw_month_info import draw_monthinfo_card
@@ -70,26 +71,73 @@ delete_ck = on_command('delete_ck', aliases={'删除ck', '删除cookie'}, priori
 
 
 @sy.handle()
-@exception_handler()
-async def sy_handler(event: MessageEvent, msg: Message = CommandArg()):
-    uid, msg, user_id, use_cache = await get_uid_in_msg(event, msg)
-    if not uid:
-        await sy.finish('请把正确的uid给派蒙哦,例如sy100123456!', at_sender=True)
+@ys.handle()
+@ysa.handle()
+@ysc.handle()
+async def _(event: MessageEvent, state: T_State, msg: Message = CommandArg()):
+    state['use_cache'] = False if '-r' in msg.extract_plain_text() else True
+    msg_text = msg.extract_plain_text().replace('-r', '').strip()
     if not msg:
+        uid = await get_last_query(str(event.user_id))
+        if uid:
+            state['uid'] = uid
+            state['user_id'] = str(event.user_id)
+    else:
+        uid_list = []
+        check_uid = msg_text.split(' ')
+        for check in check_uid:
+            uid = re.search(r'(?P<uid>(1|2|5)\d{8})', check)
+            if uid:
+                uid_list.append(uid.group('uid'))
+                msg_text = msg_text.replace(uid.group('uid'), '')
+                state['user_id'] = str(event.user_id)
+        if not uid_list:
+            user_list = []
+            for msg_seg in msg:
+                if msg_seg.type == "at":
+                    user_list.append(msg_seg.data['qq'])
+            if len(user_list) == 1:
+                uid = await get_last_query(user_list[0])
+                if uid:
+                    state['uid'] = uid
+                    state['user_id'] = user_list[0]
+            elif user_list:
+                state['uid'] = [await get_last_query(user) for user in user_list]
+                state['user_id'] = user_list
+            else:
+                state['user_id'] = str(event.user_id)
+                uid = await get_last_query(str(event.user_id))
+                if uid:
+                    state['uid'] = uid
+        else:
+            state['uid'] = uid_list[0] if len(uid_list) == 1 else uid_list if uid_list else None
+    if msg_text:
+        state['msg'] = msg_text.strip()
+
+
+@sy.got('uid', prompt='请把要查询的uid给派蒙哦~')
+@exception_handler()
+async def _(event: MessageEvent, state: T_State):
+    uid = transform_uid(state['uid'])
+    if uid:
+        state['uid'] = uid
+    else:
+        await ysa.finish('这个uid不正确哦~，请检查一下', at_sender=True)
+    if 'msg' not in state:
         floor = []
     else:
-        floor = msg.split(' ')
-    true_floor = []
-    for f in floor:
-        if f.isdigit() and (9 <= int(f) <= 12) and len(true_floor) < 2:
-            true_floor.append(int(f))
+        floor = state['msg'].split(' ')
+    true_floor = [int(f) for f in floor if f.isdigit() and (9 <= int(f) <= 12)]
     true_floor.sort()
-    data = await get_abyss_data(user_id, uid, use_cache=use_cache)
-    if isinstance(data, str):
-        await sy.finish(data, at_sender=True)
-    else:
-        abyss_card = await draw_abyss_card(data, uid, true_floor)
-        await sy.finish(abyss_card, at_sender=True)
+    query_dict, total_result = uid_userId_to_dict(state['uid'], state['user_id'])
+    for uid, user_id in query_dict.items():
+        data = await get_abyss_data(user_id, uid, use_cache=state['use_cache'])
+        if isinstance(data, str):
+            total_result += MessageSegment.text(data + '\n')
+        else:
+            abyss_card = await draw_abyss_card(data, uid, true_floor)
+            total_result += abyss_card
+    await sy.finish(total_result, at_sender=True)
 
 
 @ssbq.handle()
@@ -151,62 +199,106 @@ async def myzj_handler(event: MessageEvent, msg: Message = CommandArg()):
         await myzj.finish(monthinfo_card, at_sender=True)
 
 
-@ys.handle()
+@ys.got('uid', prompt='请把要查询的uid给派蒙哦~')
 @exception_handler()
-async def ys_handler(bot: Bot, event: MessageEvent, msg: Message = CommandArg()):
-    uid, msg, user_id, use_cache = await get_uid_in_msg(event, msg)
-    if not uid:
-        await ys.finish('请把正确的uid给派蒙哦,例如ys100123456!', at_sender=True)
-    data = await get_player_card_data(user_id, uid, use_cache=use_cache)
-    if isinstance(data, str):
-        await ys.finish(data, at_sender=True)
+async def ys_handler(bot: Bot, event: MessageEvent, state: T_State):
+    uid = transform_uid(state['uid'])
+    if uid:
+        state['uid'] = uid
     else:
-        if event.message_type == 'group':
-            user_info = await bot.get_group_member_info(group_id=event.group_id, user_id=int(user_id))
-            nickname = user_info['card'] or user_info['nickname']
+        await ysa.finish('这个uid不正确哦~，请检查一下', at_sender=True)
+    query_dict, total_result = uid_userId_to_dict(state['uid'], state['user_id'])
+    for uid, user_id in query_dict.items():
+        data = await get_player_card_data(user_id, uid, use_cache=state['use_cache'])
+        if isinstance(data, str):
+            total_result += MessageSegment.text(data + '\n')
         else:
-            nickname = event.sender.nickname
-        chara_data = await get_chara_detail_data(user_id, uid, use_cache=use_cache)
-        chara_data = None if isinstance(chara_data, str) else chara_data
-        player_card = await draw_player_card(data, chara_data, uid, nickname)
-        await ys.finish(player_card, at_sender=True)
+            if event.message_type == 'group':
+                user_info = await bot.get_group_member_info(group_id=event.group_id, user_id=int(user_id))
+                nickname = user_info['card'] or user_info['nickname']
+            else:
+                nickname = event.sender.nickname
+            chara_data = await get_chara_detail_data(user_id, uid, use_cache=state['use_cache'])
+            chara_data = None if isinstance(chara_data, str) else chara_data
+            player_card = await draw_player_card(data, chara_data, uid, nickname)
+            total_result += player_card
+    await ys.finish(total_result, at_sender=True)
 
 
-@ysa.handle()
+@ysa.got('uid', prompt='请把要查询的uid给派蒙哦~')
 @exception_handler()
-async def ysa_handler(event: MessageEvent, msg: Message = CommandArg()):
-    uid, msg, user_id, use_cache = await get_uid_in_msg(event, msg)
-    if not uid:
-        await ysa.finish('请把正确的uid给派蒙哦,例如ysa100123456!', at_sender=True)
-
-    chara_data = await get_chara_detail_data(user_id, uid, use_cache=use_cache)
-    if isinstance(chara_data, str):
-        await ysa.finish(chara_data, at_sender=True)
+async def ysa_handler(event: MessageEvent, state: T_State):
+    uid = transform_uid(state['uid'])
+    if uid:
+        state['uid'] = uid
     else:
-        player_card = await draw_all_chara_card(chara_data, uid)
-        await ysa.finish(player_card, at_sender=True)
+        await ysa.finish('这个uid不正确哦~，请检查一下', at_sender=True)
+    query_dict, total_result = uid_userId_to_dict(state['uid'], state['user_id'])
+    for uid, user_id in query_dict.items():
+        chara_data = await get_chara_detail_data(user_id, uid, use_cache=state['use_cache'])
+        if isinstance(chara_data, str):
+            total_result += MessageSegment.text(chara_data + '\n')
+        else:
+            player_card = await draw_all_chara_card(chara_data, uid)
+            total_result += player_card
+    await ysa.finish(total_result, at_sender=True)
 
 
-@ysc.handle()
-@exception_handler()
-async def ysc_handler(event: MessageEvent, msg: Message = CommandArg()):
-    uid, msg, user_id, use_cache = await get_uid_in_msg(event, msg)
-    if not uid:
-        await ysc.finish('请把正确的uid给派蒙哦,例如ysc100123456钟离', at_sender=True)
-    if not msg:
-        await ysc.finish(f'要把角色名给派蒙呀!例如ysc100123456钟离', at_sender=True)
-    chara = msg.split(' ')[0]
-    chara_name = get_id_by_alias(chara)
-    if not chara_name:
-        await ysc.finish(f'没有角色名叫{chara}哦！', at_sender=True)
-
-    chara_data = await get_chara_detail_data(user_id, uid, use_cache=use_cache)
-    if isinstance(chara_data, str):
-        await ysc.finish(chara_data, at_sender=True)
+@ysc.got('msg', prompt='请把要查询的角色名给派蒙哦~')
+async def _(event: MessageEvent, state: T_State):
+    name = state['msg']
+    if isinstance(name, Message):
+        name = replace_all(name.extract_plain_text().strip().replace('ysc', ''), state['uid'])
+        if name == 'q':
+            await ysc.finish()
+    match_alias = get_match_alias(name, 'roles', True)
+    if len(match_alias) == 1:
+        state['choice'] = match_alias
     else:
-        skill_data = await get_chara_skill_data(uid, chara_name[0], use_cache=use_cache)
-        chara_card = await draw_chara_card(chara_data, skill_data, chara_name, uid)
-        await ysc.finish(chara_card, at_sender=True)
+        if not match_alias:
+            await ysc.finish(f'没有找到叫{name}的角色哦~', at_sender=True)
+        elif 'choice' not in state:
+            msg = f'你要找的角色是哪个呀：\n'
+            # 将字典中每个键拼接到msg中，并添加序号
+            msg += '\n'.join([f'{int(i) + 1}. {name}' for i, name in enumerate(match_alias)])
+            await ysc.send(msg + '\n回答\"q\"可以取消查询', at_sender=True)
+        state['match_alias'] = match_alias
+
+
+@ysc.got('choice')
+async def _(event: MessageEvent, state: T_State):
+    choice = state['choice']
+    if isinstance(choice, dict):
+        # 获取字典的键
+        role = list(choice.items())[0]
+    else:
+        match_alias = state['match_alias']
+        choice = replace_all(choice.extract_plain_text().strip().replace('ysc', ''), state['uid'])
+
+        if choice == 'q':
+            await ysc.finish()
+        if choice.isdigit() and (1 <= int(choice) <= len(match_alias)):
+            role = list(match_alias.items())[int(choice) - 1]
+        elif choice not in match_alias.keys():
+            state['times'] = state['times'] + 1 if 'times' in state else 1
+            if state['times'] == 1:
+                await ysc.reject(f'请旅行者从上面的角色中选一个问派蒙\n回答\"q\"可以取消查询', at_sender=True)
+            elif state['times'] == 2:
+                await ysc.reject(f'别调戏派蒙啦，快选一个吧，不想问了请回答\"q\"！', at_sender=True)
+            elif state['times'] >= 3:
+                await ysc.finish(f'看来旅行者您有点神志不清哦(，下次再问派蒙吧' + MessageSegment.face(146), at_sender=True)
+        else:
+            role = [m for m in list(match_alias.items()) if m[0] == choice][0]
+    query_dict, total_result = uid_userId_to_dict(state['uid'], state['user_id'])
+    for uid, user_id in query_dict.items():
+        chara_data = await get_chara_detail_data(user_id, uid, use_cache=state['use_cache'])
+        if isinstance(chara_data, str):
+            total_result += MessageSegment.text(chara_data + '\n')
+        else:
+            skill_data = await get_chara_skill_data(uid, role[1], use_cache=state['use_cache'])
+            chara_card = await draw_chara_card(chara_data, skill_data, role, uid)
+            total_result += chara_card
+    await ysc.finish(total_result, at_sender=True)
 
 
 cookie_error_msg = '这个cookie无效哦，请旅行者确认是否正确\n1.ck要登录mys帐号后获取,且不能退出登录\n2.ck中要有cookie_token和account_id两个参数\n3.建议在无痕模式下取'

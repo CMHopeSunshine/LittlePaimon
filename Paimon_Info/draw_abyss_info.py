@@ -79,14 +79,14 @@ async def draw_abyss_card(data, uid, floor_num):
     if not data:
         return '数据出错'
     if data['retcode'] == 10102:
-        return '这uid没有在米游社公开信息哦'
+        return f'uid{uid}没有在米游社公开信息哦'
     elif data['retcode'] == 10104:
-        return 'uid有误哦，检查一下或再手动输入一次uid吧'
+        return f'uid{uid}有误哦，检查一下吧'
     elif data['retcode'] != 0:
-        return f'派蒙获取数据失败了，可能是以下原因：\n1.达到每日30次查询上限了\n2.绑定的cookie失效了\n3.没有在米游社公开信息\n{data["message"]},{data["retcode"]}'
+        return f'派蒙获取{uid}数据失败了，可能是以下原因：\n1.达到每日30次查询上限了\n2.绑定的cookie失效了\n3.没有在米游社公开信息\n{data["message"]},{data["retcode"]}'
     data = data['data']
     if not data['defeat_rank']:
-        return '没有深渊数据，请打了8-3之后的层数再来!'
+        return f'uid{uid}没有深渊数据，请打了8-3之后的层数再来!'
     total_star = '['
     for d in data['floors']:
         if not d['levels']:
