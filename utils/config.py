@@ -35,6 +35,8 @@ class PluginConfig(BaseModel):
     paimon_chat_group: List[int] = []
     # 派蒙猜语音持续时间
     paimon_guess_voice: int = 30
+    # 原神日历开启群组
+    paimon_calender_group: List[int] = []
 
 
 driver = get_driver()
