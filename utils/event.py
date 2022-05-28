@@ -2,6 +2,7 @@ import os
 import json
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
+from .aiorequests import get
 import aiohttp
 import asyncio
 import math
@@ -76,9 +77,8 @@ def cache(ttl=timedelta(hours=1), arg_key=None):
 @cache(ttl=timedelta(hours=3), arg_key='url')
 async def query_data(url):
     try:
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url) as resp:
-                return await resp.json()
+        resp = await get(url=url)
+        return resp.json()
     except:
         pass
     return None
@@ -87,7 +87,8 @@ async def query_data(url):
 async def load_event_cn():
     result = await query_data(url=list_api)
     detail_result = await query_data(url=detail_api)
-    if result and 'retcode' in result and result['retcode'] == 0 and detail_result and 'retcode' in detail_result and detail_result['retcode'] == 0:
+    if result and 'retcode' in result and result['retcode'] == 0 and detail_result and 'retcode' in detail_result and \
+            detail_result['retcode'] == 0:
         event_data['cn'] = []
         event_detail = {}
         for detail in detail_result['data']['list']:
@@ -127,7 +128,8 @@ async def load_event_cn():
                         datelist = searchObj.groups()  # ('2021', '9', '17')
                         if datelist and len(datelist) >= 6:
                             ctime = datetime.strptime(
-                                f'{datelist[0]}-{datelist[1]}-{datelist[2]} {datelist[3]}:{datelist[4]}:{datelist[5]}', r"%Y-%m-%d %H:%M:%S")
+                                f'{datelist[0]}-{datelist[1]}-{datelist[2]} {datelist[3]}:{datelist[4]}:{datelist[5]}',
+                                r"%Y-%m-%d %H:%M:%S")
                             if start_time < ctime < end_time:
                                 start_time = ctime
                     except Exception as e:
@@ -170,7 +172,7 @@ async def load_event_cn():
                 'forever': False,
                 'type': 3
             })
-            i = i+1
+            i = i + 1
 
         return 0
     return 1
@@ -222,13 +224,14 @@ async def get_events(server, offset, days):
             events.append(event)
     # 按type从大到小 按剩余天数从小到大
     events.sort(key=lambda item: item["type"]
-                * 100 - item['left_days'], reverse=True)
+                                 * 100 - item['left_days'], reverse=True)
     return events
 
 
 if __name__ == '__main__':
     async def main():
         await load_event_cn()
+
 
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main())
