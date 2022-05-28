@@ -11,6 +11,13 @@ from utils.config import config
 from utils.auth_util import FreqLimiter2
 from utils.message_util import MessageBuild
 from utils.file_handler import load_json_from_url
+if config.paimon_mongodb_url:
+    try:
+        from .Learning_repeate import main
+    except ImportError:
+        logger.info('派蒙机器学习聊天启用失败，可能是mongodb连接失败或缺少相关库')
+else:
+    logger.info('派蒙机器学习聊天启用失败，mongodb尚未配置')
 
 driver = get_driver()
 

@@ -77,6 +77,12 @@
   - 修复可能因ssl证书导致的静态资源下载问题
 + 5.23
   - 新增`xx原魔图鉴`
++ 5.25
+  - `ys、ysc、ysa、sy`等和`wiki`模块指令可以对话式查询
++ 5.27
+  - 新增`原神日历`[@nicklly](https://github.com/nicklly)，需在`.env.*`配置`paimon_calender_group=[开启群号]`
++ 5.28
+  - `Paimon_Chat`聊天新增`学习群友发言`（魔改自[Pallas-Bot](https://github.com/InvoluteHell/Pallas-Bot/tree/master/src/plugins/repeater)），需安装`jieba_fast、pymongo、pypinyin依赖库`、`mongodb数据库`且在`.env.*`配置文件中添加mongodb连接参数`paimon_mongodb_url`，例如`paimon_mongodb_url=mongodb://localhost:27017/`
 
 ## 丨功能列表
 
@@ -128,10 +134,11 @@ javascript:(function(){prompt(document.domain,document.cookie)})();
 
 - [NoneBot2](https://github.com/nonebot/nonebot2) - 跨平台异步机器人框架
 - [go-cqhttp](https://github.com/Mrs4s/go-cqhttp) - Onebot标准的框架实现
-- [西北一枝花](https://github.com/Nwflower) - 部分图片的美工大大和武器攻略图提供
-- [egenshin](https://github.com/pcrbot/erinilis-modules/tree/master/egenshin) - 参考了它的代码和资源
+- [西北一枝花](https://github.com/Nwflower) - 美工大大和武器攻略图提供
+- [egenshin](https://github.com/pcrbot/erinilis-modules/tree/master/egenshin) - 抽卡和猜语音代码、资源参考
 - [bluemushoom](https://bbs.nga.cn/nuke.php?func=ucp&uid=62861898) - 全角色收益曲线和参考面板攻略图来源
-- [genshin-gacha-export](https://github.com/sunfkny/genshin-gacha-export) - 抽卡记录导出参考
+- [genshin-gacha-export](https://github.com/sunfkny/genshin-gacha-export) - 抽卡记录导出代码参考
+- [Pallas-Bot](https://github.com/InvoluteHell/Pallas-Bot/tree/master/src/plugins/repeater) - 群聊记录发言学习代码参考
 - [西风驿站](https://bbs.mihoyo.com/ys/collection/307224) - 角色攻略一图流来源
 - [游创工坊](https://space.bilibili.com/176858937) - 深渊排行榜数据来源
 
@@ -139,15 +146,15 @@ javascript:(function(){prompt(document.domain,document.cookie)})();
 - 如果本项目对你有帮助，给个star~~求求啦
 - 部分资源使用了云存储，如果想赞助流量费用，欢迎来[爱发电](https://afdian.net/@cherishmoon)，十分感谢！
 
-### 赞助支持
-
-十分感谢！
-
-| 赞助者  | 金额 | 日期 |
-| ------- | ---- | ---- |
-| 深海    | 10   | 5.20 |
-| 夜空koi | 30   | 5.22 |
-| 情话    | 20   | 5.23 |
+| 赞助者          | 金额 |
+| --------------- | ---- |
+| 深海            | 10   |
+| 夜空koi         | 30   |
+| 情话            | 20   |
+| 爱发电用户_Mfms | 15   |
+| 米特建木        | 10   |
+| 永远的皇珈骑士  | 30   |
+| 小兔和鹿        | 30   |
 
 ## 丨其他
 

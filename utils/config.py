@@ -33,10 +33,37 @@ class PluginConfig(BaseModel):
     paimon_add_group: bool = False
     # 派蒙聊天开启群组
     paimon_chat_group: List[int] = []
+
     # 派蒙猜语音持续时间
     paimon_guess_voice: int = 30
     # 原神日历开启群组
     paimon_calender_group: List[int] = []
+
+    # 以下为机器学习聊天模块配置
+    # mongodb数据库连接url
+    paimon_mongodb_url: str = None
+    # 派蒙聊天屏蔽用户
+    paimon_chat_ban: List[int] = []
+    # 派蒙聊天学习阈值，越小学习越快
+    paimon_answer_threshold: int = 3
+    # 派蒙聊天上限阈值
+    paimon_answer_limit_threshold: int = 25
+    # N个群有相同的回复，就跨群作为全局回复
+    paimon_cross_group_threshold: int = 2
+    # 复读的阈值
+    paimon_repeat_threshold: int = 3
+    # 主动发言阈值，越小话越多
+    paimon_speak_threshold: int = 3
+    # 喝醉的概率
+    paimon_drunk_probability: float = 0.07
+    # 用文字转语音来回复的概率
+    paimon_voice_probability: float = 0.03
+    # 连续主动说话的概率
+    paimon_speak_continuously_probability: float = 0.5
+    # 主动说话加上随机戳一戳群友的概率
+    paimon_speak_poke_probability: float = 0.5
+    # 连续主动说话最多几句话
+    paimon_speak_continuously_max_len: int = 3
 
 
 driver = get_driver()

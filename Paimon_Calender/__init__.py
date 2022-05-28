@@ -7,7 +7,7 @@ from nonebot.params import CommandArg
 
 from ..utils.config import config
 from ..utils.file_handler import load_json, save_json
-from ..utils.generate import *
+from .generate import *
 import re
 
 HELP_STR = '''
@@ -62,7 +62,7 @@ async def _(bot: Bot, event: Union[GroupMessageEvent, MessageEvent], msg: Messag
     fun = str(msg).strip()
     action = re.search(r'(?P<action>on|off|time|status|test)', fun)
 
-    if group_id not in config.paimon_calender_group:
+    if group_id not in config.paimon_calender_group or int(group_id) not in config.paimon_calender_group:
         await calendar.finish(f"尚未在群 {group_id} 开启本功能！", at_sender=True)
 
     if not fun:
