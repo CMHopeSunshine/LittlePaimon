@@ -27,7 +27,7 @@ async def send_calendar(push_id, push_data):
             data = {'user_id': push_id}
         elif push_data['type'] == 'guild':
             api = 'send_guild_channel_msg'
-            data = {'guild_id': push_id, 'channel_id': push_data['channel_id']}
+            data = {'channel_id': push_id, 'guild_id': push_data['guild_id']}
         else:
             api = 'send_group_msg'
             data = {'group_id': push_id}
