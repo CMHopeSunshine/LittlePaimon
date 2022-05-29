@@ -9,7 +9,7 @@ from nonebot.typing import T_State
 
 from utils.alias_handler import get_match_alias
 from utils.message_util import MessageBuild
-# from .abyss_rate_draw import draw_rate_rank, draw_teams_rate
+from .abyss_rate_draw import draw_rate_rank, draw_teams_rate
 from .blue import get_blue_pic
 
 __usage__ = '''
@@ -79,16 +79,16 @@ async def daily_material_handle(event: MessageEvent):
             await daily_material.finish(await MessageBuild.StaticImage(url=url))
 
 
-# @abyss_rate.handle()
-# async def abyss_rate_handler(event: MessageEvent):
-#     abyss_img = await draw_rate_rank()
-#     await abyss_rate.finish(abyss_img)
-#
-#
-# @abyss_team.handle()
-# async def abyss_team_handler(event: MessageEvent, reGroup=RegexDict()):
-#     abyss_img = await draw_teams_rate(reGroup['floor'])
-#     await abyss_team.finish(abyss_img)
+@abyss_rate.handle()
+async def abyss_rate_handler(event: MessageEvent):
+    abyss_img = await draw_rate_rank()
+    await abyss_rate.finish(abyss_img)
+
+
+@abyss_team.handle()
+async def abyss_team_handler(event: MessageEvent, reGroup=RegexDict()):
+    abyss_img = await draw_teams_rate(reGroup['floor'])
+    await abyss_team.finish(abyss_img)
 
 
 def create_choice_command(endswith: str, type_: str, url: str, exclude: list = []):
@@ -110,6 +110,8 @@ def create_choice_command(endswith: str, type_: str, url: str, exclude: list = [
         match_alias = get_match_alias(name, type_)
         if isinstance(match_alias, str) and match_alias not in exclude:
             await command.finish(await MessageBuild.StaticImage(url=url.format(match_alias)))
+        elif isinstance(match_alias, list) and len(match_alias) == 1 and match_alias[0] not in exclude:
+            await command.finish(await MessageBuild.StaticImage(url=url.format(match_alias[0])))
         else:
             if not match_alias or match_alias in exclude:
                 await command.finish(f'没有{state["name"]}的{endswith}哦~', at_sender=True)
