@@ -67,7 +67,7 @@ async def draw_teams_rate(floor='上半半'):
         r = 0
         for role in team['formation']:
             role_img = Image.open(
-                os.path.join(res_path, 'role_card', f'{get_id_by_alias(role["name"])[0]}.png')).resize((160, 200))
+                os.path.join(res_path, 'role_card', f'{get_id_by_name(role["name"])}.png')).resize((160, 200))
             role_draw = ImageDraw.Draw(role_img)
             role_draw.text((80 - 15 * len(role['name']), 158), role['name'], font=get_font(30), fill='black')
             bg_img.alpha_composite(role_img, (130 + 204 * r, 180 + 240 * n))
