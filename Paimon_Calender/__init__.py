@@ -103,10 +103,11 @@ async def _(event: MessageEvent, msg: Message = CommandArg()):
                 await calendar.finish('请给出正确的时间，格式为12:00', at_sender=True)
         # 关闭推送功能
         elif msg.startswith(('关闭', 'off', 'close')):
-            del push_data[str(get_message_id(event))]
-            if scheduler.get_job("genshin_calendar_" + str(get_message_id(event))):
-                scheduler.remove_job("genshin_calendar_" + str(get_message_id(event)))
-            save_json('calender_push.json')
+            if str(get_message_id(event)) in push_data:
+                del push_data[str(get_message_id(event))]
+                if scheduler.get_job("genshin_calendar_" + str(get_message_id(event))):
+                    scheduler.remove_job("genshin_calendar_" + str(get_message_id(event)))
+                save_json(push_data, 'calender_push.json')
             await calendar.finish('原神日程推送已关闭', at_sender=True)
         elif msg.startswith(('状态', 'status', 'setting')):
             if str(get_message_id(event)) not in push_data:
@@ -115,6 +116,7 @@ async def _(event: MessageEvent, msg: Message = CommandArg()):
                 reply_msg = f'原神日历订阅：\n'
                 reply_msg += f'推送时间: {push_data[str(get_message_id(event))]["hour"]}:{push_data[str(get_message_id(event))]["minute"]:02d}\n'
                 reply_msg += f'服务器: {" ".join(push_data[str(get_message_id(event))]["server_list"])}'
+                await calendar.finish(reply_msg, at_sender=True)
         else:
             await calendar.finish('指令错误')
 

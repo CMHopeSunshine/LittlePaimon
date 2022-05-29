@@ -50,11 +50,21 @@ async def news60s_pic_handler(event: MessageEvent, msg: Message = CommandArg()):
             await news60s_pic.finish('请给出正确的时间，格式为12:00', at_sender=True)
     elif msg.startswith(('关闭', 'off', 'close')):
         push_data = load_json('news60s_push.json')
-        del push_data[str(get_message_id(event))]
-        if scheduler.get_job('60sNews' + str(get_message_id(event))):
-            scheduler.remove_job('60sNews' + str(get_message_id(event)))
-        save_json(push_data, 'news60s_push.json')
+        if str(get_message_id(event)) in push_data:
+            del push_data[str(get_message_id(event))]
+            if scheduler.get_job('60sNews' + str(get_message_id(event))):
+                scheduler.remove_job('60sNews' + str(get_message_id(event)))
+            save_json(push_data, 'news60s_push.json')
         await news60s_pic.finish('关闭60s读世界推送成功', at_sender=True)
+    elif msg.startswith(('状态', 'status', 'setting')):
+        push_data = load_json('news60s_push.json')
+        if str(get_message_id(event)) not in push_data:
+            await news60s_pic.finish('当前会话未开启60秒读世界订阅', at_sender=True)
+        else:
+            reply_msg = f'60秒读世界订阅时间: {push_data[str(get_message_id(event))]["hour"]}:{push_data[str(get_message_id(event))]["minute"]:02d}'
+            await news60s_pic.finish(reply_msg, at_sender=True)
+    else:
+        await news60s_pic.finish('指令错误')
 
 
 async def news60s_push_task(push_id, push_data: dict):
