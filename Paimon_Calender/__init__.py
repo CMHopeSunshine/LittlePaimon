@@ -126,7 +126,7 @@ for push_id, push_data in load_json('calender_push.json').items():
         trigger='cron',
         hour=push_data['hour'],
         minute=push_data['minute'],
-        id="genshin_calendar_" + push_data,
+        id="genshin_calendar_" + push_id,
         args=(push_id, push_data),
         misfire_grace_time=10
     )
