@@ -1,7 +1,7 @@
 import re
 from nonebot import on_command, require, get_bot, logger
 from nonebot.params import CommandArg
-from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
+from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment, Message
 from utils import aiorequests
 from utils.file_handler import load_json, save_json
 from utils.message_util import get_message_id
@@ -12,14 +12,14 @@ scheduler = require('nonebot_plugin_apscheduler').scheduler
 
 
 @news60s_pic.handle()
-async def news60s_pic_handler(event: MessageEvent, msg=CommandArg()):
-    msg = str(msg).strip()
+async def news60s_pic_handler(event: MessageEvent, msg: Message = CommandArg()):
+    msg = msg.extract_plain_text().strip()
     if not msg:
         url = 'https://api.iyk0.com/60s/'
         res = await aiorequests.get(url=url)
         res = res.json()
         await news60s_pic.finish(MessageSegment.image(file=res['imageUrl']))
-    elif msg.startswith('开启推送'):
+    elif msg.startswith(('开启', 'on', '打开')):
         # 匹配msg中的xx:xx时间
         time_str = re.search(r'(\d{1,2}):(\d{2})', msg)
         if time_str:
@@ -41,13 +41,14 @@ async def news60s_pic_handler(event: MessageEvent, msg=CommandArg()):
                 minute=int(time_str.group(2)),
                 id='60sNews' + str(get_message_id(event)),
                 args=(str(get_message_id(event)),
-                      push_data[str(get_message_id(event))])
+                      push_data[str(get_message_id(event))]),
+                misfire_grace_time=10
             )
             save_json(push_data, 'news60s_push.json')
             await news60s_pic.finish('开启60s读世界推送成功', at_sender=True)
         else:
             await news60s_pic.finish('请给出正确的时间，格式为12:00', at_sender=True)
-    elif msg.startswith('关闭推送'):
+    elif msg.startswith(('关闭', 'off', 'close')):
         push_data = load_json('news60s_push.json')
         del push_data[str(get_message_id(event))]
         if scheduler.get_job('60sNews' + str(get_message_id(event))):
@@ -61,13 +62,16 @@ async def news60s_push_task(push_id, push_data: dict):
         url = 'https://api.iyk0.com/60s/'
         res = await aiorequests.get(url=url)
         res = res.json()
-        if push_data['type'] == 'group':
-            await get_bot().send_group_msg(group_id=push_id, message=MessageSegment.image(file=res['imageUrl']))
-        elif push_data['type'] == 'private':
-            await get_bot().send_private_msg(user_id=push_id, message=MessageSegment.image(file=res['imageUrl']))
+        if push_data['type'] == 'private':
+            api = 'send_private_msg'
+            data = {'user_id': push_id, 'message': MessageSegment.image(file=res['imageUrl'])}
         elif push_data['type'] == 'guild':
-            await get_bot().send_guild_channel_msg(guild_id=push_data['guild_id'], channel_id=push_id,
-                                                   message=MessageSegment.image(file=res['imageUrl']))
+            api = 'send_guild_channel_msg'
+            data = {'guild_id': push_id, 'channel_id': push_data['channel_id'], 'message': MessageSegment.image(file=res['imageUrl'])}
+        else:
+            api = 'send_group_msg'
+            data = {'group_id': push_id, 'message': MessageSegment.image(file=res['imageUrl'])}
+        await get_bot().call_api(api, **data)
         logger.info(f'{push_data["type"]}的{push_id}的60秒读世界推送成功')
     except Exception as e:
         logger.exception(f'{push_data["type"]}的{push_id}的60秒读世界推送失败：{e}')
@@ -81,5 +85,6 @@ for push_id, push_data in load_json('news60s_push.json').items():
         minute=push_data['minute'],
         id='60sNews' + push_id,
         args=(push_id,
-              push_data)
+              push_data),
+        misfire_grace_time=10
     )

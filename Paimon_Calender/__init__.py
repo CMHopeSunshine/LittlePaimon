@@ -1,12 +1,10 @@
-import logging
-from typing import Union
-
-from nonebot import require, get_bot, on_command
+from nonebot import require, get_bot, on_command, logger
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageEvent, Bot, Message, MessageSegment, ActionFailed
 from nonebot.params import CommandArg
 
-from ..utils.config import config
-from ..utils.file_handler import load_json, save_json
+from utils.config import config
+from utils.file_handler import load_json, save_json
+from utils.message_util import MessageBuild, get_message_id
 from .generate import *
 import re
 
@@ -22,16 +20,25 @@ calendar = on_command('原神日历', aliases={"原神日历", 'ysrl', '原神�
 scheduler = require('nonebot_plugin_apscheduler').scheduler
 
 
-async def send_calendar(group_id, group_data):
-    for server in group_data[str(group_id)]['server_list']:
-        im = await generate_day_schedule(server)
-        base64_str = im2base64str(im)
-        if 'cardimage' not in group_data or not group_data['cardimage']:
-            msg = MessageSegment.image(base64_str)
+async def send_calendar(push_id, push_data):
+    try:
+        if push_data['type'] == 'private':
+            api = 'send_private_msg'
+            data = {'user_id': push_id}
+        elif push_data['type'] == 'guild':
+            api = 'send_guild_channel_msg'
+            data = {'guild_id': push_id, 'channel_id': push_data['channel_id']}
         else:
-            msg = f'[CQ:cardimage,file={base64_str}]'
+            api = 'send_group_msg'
+            data = {'group_id': push_id}
 
-        await get_bot().send_group_msg(group_id=int(group_id), message=msg)
+        for server in push_data['server_list']:
+            im = await generate_day_schedule(server)
+            data['message'] = MessageBuild.Image(im)
+            await get_bot().call_api(api, **data)
+        logger.info(f'{push_data["type"]}的{push_id}的原神日历推送成功')
+    except Exception as e:
+        logger.exception(f'{push_data["type"]}的{push_id}的原神日历推送失败：{e}')
 
 
 def update_group_schedule(group_id, group_data):
@@ -52,109 +59,74 @@ def update_group_schedule(group_id, group_data):
 
 
 @calendar.handle()
-async def _(bot: Bot, event: Union[GroupMessageEvent, MessageEvent], msg: Message = CommandArg()):
-    if event.message_type == 'private':
-        await calendar.finish('仅支持群聊模式下使用本指令')
-
-    group_id = str(event.group_id)
-    group_data = load_json('calender_push.json')
+async def _(event: MessageEvent, msg: Message = CommandArg()):
     server = 'cn'
-    fun = str(msg).strip()
-    action = re.search(r'(?P<action>on|off|time|status|test)', fun)
+    msg = msg.extract_plain_text().strip()
 
-    if group_id not in config.paimon_calender_group or int(group_id) not in config.paimon_calender_group:
-        await calendar.finish(f"尚未在群 {group_id} 开启本功能！", at_sender=True)
-
-    if not fun:
+    if not msg:
         im = await generate_day_schedule(server)
-        base64_str = im2base64str(im)
-        group_data = load_json('calender_push.json')
+        await calendar.finish(MessageBuild.Image(im))
+    else:
+        push_data = load_json('calender_push.json')
+        if msg.startswith(('开启', 'on', '打开')):
+            # 添加定时推送任务
+            time_str = re.search(r'(\d{1,2}):(\d{2})', msg)
+            if time_str:
+                push_id = str(get_message_id(event))
+                push_data[push_id] = {
+                    'server_list': [
+                        str(server)
+                    ],
+                    'hour':        int(time_str.group(1)),
+                    'minute':      int(time_str.group(2)),
+                    'type':        event.message_type
+                }
+                if event.message_type == 'guild':
+                    push_data[push_id]['guild_id'] = event.guild_id
+                if scheduler.get_job('genshin_calendar_' + push_id):
+                    scheduler.remove_job("genshin_calendar_" + push_id)
 
-        try:
-            if group_id not in group_data or 'cardimage' not in group_data[group_id] or not group_data[group_id]['cardimage']:
-                await calendar.finish(MessageSegment.image(base64_str))
+                save_json(push_data, 'calender_push.json')
+
+                scheduler.add_job(
+                    func=send_calendar,
+                    trigger='cron',
+                    hour=int(time_str.group(1)),
+                    minute=int(time_str.group(2)),
+                    id="genshin_calendar_" + push_id,
+                    args=(push_id, push_data[push_id]),
+                    misfire_grace_time=10
+                )
+
+                await calendar.finish('原神日程推送已开启', at_sender=True)
             else:
-                await calendar.finish(f'[CQ:cardimage,file={base64_str}]')
-        except ActionFailed as e:
-            await logging.ERROR(e)
-
-    elif action:
-
-        # 添加定时推送任务
-        if action.group('action') == 'on':
-            group_data[group_id] = {
-                'server_list': [
-                    str(server)
-                ],
-                'hour': 8,
-                'minute': 0,
-                'cardimage': False
-            }
-            if event.message_type == 'guild':
-                await calendar.finish("暂不支持频道内推送~")
-
-            if scheduler.get_job('genshin_calendar_' + group_id):
-                scheduler.remove_job("genshin_calendar_" + group_id)
-            save_json(group_data, 'calender_push.json')
-
-            scheduler.add_job(
-                func=send_calendar,
-                trigger='cron',
-                hour=8,
-                minute=0,
-                id="genshin_calendar_" + group_id,
-                args=(group_id, group_data[group_id]),
-                misfire_grace_time=10
-            )
-
-            await calendar.finish('原神日程推送已开启')
-
+                await calendar.finish('请给出正确的时间，格式为12:00', at_sender=True)
         # 关闭推送功能
-        elif action.group('action') == 'off':
-            del group_data[group_id]
-            if scheduler.get_job("genshin_calendar_" + group_id):
-                scheduler.remove_job("genshin_calendar_" + group_id)
-            await calendar.finish('原神日程推送已关闭')
-
-        # 设置推送时间
-        elif action.group('action') == 'time':
-            match = str(msg).split(" ")
-            time = re.search(r'(\d{1,2}):(\d{2})', match[1])
-
-            if re.match(r'(\d{1,2}):(\d{2})', match[1]):
-                if not time or len(time.groups()) < 2:
-                    await calendar.finish("请指定推送时间")
-                else:
-                    group_data[group_id]['hour'] = int(time.group(1))
-                    group_data[group_id]['minute'] = int(time.group(2))
-                    save_json(group_data, 'calender_push.json')
-                    update_group_schedule(group_id, group_data)
-
-                    await calendar.finish(
-                        f"推送时间已设置为: {group_data[group_id]['hour']}:{group_data[group_id]['minute']:02d}")
-
+        elif msg.startswith(('关闭', 'off', 'close')):
+            del push_data[str(get_message_id(event))]
+            if scheduler.get_job("genshin_calendar_" + str(get_message_id(event))):
+                scheduler.remove_job("genshin_calendar_" + str(get_message_id(event)))
+            save_json('calender_push.json')
+            await calendar.finish('原神日程推送已关闭', at_sender=True)
+        elif msg.startswith(('状态', 'status', 'setting')):
+            if str(get_message_id(event)) not in push_data:
+                await calendar.finish('当前会话未开启原神日历订阅', at_sender=True)
             else:
-                await calendar.finish("请给出正确的时间，格式为12:00", at_sender=True)
-        # DEBUG
-        elif action.group('action') == 'test':
-            return
-
-        # 查询订阅推送状态
-        elif action.group('action') == "status":
-            message = f"订阅日历: {group_data[group_id]['server_list']}"
-            message += f"\n推送时间: {group_data[group_id]['hour']}:{group_data[group_id]['minute']:02d}"
-            await calendar.finish(message)
+                reply_msg = f'原神日历订阅：\n'
+                reply_msg += f'推送时间: {push_data[str(get_message_id(event))]["hour"]}:{push_data[str(get_message_id(event))]["minute"]:02d}\n'
+                reply_msg += f'服务器: {" ".join(push_data[str(get_message_id(event))]["server_list"])}'
         else:
             await calendar.finish('指令错误')
 
+
 # 自动推送任务
-for group_id, group_data in load_json('calender_push.json').items():
+for push_id, push_data in load_json('calender_push.json').items():
     scheduler.add_job(
         func=send_calendar,
         trigger='cron',
-        hour=group_data['hour'],
-        minute=group_data['minute'],
-        id="genshin_calendar_" + group_id,
-        args=(group_id, group_data),
+        hour=push_data['hour'],
+        minute=push_data['minute'],
+        id="genshin_calendar_" + push_data,
+        args=(push_id, push_data),
         misfire_grace_time=10
     )

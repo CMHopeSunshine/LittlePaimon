@@ -80,7 +80,7 @@
 + 5.25
   - `ys、ysc、ysa、sy`等和`wiki`模块指令可以对话式查询
 + 5.27
-  - 新增`原神日历`[@nicklly](https://github.com/nicklly)，需在`.env.*`配置`paimon_calender_group=[开启群号]`
+  - 新增`原神日历`[@nicklly](https://github.com/nicklly)
 + 5.28
   - `Paimon_Chat`聊天新增`学习群友发言`（魔改自[Pallas-Bot](https://github.com/InvoluteHell/Pallas-Bot/tree/master/src/plugins/repeater)），需安装`jieba_fast、pymongo、pypinyin依赖库`、`mongodb数据库`且在`.env.*`配置文件中添加mongodb连接参数`paimon_mongodb_url`，例如`paimon_mongodb_url=mongodb://localhost:27017/`
 
