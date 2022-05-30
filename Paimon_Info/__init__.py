@@ -81,7 +81,7 @@ async def _(event: MessageEvent, state: T_State, msg: Message = CommandArg()):
         uid = await get_last_query(str(event.user_id))
         if uid:
             state['uid'] = uid
-            state['user_id'] = str(event.user_id)
+        state['user_id'] = str(event.user_id)
     else:
         uid_list = []
         check_uid = msg_text.split(' ')
