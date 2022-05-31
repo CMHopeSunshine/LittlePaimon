@@ -90,7 +90,10 @@ async def get_img(url: str,
                                     params=params,
                                     timeout=timeout,
                                     **kwargs)
-            img = Image.open(BytesIO(resp.read()))
+            resp = resp.read()
+            if b'error' in resp:
+                return 'No Such File'
+            img = Image.open(BytesIO(resp))
             if size:
                 img = img.resize(size, Image.ANTIALIAS)
             if mode:
@@ -110,7 +113,10 @@ async def get_img(url: str,
                                     params=params,
                                     timeout=timeout,
                                     **kwargs)
-            img = Image.open(BytesIO(resp.read()))
+            resp = resp.read()
+            if b'error' in resp:
+                return 'No Such File'
+            img = Image.open(BytesIO(resp))
             if size:
                 img = img.resize(size, Image.ANTIALIAS)
             if mode:
