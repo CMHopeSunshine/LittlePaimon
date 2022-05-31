@@ -196,7 +196,7 @@ async def draw_player_card(data, chara_data, uid, nickname="旅行者"):
     bg_draw = ImageDraw.Draw(bg_img)
     # 头部名片
     name_id = random.choice(data['avatars'][0:8])['id']
-    name_card = load_image(os.path.join(res_path, 'name_card', f'{name_id}.png'), crop=(0, 40, 840, 360), size=(846, 322))
+    name_card = load_image(os.path.join(res_path, 'name_card', f'{name_id}.png'), crop=(0, 40, 840, 360), size=(846, 352))
     avatar = load_image(os.path.join(res_path, 'role_profile', f'{name_id}.png'), size=(240, 240))
     bg_img.alpha_composite(name_card, (57, 27))
     bg_img.alpha_composite(avatar, (360, 25))
