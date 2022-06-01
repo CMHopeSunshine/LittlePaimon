@@ -28,11 +28,20 @@ class MessageBuild:
               ) -> MessageSegment:
         if isinstance(img, str) or isinstance(img, Path):
             img = load_image(path=img, size=size, mode=mode, crop=crop)
+        else:
+            if size:
+                if isinstance(size, float):
+                    img = img.resize((int(img.size[0] * size), int(img.size[1] * size)), Image.ANTIALIAS)
+                elif isinstance(size, tuple):
+                    img = img.resize(size, Image.ANTIALIAS)
+            if crop:
+                img = img.crop(crop)
+            if mode:
+                img = img.convert(mode)
         bio = BytesIO()
         img = img.convert(mode)
         img.save(bio, format='JPEG' if mode == 'RGB' else 'PNG', quality=quality)
-        img_b64 = 'base64://' + base64.b64encode(bio.getvalue()).decode()
-        return MessageSegment.image(img_b64)
+        return MessageSegment.image(bio)
 
     @classmethod
     async def StaticImage(cls,
@@ -58,8 +67,7 @@ class MessageBuild:
         bio = BytesIO()
         img = img.convert(mode)
         img.save(bio, format='JPEG' if mode == 'RGB' else 'PNG', quality=quality)
-        img_b64 = 'base64://' + base64.b64encode(bio.getvalue()).decode()
-        return MessageSegment.image(img_b64)
+        return MessageSegment.image(bio)
 
     @classmethod
     def Text(cls, text: str) -> MessageSegment:

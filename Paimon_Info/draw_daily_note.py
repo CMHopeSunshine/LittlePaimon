@@ -5,6 +5,7 @@ import random
 import matplotlib.pyplot as plt
 from PIL import Image, ImageDraw, ImageFont
 
+from pathlib import Path
 from utils import aiorequests
 from utils.message_util import MessageBuild
 from utils.file_handler import load_image
@@ -121,7 +122,8 @@ async def draw_daily_note_card(data, uid):
     exp = data['expeditions']
     i = 0
     for role in exp:
-        role_avatar = await aiorequests.get_img(url=role['avatar_side_icon'], size=(135, 135), mode='RGBA')
+        role_avatar = Path() / 'data' / 'LittlePaimon' / 'res' / 'avatar_side' / role['avatar_side_icon'].split('/')[-1]
+        role_avatar = await aiorequests.get_img(url=role['avatar_side_icon'], size=(135, 135), mode='RGBA', save_path=role_avatar)
         bg_img.alpha_composite(role_avatar, (i * 200 + 168, 1537))
         bg_img.alpha_composite(await draw_ring(1 - int(role['remained_time']) / 72000), (i * 201 + 101, 1490))
         if role['status'] == 'Ongoing':
@@ -146,7 +148,6 @@ async def draw_daily_note_card(data, uid):
         last_finish_str = f'{last_finish_day}{last_finish_time.strftime("%H:%M")}'
         bg_draw.text((1408, 1588), last_finish_str, fill="#5680d2",
                      font=get_font(60, '优设标题黑.ttf'))
-
 
     role_img = load_image(os.path.join(res_path, 'emoticons', random.choice(os.listdir(os.path.join(res_path, 'emoticons')))), size=3.5, mode='RGBA')
     bg_img.alpha_composite(role_img, (1220, 200))
