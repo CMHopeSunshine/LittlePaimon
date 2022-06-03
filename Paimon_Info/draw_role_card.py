@@ -226,12 +226,13 @@ async def draw_role_card(uid, data):
             reli_path = res_path2 / 'reli' / f'{data["圣遗物"][0]["图标"]}.png'
             reli_path = await aiorequests.get_img(url=artifact_url.format(data["圣遗物"][0]["图标"]), size=(110, 110),
                                                   save_path=reli_path)
+            bg.alpha_composite(reli_path, (76, 1130))
             bg.alpha_composite(reli_path, (76, 1255))
             bg_draw.text((184, 1168), f'{s[:2]}四件套', fill='white', font=get_font(36))
             bg_draw.text((184, 1292), f'{s[:2]}四件套', fill='white', font=get_font(36))
             flag = True
             break
-        if s not in suit2 and suit.count(s) == 2:
+        if s not in suit2 and 1 < suit.count(s) < 4:
             suit2.append(s)
     if len(suit2) == 2:
         bg_draw.text((184, 1168), f'{suit2[0][:2]}两件套', fill='white', font=get_font(36))
