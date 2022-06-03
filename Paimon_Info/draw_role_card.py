@@ -13,7 +13,7 @@ artifact_url = 'https://upload-bbs.mihoyo.com/game_record/genshin/equip/{}.png'
 talent_url = 'https://upload-bbs.mihoyo.com/game_record/genshin/constellation_icon/{}.png'
 skill_url = 'https://static.cherishmoon.fun/LittlePaimon/skill/{}.png'
 
-element_type = ['物理', '火元素', '水元素', '草元素', '雷元素', '风元素', '冰元素', '岩元素']
+element_type = ['物理', '火元素', '雷元素', '水元素', '草元素', '风元素', '岩元素', '冰元素']
 element_list = ['火', '水', '冰', '雷', '岩', '风']
 bg_card = {}
 base_icon = {}
