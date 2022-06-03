@@ -1,5 +1,4 @@
 import re
-import base64
 from time import time
 
 from PIL import Image

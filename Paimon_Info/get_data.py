@@ -6,7 +6,7 @@ import datetime
 import re
 
 
-@cache(ttl=datetime.timedelta(hours=1))
+@cache(ttl=datetime.timedelta(minutes=10))
 async def get_abyss_data(user_id, uid, schedule_type="1", use_cache=True):
     server_id = "cn_qd01" if uid[0] == '5' else "cn_gf01"
     url = "https://api-takumi-record.mihoyo.com/game_record/app/genshin/api/spiralAbyss"
@@ -223,3 +223,12 @@ async def get_sign_list():
     resp = await aiorequests.get(url=url, headers=headers, params=params)
     data = resp.json()
     return data
+
+
+@cache(ttl=datetime.timedelta(minutes=5))
+async def get_enka_data(uid, use_cache=True):
+    url = f'https://enka.shinshin.moe/u/{uid}/__data.json'
+    resp = await aiorequests.get(url=url)
+    data = resp.json()
+    return data
+
