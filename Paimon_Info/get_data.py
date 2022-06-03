@@ -225,8 +225,7 @@ async def get_sign_list():
     return data
 
 
-@cache(ttl=datetime.timedelta(minutes=5))
-async def get_enka_data(uid, use_cache=True):
+async def get_enka_data(uid):
     url = f'https://enka.shinshin.moe/u/{uid}/__data.json'
     resp = await aiorequests.get(url=url)
     data = resp.json()

@@ -18,7 +18,7 @@ from utils.db_util import get_auto_sign, delete_auto_sign, get_last_query
 from utils.db_util import insert_public_cookie, update_private_cookie, delete_cookie_cache, delete_private_cookie, \
     update_last_query, reset_public_cookie
 from utils.db_util import update_note_remind2, update_note_remind, get_note_remind, delete_note_remind, \
-    update_day_remind_count, get_private_cookie, add_auto_sign
+    update_day_remind_count, get_private_cookie, add_auto_sign, get_all_query
 from utils.auth_util import check_cookie, FreqLimiter
 from utils.decorator import exception_handler
 from utils.enka_util import PlayerInfo
@@ -32,7 +32,8 @@ from .get_data import get_bind_game, get_sign_info, sign, get_sign_list, get_aby
 from .get_data import get_monthinfo_data, get_player_card_data, get_chara_detail_data, get_chara_skill_data
 from .draw_role_card import draw_role_card
 
-scheduler = require('nonebot_plugin_apscheduler').scheduler
+require('nonebot_plugin_apscheduler')
+from nonebot_plugin_apscheduler import scheduler
 
 __usage__ = '''
 [ys (uid)]查看原神个人卡片(包含宝箱、探索度等数据)
@@ -69,7 +70,8 @@ ysc = on_command('ysc', aliases={'角色卡片'}, priority=7, block=True)
 ysb = on_command('ysb', aliases={'原神绑定', '绑定cookie'}, priority=7, block=True)
 mys_sign = on_command('mys_sign', aliases={'mys签到', '米游社签到'}, priority=7, block=True)
 mys_sign_auto = on_command('mys_sign_auto', aliases={'mys自动签到', '米游社自动签到'}, priority=7, block=True)
-mys_sign_all = on_command('mys_sign_all', aliases={'全部重签'}, priority=7, permission=SUPERUSER, rule=to_me(), block=True)
+mys_sign_all = on_command('mys_sign_all', aliases={'全部重签'}, priority=1, permission=SUPERUSER, rule=to_me(), block=True)
+update_all = on_command('update_all', aliases={'更新全部玩家'}, priority=1, permission=SUPERUSER, rule=to_me(), block=True)
 add_public_ck = on_command('add_ck', aliases={'添加公共cookie', '添加公共ck'}, permission=SUPERUSER, priority=7, block=True)
 delete_ck = on_command('delete_ck', aliases={'删除ck', '删除cookie'}, priority=7, block=True)
 update_info = on_command('udi', aliases={'更新角色信息', '更新角色面板', '更新玩家信息'}, priority=6, block=True)
@@ -424,6 +426,7 @@ async def mys_sign_auto_handler(event: MessageEvent, msg: Message = CommandArg()
             await add_auto_sign(str(event.user_id), uid, str(event.group_id))
             await mys_sign_auto.finish('开启米游社自动签到成功,派蒙会在每日0点帮你签到', at_sender=True)
 
+
 ud_lmt = FreqLimiter(300)
 ud_p_lmt = FreqLimiter(10)
 
@@ -459,8 +462,8 @@ async def _(event: MessageEvent, state: T_State):
     await update_info.send('派蒙开始更新信息~请稍等哦~')
     enka_data = await get_enka_data(uid)
     if not enka_data:
-        if uid[0] == '5':
-            await update_info.finish('暂不支持查询B服账号哦~请等待开发者更新吧~')
+        if uid[0] == '5' or uid[0] == '2':
+            await update_info.finish('暂不支持B服和2开头的账号哦~请等待开发者更新吧~')
         else:
             await update_info.finish('派蒙没有查到该uid的信息哦~')
     ud_lmt.start_cd(uid, 300)
@@ -475,7 +478,7 @@ async def _(event: MessageEvent, state: T_State):
             player_info.set_role(role)
         player_info.save()
         role_list = list(player_info.get_update_roles_list().keys())
-        await update_info.finish(f'uid{uid}更新完成~\n本次更新的角色有：\n' + ' '.join(role_list))
+        await update_info.finish(f'uid{uid}更新完成~本次更新的角色有：\n' + ' '.join(role_list))
 
 
 @role_info.handle()
@@ -483,6 +486,7 @@ async def _(event: MessageEvent, state: T_State, msg: Message = CommandArg()):
     uid = re.search(r'(?P<uid>(1|2|5)\d{8})', msg.extract_plain_text())
     if uid:
         state['uid'] = uid.group('uid')
+        await update_last_query(str(event.user_id), uid)
     else:
         user = ''
         for msg_seg in msg:
@@ -501,14 +505,13 @@ async def _(event: MessageEvent, state: T_State, msg: Message = CommandArg()):
 
 
 @role_info.got('uid', prompt='请把要查询的uid给派蒙哦~')
-@exception_handler()
+# @exception_handler()
 async def _(event: MessageEvent, state: T_State):
     uid = transform_uid(state['uid'])
     if uid:
         state['uid'] = uid
     else:
         await role_info.finish('这个uid不正确哦~，请检查一下', at_sender=True)
-    await update_last_query(str(event.user_id), uid)
     uid = state['uid']
     role = state['role']
     player_info = PlayerInfo(uid)
@@ -526,7 +529,13 @@ async def sign_all():
     await auto_sign()
 
 
-@scheduler.scheduled_job('cron', hour=config.paimon_sign_hour, minute=config.paimon_sign_minute)
+@update_all.handle()
+async def update_all():
+    res = await all_update()
+    await update_all.finish(res)
+
+
+@scheduler.scheduled_job('cron', hour=config.paimon_sign_hour, minute=config.paimon_sign_minute, misfire_grace_time=10)
 async def auto_sign():
     data = await get_auto_sign()
     if data:
@@ -559,7 +568,7 @@ async def auto_sign():
                 logger.error(f'米游社签到结果发送失败：{e}')
 
 
-@scheduler.scheduled_job('cron', minute=f'*/{config.paimon_check_interval}')
+@scheduler.scheduled_job('cron', minute=f'*/{config.paimon_check_interval}', misfire_grace_time=10)
 async def check_note():
     now_time = datetime.datetime.now()
     start_time = datetime.datetime(now_time.year, now_time.month, now_time.day, config.paimon_remind_start, 0, 0)
@@ -616,7 +625,7 @@ async def check_note():
                 await sleep(3)
 
 
-@scheduler.scheduled_job('cron', hour=0)
+@scheduler.scheduled_job('cron', hour=0, misfire_grace_time=10)
 async def daily_update():
     logger.info('---清空今日树脂提醒限制---')
     await update_day_remind_count()
@@ -625,3 +634,26 @@ async def daily_update():
     logger.info('---清空今日cookie限制记录---')
     await reset_public_cookie()
 
+
+@scheduler.scheduled_job('cron', hour=3, misfire_grace_time=10)
+async def all_update():
+    uid_list = await get_all_query()
+    logger.info('派蒙开始更新用户角色信息，共{}个用户'.format(len(uid_list)))
+    failed_time = 0
+    for uid in uid_list:
+        try:
+            data = await get_enka_data(uid)
+            if data:
+                player_info = PlayerInfo(uid)
+                player_info.set_player(data['playerInfo'])
+                if 'avatarInfoList' in data:
+                    for role in data['avatarInfoList']:
+                        player_info.set_role(role)
+                player_info.save()
+                logger.info(f'---派蒙更新{uid}的角色信息成功---')
+            await sleep(random.randint(8, 15))
+        except Exception:
+            failed_time += 1
+            if failed_time > 5:
+                break
+    return '共{}个用户，更新完成'.format(len(uid_list))

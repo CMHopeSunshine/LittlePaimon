@@ -239,6 +239,24 @@ async def update_last_query(user_id, value, key='uid'):
     conn.close()
 
 
+async def get_all_query():
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS last_query(
+            user_id TEXT PRIMARY KEY NOT NULL,
+            uid TEXT,
+            mys_id TEXT,
+            last_time datetime);''')
+    cursor.execute('SELECT uid, last_time FROM last_query')
+    uid_list = cursor.fetchall()
+    uids = []
+    for uid, last_time in uid_list:
+        if (datetime.now() - datetime.strptime(last_time, '%Y-%m-%d %H:%M:%S')).days <= 3:
+            uids.append(uid)
+    conn.close()
+    return uids
+
+
 # 获取树脂提醒信息
 async def get_note_remind():
     conn = sqlite3.connect(db_path)

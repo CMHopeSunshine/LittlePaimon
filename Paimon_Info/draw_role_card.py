@@ -98,9 +98,11 @@ async def draw_role_card(uid, data):
                  font=get_font(34, 'number.ttf'))
 
     # 天赋
+    if data['名称'] in ['神里绫华', '莫娜']:
+        data['天赋'].pop(2)
     for i in range(3):
         bg.alpha_composite(base_icon[data['元素']].resize((132, 142)), (564, 253 + 147 * i))
-        bg_draw.text((520 if data['天赋'][i]['等级'] < 10 else 513, 310 + 147 * i), str(data['天赋'][i]['等级']), fill='black',
+        bg_draw.text((520 if data['天赋'][i]['等级'] < 10 else 517, 310 + 147 * i), str(data['天赋'][i]['等级']), fill='black',
                      font=get_font(34, 'number.ttf'))
         skill_icon = res_path2 / 'skill' / f'{data["天赋"][i]["图标"]}.png'
         skill_icon = await aiorequests.get_img(url=skill_url.format(data["天赋"][i]["图标"]), size=(57, 57), save_path=skill_icon)
@@ -153,7 +155,7 @@ async def draw_role_card(uid, data):
             bg_draw.text((408 + 317 * i, 1100), f"+{artifact['主属性']['属性值']}%", fill='white', font=get_font(25, 'number.ttf'))
         else:
             bg_draw.text((408 + 317 * i, 1100), f"+{artifact['主属性']['属性值']}", fill='white', font=get_font(48, 'number.ttf'))
-        for j in range(4):
+        for j in range(len(artifact['词条'])):
             if '百分比' in artifact['词条'][j]['属性名']:
                 text = artifact['词条'][j]['属性名'].replace('百分比', '')
             else:
@@ -191,7 +193,7 @@ async def draw_role_card(uid, data):
             bg_draw.text((91 + 317 * i, 1537), f"+{artifact['主属性']['属性值']}%", fill='white', font=get_font(48, 'number.ttf'))
         else:
             bg_draw.text((91 + 317 * i, 1537), f"+{artifact['主属性']['属性值']}", fill='white', font=get_font(48, 'number.ttf'))
-        for j in range(4):
+        for j in range(len(artifact['词条'])):
             if '百分比' in artifact['词条'][j]['属性名']:
                 text = artifact['词条'][j]['属性名'].replace('百分比', '')
             else:
@@ -219,25 +221,41 @@ async def draw_role_card(uid, data):
     for artifact in data['圣遗物']:
         suit.append(artifact['所属套装'])
     for s in suit:
-        if s not in suit2 and suit.count(s) > 1:
+        if suit.count(s) == 4:
+            reli_path = res_path2 / 'reli' / f'{data["圣遗物"][0]["图标"]}.png'
+            reli_path = await aiorequests.get_img(url=artifact_url.format(data["圣遗物"][0]["图标"]), size=(110, 110),
+                                                  save_path=reli_path)
+            bg.alpha_composite(reli_path, (76, 1255))
+            bg_draw.text((184, 1168), f'{s[:2]}四件套', fill='white', font=get_font(36))
+            bg_draw.text((184, 1292), f'{s[:2]}四件套', fill='white', font=get_font(36))
+            flag = True
+            break
+        if s not in suit2 and suit.count(s) == 2:
             suit2.append(s)
-    reli_path = res_path2 / 'reli' / f'{data["圣遗物"][0]["图标"]}.png'
-    reli_path = await aiorequests.get_img(url=artifact_url.format(data["圣遗物"][0]["图标"]), size=(110, 110), save_path=reli_path)
-    bg.alpha_composite(reli_path, (76, 1130))
-    if len(suit2) == 1:
-        bg.alpha_composite(reli_path, (76, 1255))
-        bg_draw.text((184, 1168), f'{suit2[0][:2]}四件套', fill='white', font=get_font(36))
-        bg_draw.text((184, 1292), f'{suit2[0][:2]}四件套', fill='white', font=get_font(36))
-    elif len(suit2) == 2:
+    if len(suit2) == 2:
         bg_draw.text((184, 1168), f'{suit2[0][:2]}两件套', fill='white', font=get_font(36))
         bg_draw.text((184, 1292), f'{suit2[1][:2]}两件套', fill='white', font=get_font(36))
-        suit2.pop(0)
+        n = 0
+        for r in data["圣遗物"]:
+            if n == 2:
+                break
+            if r['所属套装'] in suit2:
+                suit2.remove(r['所属套装'])
+                reli_path = res_path2 / 'reli' / f'{r["图标"]}.png'
+                reli_path = await aiorequests.get_img(url=artifact_url.format(r["图标"]), size=(110, 110),
+                                                      save_path=reli_path)
+                bg.alpha_composite(reli_path, (76, 1130 + n * 125))
+                n += 1
+    elif len(suit2) == 1:
+        bg_draw.text((184, 1168), f'{suit2[0][:2]}两件套', fill='white', font=get_font(36))
+        bg_draw.text((184, 1292), '未激活套装', fill='white', font=get_font(36))
         for r in data["圣遗物"]:
             if r['所属套装'] in suit2:
-                reli2_path = res_path2 / 'reli' / f'{r["图标"]}.png'
-                reli2_path = await aiorequests.get_img(url=artifact_url.format(r["图标"]), size=(110, 110),
-                                                      save_path=reli2_path)
-                bg.alpha_composite(reli2_path, (76, 1255))
+                reli_path = res_path2 / 'reli' / f'{r["图标"]}.png'
+                reli_path = await aiorequests.get_img(url=artifact_url.format(r["图标"]), size=(110, 110),
+                                                      save_path=reli_path)
+                bg.alpha_composite(reli_path, (76, 1130))
+
                 break
     else:
         bg_draw.text((184, 1168), '未激活套装', fill='white', font=get_font(36))
@@ -251,7 +269,7 @@ async def draw_role_card(uid, data):
     else:
         bg.alpha_composite(load_image(path=paint_path), (695, 234))
 
-    bg_draw.text((50, 1870), f'更新于{data["更新时间"].replace("2022-", "")}', fill='#afafaf', font=get_font(36, '优设标题黑.ttf'))
+    bg_draw.text((50, 1870), f'更新于{data["更新时间"].replace("2022-", "")}', fill='white', font=get_font(36, '优设标题黑.ttf'))
     bg_draw.text((560, 1869), 'Created by LittlePaimon', fill='white', font=get_font(36, '优设标题黑.ttf'))
 
     return MessageBuild.Image(bg, quality=75)
