@@ -445,7 +445,7 @@ async def _(event: MessageEvent, state: T_State, msg: Message = CommandArg()):
     if not ud_lmt.check(state['uid']):
         await update_info.finish(f'每个uid每5分钟才能更新一次信息，请稍等一下吧~(剩余{ud_lmt.left_time(state["uid"])}秒)')
     if not ud_p_lmt.check(get_message_id(event)):
-        await update_info.finish(f'每个会话每12秒才能更新一次信息，请稍等一下吧~(剩余{ud_lmt.left_time(state["uid"])}秒)')
+        await update_info.finish(f'每个会话每12秒才能更新一次信息，请稍等一下吧~(剩余{ud_lmt.left_time(get_message_id(event))}秒)')
 
 
 @update_info.got('uid', prompt='请把要更新的uid给派蒙哦~')
