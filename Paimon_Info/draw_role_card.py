@@ -102,7 +102,7 @@ async def draw_role_card(uid, data):
         data['天赋'].pop(2)
     for i in range(3):
         bg.alpha_composite(base_icon[data['元素']].resize((132, 142)), (564, 253 + 147 * i))
-        bg_draw.text((520 if data['天赋'][i]['等级'] < 10 else 517, 310 + 147 * i), str(data['天赋'][i]['等级']), fill='black',
+        bg_draw.text((522 if data['天赋'][i]['等级'] < 10 else 513, 310 + 147 * i), str(data['天赋'][i]['等级']), fill='black',
                      font=get_font(34, 'number.ttf'))
         skill_icon = res_path2 / 'skill' / f'{data["天赋"][i]["图标"]}.png'
         skill_icon = await aiorequests.get_img(url=skill_url.format(data["天赋"][i]["图标"]), size=(57, 57), save_path=skill_icon)
@@ -218,6 +218,7 @@ async def draw_role_card(uid, data):
     # 圣遗物套装
     suit = []
     suit2 = []
+    flag = False
     for artifact in data['圣遗物']:
         suit.append(artifact['所属套装'])
     for s in suit:
@@ -257,7 +258,7 @@ async def draw_role_card(uid, data):
                 bg.alpha_composite(reli_path, (76, 1130))
 
                 break
-    else:
+    elif not flag:
         bg_draw.text((184, 1168), '未激活套装', fill='white', font=get_font(36))
         bg_draw.text((184, 1292), '未激活套装', fill='white', font=get_font(36))
 
