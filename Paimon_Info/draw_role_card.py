@@ -222,18 +222,20 @@ async def draw_role_card(uid, data):
     for artifact in data['圣遗物']:
         suit.append(artifact['所属套装'])
     for s in suit:
-        if suit.count(s) == 4:
-            reli_path = res_path2 / 'reli' / f'{data["圣遗物"][0]["图标"]}.png'
-            reli_path = await aiorequests.get_img(url=artifact_url.format(data["圣遗物"][0]["图标"]), size=(110, 110),
-                                                  save_path=reli_path)
-            bg.alpha_composite(reli_path, (76, 1130))
-            bg.alpha_composite(reli_path, (76, 1255))
-            bg_draw.text((184, 1168), f'{s[:2]}四件套', fill='white', font=get_font(36))
-            bg_draw.text((184, 1292), f'{s[:2]}四件套', fill='white', font=get_font(36))
-            flag = True
-            break
         if s not in suit2 and 1 < suit.count(s) < 4:
             suit2.append(s)
+        if suit.count(s) >= 4:
+            for r in data['圣遗物']:
+                if r['所属套装'] == s:
+                    reli_path = res_path2 / 'reli' / f'{r["图标"]}.png'
+                    reli_path = await aiorequests.get_img(url=artifact_url.format(r["图标"]), size=(110, 110),
+                                                          save_path=reli_path)
+                    bg.alpha_composite(reli_path, (76, 1130))
+                    bg.alpha_composite(reli_path, (76, 1255))
+                    bg_draw.text((184, 1168), f'{s[:2]}四件套', fill='white', font=get_font(36))
+                    bg_draw.text((184, 1292), f'{s[:2]}四件套', fill='white', font=get_font(36))
+                    flag = True
+                    break
     if len(suit2) == 2:
         bg_draw.text((184, 1168), f'{suit2[0][:2]}两件套', fill='white', font=get_font(36))
         bg_draw.text((184, 1292), f'{suit2[1][:2]}两件套', fill='white', font=get_font(36))
@@ -257,7 +259,6 @@ async def draw_role_card(uid, data):
                 reli_path = await aiorequests.get_img(url=artifact_url.format(r["图标"]), size=(110, 110),
                                                       save_path=reli_path)
                 bg.alpha_composite(reli_path, (76, 1130))
-
                 break
     elif not flag:
         bg_draw.text((184, 1168), '未激活套装', fill='white', font=get_font(36))
