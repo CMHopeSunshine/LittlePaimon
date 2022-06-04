@@ -146,7 +146,7 @@ async def _(event: MessageEvent, state: T_State):
         else:
             abyss_card = await draw_abyss_card(data, uid, true_floor)
             total_result += abyss_card
-    await sy.finish(total_result, at_sender=True)
+    await sy.finish(total_result)
 
 
 @ssbq.handle()
@@ -182,7 +182,7 @@ async def ssbq_handler(event: MessageEvent, msg: Message = CommandArg()):
             await ssbq.finish(data, at_sender=True)
         else:
             daily_note_card = await draw_daily_note_card(data, uid)
-            await ssbq.finish(daily_note_card, at_sender=True)
+            await ssbq.finish(daily_note_card)
 
 
 @myzj.handle()
@@ -205,7 +205,7 @@ async def myzj_handler(event: MessageEvent, msg: Message = CommandArg()):
         await myzj.finish(data, at_sender=True)
     else:
         monthinfo_card = await draw_monthinfo_card(data)
-        await myzj.finish(monthinfo_card, at_sender=True)
+        await myzj.finish(monthinfo_card)
 
 
 @ys.got('uid', prompt='请把要查询的uid给派蒙哦~')
@@ -232,7 +232,7 @@ async def ys_handler(bot: Bot, event: MessageEvent, state: T_State):
             chara_data = None if isinstance(chara_data, str) else chara_data
             player_card = await draw_player_card(data, chara_data, uid, nickname)
             total_result += player_card
-    await ys.finish(total_result, at_sender=True)
+    await ys.finish(total_result)
 
 
 @ysa.got('uid', prompt='请把要查询的uid给派蒙哦~')
@@ -252,7 +252,7 @@ async def ysa_handler(event: MessageEvent, state: T_State):
         else:
             player_card = await draw_all_chara_card(chara_data, uid)
             total_result += player_card
-    await ysa.finish(total_result, at_sender=True)
+    await ysa.finish(total_result)
 
 
 @ysc.got('uid', prompt='请把要查询的uid给派蒙哦~')
@@ -319,7 +319,7 @@ async def _(event: MessageEvent, state: T_State):
             skill_data = await get_chara_skill_data(uid, role[1], use_cache=state['use_cache'])
             chara_card = await draw_chara_card(chara_data, skill_data, role, uid)
             total_result += chara_card
-    await ysc.finish(total_result, at_sender=True)
+    await ysc.finish(total_result)
 
 
 cookie_error_msg = '这个cookie无效哦，请旅行者确认是否正确\n1.ck要登录mys帐号后获取,且不能退出登录\n2.ck中要有cookie_token和account_id两个参数\n3.建议在无痕模式下取'
@@ -428,7 +428,7 @@ async def mys_sign_auto_handler(event: MessageEvent, msg: Message = CommandArg()
 
 
 ud_lmt = FreqLimiter(300)
-ud_p_lmt = FreqLimiter(10)
+ud_p_lmt = FreqLimiter(12)
 
 
 @update_info.handle()
@@ -530,7 +530,7 @@ async def sign_all():
 
 
 @update_all.handle()
-async def update_all():
+async def _():
     res = await all_update()
     await update_all.finish(res)
 
@@ -656,4 +656,4 @@ async def all_update():
             failed_time += 1
             if failed_time > 5:
                 break
-    return '共{}个用户，更新完成'.format(len(uid_list))
+    return '玩家信息uid更新共{}个，更新完成'.format(len(uid_list))

@@ -4,6 +4,7 @@ from utils.decorator import cache
 from utils import aiorequests
 import datetime
 import re
+from asyncio import sleep
 
 
 @cache(ttl=datetime.timedelta(minutes=10))
@@ -226,8 +227,13 @@ async def get_sign_list():
 
 
 async def get_enka_data(uid):
-    url = f'https://enka.shinshin.moe/u/{uid}/__data.json'
-    resp = await aiorequests.get(url=url)
-    data = resp.json()
-    return data
+    for _ in range(3):
+        try:
+            url = f'https://enka.shinshin.moe/u/{uid}/__data.json'
+            resp = await aiorequests.get(url=url)
+            data = resp.json()
+            return data
+        except Exception:
+            await sleep(1.5)
+
 
