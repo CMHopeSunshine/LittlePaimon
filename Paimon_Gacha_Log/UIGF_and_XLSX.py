@@ -16,6 +16,8 @@ def id_generator():
 
 
 def convertUIGF(gachaLog, uid):
+    if 'gachaLog' in gachaLog:
+        gachaLog = gachaLog['gachaLog']
     UIGF_data = {"info": {}}
     UIGF_data["info"]["uid"] = uid
     UIGF_data["info"]["lang"] = "zh-cn"

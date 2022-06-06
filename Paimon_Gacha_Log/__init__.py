@@ -58,7 +58,7 @@ async def ckjl(bot: Bot, event: Union[MessageEvent, GroupMessageEvent], msg: Mes
 async def update_ckjl(event: MessageEvent, msg: Message = CommandArg()):
     url = None
     if msg:
-        msg = str(msg)
+        msg = msg.extract_plain_text().strip()
         match = re.search(r'(https://webstatic.mihoyo.com/.*#/log)', msg)
         if match:
             url = match.group(1)

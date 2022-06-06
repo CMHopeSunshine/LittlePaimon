@@ -2,8 +2,8 @@ import re
 from typing import Dict, Union
 
 from nonebot import on_command, on_regex
-from nonebot.adapters.onebot.v11 import MessageSegment, MessageEvent, GroupMessageEvent
-from nonebot.params import RegexDict
+from nonebot.adapters.onebot.v11 import MessageEvent, GroupMessageEvent, Message
+from nonebot.params import RegexDict, CommandArg
 
 from utils.config import config
 from utils import aiorequests
@@ -79,13 +79,13 @@ async def gacha(event: Union[MessageEvent, GroupMessageEvent], reGroup: Dict = R
 
 
 @show_log.handle()
-async def show_log_handler(event: MessageEvent):
+async def show_log_handler(event: MessageEvent, msg: Message = CommandArg()):
     uid = str(event.user_id)
     init_user_info(uid)
     # gacha_list = user_info[uid]['gacha_list']
     if user_info[uid]['gacha_list']['wish_total'] == 0:
         await show_log.finish('你此前并没有抽过卡哦', at_sender=True)
-    msg = event.message.extract_plain_text().replace('模拟抽卡记录', '').strip()
+    msg = msg.extract_plain_text().strip()
     if msg == '角色' or msg == '武器':
         res = get_rw_record(msg, uid)
     else:
@@ -146,10 +146,7 @@ def get_rw_record(msg, uid):
                     res += '%s%s 数量: %s 出货: %s\n' % (wp[1]['星级'], wp[0], wp[1]['数量'], wp[1]['出货'])
                 else:
                     res += '%s%s 数量: %s\n' % (wp[1]['星级'], wp[0], wp[1]['数量'])
-    res = res.replace('[', '')
-    res = res.replace(']', '')
-    res = res.replace(',', ' ')
-    return res
+    return res.replace('[', '').replace(']', '').replace(',', ' ')
 
 
 @delete_log.handle()
@@ -165,10 +162,10 @@ async def delete_log_handler(event: MessageEvent):
 
 
 @choose_dg.handle()
-async def choose_dg_handler(event: MessageEvent):
+async def choose_dg_handler(event: MessageEvent, msg: Message = CommandArg()):
     uid = str(event.user_id)
     init_user_info(uid)
-    dg_weapon = event.message.extract_plain_text().strip()
+    dg_weapon = msg.extract_plain_text().strip()
     weapon_up_list = await get_dg_weapon()
     if dg_weapon not in weapon_up_list:
         await choose_dg.finish(f'该武器无定轨，请输入全称[{weapon_up_list[0]}|{weapon_up_list[1]}]', at_sender=True)
