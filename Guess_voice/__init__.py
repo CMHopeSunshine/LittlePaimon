@@ -1,9 +1,8 @@
 import asyncio
 from pathlib import Path
-from typing import Union
 
 from nonebot import on_command
-from nonebot.adapters.onebot.v11 import PrivateMessageEvent, GroupMessageEvent, MessageSegment, Bot
+from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageSegment, Bot, MessageEvent
 from nonebot.exception import FinishedException
 from nonebot.params import CommandArg
 from nonebot.permission import SUPERUSER
@@ -23,7 +22,7 @@ ys_voice = on_command('原神语音', priority=12, block=True)
 update_ys_voice = on_command('更新原神语音资源', priority=12, permission=SUPERUSER, block=True)
 
 
-async def download_voice(bot: Bot, event: Union[PrivateMessageEvent, GroupMessageEvent]):
+async def download_voice(bot: Bot, event: MessageEvent):
     if not dir_name.exists():
         dir_name.mkdir(parents=True, exist_ok=True)
         await bot.send(event, '资源尚未初始化，现在开始下载资源，这需要较长的时间，请耐心等待')
@@ -72,7 +71,7 @@ async def guess_genshin_voice(bot: Bot, event: GroupMessageEvent, msg=CommandArg
 
 
 @ys_voice.handle()
-async def get_genshin_voice(bot: Bot, event: Union[PrivateMessageEvent, GroupMessageEvent], msg=CommandArg()):
+async def get_genshin_voice(bot: Bot, event: GroupMessageEvent, msg=CommandArg()):
     name = str(msg).strip()
     if name.startswith('日'):
         language = '日'
@@ -87,7 +86,7 @@ async def get_genshin_voice(bot: Bot, event: Union[PrivateMessageEvent, GroupMes
 
 
 @update_ys_voice.handle()
-async def update_genshin_voice(bot: Bot, event: Union[PrivateMessageEvent, GroupMessageEvent]):
+async def update_genshin_voice(bot: Bot, event: GroupMessageEvent):
     await update_ys_voice.send('将在后台开始更新原神语音资源，请耐心等待资源下载完成后再使用原神语音')
     await download_data.update_voice_data()
     await update_ys_voice.finish('原神语音资源更新完成')

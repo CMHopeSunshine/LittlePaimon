@@ -1,5 +1,5 @@
 import re
-from typing import Dict, Union
+from typing import Dict
 
 from nonebot import on_command, on_regex
 from nonebot.adapters.onebot.v11 import MessageEvent, GroupMessageEvent, Message
@@ -35,7 +35,7 @@ lmt_user = FreqLimiter(config.paimon_gacha_cd_user)
 
 
 @sim_gacha.handle()
-async def gacha(event: Union[MessageEvent, GroupMessageEvent], reGroup: Dict = RegexDict()):
+async def gacha(event: MessageEvent, reGroup: Dict = RegexDict()):
     uid = str(event.user_id)
     init_user_info(uid)
     sender = event.sender
