@@ -16,7 +16,17 @@ HELP_STR = '''
 原神日历 status : 查看本群日历推送设置
 '''.strip()
 
+__paimon_help__ = {
+    'type': '原神Wiki',
+    'range': ['private', 'group', 'guild']
+}
+
 calendar = on_command('原神日历', aliases={"原神日历", 'ysrl', '原神日程'}, priority=24, block=True)
+calendar.__paimon_help__ = {
+    "usage": "原神日历",
+    "introduce": "查看原神活动日历，后加on时间/off可以开启定时推送",
+    "priority": 99
+}
 scheduler = require('nonebot_plugin_apscheduler').scheduler
 
 

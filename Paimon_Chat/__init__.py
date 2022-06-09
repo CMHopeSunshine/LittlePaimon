@@ -26,6 +26,8 @@ chat_lmt = FreqLimiter2(60)
 
 update_voice = on_command('更新派蒙语音', priority=2)
 
+# TODO 被动效果
+
 
 def check_group(event: GroupMessageEvent) -> bool:
     if event.group_id in config.paimon_chat_group:

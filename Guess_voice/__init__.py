@@ -16,9 +16,23 @@ setting_time = config.paimon_guess_voice  # 游戏持续时间
 
 dir_name = Path() / 'data' / 'LittlePaimon' / 'guess_voice' / 'voice'
 
+__paimon_help__ = {
+    'type': '娱乐',
+    'range': ['group']
+}
 
 guess_game = on_command('原神猜语音', priority=12, block=True)
+guess_game.__paimon_help__ = {
+    "usage": "原神猜语音[语言]",
+    "introduce": "来一起猜语音吧",
+    "priority": 5
+}
 ys_voice = on_command('原神语音', priority=12, block=True)
+ys_voice.__paimon_help__ = {
+    "usage": "原神语音[语言]<角色名>",
+    "introduce": "随机发一条该角色的语音",
+    "priority": 6
+}
 update_ys_voice = on_command('更新原神语音资源', priority=12, permission=SUPERUSER, block=True)
 
 

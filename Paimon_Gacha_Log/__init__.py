@@ -20,10 +20,30 @@ __usage__ = '''
 '''
 __help_version__ = '0.9.0'
 
+__paimon_help__ = {
+    'type': '原神抽卡记录',
+    'range': ['private', 'group', 'guild']
+}
+
 
 gacha_log_export = on_command('ckjldc', aliases={'抽卡记录导出', '导出抽卡记录'}, priority=5, block=True)
+gacha_log_export.__paimon_help__ = {
+    "usage":     "抽卡记录导出(uid)",
+    "introduce": "将抽卡记录导出到群文件中",
+    "priority":  3
+}
 gacha_log_update = on_command('ckjlgx', aliases={'抽卡记录更新', '更新抽卡记录', '获取抽卡记录'}, priority=5, block=True)
+gacha_log_update.__paimon_help__ = {
+    "usage":     "获取抽卡记录<链接>(uid)",
+    "introduce": "从抽卡链接获取抽卡记录，抽卡链接通过祈愿页面断网取得",
+    "priority":  1
+}
 gacha_log_show = on_command('ckjl', aliases={'抽卡记录', '查看抽卡记录'}, priority=5, block=True)
+gacha_log_show.__paimon_help__ = {
+    "usage":     "查看抽卡记录(uid)",
+    "introduce": "查看你的抽卡记录分析",
+    "priority":  2
+}
 
 data_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'user_data', 'gacha_log_data')
 if not os.path.exists(data_path):

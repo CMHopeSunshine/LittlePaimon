@@ -23,6 +23,10 @@ __usage__ = '''
 7.[深渊上半/下半阵容出场率]查看2.6深渊阵容出场率
 '''
 __help_version__ = '1.0.4'
+__paimon_help__ = {
+    'type': '原神Wiki',
+    'range': ['private', 'group', 'guild']
+}
 
 res_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'res')
 
@@ -96,8 +100,14 @@ async def abyss_team_handler(event: MessageEvent, reGroup=RegexDict()):
     await abyss_team.finish(abyss_img)
 
 
-def create_choice_command(endswith: str, type_: str, url: str, tips: str = None):
+def create_choice_command(endswith: str, type_: str, url: str, tips: str = None, help_tips: str = None):
     command = on_endswith(endswith, priority=6, block=True)
+    command.plugin_name = 'Paimon_Wiki'
+    command.__paimon_help__ = {
+        "usage":  f'<{help_tips}名> ' + endswith,
+        "introduce": f"查看该{help_tips}的{endswith}",
+        "priority": 3
+    }
 
     @command.handle()
     async def _(event: MessageEvent, state: T_State):
@@ -105,7 +115,7 @@ def create_choice_command(endswith: str, type_: str, url: str, tips: str = None)
         if name:
             state['name'] = name
 
-    @command.got('name', prompt=f'请把要查询的{endswith[0:2]}告诉我哦~')
+    @command.got('name', prompt=f'请把要查询的{help_tips}告诉我哦~')
     async def _(event: MessageEvent, state: T_State):
         name = state['name']
         if isinstance(name, Message):
@@ -153,8 +163,8 @@ def create_choice_command(endswith: str, type_: str, url: str, tips: str = None)
         await command.finish(await MessageBuild.StaticImage(url=url.format(choice), tips=tips.format(choice)))
 
 
-create_choice_command('原魔图鉴', 'monsters', 'LittlePaimon/MonsterMaps/{}.jpg', '暂时没有{}的原魔图鉴哦~')
-create_choice_command('武器攻略', 'weapons', 'LittlePaimon/WeaponGuild/{}.png', '暂时没有{}的武器攻略哦~')
-create_choice_command('角色攻略', 'roles', 'LittlePaimon/XFGuide/{}.jpg', '暂时没有{}的角色攻略哦~')
-create_choice_command('角色材料', 'roles', 'LittlePaimon/RoleMaterials/{}材料.jpg', '暂时没有{}的角色材料哦~')
-create_choice_command('收益曲线', 'roles', 'LittlePaimon/blue/{}.jpg', '暂时没有{}的收益曲线哦~')
+create_choice_command('原魔图鉴', 'monsters', 'LittlePaimon/MonsterMaps/{}.jpg', '暂时没有{}的原魔图鉴哦~', '原魔')
+create_choice_command('武器攻略', 'weapons', 'LittlePaimon/WeaponGuild/{}.png', '暂时没有{}的武器攻略哦~', '武器')
+create_choice_command('角色攻略', 'roles', 'LittlePaimon/XFGuide/{}.jpg', '暂时没有{}的角色攻略哦~', '角色')
+create_choice_command('角色材料', 'roles', 'LittlePaimon/RoleMaterials/{}材料.jpg', '暂时没有{}的角色材料哦~', '角色')
+create_choice_command('收益曲线', 'roles', 'LittlePaimon/blue/{}.jpg', '暂时没有{}的收益曲线哦~', '角色')

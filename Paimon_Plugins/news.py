@@ -6,7 +6,17 @@ from utils import aiorequests
 from utils.file_handler import load_json, save_json
 from utils.message_util import get_message_id
 
+__paimon_help__ = {
+    'type': '娱乐',
+    'range': ['private', 'group', 'guild']
+}
+
 news60s_pic = on_command('早报', aliases={'今日早报', '今日新闻', '60s读世界'}, priority=13, block=True)
+news60s_pic.__paimon_help__ = {
+    "usage":     "今日早报",
+    "introduce": "获取60秒读世界早报，后加on时间/off可以开启/关闭推送",
+    "priority": 10
+}
 
 scheduler = require('nonebot_plugin_apscheduler').scheduler
 

@@ -7,12 +7,27 @@ from utils.auth_util import FreqLimiter
 from utils.message_util import get_message_id
 from utils.decorator import auto_withdraw
 
+__paimon_help__ = {
+    'type': '娱乐',
+    'range': ['private', 'group', 'guild']
+}
+
 cat_lmt = FreqLimiter(config.paimon_cat_cd)
 ecy_lmt = FreqLimiter(config.paimon_ecy_cd)
 ys_lmt = FreqLimiter(config.paimon_ysp_cd)
 
 cat_img = on_command('猫图', aliases={'来点猫片', '看看猫猫', '来个猫猫'}, priority=13, block=True)
+cat_img.__paimon_help__ = {
+    "usage":     "来点猫片",
+    "introduce": "谁会拒绝可爱的猫猫图呢",
+    "priority": 13
+}
 ecy_img = on_regex(r'^来点(二次元|二刺螈|银发|兽耳|星空|竖屏|横屏)图?$', priority=13, block=True)
+ecy_img.__paimon_help__ = {
+    "usage":     "来点<类型>图",
+    "introduce": "懂得都懂，类型有原神|二次元|二刺螈|银发|兽耳|星空|竖屏|横屏",
+    "priority": 13
+}
 ys_img = on_command('原神壁纸', aliases={'来点原神图', '来点原神壁纸'}, priority=13, block=True)
 
 

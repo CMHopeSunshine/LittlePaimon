@@ -59,23 +59,78 @@ __usage__ = '''
 [添加公共ck cookie]添加公共cookie以供大众查询*仅管理员
 '''
 
+__paimon_help__ = {
+    'type': '原神信息查询',
+    'range': ['private', 'group', 'guild']
+}
+
 __help_version__ = '1.1.0'
 
 sy = on_command('sy', aliases={'深渊信息', '深境螺旋信息'}, priority=7, block=True)
+sy.__paimon_help__ = {
+    "usage":     "sy[层数](uid)",
+    "introduce": "查看深渊战绩信息",
+    "priority":  6
+}
 ssbq = on_command('ssbq', aliases={'实时便笺', '实时便签', '当前树脂'}, priority=7, block=True)
+ssbq.__paimon_help__ = {
+    "usage":     "ssbq(uid)",
+    "introduce": "*查看当前树脂、洞天宝钱、派遣状况等",
+    "priority":  7
+}
 myzj = on_command('myzj', aliases={'札记信息', '每月札记'}, priority=7, block=True)
+myzj.__paimon_help__ = {
+    "usage":     "myzj[月份](uid)",
+    "introduce": "*查看该月份获得的原石、摩拉数",
+    "priority":  8
+}
 ys = on_command('ys', aliases={'原神卡片', '个人卡片'}, priority=7, block=True)
+ys.__paimon_help__ = {
+    "usage":     "ys(uid)",
+    "introduce": "查看原神个人卡片(宝箱、探索度等)",
+    "priority":  1
+}
 ysa = on_command('ysa', aliases={'角色背包'}, priority=7, block=True)
+ysa.__paimon_help__ = {
+    "usage":     "ysa(uid)",
+    "introduce": "查看原神公开角色的简略信息",
+    "priority":  2
+}
 ysc = on_command('ysc', aliases={'角色卡片'}, priority=7, block=True)
+ysc.__paimon_help__ = {
+    "usage":     "ysc<角色名>(uid)",
+    "introduce": "查看原神指定角色的简略信息",
+    "priority":  3
+}
 ysb = on_command('ysb', aliases={'原神绑定', '绑定cookie'}, priority=7, block=True)
+ysb.__paimon_help__ = {
+    "usage":     "ysb<cookie>",
+    "introduce": "绑定私人cookie以开启更多功能",
+    "priority":  99
+}
 mys_sign = on_command('mys_sign', aliases={'mys签到', '米游社签到'}, priority=7, block=True)
 mys_sign_auto = on_command('mys_sign_auto', aliases={'mys自动签到', '米游社自动签到'}, priority=7, block=True)
+mys_sign_auto.__paimon_help__ = {
+    "usage":     "mys自动签到<on|off uid>",
+    "introduce": "*米游社原神区自动签到奖励获取",
+    "priority":  9
+}
 mys_sign_all = on_command('mys_sign_all', aliases={'全部重签'}, priority=1, permission=SUPERUSER, rule=to_me(), block=True)
 update_all = on_command('update_all', aliases={'更新全部玩家'}, priority=1, permission=SUPERUSER, rule=to_me(), block=True)
 add_public_ck = on_command('add_ck', aliases={'添加公共cookie', '添加公共ck'}, permission=SUPERUSER, priority=7, block=True)
 delete_ck = on_command('delete_ck', aliases={'删除ck', '删除cookie'}, priority=7, block=True)
 update_info = on_command('udi', aliases={'更新角色信息', '更新角色面板', '更新玩家信息'}, priority=6, block=True)
+update_info.__paimon_help__ = {
+    "usage":     "更新角色信息(uid)",
+    "introduce": "更新游戏内展柜8个角色的面板信息，以便使用ysd指令",
+    "priority":  5
+}
 role_info = on_command('角色面板', aliases={'角色详情', '角色信息', 'ysd'}, block=True, priority=7)
+role_info.__paimon_help__ = {
+    "usage":     "ysd<角色名>(uid)",
+    "introduce": "查看指定角色的详细面板信息",
+    "priority":  4
+}
 
 
 @sy.handle()
@@ -411,15 +466,15 @@ async def mys_sign_auto_handler(event: MessageEvent, msg: Message = CommandArg()
         await mys_sign_auto.finish('请把正确的需要帮忙签到的uid给派蒙哦!', at_sender=True)
     else:
         uid = find_uid.group('uid')
-        find_action = re.search(r'(?P<action>开启|启用|打开|关闭|禁用)', msg)
+        find_action = re.search(r'(?P<action>开启|启用|打开|关闭|禁用|on|off)', msg)
         if find_action:
-            if find_action.group('action') in ['开启', '启用', '打开']:
+            if find_action.group('action') in ['开启', '启用', '打开', 'on']:
                 cookie = await get_private_cookie(uid, key='uid')
                 if not cookie:
                     await mys_sign_auto.finish('你的该uid还没绑定cookie哦，先用ysb绑定吧!', at_sender=True)
                 await add_auto_sign(str(event.user_id), uid, str(event.group_id))
                 await mys_sign_auto.finish('开启米游社自动签到成功,派蒙会在每日0点帮你签到', at_sender=True)
-            elif find_action.group('action') in ['关闭', '禁用']:
+            elif find_action.group('action') in ['关闭', '禁用', 'off']:
                 await delete_auto_sign(str(event.user_id), uid)
                 await mys_sign_auto.finish('关闭米游社自动签到成功', at_sender=True)
         else:

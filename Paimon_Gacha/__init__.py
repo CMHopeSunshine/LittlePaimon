@@ -23,12 +23,34 @@ __usage__ = '''
 '''
 __help_version__ = '1.0.1'
 
+__paimon_help__ = {
+    'type': '原神模拟抽卡',
+    'range': ['private', 'group', 'guild']
+}
+
 sim_gacha = on_regex(r'^抽((?P<num>\d+)|(?:.*))十连(?P<pool>.*?)$', priority=5, block=True)
+sim_gacha.__paimon_help__ = {
+    "usage": "抽[数量]十连[卡池]",
+    "introduce": "模拟抽卡，池有角色1|角色2|武器|常驻|菜单",
+    "priority": 1
+}
+
 show_log = on_command('模拟抽卡记录', aliases={'查看模拟抽卡记录'}, priority=5, block=True)
+show_log.__paimon_help__ = {
+    "usage": "模拟抽卡记录[角色|武器]",
+    "introduce": "查看你的模拟抽卡记录，前加删除可以删除记录",
+    "priority": 2
+}
+
 delete_log = on_command('删除模拟抽卡记录', priority=5, block=True)
 show_dg = on_command('查看定轨', priority=5, block=True)
 delete_dg = on_command('删除定轨', priority=5, block=True)
 choose_dg = on_command('选择定轨', priority=5, block=True)
+choose_dg.__paimon_help__ = {
+    "usage": "选择定轨<武器名>",
+    "introduce": "模拟抽卡定轨，另有 查看|删除定轨",
+    "priority": 3
+}
 
 lmt_group = FreqLimiter(config.paimon_gacha_cd_group)
 lmt_user = FreqLimiter(config.paimon_gacha_cd_user)
