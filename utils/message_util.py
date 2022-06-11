@@ -1,5 +1,5 @@
 import re
-import base64
+from time import time
 
 from PIL import Image
 from pathlib import Path
@@ -27,11 +27,20 @@ class MessageBuild:
               ) -> MessageSegment:
         if isinstance(img, str) or isinstance(img, Path):
             img = load_image(path=img, size=size, mode=mode, crop=crop)
+        else:
+            if size:
+                if isinstance(size, float):
+                    img = img.resize((int(img.size[0] * size), int(img.size[1] * size)), Image.ANTIALIAS)
+                elif isinstance(size, tuple):
+                    img = img.resize(size, Image.ANTIALIAS)
+            if crop:
+                img = img.crop(crop)
+            if mode:
+                img = img.convert(mode)
         bio = BytesIO()
         img = img.convert(mode)
         img.save(bio, format='JPEG' if mode == 'RGB' else 'PNG', quality=quality)
-        img_b64 = 'base64://' + base64.b64encode(bio.getvalue()).decode()
-        return MessageSegment.image(img_b64)
+        return MessageSegment.image(bio)
 
     @classmethod
     async def StaticImage(cls,
@@ -39,14 +48,17 @@ class MessageBuild:
                           size: Optional[Tuple[int, int]] = None,
                           crop: Optional[Tuple[int, int, int, int]] = None,
                           quality: Optional[int] = 100,
-                          mode: Optional[str] = 'RGB'
+                          mode: Optional[str] = 'RGB',
+                          tips: Optional[str] = None
                           ):
         path = Path() / 'data' / url
-        if not path.exists():
+        if path.exists() and not check_time(path.stat().st_mtime, 3):
+            img = Image.open(path)
+        else:
             path.parent.mkdir(parents=True, exist_ok=True)
             img = await aiorequests.get_img(url='https://static.cherishmoon.fun/' + url, save_path=path)
-        else:
-            img = Image.open(path)
+            if img == 'No Such File':
+                return MessageSegment.text(tips or '缺少该静态资源')
         if size:
             img = img.resize(size)
         if crop:
@@ -54,8 +66,7 @@ class MessageBuild:
         bio = BytesIO()
         img = img.convert(mode)
         img.save(bio, format='JPEG' if mode == 'RGB' else 'PNG', quality=quality)
-        img_b64 = 'base64://' + base64.b64encode(bio.getvalue()).decode()
-        return MessageSegment.image(img_b64)
+        return MessageSegment.image(bio)
 
     @classmethod
     def Text(cls, text: str) -> MessageSegment:
@@ -172,3 +183,14 @@ def transform_uid(msg):
         if uid:
             uid_list.append(uid.group('uid'))
     return uid_list if len(uid_list) > 1 else uid_list[0] if uid_list else None
+
+
+# 检查该时间戳和当前时间戳相差是否超过n天， 超过则返回True
+def check_time(time_stamp, n=1):
+    time_stamp = int(time_stamp)
+    now = int(time())
+    if (now - time_stamp) / 86400 > n:
+        return True
+    else:
+        return False
+

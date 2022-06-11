@@ -1,8 +1,5 @@
 import sqlite3
-import json
 import os
-import re
-from nonebot import logger
 from datetime import datetime
 
 db_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'user_data', 'user_data.db')
@@ -32,31 +29,31 @@ def init_db():
             mys_id TEXT,
             last_time datetime
         );''')
-        try:
-            with open(os.path.join(os.path.dirname(__file__), 'user_data', 'user_cookies.json'), 'r',
-                      encoding='utf-8') as f:
-                data = json.load(f)
-            for d in data['私人'].items():
-                for c in d[1]['cookies']:
-                    match = re.search(r'account_id=(\d{6,12})', c['cookie'])
-                    mys_id = match.group(1) if match else ''
-                    cursor.execute('INSERT INTO private_cookies (user_id, uid, mys_id, cookie) VALUES (?, ?, ?, ?);',
-                                   (d[0], c['uid'], mys_id, c['cookie']))
-                cursor.execute('INSERT INTO last_query (user_id, uid, last_time) VALUES (?, ?, ?);',
-                               (d[0], d[1]['last_query'], datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
-            cursor.execute('''CREATE TABLE IF NOT EXISTS public_cookies (
-                no int IDENTITY(1,1) PRIMARY KEY,
-                cookie TEXT,
-                status TEXT);''')
-            for d in data['通用']:
-                if d['cookie']:
-                    try:
-                        cursor.execute('INSERT INTO public_cookies VALUES (?, ?, "OK");', (d['no'], d['cookie']))
-                    except:
-                        pass
-            logger.info('---派蒙初始化数据库成功，已导入原json数据---')
-        except:
-            logger.error('---派蒙初始化数据库失败，请检查user_cookies.json文件是否存在---')
+        # try:
+        #     with open(os.path.join(os.path.dirname(__file__), 'user_data', 'user_cookies.json'), 'r',
+        #               encoding='utf-8') as f:
+        #         data = json.load(f)
+        #     for d in data['私人'].items():
+        #         for c in d[1]['cookies']:
+        #             match = re.search(r'account_id=(\d{6,12})', c['cookie'])
+        #             mys_id = match.group(1) if match else ''
+        #             cursor.execute('INSERT INTO private_cookies (user_id, uid, mys_id, cookie) VALUES (?, ?, ?, ?);',
+        #                            (d[0], c['uid'], mys_id, c['cookie']))
+        #         cursor.execute('INSERT INTO last_query (user_id, uid, last_time) VALUES (?, ?, ?);',
+        #                        (d[0], d[1]['last_query'], datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+        #     cursor.execute('''CREATE TABLE IF NOT EXISTS public_cookies (
+        #         no int IDENTITY(1,1) PRIMARY KEY,
+        #         cookie TEXT,
+        #         status TEXT);''')
+        #     for d in data['通用']:
+        #         if d['cookie']:
+        #             try:
+        #                 cursor.execute('INSERT INTO public_cookies VALUES (?, ?, "OK");', (d['no'], d['cookie']))
+        #             except:
+        #                 pass
+        #     logger.info('---派蒙初始化数据库成功，已导入原json数据---')
+        # except:
+        #     logger.error('---派蒙初始化数据库失败，请检查user_cookies.json文件是否存在---')
     conn.commit()
     conn.close()
 
@@ -240,6 +237,24 @@ async def update_last_query(user_id, value, key='uid'):
     cursor.execute(f'REPLACE INTO last_query (user_id, {key}, last_time) VALUES ("{user_id}", "{value}", "{t}");')
     conn.commit()
     conn.close()
+
+
+async def get_all_query():
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS last_query(
+            user_id TEXT PRIMARY KEY NOT NULL,
+            uid TEXT,
+            mys_id TEXT,
+            last_time datetime);''')
+    cursor.execute('SELECT uid, last_time FROM last_query')
+    uid_list = cursor.fetchall()
+    uids = []
+    for uid, last_time in uid_list:
+        if (datetime.now() - datetime.strptime(last_time, '%Y-%m-%d %H:%M:%S')).days <= 3:
+            uids.append(uid)
+    conn.close()
+    return uids
 
 
 # 获取树脂提醒信息

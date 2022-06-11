@@ -7,7 +7,17 @@ from utils.message_util import get_message_id
 from utils.config import config
 from utils import aiorequests
 
+__paimon_help__ = {
+    'type': '娱乐',
+    'range': ['private', 'group', 'guild']
+}
+
 couplets = on_command('对联', aliases={'对对联'}, priority=13, block=True)
+couplets.__paimon_help__ = {
+        "usage":  "对对联 <对联内容>",
+        "introduce": "人工智能和你对对联",
+        "priority": 8
+    }
 
 couplets_limit = FreqLimiter(config.paimon_couplets_cd)
 

@@ -5,7 +5,18 @@ from nonebot.adapters.onebot.v11 import Message, MessageEvent, MessageSegment
 from utils.auth_util import FreqLimiter
 from utils import aiorequests
 
+__paimon_help__ = {
+    'type': '娱乐',
+    'range': ['private', 'group', 'guild']
+}
+
 order_pic = on_command('点菜', aliases={'点餐', '食谱', '我想吃'}, priority=13, block=True)
+order_pic.__paimon_help__ = {
+    "usage":     "点餐<食品名>",
+    "introduce": "群主，来一份派蒙！",
+    "priority": 11
+}
+
 order_lmt = FreqLimiter(10)
 
 

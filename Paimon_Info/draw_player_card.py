@@ -3,6 +3,7 @@ import os
 import random
 import re
 
+from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 
 from utils import aiorequests
@@ -10,6 +11,18 @@ from utils.message_util import MessageBuild
 from utils.file_handler import load_image
 
 res_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'res')
+
+b = load_image(os.path.join(res_path, 'player_card', '角色卡底部.png'))
+b_c = load_image(os.path.join(res_path, 'player_card', 'chara_botton.png'))
+fetter = []
+for i in range(0, 11):
+    fetter.append(load_image(os.path.join(res_path, 'player_card', f'好感度{i}.png')))
+weapon_bg = []
+for i in range(1, 6):
+    weapon_bg.append(load_image(os.path.join(res_path, 'player_card', f'{i}星武器.png')))
+constellation = []
+for i in range(0, 7):
+    constellation.append(load_image(os.path.join(res_path, 'player_card', f'命之座{i}.png')))
 
 
 def get_font(size):
@@ -31,22 +44,18 @@ async def get_chara_card(data):
     chara_card = Image.new("RGBA", (226, 313), (255, 255, 255, 255))
     chara_img = load_image(os.path.join(res_path, 'role_card', f'{data["id"]}.png'))
     chara_card.alpha_composite(chara_img, (0, 0))
-    b = load_image(os.path.join(res_path, 'player_card', 'chara_botton.png'))
-    chara_card.alpha_composite(b, (0, 236))
+    chara_card.alpha_composite(b_c, (0, 236))
     # 命座
     if data['name'] != '埃洛伊':
-        actived_constellation_num = load_image(
-            os.path.join(res_path, 'player_card', f'命之座{data["actived_constellation_num"]}.png'))
-        chara_card.alpha_composite(actived_constellation_num, (155, 0))
+        chara_card.alpha_composite(constellation[data["actived_constellation_num"]], (155, 0))
     # 好感度
     if data['name'] != '旅行者':
-        fetter = load_image(os.path.join(res_path, 'player_card', f'好感度{data["fetter"]}.png'))
-        chara_card.alpha_composite(fetter, (155, 166))
+        chara_card.alpha_composite(fetter[data["fetter"]], (155, 166))
     # 武器背景
-    weapon_bg = load_image(os.path.join(res_path, 'player_card', f'{data["weapon"]["rarity"]}星武器.png'))
-    chara_card.alpha_composite(weapon_bg, (0, 227))
+    chara_card.alpha_composite(weapon_bg[data["weapon"]["rarity"] - 1], (0, 227))
     # 武器图标
-    weapon_icon = await aiorequests.get_img(url=data['weapon']['icon'], size=(63, 63), mode='RGBA')
+    weapon_icon = Path() / 'data' / 'LittlePaimon' / 'res' / 'weapon' / data['weapon']['icon'].split('/')[-1]
+    weapon_icon = await aiorequests.get_img(url=data['weapon']['icon'], size=(63, 63), mode='RGBA', save_path=weapon_icon)
     chara_card.alpha_composite(weapon_icon, (0, 230))
     # 等级信息
     chara_draw = ImageDraw.Draw(chara_card)
@@ -196,7 +205,7 @@ async def draw_player_card(data, chara_data, uid, nickname="旅行者"):
     bg_draw = ImageDraw.Draw(bg_img)
     # 头部名片
     name_id = random.choice(data['avatars'][0:8])['id']
-    name_card = load_image(os.path.join(res_path, 'name_card', f'{name_id}.png'), crop=(0, 40, 840, 360), size=(846, 322))
+    name_card = load_image(os.path.join(res_path, 'name_card', f'{name_id}.png'), crop=(0, 40, 840, 360), size=(846, 360))
     avatar = load_image(os.path.join(res_path, 'role_profile', f'{name_id}.png'), size=(240, 240))
     bg_img.alpha_composite(name_card, (57, 27))
     bg_img.alpha_composite(avatar, (360, 25))
@@ -252,7 +261,6 @@ async def get_chara_card_long(data):
     chara_card = Image.new("RGBA", (226, 382), (255, 255, 255, 255))
     chara_img = load_image(os.path.join(res_path, 'role_card', f'{data["id"]}.png'))
     chara_card.alpha_composite(chara_img, (0, 0))
-    b = load_image(os.path.join(res_path, 'player_card', '角色卡底部.png'))
     chara_card.alpha_composite(b, (0, 282))
     # 命座
     if data['name'] != '埃洛伊':
@@ -261,12 +269,11 @@ async def get_chara_card_long(data):
         chara_card.alpha_composite(actived_constellation_num, (155, 0))
     # 好感度
     if data['name'] != '旅行者':
-        fetter = load_image(os.path.join(res_path, 'player_card', f'好感度{data["fetter"]}.png'))
-        chara_card.alpha_composite(fetter, (155, 166))
+        chara_card.alpha_composite(fetter[data['fetter']], (155, 166))
     # 武器背景
-    weapon_bg = load_image(os.path.join(res_path, 'player_card', f'{data["weapon"]["rarity"]}星武器.png'))
-    chara_card.alpha_composite(weapon_bg, (3, 288))
-    weapon_icon = await aiorequests.get_img(url=data['weapon']['icon'], size=(62, 62), mode='RGBA')
+    chara_card.alpha_composite(weapon_bg[data["weapon"]["rarity"] - 1], (3, 288))
+    weapon_icon = Path() / 'data' / 'LittlePaimon' / 'res' / 'weapon' / data['weapon']['icon'].split('/')[-1]
+    weapon_icon = await aiorequests.get_img(url=data['weapon']['icon'], size=(62, 62), mode='RGBA', save_path=weapon_icon)
     chara_card.alpha_composite(weapon_icon, (3, 291))
     # 等级信息
     chara_draw = ImageDraw.Draw(chara_card)
@@ -330,7 +337,8 @@ shadow = load_image(os.path.join(res_path, 'other', 'shadow.png'))
 
 async def draw_reli_icon(data):
     base_icon = load_image(os.path.join(res_path, 'other', f'star{data["rarity"]}.png'), size=(80, 80))
-    icon = await aiorequests.get_img(url=data["icon"], size=(80, 80), mode='RGBA')
+    icon = Path() / 'data' / 'LittlePaimon' / 'res' / 'reli' / data['icon'].split('/')[-1]
+    icon = await aiorequests.get_img(url=data["icon"], size=(80, 80), mode='RGBA', save_path=icon)
     base_icon.alpha_composite(icon, (0, 0))
     base_icon.alpha_composite(shadow, (40, 60))
     base_icon_draw = ImageDraw.Draw(base_icon)
@@ -340,7 +348,8 @@ async def draw_reli_icon(data):
 
 async def draw_const_skill_icon(data, name):
     base_icon = load_image(os.path.join(res_path, 'other', '命座.png'), size=(65, 65))
-    icon = await aiorequests.get_img(url=data["icon"], size=(65, 65), mode='RGBA')
+    icon = Path() / 'data' / 'LittlePaimon' / 'res' / 'skill' / data['icon'].split('/')[-1]
+    icon = await aiorequests.get_img(url=data["icon"], size=(65, 65), mode='RGBA', save_path=icon)
     base_icon.alpha_composite(icon, (0, 0))
     if 'is_actived' in data and not data['is_actived']:
         unlock_icon = load_image(os.path.join(res_path, 'other', '命座未解锁.png'), size=(65, 65))
@@ -412,7 +421,8 @@ async def draw_chara_card(data, skill_data, chara_name, uid):
 
     # 武器
     weapon_bg = load_image(os.path.join(res_path, 'other', f'star{character["weapon"]["rarity"]}.png'), size=(100, 100))
-    weapon_icon = await aiorequests.get_img(url=character['weapon']['icon'], size=(100, 100), mode='RGBA')
+    weapon_icon = Path() / 'data' / 'LittlePaimon' / 'res' / 'weapon' / character['weapon']['icon'].split('/')[-1]
+    weapon_icon = await aiorequests.get_img(url=character['weapon']['icon'], size=(100, 100), mode='RGBA', save_path=weapon_icon)
     bg_img.alpha_composite(weapon_bg, (293, 175))
     bg_img.alpha_composite(weapon_icon, (293, 175))
     bg_img.alpha_composite(shadow.resize((50, 25)), (344, 250))

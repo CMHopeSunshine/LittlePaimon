@@ -8,9 +8,9 @@ from nonebot.params import RegexDict
 from nonebot.typing import T_State
 
 from utils.alias_handler import get_match_alias
+from utils.file_handler import load_json_from_url
 from utils.message_util import MessageBuild
-# from .abyss_rate_draw import draw_rate_rank, draw_teams_rate
-from .blue import get_blue_pic
+from .abyss_rate_draw import draw_rate_rank, draw_teams_rate
 
 __usage__ = '''
 1.[xx角色攻略]查看西风驿站出品的角色一图流攻略
@@ -23,6 +23,10 @@ __usage__ = '''
 7.[深渊上半/下半阵容出场率]查看2.6深渊阵容出场率
 '''
 __help_version__ = '1.0.4'
+__paimon_help__ = {
+    'type': '原神Wiki',
+    'range': ['private', 'group', 'guild']
+}
 
 res_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'res')
 
@@ -42,7 +46,12 @@ async def genshinAttribute(event: MessageEvent):
     name = event.message.extract_plain_text().replace('参考面板', '').strip()
     realname = get_match_alias(name)
     if realname:
-        img = await get_blue_pic(realname)
+        blue = await load_json_from_url('https://static.cherishmoon.fun/LittlePaimon/blue/blue.json')
+        if realname in blue.keys():
+            img = await MessageBuild.StaticImage(url=f'LittlePaimon/blue/{blue[realname][0]}.jpg',
+                                                 crop=(0, int(blue[realname][1][0]), 1080, int(blue[realname][1][1])))
+        else:
+            img = MessageBuild.Text(f'没有找到{name}的参考面板')
         await attribute.finish(img)
     else:
         await attribute.finish(f'没有找到{name}的参考面板', at_sender=True)
@@ -79,20 +88,26 @@ async def daily_material_handle(event: MessageEvent):
             await daily_material.finish(await MessageBuild.StaticImage(url=url))
 
 
-# @abyss_rate.handle()
-# async def abyss_rate_handler(event: MessageEvent):
-#     abyss_img = await draw_rate_rank()
-#     await abyss_rate.finish(abyss_img)
-#
-#
-# @abyss_team.handle()
-# async def abyss_team_handler(event: MessageEvent, reGroup=RegexDict()):
-#     abyss_img = await draw_teams_rate(reGroup['floor'])
-#     await abyss_team.finish(abyss_img)
+@abyss_rate.handle()
+async def abyss_rate_handler(event: MessageEvent):
+    abyss_img = await draw_rate_rank()
+    await abyss_rate.finish(abyss_img)
 
 
-def create_choice_command(endswith: str, type_: str, url: str, exclude: list = []):
+@abyss_team.handle()
+async def abyss_team_handler(event: MessageEvent, reGroup=RegexDict()):
+    abyss_img = await draw_teams_rate(reGroup['floor'])
+    await abyss_team.finish(abyss_img)
+
+
+def create_choice_command(endswith: str, type_: str, url: str, tips: str = None, help_tips: str = None):
     command = on_endswith(endswith, priority=6, block=True)
+    command.plugin_name = 'Paimon_Wiki'
+    command.__paimon_help__ = {
+        "usage":  f'<{help_tips}名> ' + endswith,
+        "introduce": f"查看该{help_tips}的{endswith}",
+        "priority": 3
+    }
 
     @command.handle()
     async def _(event: MessageEvent, state: T_State):
@@ -100,7 +115,7 @@ def create_choice_command(endswith: str, type_: str, url: str, exclude: list = [
         if name:
             state['name'] = name
 
-    @command.got('name', prompt=f'请把要查询的{endswith[0:2]}告诉我哦~')
+    @command.got('name', prompt=f'请把要查询的{help_tips}告诉我哦~')
     async def _(event: MessageEvent, state: T_State):
         name = state['name']
         if isinstance(name, Message):
@@ -108,10 +123,14 @@ def create_choice_command(endswith: str, type_: str, url: str, exclude: list = [
             if name == 'q':
                 await command.finish()
         match_alias = get_match_alias(name, type_)
-        if isinstance(match_alias, str) and match_alias not in exclude:
-            await command.finish(await MessageBuild.StaticImage(url=url.format(match_alias)))
+        if isinstance(match_alias, str):
+            await command.finish(
+                await MessageBuild.StaticImage(url=url.format(match_alias), tips=tips.format(match_alias)))
+        elif isinstance(match_alias, list) and len(match_alias) == 1:
+            await command.finish(
+                await MessageBuild.StaticImage(url=url.format(match_alias[0]), tips=tips.format(match_alias[0])))
         else:
-            if not match_alias or match_alias in exclude:
+            if not match_alias:
                 await command.finish(f'没有{state["name"]}的{endswith}哦~', at_sender=True)
             else:
                 if isinstance(match_alias, dict):
@@ -131,7 +150,8 @@ def create_choice_command(endswith: str, type_: str, url: str, exclude: list = [
             await command.finish()
         if choice.isdigit() and (1 <= int(choice) <= len(match_alias)):
             await command.finish(
-                await MessageBuild.StaticImage(url=url.format(match_alias[int(choice) - 1])))
+                await MessageBuild.StaticImage(url=url.format(match_alias[int(choice) - 1]),
+                                               tips=tips.format(match_alias[int(choice) - 1])))
         if choice not in match_alias:
             state['times'] = state['times'] + 1 if 'times' in state else 1
             if state['times'] == 1:
@@ -140,12 +160,11 @@ def create_choice_command(endswith: str, type_: str, url: str, exclude: list = [
                 await command.reject(f'别调戏派蒙啦，快选一个吧，不想问了请回答\"q\"！', at_sender=True)
             elif state['times'] >= 3:
                 await command.finish(f'看来旅行者您有点神志不清哦(，下次再问派蒙吧' + MessageSegment.face(146), at_sender=True)
-        await command.finish(await MessageBuild.StaticImage(url=url.format(choice)))
+        await command.finish(await MessageBuild.StaticImage(url=url.format(choice), tips=tips.format(choice)))
 
 
-create_choice_command('原魔图鉴', 'monsters', 'LittlePaimon/MonsterMaps/{}.jpg')
-create_choice_command('武器攻略', 'weapons', 'LittlePaimon/WeaponGuild/{}.png')
-create_choice_command('角色攻略', 'roles', 'LittlePaimon/XFGuide/{}.jpg', ['夜兰', '久岐忍', '鹿野院平藏'])
-create_choice_command('角色材料', 'roles', 'LittlePaimon/RoleMaterials/{}材料.jpg')
-create_choice_command('收益曲线', 'roles', 'LittlePaimon/blue/{}.jpg', ['神里绫人', '夜兰', '久岐忍', '鹿野院平藏'])
-
+create_choice_command('原魔图鉴', 'monsters', 'LittlePaimon/MonsterMaps/{}.jpg', '暂时没有{}的原魔图鉴哦~', '原魔')
+create_choice_command('武器攻略', 'weapons', 'LittlePaimon/WeaponGuild/{}.png', '暂时没有{}的武器攻略哦~', '武器')
+create_choice_command('角色攻略', 'roles', 'LittlePaimon/XFGuide/{}.jpg', '暂时没有{}的角色攻略哦~', '角色')
+create_choice_command('角色材料', 'roles', 'LittlePaimon/RoleMaterials/{}材料.jpg', '暂时没有{}的角色材料哦~', '角色')
+create_choice_command('收益曲线', 'roles', 'LittlePaimon/blue/{}.jpg', '暂时没有{}的收益曲线哦~', '角色')

@@ -4,9 +4,10 @@ from utils.decorator import cache
 from utils import aiorequests
 import datetime
 import re
+from asyncio import sleep
 
 
-@cache(ttl=datetime.timedelta(hours=1))
+@cache(ttl=datetime.timedelta(minutes=10))
 async def get_abyss_data(user_id, uid, schedule_type="1", use_cache=True):
     server_id = "cn_qd01" if uid[0] == '5' else "cn_gf01"
     url = "https://api-takumi-record.mihoyo.com/game_record/app/genshin/api/spiralAbyss"
@@ -223,3 +224,16 @@ async def get_sign_list():
     resp = await aiorequests.get(url=url, headers=headers, params=params)
     data = resp.json()
     return data
+
+
+async def get_enka_data(uid):
+    for _ in range(3):
+        try:
+            url = f'https://enka.shinshin.moe/u/{uid}/__data.json'
+            resp = await aiorequests.get(url=url)
+            data = resp.json()
+            return data
+        except Exception:
+            await sleep(1.5)
+
+

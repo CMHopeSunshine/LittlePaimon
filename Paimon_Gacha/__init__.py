@@ -1,9 +1,9 @@
 import re
-from typing import Dict, Union
+from typing import Dict
 
 from nonebot import on_command, on_regex
-from nonebot.adapters.onebot.v11 import MessageSegment, MessageEvent, GroupMessageEvent
-from nonebot.params import RegexDict
+from nonebot.adapters.onebot.v11 import MessageEvent, GroupMessageEvent, Message
+from nonebot.params import RegexDict, CommandArg
 
 from utils.config import config
 from utils import aiorequests
@@ -23,19 +23,41 @@ __usage__ = '''
 '''
 __help_version__ = '1.0.1'
 
+__paimon_help__ = {
+    'type': '原神模拟抽卡',
+    'range': ['private', 'group', 'guild']
+}
+
 sim_gacha = on_regex(r'^抽((?P<num>\d+)|(?:.*))十连(?P<pool>.*?)$', priority=5, block=True)
+sim_gacha.__paimon_help__ = {
+    "usage": "抽[数量]十连[卡池]",
+    "introduce": "模拟抽卡，池有角色1|角色2|武器|常驻|菜单",
+    "priority": 1
+}
+
 show_log = on_command('模拟抽卡记录', aliases={'查看模拟抽卡记录'}, priority=5, block=True)
+show_log.__paimon_help__ = {
+    "usage": "模拟抽卡记录[角色|武器]",
+    "introduce": "查看你的模拟抽卡记录，前加删除可以删除记录",
+    "priority": 2
+}
+
 delete_log = on_command('删除模拟抽卡记录', priority=5, block=True)
 show_dg = on_command('查看定轨', priority=5, block=True)
 delete_dg = on_command('删除定轨', priority=5, block=True)
 choose_dg = on_command('选择定轨', priority=5, block=True)
+choose_dg.__paimon_help__ = {
+    "usage": "选择定轨<武器名>",
+    "introduce": "模拟抽卡定轨，另有 查看|删除定轨",
+    "priority": 3
+}
 
 lmt_group = FreqLimiter(config.paimon_gacha_cd_group)
 lmt_user = FreqLimiter(config.paimon_gacha_cd_user)
 
 
 @sim_gacha.handle()
-async def gacha(event: Union[MessageEvent, GroupMessageEvent], reGroup: Dict = RegexDict()):
+async def gacha(event: MessageEvent, reGroup: Dict = RegexDict()):
     uid = str(event.user_id)
     init_user_info(uid)
     sender = event.sender
@@ -79,13 +101,13 @@ async def gacha(event: Union[MessageEvent, GroupMessageEvent], reGroup: Dict = R
 
 
 @show_log.handle()
-async def show_log_handler(event: MessageEvent):
+async def show_log_handler(event: MessageEvent, msg: Message = CommandArg()):
     uid = str(event.user_id)
     init_user_info(uid)
     # gacha_list = user_info[uid]['gacha_list']
     if user_info[uid]['gacha_list']['wish_total'] == 0:
         await show_log.finish('你此前并没有抽过卡哦', at_sender=True)
-    msg = event.message.extract_plain_text().replace('模拟抽卡记录', '').strip()
+    msg = msg.extract_plain_text().strip()
     if msg == '角色' or msg == '武器':
         res = get_rw_record(msg, uid)
     else:
@@ -146,10 +168,7 @@ def get_rw_record(msg, uid):
                     res += '%s%s 数量: %s 出货: %s\n' % (wp[1]['星级'], wp[0], wp[1]['数量'], wp[1]['出货'])
                 else:
                     res += '%s%s 数量: %s\n' % (wp[1]['星级'], wp[0], wp[1]['数量'])
-    res = res.replace('[', '')
-    res = res.replace(']', '')
-    res = res.replace(',', ' ')
-    return res
+    return res.replace('[', '').replace(']', '').replace(',', ' ')
 
 
 @delete_log.handle()
@@ -165,10 +184,10 @@ async def delete_log_handler(event: MessageEvent):
 
 
 @choose_dg.handle()
-async def choose_dg_handler(event: MessageEvent):
+async def choose_dg_handler(event: MessageEvent, msg: Message = CommandArg()):
     uid = str(event.user_id)
     init_user_info(uid)
-    dg_weapon = event.message.extract_plain_text().strip()
+    dg_weapon = msg.extract_plain_text().strip()
     weapon_up_list = await get_dg_weapon()
     if dg_weapon not in weapon_up_list:
         await choose_dg.finish(f'该武器无定轨，请输入全称[{weapon_up_list[0]}|{weapon_up_list[1]}]', at_sender=True)
@@ -222,18 +241,18 @@ async def get_dg_weapon():
 
 
 def gacha_type_by_name(gacha_type):
-    if re.match(r'^角色1|限定1|角色2|限定2(?:池)$', gacha_type):
-        return 301
-    # if re.match(r'^角色1|限定1(?:池)$', gacha_type):
+    # if re.match(r'^角色1|限定1|角色2|限定2(?:池)$', gacha_type):
     #     return 301
-    # if re.match(r'^角色2|限定2(?:池)$', gacha_type):
-    #     return 400
+    if re.match(r'^角色1|限定1(?:池)$', gacha_type):
+        return 301
+    if re.match(r'^角色2|限定2(?:池)$', gacha_type):
+        return 400
     if re.match(r'^武器|武器池$', gacha_type):
         return 302
     if re.match(r'^常驻|普(?:池)$', gacha_type):
         return 200
-    if re.match(r'^新角色1|新限定1|新角色2|新限定2(?:池)$', gacha_type):
-        return 'role_1_pool'
+    # if re.match(r'^新角色1|新限定1|新角色2|新限定2(?:池)$', gacha_type):
+    #     return 'role_1_pool'
     if re.match(r'^彩蛋池?$', gacha_type):
         return 'all_star'
     # if re.match(r'^新角色1|新限定1(?:池)$', gacha_type):

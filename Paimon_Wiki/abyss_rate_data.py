@@ -13,7 +13,7 @@ headers = {
 async def get_rate(type: str = 'role'):
     url = f'https://www.youchuang.fun/gamerole/{type}Rate'
     json_data = {
-        "version": "2.6"
+        "version": "2.7"
     }
     res = await aiorequests.post(url=url, headers=headers, json=json_data)
     return res.json()
@@ -22,7 +22,7 @@ async def get_rate(type: str = 'role'):
 async def get_formation_rate(layer: int = 1):
     url = 'https://www.youchuang.fun/gamerole/formationRate'
     json_data = {
-        "version": "2.6",
+        "version": "2.7",
         "layer": layer
     }
     res = await aiorequests.post(url=url, headers=headers, json=json_data)
@@ -33,7 +33,7 @@ async def get_teammates_rate(name: str):
     url = 'https://www.youchuang.fun/gamerole/teammatesRate'
     json_data = {
         "name": name,
-        "version": "2.6"
+        "version": "2.7"
     }
     res = await aiorequests.post(url=url, headers=headers, json=json_data)
     return res.json()
@@ -43,7 +43,7 @@ async def get_weapon_rate(name: str):
     url = 'https://www.youchuang.fun/gamerole/getWeaponByName'
     json_data = {
         "name": name,
-        "version": "2.6"
+        "version": "2.7"
     }
     res = await aiorequests.post(url=url, headers=headers, json=json_data)
     return res.json()

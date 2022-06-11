@@ -2,7 +2,7 @@ import os
 
 from PIL import Image, ImageDraw, ImageFont
 
-from utils.alias_handler import get_id_by_alias
+from utils.alias_handler import get_id_by_name
 from utils.message_util import MessageBuild
 from .abyss_rate_data import get_rate, get_formation_rate
 
@@ -24,7 +24,7 @@ async def draw_rate_rank(type: str = 'role', mode: str = 'used'):
     bg_img = Image.new('RGBA', (1080, top_img.height + col * 220 + bottom_img.height + 50))
     bg_img.paste(top_img, (0, 0))
     bg_draw = ImageDraw.Draw(bg_img)
-    bg_draw.text((70, 55), '2.6深境螺旋登场率排行榜', fill='black', font=get_font(40, 'msyhbd.ttc'))
+    bg_draw.text((70, 55), '2.7深境螺旋登场率排行榜', fill='black', font=get_font(40, 'msyhbd.ttc'))
     bg_draw.text((70, 110), f'当前共{data["result"]["userCount"]}份样本数据', fill='black', font=get_font(35))
     for i in range(0, col + 1):
         bg_img.paste(body_img, (0, top_img.height + i * body_img.height))
@@ -32,7 +32,7 @@ async def draw_rate_rank(type: str = 'role', mode: str = 'used'):
     bg_draw.text((130, bg_img.height - 86), 'Created by LittlePaimon | Data from 原神创意工坊', fill='black', font=get_font(35))
     n = 0
     for role in data['result']['rateList']:
-        role_img = Image.open(os.path.join(res_path, 'role_card', f'{get_id_by_alias(role["name"])[0]}.png')).resize((160, 200))
+        role_img = Image.open(os.path.join(res_path, 'role_card', f'{get_id_by_name(role["name"])}.png')).resize((160, 200))
         role_draw = ImageDraw.Draw(role_img)
         role_draw.text((28 if len(role['rate']) == 6 else 38, 158), role['rate'], font=get_font(30), fill='black')
         bg_img.alpha_composite(role_img, (50 + 204 * (n % 5), 180 + 240 * int(n / 5)))
@@ -52,7 +52,7 @@ async def draw_teams_rate(floor='上半半'):
     bg_img = Image.new('RGBA', (1080, top_img.height + 10 * body_img.height + bottom_img.height - 130))
     bg_img.paste(top_img, (0, 0))
     bg_draw = ImageDraw.Draw(bg_img)
-    bg_draw.text((70, 55), f'2.6深境螺旋阵容出场率 | {floor}', fill='black', font=get_font(40, 'msyhbd.ttc'))
+    bg_draw.text((70, 55), f'2.7深境螺旋阵容出场率 | {floor}', fill='black', font=get_font(40, 'msyhbd.ttc'))
     bg_draw.text((70, 110), f'当前共{data["result"]["userCount"]}份样本数据', fill='black', font=get_font(35))
     for i in range(0, 10):
         bg_img.paste(body_img, (0, top_img.height + i * body_img.height))
@@ -67,7 +67,7 @@ async def draw_teams_rate(floor='上半半'):
         r = 0
         for role in team['formation']:
             role_img = Image.open(
-                os.path.join(res_path, 'role_card', f'{get_id_by_alias(role["name"])[0]}.png')).resize((160, 200))
+                os.path.join(res_path, 'role_card', f'{get_id_by_name(role["name"])}.png')).resize((160, 200))
             role_draw = ImageDraw.Draw(role_img)
             role_draw.text((80 - 15 * len(role['name']), 158), role['name'], font=get_font(30), fill='black')
             bg_img.alpha_composite(role_img, (130 + 204 * r, 180 + 240 * n))

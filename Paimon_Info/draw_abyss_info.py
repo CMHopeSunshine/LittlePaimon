@@ -2,7 +2,7 @@ import datetime
 import os
 
 from PIL import Image, ImageDraw, ImageFont
-
+from pathlib import Path
 from utils import aiorequests
 from utils.message_util import MessageBuild
 from utils.file_handler import load_image
@@ -111,27 +111,32 @@ async def draw_abyss_card(data, uid, floor_num):
         top_img.alpha_composite(role_img, (width, 165))
         width += 150
     defeat_rank = data['defeat_rank'][0]
-    defeat_rank_img = await aiorequests.get_img(url=defeat_rank['avatar_icon'], size=(60, 60), mode='RGBA')
+    avatar_img = Path() / 'data' / 'LittlePaimon' / 'res' / 'avatar_side' / defeat_rank['avatar_icon'].split('/')[-1]
+    defeat_rank_img = await aiorequests.get_img(url=defeat_rank['avatar_icon'], size=(60, 60), mode='RGBA', save_path=avatar_img)
     top_draw.text((160, 343), str(defeat_rank['value']), font=get_font(21), fill='white')
     top_img.alpha_composite(defeat_rank_img, (280, 320))
 
     damage_rank = data['damage_rank'][0]
-    damage_rank_img = await aiorequests.get_img(url=damage_rank['avatar_icon'], size=(60, 60), mode='RGBA')
+    avatar_img = Path() / 'data' / 'LittlePaimon' / 'res' / 'avatar_side' / damage_rank['avatar_icon'].split('/')[-1]
+    damage_rank_img = await aiorequests.get_img(url=damage_rank['avatar_icon'], size=(60, 60), mode='RGBA', save_path=avatar_img)
     top_draw.text((495, 343), str(damage_rank['value']), font=get_font(21), fill='white')
     top_img.alpha_composite(damage_rank_img, (590, 320))
 
     take_damage_rank = data['take_damage_rank'][0]
-    take_damage_rank_img = await aiorequests.get_img(url=take_damage_rank['avatar_icon'], size=(60, 60), mode='RGBA')
+    avatar_img = Path() / 'data' / 'LittlePaimon' / 'res' / 'avatar_side' / take_damage_rank['avatar_icon'].split('/')[-1]
+    take_damage_rank_img = await aiorequests.get_img(url=take_damage_rank['avatar_icon'], size=(60, 60), mode='RGBA', save_path=avatar_img)
     top_draw.text((180, 389), str(take_damage_rank['value']), font=get_font(21), fill='white')
     top_img.alpha_composite(take_damage_rank_img, (280, 365))
 
     energy_skill_rank = data['energy_skill_rank'][0]
-    energy_skill_rank_img = await aiorequests.get_img(url=energy_skill_rank['avatar_icon'], size=(60, 60), mode='RGBA')
+    avatar_img = Path() / 'data' / 'LittlePaimon' / 'res' / 'avatar_side' / energy_skill_rank['avatar_icon'].split('/')[-1]
+    energy_skill_rank_img = await aiorequests.get_img(url=energy_skill_rank['avatar_icon'], size=(60, 60), mode='RGBA', save_path=avatar_img)
     top_draw.text((530, 389), str(energy_skill_rank['value']), font=get_font(21), fill='white')
     top_img.alpha_composite(energy_skill_rank_img, (590, 365))
 
     normal_skill_rank = data['normal_skill_rank'][0]
-    normal_skill_rank_img = await aiorequests.get_img(url=normal_skill_rank['avatar_icon'], size=(60, 60), mode='RGBA')
+    avatar_img = Path() / 'data' / 'LittlePaimon' / 'res' / 'avatar_side' / normal_skill_rank['avatar_icon'].split('/')[-1]
+    normal_skill_rank_img = await aiorequests.get_img(url=normal_skill_rank['avatar_icon'], size=(60, 60), mode='RGBA', save_path=avatar_img)
     top_draw.text((195, 435), str(normal_skill_rank['value']), font=get_font(21), fill='white')
     top_img.alpha_composite(normal_skill_rank_img, (280, 410))
 

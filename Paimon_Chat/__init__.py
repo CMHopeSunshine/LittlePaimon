@@ -11,6 +11,13 @@ from utils.config import config
 from utils.auth_util import FreqLimiter2
 from utils.message_util import MessageBuild
 from utils.file_handler import load_json_from_url
+if config.paimon_mongodb_url:
+    try:
+        from .Learning_repeate import main
+    except ImportError:
+        logger.info('派蒙机器学习聊天启用失败，可能是mongodb连接失败或缺少相关库')
+else:
+    logger.info('派蒙机器学习聊天启用失败，mongodb尚未配置')
 
 driver = get_driver()
 
@@ -18,6 +25,8 @@ voice_url = 'https://static.cherishmoon.fun/LittlePaimon/voice/'
 chat_lmt = FreqLimiter2(60)
 
 update_voice = on_command('更新派蒙语音', priority=2)
+
+# TODO 被动效果
 
 
 def check_group(event: GroupMessageEvent) -> bool:

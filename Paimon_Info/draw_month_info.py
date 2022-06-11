@@ -40,6 +40,8 @@ async def draw_ring(per, colors):
     plt.savefig('temp.png', transparent=True)
     img = Image.open('temp.png').resize((378, 378)).convert('RGBA')
     os.remove('temp.png')
+    plt.cla()
+    plt.close("all")
     return img
 
 
