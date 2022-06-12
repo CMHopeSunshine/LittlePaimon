@@ -111,19 +111,6 @@ async def _(event: Union[GroupMessageEvent, MessageEvent], msg: Message = Comman
                       '剩余免费时间: {2}分钟\n' \
                       '畅玩卡状态: {3}'.format(uid, coins, free_time, card)
             await cloud_ys.finish(message)
-        #elif action.group('action') in ['签到', 'sign']:
-
-            #    token = data[user_id]['token']
-            #    uuid = data[user_id]['uuid']
-
-            #    if await check_token(uuid, token):
-        #        d1 = await get_Notification(uuid, token)
-        #        signInfo = json.loads(d1['data']['list'][0]['msg'])
-        #        if not list(d1['data']['list']):
-        #            await cloud_ys.finish('今天已签到了哦~', at_sender=True)
-        #        elif signInfo:
-        #            await cloud_ys.finish(f'签到成功~ {signInfo["msg"]}: {signInfo["num"]}分钟', at_sender=True)
-
         else:
             await cloud_ys.finish('参数错误！', at_sender=True)
 
