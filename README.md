@@ -82,7 +82,7 @@
 + 5.27
   - 新增`原神日历`[@nicklly](https://github.com/nicklly)
 + 5.28
-  - `Paimon_Chat`聊天新增`学习群友发言`（魔改自[Pallas-Bot](https://github.com/InvoluteHell/Pallas-Bot/tree/master/src/plugins/repeater)），需安装`jieba_fast、pymongo、pypinyin依赖库`、`mongodb数据库`且在`.env.*`配置文件中添加mongodb连接参数`paimon_mongodb_url`，例如`paimon_mongodb_url=mongodb://localhost:27017/
+  - `Paimon_Chat`聊天新增`学习群友发言`（魔改自[Pallas-Bot](https://github.com/InvoluteHell/Pallas-Bot/tree/master/src/plugins/repeater)），需安装`jieba_fast、pymongo、pypinyin依赖库`、`mongodb数据库`且在`.env.*`配置文件中添加mongodb连接参数`paimon_mongodb_url`，例如`paimon_mongodb_url=mongodb://localhost:27017/`
 + 6.3
   - 新增游戏内展柜角色面板卡片，使用`更新角色面板`来获取角色，`ysd角色名`来查看角色卡片
   - 修复部分不记录上次查询的uid的bug
@@ -93,6 +93,9 @@
   - 修复`原神猜语音`和`模拟抽卡`因`nonebot2.0.0b3`版本Union校验产生的bug，但`原神猜语音`将暂时无法私聊使用
 + 6.9
   - 新增`帮助菜单`指令~~(不太好看，继续美化)~~
++ 6.12
+  - 新增`云原神签到`等功能[@nicklly](https://github.com/nicklly)
+  - 修复部分bug，新增`好友、群新成员和龙王提醒`[#45](https://github.com/CMHopeSunshine/LittlePaimon/issues/45)
 
 ## 丨功能列表
 
@@ -136,7 +139,7 @@
 javascript:(function(){prompt(document.domain,document.cookie)})();
 ```
 
-复制得到的cookie，向小派蒙发送**`添加公共ck`**和粘贴的内容，即可开始使用
+复制得到的cookie，向小派蒙发送`添加公共ck`和粘贴的内容，即可开始使用
 
 ## 丨感谢
 
@@ -145,6 +148,7 @@ javascript:(function(){prompt(document.domain,document.cookie)})();
 - [NoneBot2](https://github.com/nonebot/nonebot2) - 跨平台异步机器人框架
 - [go-cqhttp](https://github.com/Mrs4s/go-cqhttp) - Onebot标准的框架实现
 - [西北一枝花](https://github.com/Nwflower) - 美工大大和武器攻略图提供
+- [nicklly](https://github.com/nicklly) - 原神日历、云原神等功能贡献者
 - [egenshin](https://github.com/pcrbot/erinilis-modules/tree/master/egenshin) - 抽卡和猜语音代码、资源参考
 - [bluemushoom](https://bbs.nga.cn/nuke.php?func=ucp&uid=62861898) - 全角色收益曲线和参考面板攻略图来源
 - [genshin-gacha-export](https://github.com/sunfkny/genshin-gacha-export) - 抽卡记录导出代码参考
@@ -156,15 +160,17 @@ javascript:(function(){prompt(document.domain,document.cookie)})();
 - 如果本项目对你有帮助，给个star~~求求啦
 - 部分资源使用了云存储，如果想赞助流量费用，欢迎来[爱发电](https://afdian.net/@cherishmoon)，十分感谢！
 
-| 赞助者          | 金额 |
-| --------------- | ---- |
-| 深海            | 10   |
-| 夜空koi         | 30   |
-| 情话            | 20   |
-| 爱发电用户_Mfms | 15   |
-| 米特建木        | 10   |
-| 永远的皇珈骑士  | 30   |
-| 小兔和鹿        | 30   |
+| 赞助者            | 金额  |
+|----------------|-----|
+| 深海             | 10  |
+| 夜空koi          | 30  |
+| 情话             | 20  |
+| 爱发电用户_Mfms     | 15  |
+| 米特建木           | 10  |
+| 永远的皇珈骑士        | 30  |
+| 小兔和鹿           | 30  |
+| el psy congroo | 20  |
+| jimjqn         | 30  |
 
 ## 丨其他
 

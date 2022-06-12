@@ -27,10 +27,6 @@ class PluginConfig(BaseModel):
     paimon_ecy_cd: int = 6
     # 原神壁纸图冷却（秒）
     paimon_ysp_cd: int = 10
-    # 是否自动通过好友请求
-    paimon_add_friend: bool = False
-    # 是否自动通过群组请求
-    paimon_add_group: bool = False
     # 派蒙聊天开启群组
     paimon_chat_group: List[int] = []
 
@@ -64,6 +60,15 @@ class PluginConfig(BaseModel):
     paimon_speak_poke_probability: float = 0.5
     # 连续主动说话最多几句话
     paimon_speak_continuously_max_len: int = 3
+
+    # 派蒙收到好友申请或群邀请时是否向超级管理员发通知
+    paimon_request_remind: bool = True
+    # 是否自动通过好友请求
+    paimon_add_friend: bool = False
+    # 是否自动通过群组请求
+    paimon_add_group: bool = False
+    # 禁用群新成员欢迎语和龙王提醒的群号列表
+    paimon_greet_ban: List[int] = []
 
 
 driver = get_driver()
