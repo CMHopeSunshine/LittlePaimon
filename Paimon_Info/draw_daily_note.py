@@ -18,6 +18,10 @@ def get_font(size, font='msyhbd.ttc'):
 
 
 async def draw_ring(per):
+    if per > 1:
+        per = 1
+    elif per < 0:
+        per = 0
     per_list = [per, 1 - per]
     colors = ['#507bd0', '#FFFFFF']
     plt.pie(per_list, startangle=90, colors=colors)
@@ -109,14 +113,14 @@ async def draw_daily_note_card(data, uid):
         bg_draw.text((965, 1167), "周本减半", fill='white', font=get_font(40, '优设标题黑.ttf'))
     # 深渊文字
     abyss_new_month = datetime.datetime.now().month if datetime.datetime.now().day < 16 else datetime.datetime.now().month + 1
-    abyss_new_day = 15 if datetime.datetime.now().day < 16 else 1
-    abyss_new = datetime.datetime.strptime('2022.' + str(abyss_new_month) + '.' + str(abyss_new_day) + '.04:00',
+    abyss_new_day = 16 if datetime.datetime.now().day < 16 else 1
+    abyss_new = datetime.datetime.strptime('2022.' + str(abyss_new_month) + '.' + str(abyss_new_day) + '.00:00',
                                            '%Y.%m.%d.%H:%M') - datetime.datetime.now()
     bg_draw.text((337, 1358), f"{abyss_new.days}/15", fill='white',
                  font=get_font(48, 'number.ttf'))
-    bg_draw.text((745, 1358), f"本期深渊还有{abyss_new.days}天结束", fill='white',
+    bg_draw.text((745, 1358), f"本期深渊还有{abyss_new.days if abyss_new.days <= 15 else 15}天结束", fill='white',
                  font=get_font(40, '优设标题黑.ttf'))
-    bg_img.alpha_composite(await draw_ring(abyss_new.days / 15), (100, 1249))
+    bg_img.alpha_composite(await draw_ring(abyss_new.days if abyss_new.days <= 15 else 15 / 15), (100, 1249))
 
     # 派遣情况
     exp = data['expeditions']
