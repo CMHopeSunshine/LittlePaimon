@@ -541,7 +541,7 @@ async def _(event: MessageEvent, state: T_State, msg: Message = CommandArg()):
     uid = re.search(r'(?P<uid>(1|2|5)\d{8})', msg.extract_plain_text())
     if uid:
         state['uid'] = uid.group('uid')
-        await update_last_query(str(event.user_id), uid)
+        await update_last_query(str(event.user_id), uid.group('uid'))
     else:
         user = ''
         for msg_seg in msg:

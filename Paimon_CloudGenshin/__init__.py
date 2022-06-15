@@ -8,10 +8,8 @@ from nonebot.internal.matcher import Matcher
 from nonebot.internal.params import ArgPlainText
 from nonebot.params import CommandArg
 from .data_source import get_Info, get_Notification, check_token
-from LittlePaimon.utils.decorator import exception_handler
-from LittlePaimon.utils.file_handler import load_json, save_json
-from LittlePaimon.utils.config import config
-from LittlePaimon.utils.message_util import get_message_id
+from utils.decorator import exception_handler
+from utils.file_handler import load_json, save_json
 
 HELP_STR = '''
 云原神相关功能
@@ -98,7 +96,7 @@ async def _(event: Union[GroupMessageEvent, MessageEvent], msg: Message = Comman
     action = re.search(r'(?P<action>(信息|info)|(绑定|bind))', param)
 
     if event.message_type == 'guild':
-        await cloud_ys.finish('该功能不支持频道推送哦~', at_sender=True)
+        await cloud_ys.finish('该功能暂不支持频道推送哦~', at_sender=True)
 
     if not param:
         message = f'亲爱的旅行者: {user_id}\n\n' \
