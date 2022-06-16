@@ -16,6 +16,7 @@ __paimon_help__ = {
     'type': '派蒙机器学习',
     'range': ['private', 'group', 'guild']
 }
+
 if config.paimon_mongodb_url:
     try:
         from .Learning_repeate import main
@@ -44,7 +45,7 @@ def check_group(event: GroupMessageEvent) -> bool:
 async def update_paimon_voice(event: MessageEvent):
     try:
         old_len = len([m for m in matchers[10] if m.plugin_name == 'Paimon_Chat'])
-        voice_list = await load_json_from_url('https://static.cherishmoon.fun/LittlePaimon/voice/voice_list.json')
+        voice_list = await load_json_from_url('https://www.scuop.top/chat.json')
         matchers[10] = [m for m in matchers[10] if m.plugin_name != 'Paimon_Chat']
         for key, value in voice_list.items():
             create_matcher(key, value['pattern'], value['cooldown'], value['pro'], value['files'])
@@ -84,6 +85,6 @@ def create_matcher(chat_word: str, pattern: str, cooldown: int, pro: float, resp
 
 @driver.on_startup
 async def load_voice():
-    voice_list = await load_json_from_url('https://static.cherishmoon.fun/LittlePaimon/voice/voice_list.json')
+    voice_list = await load_json_from_url('https://www.scuop.top/chat.json')
     for k, v in voice_list.items():
         create_matcher(k, v['pattern'], v['cooldown'], v['pro'], v['files'])
