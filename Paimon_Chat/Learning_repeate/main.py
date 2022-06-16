@@ -230,7 +230,7 @@ onLearningGroup = on_message(
 onLearningGroup.__paimon_help__ = {
     "usage": "@派蒙 <说怪话>",
     "introduce": "开启派蒙在该群的机器学习能力",
-    "priority": 99
+    "priority": 94
 }
 @onLearningGroup.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
@@ -243,14 +243,14 @@ async def _(bot: Bot, event: GroupMessageEvent):
 #群组关闭
 offLearningGroup = on_message(
     rule = to_me() & keyword("派蒙学习关闭","不准说怪话"),
-    priority = 4,
+    priority = 3,
     block = True,
     permission=permission.GROUP_ADMIN | permission.GROUP_OWNER | SUPERUSER
 )
 offLearningGroup.__paimon_help__ = {
     "usage": "@派蒙 <不准说怪话>",
     "introduce": "关闭派蒙在该群的机器学习能力",
-    "priority": 99
+    "priority": 95
 }
 @offLearningGroup.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
@@ -270,7 +270,7 @@ fun_msg = on_message(
 fun_msg.__paimon_help__ = {
     "usage": "@派蒙 <发癫>",
     "introduce": "派蒙喝醉了在群里发癫",
-    "priority": 99
+    "priority": 96
 }
 @fun_msg.handle()
 async def funmsg(bot: Bot, event: GroupMessageEvent):
@@ -294,7 +294,7 @@ stop_fun_msg = on_message(
 stop_fun_msg.__paimon_help__ = {
     "usage": "@派蒙 <不准发癫>",
     "introduce": "让派蒙恢复正常",
-    "priority": 99
+    "priority": 97
 }
 @stop_fun_msg.handle()
 async def stopfunmsg(bot: Bot, event: GroupMessageEvent):
@@ -318,7 +318,7 @@ upLearning = on_message(
 upLearning.__paimon_help__ = {
     "usage": "@派蒙 <派蒙快学>",
     "introduce": "增强派蒙的学习能力",
-    "priority": 99
+    "priority": 98
 }
 @upLearning.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
