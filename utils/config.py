@@ -27,7 +27,7 @@ class PluginConfig(BaseModel):
     paimon_ecy_cd: int = 6
     # 原神壁纸图冷却（秒）
     paimon_ysp_cd: int = 10
-    # 派蒙聊天开启群组
+    # 派蒙聊天&机器学习开启群组
     paimon_chat_group: List[int] = []
 
     # 派蒙猜语音持续时间
