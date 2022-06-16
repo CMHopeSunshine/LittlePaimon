@@ -5,9 +5,9 @@ from typing import List
 
 class PluginConfig(BaseModel):
     # 群组模拟抽卡冷却（秒）
-    paimon_gacha_cd_group: int = 12
+    paimon_gacha_cd_group: int = 30
     # 个人模拟抽卡冷却（秒）
-    paimon_gacha_cd_user: int = 15
+    paimon_gacha_cd_user: int = 60
     # 树脂提醒停止检查时间（小时）
     paimon_remind_start: int = 0
     paimon_remind_end: int = 8
@@ -22,44 +22,44 @@ class PluginConfig(BaseModel):
     # 对联冷却（秒）
     paimon_couplets_cd: int = 6
     # 猫图冷却（秒）
-    paimon_cat_cd: int = 8
+    paimon_cat_cd: int = 12
     # 二次元图冷却（秒）
-    paimon_ecy_cd: int = 8
+    paimon_ecy_cd: int = 6
     # 原神壁纸图冷却（秒）
-    paimon_ysp_cd: int = 8
+    paimon_ysp_cd: int = 10
     # 派蒙聊天开启群组
-    paimon_chat_group: List[int] = [870897036, 706346489,1094961993,574124226,884840181,913507017]
+    paimon_chat_group: List[int] = []
 
     # 派蒙猜语音持续时间
     paimon_guess_voice: int = 30
     # 原神日历开启群组
-    paimon_calender_group: List[int] = [870897036, 706346489,1094961993,574124226,884840181,913507017]
+    paimon_calender_group: List[int] = []
 
     # 以下为机器学习聊天模块配置
     # mongodb数据库连接url
-    paimon_mongodb_url: str = "mongodb://localhost:27017"
+    paimon_mongodb_url: str = None
     # 派蒙聊天屏蔽用户
     paimon_chat_ban: List[int] = []
     # 派蒙聊天学习阈值，越小学习越快
-    paimon_answer_threshold: int = 2
+    paimon_answer_threshold: int = 3
     # 派蒙聊天上限阈值
-    paimon_answer_limit_threshold: int = 50
+    paimon_answer_limit_threshold: int = 25
     # N个群有相同的回复，就跨群作为全局回复
     paimon_cross_group_threshold: int = 2
     # 复读的阈值
     paimon_repeat_threshold: int = 3
     # 主动发言阈值，越小话越多
-    paimon_speak_threshold: int = 2
+    paimon_speak_threshold: int = 3
     # 喝醉的概率
-    paimon_drunk_probability: float = 0.6
+    paimon_drunk_probability: float = 0.07
     # 用文字转语音来回复的概率
-    paimon_voice_probability: float = 0.1
+    paimon_voice_probability: float = 0.03
     # 连续主动说话的概率
-    paimon_speak_continuously_probability: float = 0.7
+    paimon_speak_continuously_probability: float = 0.5
     # 主动说话加上随机戳一戳群友的概率
-    paimon_speak_poke_probability: float = 0.7
+    paimon_speak_poke_probability: float = 0.5
     # 连续主动说话最多几句话
-    paimon_speak_continuously_max_len: int = 10
+    paimon_speak_continuously_max_len: int = 3
 
     # 派蒙收到好友申请或群邀请时是否向超级管理员发通知
     paimon_request_remind: bool = True
