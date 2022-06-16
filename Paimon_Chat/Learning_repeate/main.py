@@ -322,7 +322,7 @@ upLearning.__paimon_help__ = {
 }
 @upLearning.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
-    if Chat.answer_threshold == 1:
+    if Chat.speak_threshold == 1:
         Chat.answer_threshold = Chat.speak_threshold
         await upLearning.finish("派蒙已经学满贯了")
     else:
@@ -344,7 +344,7 @@ downLearning.__paimon_help__ = {
 }
 @downLearning.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
-    if Chat.answer_threshold == 6:
+    if Chat.speak_threshold == 6:
         Chat.answer_threshold = Chat.speak_threshold
         await downLearning.finish("派蒙不说话就是了o(￣ヘ￣o＃)")
     else:
