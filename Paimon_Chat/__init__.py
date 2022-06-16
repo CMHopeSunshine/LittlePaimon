@@ -11,6 +11,12 @@ from utils.config import config
 from utils.auth_util import FreqLimiter2
 from utils.message_util import MessageBuild
 from utils.file_handler import load_json_from_url
+
+__paimon_help__ = {
+    'type': '派蒙机器学习',
+    'range': ['private', 'group', 'guild']
+}
+
 if config.paimon_mongodb_url:
     try:
         from .Learning_repeate import main

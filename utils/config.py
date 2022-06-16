@@ -37,7 +37,7 @@ class PluginConfig(BaseModel):
 
     # 以下为机器学习聊天模块配置
     # mongodb数据库连接url
-    paimon_mongodb_url: str = None
+    paimon_mongodb_url: str = "mongodb://localhost:27017"
     # 派蒙聊天屏蔽用户
     paimon_chat_ban: List[int] = []
     # 派蒙聊天学习阈值，越小学习越快
@@ -60,6 +60,8 @@ class PluginConfig(BaseModel):
     paimon_speak_poke_probability: float = 0.5
     # 连续主动说话最多几句话
     paimon_speak_continuously_max_len: int = 3
+    # 机器学习开启群组
+    paimonLearningGroup: List[int] = []
 
     # 派蒙收到好友申请或群邀请时是否向超级管理员发通知
     paimon_request_remind: bool = True
