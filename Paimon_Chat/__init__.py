@@ -16,7 +16,6 @@ __paimon_help__ = {
     'type': '派蒙机器学习',
     'range': ['private', 'group', 'guild']
 }
-
 if config.paimon_mongodb_url:
     try:
         from .Learning_repeate import main
