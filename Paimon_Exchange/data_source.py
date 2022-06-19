@@ -186,6 +186,7 @@ async def exchange_action(info):
 @driver.on_startup
 async def _():
     path = Path() / 'data' / 'LittlePaimon' / 'myb_exchange'
+    path.mkdir(parents=True, exist_ok=True)
     for exchange_data in path.iterdir():
         info = load_json(path=exchange_data)
         t = str(exchange_data).replace('data\\LittlePaimon\\myb_exchange\\', '').replace('data/LittlePaimon/myb_exchange/', '').replace(
@@ -204,6 +205,7 @@ async def _():
 def get_exchange_info(user_id):
     result = ''
     path = Path() / 'data' / 'LittlePaimon' / 'myb_exchange'
+    path.mkdir(parents=True, exist_ok=True)
     i = 1
     for exchange_data in path.iterdir():
         file_name = str(exchange_data).replace('data\\LittlePaimon\\myb_exchange\\', '').replace('data/LittlePaimon/myb_exchange/', '')
@@ -220,6 +222,7 @@ def get_exchange_info(user_id):
 
 def delete_exchange_info(user_id):
     path = Path() / 'data' / 'LittlePaimon' / 'myb_exchange'
+    path.mkdir(parents=True, exist_ok=True)
     for exchange_data in path.iterdir():
         file_name = str(exchange_data).replace('data\\LittlePaimon\\myb_exchange\\', '').replace('data/LittlePaimon/myb_exchange/', '')
         if file_name.startswith(user_id):
