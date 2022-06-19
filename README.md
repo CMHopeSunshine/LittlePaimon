@@ -163,7 +163,7 @@ javascript:(function(){prompt(document.domain,document.cookie)})();
 - 如果本项目对你有帮助，给个star~~求求啦
 - 部分资源使用了云存储，如果想赞助流量费用，欢迎来[爱发电](https://afdian.net/@cherishmoon)，十分感谢！
 
-| 赞助者            | 金额  |
+| 赞助者(排名不分先后)    | 金额  |
 |----------------|-----|
 | 深海             | 10  |
 | 夜空koi          | 30  |
@@ -173,8 +173,9 @@ javascript:(function(){prompt(document.domain,document.cookie)})();
 | 永远的皇珈骑士        | 30  |
 | 小兔和鹿           | 30  |
 | el psy congroo | 20  |
-| jimjqn         | 30  |
-
+| Why U Bully Me | 30  |
+| 南絮ヽ            | 20  |
+| 夜空koi我老婆       | 30  |
 ## 丨其他
 
 - 本项目仅供学习使用，禁止用于商业用途
