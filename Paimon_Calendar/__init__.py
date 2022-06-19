@@ -1,8 +1,7 @@
 from nonebot import require, get_bot, on_command, logger
-from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageEvent, Bot, Message, MessageSegment, ActionFailed
+from nonebot.adapters.onebot.v11 import MessageEvent, Message
 from nonebot.params import CommandArg
 
-from utils.config import config
 from utils.file_handler import load_json, save_json
 from utils.message_util import MessageBuild, get_message_id
 from .generate import *

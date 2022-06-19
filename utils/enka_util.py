@@ -17,14 +17,9 @@ class PlayerInfo:
     def __init__(self, uid: str):
         self.path = Path(__file__).parent.parent / 'user_data' / 'player_info' / f'{uid}.json'
         self.data = load_json(path=self.path)
-        if '玩家信息' in self.data:
-            self.player_info = self.data['玩家信息']
-        else:
-            self.player_info = {}
-        if '角色' in self.data:
-            self.roles = self.data['角色']
-        else:
-            self.roles = {}
+        self.player_info = self.data['玩家信息'] if '玩家信息' in self.data else {}
+        self.roles = self.data['角色'] if '角色' in self.data else {}
+        # self.artifacts = self.data['圣遗物'] if '圣遗物' in self.data else transform_artifacts(self.roles)
 
     def set_player(self, data: dict):
         self.player_info['昵称'] = data.get('nickname', 'unknown')
@@ -130,6 +125,26 @@ class PlayerInfo:
             role_info['圣遗物'] = artifacts
             role_info['更新时间'] = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S')
             self.roles[role_name] = role_info
+            # self.set_artifacts(data)
+
+    # def set_artifacts(self, data):
+    #     for artifact in data['equipList'][:-1]:
+    #         artifact_info = {}
+    #         artifact_info['名称'] = artifact_list['Name'][artifact['flat']['icon']]
+    #         artifact_info['图标'] = artifact['flat']['icon']
+    #         artifact_info['部位'] = artifact_list['Piece'][artifact['flat']['icon'].split('_')[-1]][1]
+    #         artifact_info['所属套装'] = artifact_list['Mapping'][artifact_info['名称']]
+    #         artifact_info['等级'] = artifact['reliquary']['level'] - 1
+    #         artifact_info['星级'] = artifact['flat']['rankLevel']
+    #         artifact_info['主属性'] = {'属性名': prop_list[artifact['flat']['reliquaryMainstat']['mainPropId']],
+    #                                 '属性值': artifact['flat']['reliquaryMainstat']['statValue']}
+    #         artifact_info['词条'] = []
+    #         for reliquary in artifact['flat']['reliquarySubstats']:
+    #             artifact_info['词条'].append({'属性名': prop_list[reliquary['appendPropId']],
+    #                                         '属性值': reliquary['statValue']})
+    #         artifact_info['角色名'] = get_name_by_id(str(data['avatarId']))
+    #         if artifact_info not in self.artifacts:
+    #             self.artifacts.append(artifact_info)
 
     def get_player_info(self):
         return self.player_info
@@ -161,6 +176,27 @@ def dictList_to_list(data):
         if name not in ['荧', '空']:
             new_data[name] = d['avatarId']
     return new_data
+
+
+# def transform_artifacts(data):
+#     artifacts = []
+#     for role in data.values():
+#         for artifact in role['圣遗物']:
+#             artifacts_temp = {}
+#             artifacts_temp['名称'] = artifact['名称']
+#             artifacts_temp['图标'] = artifact['图标']
+#             artifacts_temp['部位'] = artifact['部位']
+#             artifacts_temp['所属套装'] = artifact['所属套装']
+#             artifacts_temp['等级'] = artifact['等级']
+#             artifacts_temp['星级'] = artifact['星级']
+#             artifacts_temp['主属性'] = artifact['主属性']
+#             artifacts_temp['词条'] = []
+#             for reliquary in artifact['词条']:
+#                 artifacts_temp['词条'].append({'属性名': reliquary['属性名'],
+#                                             '属性值': reliquary['属性值']})
+#             artifacts_temp['角色名'] = role['名称']
+#             artifacts.append(artifacts_temp)
+#     return artifacts
 
 
 def artifact_score(role_name, prop_name, prop_value, artifact_type):
@@ -214,4 +250,3 @@ def artifact_total_score(data):
     for i in data:
         score += i['评分']
     return round(score, 1)
-

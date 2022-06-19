@@ -6,7 +6,6 @@ from collections import defaultdict
 
 from nonebot import on_command, require, logger, get_bot
 from nonebot.adapters.onebot.v11 import MessageEvent, Message, Bot, MessageSegment
-from nonebot.exception import FinishedException
 from nonebot.params import CommandArg
 from nonebot.typing import T_State
 from nonebot.permission import SUPERUSER
@@ -385,10 +384,11 @@ cookie_error_msg = '这个cookie无效哦，请旅行者确认是否正确\n1.ck
 async def ysb_handler(event: MessageEvent, msg: Message = CommandArg()):
     cookie = str(msg).strip()
     if cookie == '':
-        res = '''旅行者好呀，你可以直接用ys/ysa等指令附上uid来使用派蒙\n如果想看全部角色信息和实时便笺等功能，要把cookie给派蒙哦\ncookie
-        获取方法：登录网页版米游社，在地址栏粘贴代码：\njavascript:(function(){prompt(document.domain,document.cookie)})(
-        );\n复制弹窗出来的字符串（手机要via或chrome浏览器才行）\n然后添加派蒙私聊发送ysb接刚刚复制的字符串，例如:ysb 
-        UM_distinctid=17d131d...\ncookie是账号重要安全信息，请确保机器人持有者可信赖！ '''
+        # res = '''旅行者好呀，你可以直接用ys/ysa等指令附上uid来使用派蒙\n如果想看全部角色信息和实时便笺等功能，要把cookie给派蒙哦\ncookie
+        # 获取方法：登录网页版米游社，在地址栏粘贴代码：\njavascript:(function(){prompt(document.domain,document.cookie)})(
+        # );\n复制弹窗出来的字符串（手机要via或chrome浏览器才行）\n然后添加派蒙私聊发送ysb接刚刚复制的字符串，例如:ysb
+        # UM_distinctid=17d131d...\ncookie是账号重要安全信息，请确保机器人持有者可信赖！ '''
+        res = '获取cookie的教程在这里哦：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1\n获取到后，添加派蒙好友私聊发送ysb接复制到的cookie就行啦~'
         await ysb.finish(res, at_sender=True)
     else:
         cookie_info, mys_id = await get_bind_game(cookie)
@@ -560,7 +560,7 @@ async def _(event: MessageEvent, state: T_State, msg: Message = CommandArg()):
 
 
 @role_info.got('uid', prompt='请把要查询的uid给派蒙哦~')
-# @exception_handler()
+@exception_handler()
 async def _(event: MessageEvent, state: T_State):
     uid = transform_uid(state['uid'])
     if uid:

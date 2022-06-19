@@ -96,6 +96,9 @@
 + 6.12
   - 新增`云原神签到`等功能[@nicklly](https://github.com/nicklly)
   - 修复部分bug，新增`好友、群新成员和龙王提醒`[#45](https://github.com/CMHopeSunshine/LittlePaimon/issues/45)
++ 6.19
+  - 新增`米游币商品兑换`功能，私聊机器人发送`myb`跟着一步步指引来做，目前该功能还没有机会做测试，出现问题请提issue
+  - `ysb`绑定cookie的方法增加腾讯文档
 
 ## 丨功能列表
 
