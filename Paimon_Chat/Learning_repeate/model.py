@@ -104,6 +104,8 @@ class Chat:
     blacklist_answer = defaultdict(set)
     blacklist_answer_reserve = defaultdict(set)
 
+    learningGroup = config.paimon_chat_group# 机器学习群组
+
     def __init__(self, data: Union[ChatData, GroupMessageEvent, PrivateMessageEvent]):
 
         if isinstance(data, ChatData):
