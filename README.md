@@ -151,13 +151,15 @@ javascript:(function(){prompt(document.domain,document.cookie)})();
 - [NoneBot2](https://github.com/nonebot/nonebot2) - 跨平台异步机器人框架
 - [go-cqhttp](https://github.com/Mrs4s/go-cqhttp) - Onebot标准的框架实现
 - [西北一枝花](https://github.com/Nwflower) - 美工大大和武器攻略图提供
-- [nicklly](https://github.com/nicklly) - 原神日历、云原神等功能贡献者
+- [nicklly](https://github.com/nicklly) 、[SCU_OP](https://github.com/SCUOP) - PR贡献者们
 - [egenshin](https://github.com/pcrbot/erinilis-modules/tree/master/egenshin) - 抽卡和猜语音代码、资源参考
 - [bluemushoom](https://bbs.nga.cn/nuke.php?func=ucp&uid=62861898) - 全角色收益曲线和参考面板攻略图来源
 - [genshin-gacha-export](https://github.com/sunfkny/genshin-gacha-export) - 抽卡记录导出代码参考
+- [GenshinUID](https://github.com/KimigaiiWuyi/GenshinUID) - 部分map资源来源
 - [Pallas-Bot](https://github.com/InvoluteHell/Pallas-Bot/tree/master/src/plugins/repeater) - 群聊记录发言学习代码参考
 - [西风驿站](https://bbs.mihoyo.com/ys/collection/307224) - 角色攻略一图流来源
 - [游创工坊](https://space.bilibili.com/176858937) - 深渊排行榜数据来源
+- [Enka Network](https://enka.shinshin.moe/) - 角色面板查询数据来源
 
 ## 丨赞助
 - 如果本项目对你有帮助，给个star~~求求啦
@@ -173,7 +175,7 @@ javascript:(function(){prompt(document.domain,document.cookie)})();
 | 永远的皇珈骑士        | 30  |
 | 小兔和鹿           | 30  |
 | el psy congroo | 20  |
-| Why U Bully Me | 30  |
+| SCU_OP         | 30  |
 | 南絮ヽ            | 20  |
 | 夜空koi我老婆       | 30  |
 ## 丨其他

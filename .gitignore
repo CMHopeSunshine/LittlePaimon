@@ -146,6 +146,5 @@ nohup.out
 
 # 忽略文件夹
 .history
-_Paimon_exchange/*
 user_data/gacha_log_data/*
 user_data/player_info/*
