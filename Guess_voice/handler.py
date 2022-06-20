@@ -62,7 +62,7 @@ def create_guess_matcher(role_name, second, group_id):
             return True
         return False
 
-    alias_list = character_json[role_name]
+    alias_list = character_json.get(role_name, [])
     re_str = role_name + '|' + '|'.join(alias_list)
     guess_matcher = on_regex(re_str, temp=True, rule=Rule(check_group))
     guess_matcher.plugin_name = "Guess_voice"
