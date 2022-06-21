@@ -1,5 +1,5 @@
 from nonebot import require, get_bot, on_command, logger
-from nonebot.adapters.onebot.v11 import MessageEvent, Message
+from nonebot.adapters.onebot.v11 import MessageEvent, Message, MessageSegment
 from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 
@@ -26,7 +26,7 @@ __plugin_meta__ = PluginMetadata(
     },
 )
 
-calendar = on_command('原神日历', aliases={"原神日历", 'ysrl', '原神日程'}, priority=24, block=True)
+calendar = on_command('原神日历', aliases={"原神日历", '原神日程', 'ysrl', 'ysrc'}, priority=24, block=True)
 calendar.__paimon_help__ = {
     "usage":     "原神日历",
     "introduce": "查看原神活动日历，后加on时间/off可以开启定时推送",
@@ -48,7 +48,7 @@ async def send_calendar(push_id, push_data):
 
         for server in push_data['server_list']:
             im = await generate_day_schedule(server)
-            data['message'] = MessageBuild.Image(im)
+            data['message'] = MessageSegment.image(im)
             await get_bot().call_api(api, **data)
         logger.info(f'{push_data["type"]}的{push_id}的原神日历推送成功')
     except Exception as e:
@@ -79,7 +79,7 @@ async def _(event: MessageEvent, msg: Message = CommandArg()):
 
     if not msg:
         im = await generate_day_schedule(server)
-        await calendar.finish(MessageBuild.Image(im))
+        await calendar.finish( MessageSegment.image(im))
     else:
         push_data = load_json('calender_push.json')
         if msg.startswith(('开启', 'on', '打开')):
