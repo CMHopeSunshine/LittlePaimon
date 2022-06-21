@@ -7,27 +7,39 @@ from nonebot.adapters.onebot.v11 import MessageEvent, Message, GroupMessageEvent
 from nonebot.internal.matcher import Matcher
 from nonebot.internal.params import ArgPlainText
 from nonebot.params import CommandArg
+from nonebot.plugin import PluginMetadata
+
 from .data_source import get_Info, get_Notification, check_token
 from utils.decorator import exception_handler
 from utils.file_handler import load_json, save_json
 
-HELP_STR = '''
-云原神相关功能
-云原神 绑定/bind : 绑定云原神的token
-云原神 信息/info: 查询云原神账户信息
-'''.strip()
+
+__plugin_meta__ = PluginMetadata(
+    name="云原神",
+    description="云原神相关功能模块",
+    usage=(
+        "云原神 绑定/bind : 绑定云原神的token\n"
+        "云原神 信息/info: 查询云原神账户信息\n"
+    ),
+    extra={
+        'type':    '工具',
+        'range':   ['private', 'group'],
+        "author":  "nicklly <1134741727@qq.com>",
+        "version": "1.0.0",
+    },
+)
 
 cloud_ys = on_command('云原神', aliases={'云原神', 'yys'}, priority=16, block=True)
 rm_cloud_ys = on_command('云原神解绑', aliases={'yys解绑', 'yys解除绑定', 'yysdel'}, priority=16, block=True)
 cloud_ys.__paimon_help__ = {
     "usage": "云原神",
     "introduce": "查询云原神账户信息, 绑定token进行签到",
-    "priority": 99
+    "priority": 95
 }
 rm_cloud_ys.__paimon_help__ = {
     "usage": "云原神解绑",
     "introduce": "解绑cookie并取消自动签到",
-    "priority": 99
+    "priority": 96
 }
 scheduler = require('nonebot_plugin_apscheduler').scheduler
 uuid = str(uuid.uuid4())

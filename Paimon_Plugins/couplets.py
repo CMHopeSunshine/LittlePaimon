@@ -2,15 +2,27 @@ from urllib.parse import quote
 from nonebot import on_command
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import MessageEvent
+from nonebot.plugin import PluginMetadata
+
 from utils.auth_util import FreqLimiter
 from utils.message_util import get_message_id
 from utils.config import config
 from utils import aiorequests
 
-__paimon_help__ = {
-    'type': '娱乐',
-    'range': ['private', 'group', 'guild']
-}
+
+__plugin_meta__ = PluginMetadata(
+    name="对对联",
+    description="人工智能和你对对联",
+    usage=(
+        "对对联 <对联内容>"
+    ),
+    extra={
+        'type':    '娱乐',
+        'range':   ['private', 'group', 'guild'],
+        "author":  "惜月 <277073121@qq.com>",
+        "version": "1.0.0",
+    },
+)
 
 couplets = on_command('对联', aliases={'对对联'}, priority=13, block=True)
 couplets.__paimon_help__ = {
@@ -38,7 +50,7 @@ async def couplets_handler(event: MessageEvent, msg=CommandArg()):
         num = num if num < 10 else 10
         couplets_limit.start_cd(get_message_id(event), config.paimon_couplets_cd)
         text = quote(str(word))
-        url = f'https://ai-backend.binwang.me/v0.2/couplet/{text}'
+        url = f'https://seq2seq-couplet-model.rssbrain.com/v0.2/couplet/{text}'
         res = await aiorequests.get(url=url)
         res = res.json()
         result = ''

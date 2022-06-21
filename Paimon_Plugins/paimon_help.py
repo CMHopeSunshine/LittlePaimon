@@ -5,17 +5,26 @@ from nonebot import on_command
 from nonebot import plugin as nb_plugin
 from nonebot.params import Depends
 from nonebot.adapters.onebot.v11 import MessageEvent
+from nonebot.plugin import PluginMetadata
 
 from utils.message_util import MessageBuild
 
-__version__ = 'v1.0.0'
 
-__paimon_help__ = {
-    'type':  '工具',
-    'range': ['private', 'group', 'guild']
-}
+__plugin_meta__ = PluginMetadata(
+    name="帮助菜单",
+    description="自动读取插件的信息，生成帮助菜单图片",
+    usage=(
+        "help"
+    ),
+    extra={
+        'type':    '工具',
+        'range':   ['private', 'group', 'guild'],
+        "author":  "惜月 <277073121@qq.com>",
+        "version": "v1.0.0",
+    },
+)
 
-help_ = on_command('help', aliases={'帮助菜单'}, priority=1, block=True)
+help_ = on_command('help', aliases={'帮助菜单', '派蒙帮助'}, priority=1, block=True)
 help_.__paimon_help__ = {
     "usage":     "帮助菜单|help",
     "introduce": "查看派蒙的帮助信息",
@@ -84,7 +93,7 @@ def draw_help_info(help_info: dict):
     img.paste(bg_img, (0, 0), bg_img)
     draw = ImageDraw.Draw(img)
     draw_shadow_text(draw, (50, 50), '派蒙帮助', get_font(140), (255, 255, 255), (0, 0, 0, 255), (3, 3))
-    draw_shadow_text(draw, (610, 140), __version__, get_font(50), (255, 255, 255), (0, 0, 0, 255), (3, 3))
+    draw_shadow_text(draw, (610, 140), __plugin_meta__.extra.get('version', '1.0.0'), get_font(50), (255, 255, 255), (0, 0, 0, 255), (3, 3))
     draw_shadow_text(draw, (520, 250), '<>内为必须，[]内为可选，()内只需要第一次', get_font(50), (255, 255, 255), (0, 0, 0, 255), (2, 2))
     draw_shadow_text(draw, (620, 300), '描述前带*号说明需要绑定私人cookie', get_font(50), (255, 255, 255), (0, 0, 0, 255), (2, 2))
     n = 400
@@ -101,20 +110,22 @@ async def get_all_plugin(event: MessageEvent) -> dict:
     help_info: Dict[str, List[dict]] = {}
     for plugin in plugin_list:
         try:
-            plugin_info = plugin.module.__getattribute__('__paimon_help__')
+            plugin_type = plugin.metadata.extra.get('type', '其他')
+            plugin_range = plugin.metadata.extra.get('range', ['private', 'group', 'guild'])
         except AttributeError:
-            plugin_info = {'type': '其他', 'range': ['private', 'group', 'guild']}
-        if event.message_type not in plugin_info['range']:
+            plugin_type = '其他'
+            plugin_range = ['private', 'group', 'guild']
+        if event.message_type not in plugin_range:
             continue
-        if plugin_info['type'] not in help_info:
-            help_info[plugin_info['type']] = []
+        if plugin_type not in help_info:
+            help_info[plugin_type] = []
         matchers = plugin.matcher
         for matcher in matchers:
             try:
                 matchers_info = matcher.__paimon_help__
                 if 'priority' not in matchers_info:
                     matchers_info['priority'] = 99
-                help_info[plugin_info['type']].append(matchers_info)
+                help_info[plugin_type].append(matchers_info)
             except AttributeError:
                 pass
     help_info = {k: v for k, v in help_info.items() if v}

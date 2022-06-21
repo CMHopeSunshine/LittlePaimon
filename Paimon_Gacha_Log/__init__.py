@@ -6,25 +6,28 @@ from typing import Union
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import Bot, Message, MessageEvent, GroupMessageEvent
 from nonebot.params import CommandArg
+from nonebot.plugin import PluginMetadata
 
 from utils.message_util import get_uid_in_msg
 from .api import toApi, checkApi
 from .gacha_logs import get_data
 from .get_img import get_gacha_log_img
-from pathlib import Path
 
-__usage__ = '''
-1.[获取抽卡记录 (uid) (url)]提供url，获取原神抽卡记录，需要一定时间
-2.[查看抽卡记录 (uid)]查看抽卡记录分析
-3.[导出抽卡记录 (uid) (xlsx/json)]导出抽卡记录文件，上传到群文件中
-'''
-__help_version__ = '0.9.0'
-
-__paimon_help__ = {
-    'type': '原神抽卡记录',
-    'range': ['private', 'group', 'guild']
-}
-
+__plugin_meta__ = PluginMetadata(
+    name="Paimon_Gacha_Log",
+    description="小派蒙的原神抽卡记录模块",
+    usage=(
+        "1.[获取抽卡记录 (uid) (url)]提供url，获取原神抽卡记录，需要一定时间"
+        "2.[查看抽卡记录 (uid)]查看抽卡记录分析"
+        "3.[导出抽卡记录 (uid) (xlsx/json)]导出抽卡记录文件，上传到群文件中"
+    ),
+    extra={
+        'type':    '原神抽卡记录',
+        'range':   ['private', 'group', 'guild'],
+        "author":  "惜月 <277073121@qq.com>",
+        "version": "0.1.3",
+    },
+)
 
 gacha_log_export = on_command('ckjldc', aliases={'抽卡记录导出', '导出抽卡记录'}, priority=5, block=True)
 gacha_log_export.__paimon_help__ = {

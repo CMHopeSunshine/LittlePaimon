@@ -4,6 +4,7 @@ from typing import Dict
 from nonebot import on_command, on_regex
 from nonebot.adapters.onebot.v11 import MessageEvent, GroupMessageEvent, Message
 from nonebot.params import RegexDict, CommandArg
+from nonebot.plugin import PluginMetadata
 
 from utils.config import config
 from utils import aiorequests
@@ -11,22 +12,27 @@ from utils.auth_util import FreqLimiter
 from .gacha_info import *
 from .gacha_res import more_ten
 
-__usage__ = '''
-1.[抽n十连xx池]抽n次xx池的十连，最多同时5次
-*池子和官方同步，有角色1|角色2|武器|常驻，默认为角色1
-2.[模拟抽卡记录]查看模拟抽卡记录总结
-3.[模拟抽卡记录 角色/武器]查看模拟抽卡抽到的五星角色/武器
-4.[删除模拟抽卡记录]顾名思义
-5.[选择定轨 武器全名]选择武器定轨
-6.[查看定轨]查看当前定轨的武器
-7.[删除定轨]删除当前定轨的武器
-'''
-__help_version__ = '1.0.1'
 
-__paimon_help__ = {
-    'type': '原神模拟抽卡',
-    'range': ['private', 'group', 'guild']
-}
+__plugin_meta__ = PluginMetadata(
+    name="原神模拟抽卡",
+    description="小派蒙的原神模拟抽卡模块",
+    usage=(
+        "1.[抽n十连xx池]抽n次xx池的十连，最多同时5次"
+        "*池子和官方同步，有角色1|角色2|武器|常驻，默认为角色1"
+        "2.[模拟抽卡记录]查看模拟抽卡记录总结"
+        "3.[模拟抽卡记录 角色/武器]查看模拟抽卡抽到的五星角色/武器"
+        "4.[删除模拟抽卡记录]顾名思义"
+        "5.[选择定轨 武器全名]选择武器定轨"
+        "6.[查看定轨]查看当前定轨的武器"
+        "7.[删除定轨]删除当前定轨的武器"
+    ),
+    extra={
+        'type':    '原神模拟抽卡',
+        'range':   ['private', 'group', 'guild'],
+        "author":  "惜月 <277073121@qq.com>",
+        "version": "1.0.3",
+    },
+)
 
 sim_gacha = on_regex(r'^抽((?P<num>\d+)|(?:.*))十连(?P<pool>.*?)$', priority=5, block=True)
 sim_gacha.__paimon_help__ = {

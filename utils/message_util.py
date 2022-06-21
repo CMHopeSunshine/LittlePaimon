@@ -13,6 +13,12 @@ from .db_util import get_last_query, update_last_query
 from .file_handler import load_image
 from . import aiorequests
 
+# 加载敏感违禁词列表
+ban_word = []
+with open(Path(__file__).parent / 'json' / 'ban_word.txt', 'r', encoding='utf-8') as f:
+    for line in f:
+        ban_word.append(line.strip())
+
 
 class MessageBuild:
 
@@ -25,6 +31,16 @@ class MessageBuild:
               quality: Optional[int] = 100,
               mode: Optional[str] = 'RGB'
               ) -> MessageSegment:
+        """
+        说明：
+            图片预处理并构造成MessageSegment
+            :param img: 图片Image对象或图片路径
+            :param size: 预处理尺寸
+            :param crop: 预处理裁剪大小
+            :param quality: 预处理图片质量
+            :param mode: 预处理图像模式
+            :return: MessageSegment.image
+        """
         if isinstance(img, str) or isinstance(img, Path):
             img = load_image(path=img, size=size, mode=mode, crop=crop)
         else:
@@ -48,11 +64,26 @@ class MessageBuild:
                           size: Optional[Tuple[int, int]] = None,
                           crop: Optional[Tuple[int, int, int, int]] = None,
                           quality: Optional[int] = 100,
-                          mode: Optional[str] = 'RGB',
-                          tips: Optional[str] = None
+                          mode: Optional[str] = None,
+                          tips: Optional[str] = None,
+                          is_check_time: Optional[bool] = True,
+                          check_time_day: Optional[int] = 3
                           ):
+        """
+            从url下载图片，并预处理并构造成MessageSegment，如果url的图片已存在本地，则直接读取本地图片
+            :param url: 图片url
+            :param size: 预处理尺寸
+            :param crop: 预处理裁剪大小
+            :param quality: 预处理图片质量
+            :param mode: 预处理图像模式
+            :param tips: url中不存在该图片时的提示语
+            :param is_check_time: 是否检查本地图片最后修改时间
+            :param check_time_day: 检查本地图片最后修改时间的天数，超过该天数则重新下载图片
+            :return: MessageSegment.image
+        """
         path = Path() / 'data' / url
-        if path.exists() and not check_time(path.stat().st_mtime, 3):
+        if path.exists() and (
+                not is_check_time or (is_check_time and not check_time(path.stat().st_mtime, check_time_day))):
             img = Image.open(path)
         else:
             path.parent.mkdir(parents=True, exist_ok=True)
@@ -63,23 +94,35 @@ class MessageBuild:
             img = img.resize(size)
         if crop:
             img = img.crop(crop)
+        if mode:
+            img = img.convert(mode)
         bio = BytesIO()
-        img = img.convert(mode)
-        img.save(bio, format='JPEG' if mode == 'RGB' else 'PNG', quality=quality)
+        img.save(bio, format=img.format, quality=quality)
         return MessageSegment.image(bio)
 
     @classmethod
     def Text(cls, text: str) -> MessageSegment:
-        # TODO 过滤负面文本
+        """
+            过滤文本中的敏感词
+            :param text: 文本
+            :return: MessageSegment.text
+        """
+        for word in ban_word:
+            if word in text:
+                text = text.replace(word, '*')
         return MessageSegment.text(text)
 
     @classmethod
     def Record(cls, path: str) -> MessageSegment:
-        # TODO 网络语音
         return MessageSegment.record(path)
 
     @classmethod
     async def StaticRecord(cls, url: str) -> MessageSegment:
+        """
+            从url中下载音频文件，并构造成MessageSegment，如果本地已有该音频文件，则直接读取本地文件
+            :param url: 语音url
+            :return: MessageSegment.record
+        """
         path = Path() / 'data' / url
         if not path.exists():
             path.parent.mkdir(parents=True, exist_ok=True)
@@ -87,6 +130,25 @@ class MessageBuild:
             content = resp.content
             path.write_bytes(content)
         return MessageSegment.record(file=path)
+
+    @classmethod
+    def Video(cls, path: str) -> MessageSegment:
+        return MessageSegment.video(path)
+
+    @classmethod
+    async def StaticVideo(cls, url: str) -> MessageSegment:
+        """
+            从url中下载视频文件，并构造成MessageSegment，如果本地已有该视频文件，则直接读取本地文件
+            :param url: 视频url
+            :return: MessageSegment.video
+        """
+        path = Path() / 'data' / url
+        if not path.exists():
+            path.parent.mkdir(parents=True, exist_ok=True)
+            resp = await aiorequests.get(url='https://static.cherishmoon.fun/' + url)
+            content = resp.content
+            path.write_bytes(content)
+        return MessageSegment.video(file=path)
 
 
 async def get_at_target(msg):
@@ -174,6 +236,8 @@ def replace_all(raw_text: str, text_list: Union[str, list]):
 
 
 def transform_uid(msg):
+    if not msg:
+        return None
     if isinstance(msg, Message):
         msg = msg.extract_plain_text().strip()
     check_uid = msg.split(' ')
@@ -193,4 +257,3 @@ def check_time(time_stamp, n=1):
         return True
     else:
         return False
-

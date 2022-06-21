@@ -2,13 +2,25 @@ import random
 from nonebot import on_command
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import Message, MessageEvent, MessageSegment
+from nonebot.plugin import PluginMetadata
+
 from utils.auth_util import FreqLimiter
 from utils import aiorequests
 
-__paimon_help__ = {
-    'type': '娱乐',
-    'range': ['private', 'group', 'guild']
-}
+
+__plugin_meta__ = PluginMetadata(
+    name="点餐",
+    description="点餐查看食物图片",
+    usage=(
+        "点餐 食物名"
+    ),
+    extra={
+        'type':    '娱乐',
+        'range':   ['private', 'group', 'guild'],
+        "author":  "惜月 <277073121@qq.com>",
+        "version": "1.0.0",
+    },
+)
 
 order_pic = on_command('点菜', aliases={'点餐', '食谱', '我想吃'}, priority=13, block=True)
 order_pic.__paimon_help__ = {

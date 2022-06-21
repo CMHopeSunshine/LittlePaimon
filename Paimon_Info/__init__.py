@@ -6,7 +6,8 @@ from collections import defaultdict
 
 from nonebot import on_command, require, logger, get_bot
 from nonebot.adapters.onebot.v11 import MessageEvent, Message, Bot, MessageSegment
-from nonebot.params import CommandArg
+from nonebot.params import CommandArg, Arg
+from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
 from nonebot.permission import SUPERUSER
 from nonebot.rule import to_me
@@ -34,36 +35,44 @@ from .draw_role_card import draw_role_card
 require('nonebot_plugin_apscheduler')
 from nonebot_plugin_apscheduler import scheduler
 
-__usage__ = '''
-[ys (uid)]查看原神个人卡片(包含宝箱、探索度等数据)
-[ysa (uid)]查看所有公开的8角色的简略信息
-[ysc (uid) 角色名]查看公开的8角色的详细信息
-*绑定私人cookie之后就可以查看所有角色啦
---------
-[ssbq/实时便签 (uid)]查询当前树脂、洞天宝钱、派遣状况等
-[ssbq (uid) 开启提醒(树脂数)/关闭提醒]开启/关闭树脂提醒，达到树脂数时会在群里艾特你
-*绑定私人cookie之后才能使用
---------
-[sy/深渊查询/深境螺旋查询 (uid) (层数)]查询深渊战绩信息
-*绑定私人cookie之后才能查看层数具体阵容哦
---------
-[mys签到]手动进行一次米游社原神签到
-[mys自动签到开启uid/关闭]开启米游社原神自动签到
---------
-[myzj/每月札记/zj (uid) (月份)]查看该月份获得的原石、摩拉数
-*绑定私人cookie之后才能使用,只能查看最近3个月的记录,默认为本月
---------
-[ysb cookie]绑定你的私人cookie以开启高级功能
-[删除ck]删除你的私人cookie
-[添加公共ck cookie]添加公共cookie以供大众查询*仅管理员
-'''
 
-__paimon_help__ = {
-    'type': '原神信息查询',
-    'range': ['private', 'group', 'guild']
-}
+__plugin_meta__ = PluginMetadata(
+    name="Paimon_Info",
+    description="小派蒙的原神信息查询模块",
+    usage=(
+        "[ys (uid)]查看原神个人卡片(包含宝箱、探索度等数据)\n"
+        "[ysa (uid)]查看所有公开的8角色的简略信息\n"
+        "[ysc (uid) 角色名]查看公开的8角色的详细信息\n"
+        "*绑定私人cookie之后就可以查看所有角色啦\n"
+        "--------\n"
+        "[ssbq/实时便签 (uid)]查询当前树脂、洞天宝钱、派遣状况等\n"
+        "[ssbq (uid) 开启提醒(树脂数)/关闭提醒]开启/关闭树脂提醒，达到树脂数时会在群里艾特你\n"
+        "*绑定私人cookie之后才能使用\n"
+        "--------\n"
+        "[sy/深渊查询/深境螺旋查询 (uid) (层数)]查询深渊战绩信息\n"
+        "*绑定私人cookie之后才能查看层数具体阵容哦\n"
+        "--------\n"
+        "[mys签到]手动进行一次米游社原神签到\n"
+        "[mys自动签到开启uid/关闭]开启米游社原神自动签到\n"
+        "--------\n"
+        "[myzj/每月札记/zj (uid) (月份)]查看该月份获得的原石、摩拉数\n"
+        "*绑定私人cookie之后才能使用,只能查看最近3个月的记录,默认为本月\n"
+        "--------\n"
+        "[ysb cookie]绑定你的私人cookie以开启高级功能\n"
+        "[删除ck]删除你的私人cookie\n"
+        "[添加公共ck cookie]添加公共cookie以供大众查询*仅管理员\n"
+        "--------\n"
+        "[更新角色信息 uid]更新游戏内展柜8个角色的面板信息\n"
+        "[ysd 角色名 uid]查看指定角色的详细面板信息\n"
+    ),
+    extra={
+        'type': '原神信息查询',
+        'range': ['private', 'group', 'guild'],
+        "author": "惜月 <277073121@qq.com>",
+        "version": "0.1.3",
+    },
+)
 
-__help_version__ = '1.1.0'
 
 sy = on_command('sy', aliases={'深渊信息', '深境螺旋信息'}, priority=7, block=True)
 sy.__paimon_help__ = {
@@ -483,7 +492,7 @@ async def mys_sign_auto_handler(event: MessageEvent, msg: Message = CommandArg()
 
 
 ud_lmt = FreqLimiter(300)
-ud_p_lmt = FreqLimiter(12)
+ud_p_lmt = FreqLimiter(15)
 
 
 @update_info.handle()
@@ -496,33 +505,38 @@ async def _(event: MessageEvent, state: T_State, msg: Message = CommandArg()):
         for msg_seg in msg:
             if msg_seg.type == "at":
                 user = msg_seg.data['qq']
+                break
         if user:
-            state['uid'] = await get_last_query(str(user))
+            uid = await get_last_query(str(user))
+            if uid:
+                state['uid'] = uid
         else:
-            state['uid'] = await get_last_query(str(event.user_id))
-    if not ud_lmt.check(state['uid']):
+            uid = await get_last_query(str(event.user_id))
+            if uid:
+                state['uid'] = uid
+    if 'uid' in state and not ud_lmt.check(state['uid']):
         await update_info.finish(f'每个uid每5分钟才能更新一次信息，请稍等一下吧~(剩余{ud_lmt.left_time(state["uid"])}秒)')
     if not ud_p_lmt.check(get_message_id(event)):
-        await update_info.finish(f'每个会话每12秒才能更新一次信息，请稍等一下吧~(剩余{ud_lmt.left_time(get_message_id(event))}秒)')
+        await update_info.finish(f'每个会话每15秒才能更新一次信息，请稍等一下吧~(剩余{ud_lmt.left_time(get_message_id(event))}秒)')
 
 
 @update_info.got('uid', prompt='请把要更新的uid给派蒙哦~')
 @exception_handler()
-async def _(event: MessageEvent, state: T_State):
-    uid = transform_uid(state['uid'])
+async def _(event: MessageEvent, uid: Message = Arg('uid')):
+    uid = transform_uid(uid)
     if not uid:
-        await update_info.finish('这个uid不正确哦~，请检查一下', at_sender=True)
+        await update_info.finish('这好像不是一个正确的uid哦~，请检查一下', at_sender=True)
     await update_last_query(str(event.user_id), uid)
 
     await update_info.send('派蒙开始更新信息~请稍等哦~')
     enka_data = await get_enka_data(uid)
     if not enka_data:
         if uid[0] == '5' or uid[0] == '2':
-            await update_info.finish('暂不支持B服和2开头的账号哦~请等待开发者更新吧~')
+            await update_info.finish('暂不支持B服账号哦~请等待开发者更新吧~')
         else:
             await update_info.finish('派蒙没有查到该uid的信息哦~')
     ud_lmt.start_cd(uid, 300)
-    ud_lmt.start_cd(get_message_id(event), 12)
+    ud_lmt.start_cd(get_message_id(event), 15)
     player_info = PlayerInfo(uid)
     player_info.set_player(enka_data['playerInfo'])
     if 'avatarInfoList' not in enka_data:

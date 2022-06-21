@@ -2,15 +2,28 @@ import random
 from nonebot import on_command, on_regex
 from nonebot.params import RegexGroup
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent, MessageSegment
+from nonebot.plugin import PluginMetadata
+
 from utils.config import config
 from utils.auth_util import FreqLimiter
 from utils.message_util import get_message_id
 from utils.decorator import auto_withdraw
 
-__paimon_help__ = {
-    'type': '娱乐',
-    'range': ['private', 'group', 'guild']
-}
+
+__plugin_meta__ = PluginMetadata(
+    name="随机图片",
+    description="从各随机图片接口获取一张图片",
+    usage=(
+        "来点猫片\n"
+        "来点二次元图\n"
+    ),
+    extra={
+        'type':    '娱乐',
+        'range':   ['private', 'group', 'guild'],
+        "author":  "惜月 <277073121@qq.com>",
+        "version": "1.0.0",
+    },
+)
 
 cat_lmt = FreqLimiter(config.paimon_cat_cd)
 ecy_lmt = FreqLimiter(config.paimon_ecy_cd)

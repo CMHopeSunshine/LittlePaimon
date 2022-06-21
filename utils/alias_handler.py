@@ -5,7 +5,7 @@ import os
 
 
 def get_short_name(name: str):
-    short_name = load_json(path=os.path.join(os.path.dirname(__file__),'short_name.json'))
+    short_name = load_json(path=os.path.join(os.path.dirname(__file__), 'short_name.json'))
     return name if name not in short_name.keys() else short_name[name]
 
 
@@ -26,7 +26,6 @@ def get_name_by_id(role_id: str):
         return None
 
 
-
 def get_match_alias(msg: str, type: str = 'roles', single_to_dict: bool = False) -> Union[str, list, dict]:
     alias_file = load_json(path=os.path.join(os.path.dirname(__file__), 'alias.json'))
     alias_list = alias_file[type]
@@ -42,6 +41,8 @@ def get_match_alias(msg: str, type: str = 'roles', single_to_dict: bool = False)
                 else:
                     return alias[0]
             elif match_list:
+                if len(match_list) == 1:
+                    return alias[0]
                 possible[alias[0]] = role_id
         return possible
     elif type == 'weapons':

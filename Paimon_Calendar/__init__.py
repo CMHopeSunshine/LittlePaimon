@@ -1,32 +1,37 @@
 from nonebot import require, get_bot, on_command, logger
 from nonebot.adapters.onebot.v11 import MessageEvent, Message
 from nonebot.params import CommandArg
+from nonebot.plugin import PluginMetadata
 
 from utils.file_handler import load_json, save_json
 from utils.message_util import MessageBuild, get_message_id
 from .generate import *
 import re
 
-HELP_STR = '''
-原神活动日历
-原神日历 : 查看本群订阅服务器日历
-原神日历 on/off : 订阅/取消订阅指定服务器的日历推送
-原神日历 time 时:分 : 设置日历推送时间
-原神日历 status : 查看本群日历推送设置
-'''.strip()
+require('nonebot_plugin_apscheduler')
+from nonebot_plugin_apscheduler import scheduler
 
-__paimon_help__ = {
-    'type': '原神Wiki',
-    'range': ['private', 'group', 'guild']
-}
+__plugin_meta__ = PluginMetadata(
+    name="原神日历",
+    description="查看原神活动日历",
+    usage=(
+        "原神日历 : 查看本群订阅服务器日历\n"
+        "原神日历 on 时间/off : 订阅/取消订阅指定服务器的日历推送\n"
+    ),
+    extra={
+        'type':    '原神Wiki',
+        'range':   ['private', 'group', 'guild'],
+        "author":  "nicklly <1134741727@qq.com>",
+        "version": "1.0.0",
+    },
+)
 
 calendar = on_command('原神日历', aliases={"原神日历", 'ysrl', '原神日程'}, priority=24, block=True)
 calendar.__paimon_help__ = {
-    "usage": "原神日历",
+    "usage":     "原神日历",
     "introduce": "查看原神活动日历，后加on时间/off可以开启定时推送",
-    "priority": 99
+    "priority":  99
 }
-scheduler = require('nonebot_plugin_apscheduler').scheduler
 
 
 async def send_calendar(push_id, push_data):

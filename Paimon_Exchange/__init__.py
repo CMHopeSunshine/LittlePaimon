@@ -2,12 +2,26 @@ import re
 from nonebot import on_command
 from nonebot.params import CommandArg, T_State, Arg
 from nonebot.adapters.onebot.v11 import PrivateMessageEvent, Message
+from nonebot.plugin import PluginMetadata
+
 from .data_source import get_address, get_goods, save_exchange_info, get_exchange_info, delete_exchange_info
 
-__paimon_help__ = {
-    'type': '工具',
-    'range': ['private']
-}
+
+__plugin_meta__ = PluginMetadata(
+    name="米游币商品抢兑",
+    description="小派蒙的米游币商品抢兑模块",
+    usage=(
+        "myb 跟随派蒙的指引录入兑换计划\n"
+        "myb_info 查看当前的兑换计划\n"
+        "myb_delete 删除你的所有兑换计划\n"
+    ),
+    extra={
+        'type':    '工具',
+        'range':   ['private'],
+        "author":  "惜月 <277073121@qq.com>",
+        "version": "1.0.0",
+    },
+)
 
 myb_exchange = on_command('myb', aliases={'米游币兑换', '米游币商品兑换', '米游社商品兑换'}, priority=4, block=True)
 myb_exchange.__paimon_help__ = {

@@ -2,14 +2,26 @@ import re
 from nonebot import on_command, require, get_bot, logger
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment, Message
+from nonebot.plugin import PluginMetadata
+
 from utils import aiorequests
 from utils.file_handler import load_json, save_json
 from utils.message_util import get_message_id
 
-__paimon_help__ = {
-    'type': '娱乐',
-    'range': ['private', 'group', 'guild']
-}
+
+__plugin_meta__ = PluginMetadata(
+    name="今日早报",
+    description="60秒读世界早报",
+    usage=(
+        "今日早报 后加on时间/off可以开启/关闭推送"
+    ),
+    extra={
+        'type':    '娱乐',
+        'range':   ['private', 'group', 'guild'],
+        "author":  "惜月 <277073121@qq.com>",
+        "version": "1.0.0",
+    },
+)
 
 news60s_pic = on_command('早报', aliases={'今日早报', '今日新闻', '60s读世界'}, priority=13, block=True)
 news60s_pic.__paimon_help__ = {

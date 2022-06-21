@@ -6,27 +6,41 @@ from nonebot import on_endswith, on_command, on_regex
 from nonebot.adapters.onebot.v11 import MessageEvent, Message, MessageSegment
 from nonebot.params import RegexDict
 from nonebot.typing import T_State
+from nonebot.plugin import PluginMetadata
 
 from utils.alias_handler import get_match_alias
 from utils.file_handler import load_json_from_url
 from utils.message_util import MessageBuild
 from .abyss_rate_draw import draw_rate_rank, draw_teams_rate
 
-__usage__ = '''
-1.[xx角色攻略]查看西风驿站出品的角色一图流攻略
-2.[xx角色材料]查看惜月出品的角色材料统计
-3.[xx参考面板]查看blue菌hehe出品的参考面板攻略
-4.[xx收益曲线]查看blue菌hehe出品的收益曲线攻略
-*感谢来自大佬们的授权。角色支持别名查询
-5.[今日/明日/周x材料]查看每日角色天赋材料和武器突破材料表
-6.[深渊登场率]查看2.6深渊角色登场率
-7.[深渊上半/下半阵容出场率]查看2.6深渊阵容出场率
-'''
-__help_version__ = '1.0.4'
+
 __paimon_help__ = {
     'type': '原神Wiki',
     'range': ['private', 'group', 'guild']
 }
+
+__plugin_meta__ = PluginMetadata(
+    name="Paimon_Wiki",
+    description="小派蒙的wiki查询模块",
+    usage=(
+        "1.[xx角色攻略]查看西风驿站出品的角色一图流攻略\n"
+        "2.[xx角色材料]查看惜月出品的角色材料统计\n"
+        "3.[xx参考面板]查看blue菌hehe出品的参考面板攻略\n"
+        "4.[xx收益曲线]查看blue菌hehe出品的收益曲线攻略\n"
+        "5.[今日/明日/周x材料]查看每日角色天赋材料和武器突破材料表\n"
+        "6.[深渊登场率]查看2.6深渊角色登场率\n"
+        "7.[深渊上半/下半阵容出场率]查看2.6深渊阵容出场率\n"
+        "8.[xx武器攻略]查看武器攻略\n"
+        "9.[xx原魔图鉴]查看原魔图鉴\n"
+    ),
+    extra={
+        'type': '原神Wiki',
+        'range': ['private', 'group', 'guild'],
+        "author": "惜月 <277073121@qq.com>",
+        "version": "0.1.3",
+    },
+)
+
 
 res_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'res')
 
