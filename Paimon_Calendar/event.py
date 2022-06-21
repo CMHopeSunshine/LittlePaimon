@@ -8,7 +8,7 @@ import functools
 import re
 
 
-res = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'template')
+res = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Paimon_Calendar/template')
 
 # type 0 普通常驻任务深渊 1 新闻 2 蛋池 3 限时活动H5
 event_data = {
