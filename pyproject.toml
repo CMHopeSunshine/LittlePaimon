@@ -1,0 +1,36 @@
+[tool.poetry]
+name = "LittlePaimon"
+version = "0.1.0"
+description = "小派蒙！原神qq群机器人，基于NoneBot2和HoshinoBot的UID查询、抽卡导出分析、模拟抽卡、实时便签、札记等多功能小助手。"
+authors = ["惜月 <277073121@qq.com>"]
+license = "AGPL"
+
+[[tool.poetry.source]]
+name = "ali"
+default = true
+url = "https://mirrors.aliyun.com/pypi/simple/"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+nonebot2 = "^2.0.0-beta.4"
+nonebot-adapter-onebot = "^2.0.0-beta.1"
+nonebot-plugin-apscheduler = "^0.1.2"
+nonebot-plugin-htmlrender = "^0.0.4.6"
+nonebot-plugin-gocqhttp = "^0.5.1"
+beautifulsoup4 = "^4.10.0"
+httpx = "^0.22.0"
+lxml = "^4.8.0"
+Pillow = "^9.1.0"
+matplotlib = "^3.5.1"
+pypinyin = "^0.46.0"
+pymongo = "^4.1.0"
+xlsxwriter = "^3.0.3"
+sqlitedict = "^2.0.0"
+aiofiles = "^0.8.0"
+jieba_fast = "^0.53"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

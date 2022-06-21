@@ -41,3 +41,5 @@
   - 修复`Paimon_Wiki`搜索对象名结果只有一个时仍需要选择的bug
   - 对对联功能api更换
   - 增加部分注释文档
+  - 更换原神日历样式[@nicklly](https://github.com/nicklly) ，需用到htmlrender插件`pip install nonebot-plugin-htmlrender`
+  - 添加`pyproject.toml`和`poetry.lock`
