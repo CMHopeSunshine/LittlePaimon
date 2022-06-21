@@ -120,14 +120,21 @@ async def get_all_plugin(event: MessageEvent) -> dict:
         if plugin_type not in help_info:
             help_info[plugin_type] = []
         matchers = plugin.matcher
+        matcher_flag = False
         for matcher in matchers:
             try:
                 matchers_info = matcher.__paimon_help__
                 if 'priority' not in matchers_info:
                     matchers_info['priority'] = 99
                 help_info[plugin_type].append(matchers_info)
+                matcher_flag = True
             except AttributeError:
                 pass
+        if not matcher_flag:
+            try:
+                help_info[plugin_type].append({'usage': plugin.metadata.name, 'introduce': plugin.metadata.description, 'priority': 99})
+            except AttributeError:
+                continue
     help_info = {k: v for k, v in help_info.items() if v}
     if not help_info:
         await help_.finish('当前没有已加载的插件哦')
