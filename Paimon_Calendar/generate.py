@@ -1,7 +1,15 @@
 import base64
 from io import BytesIO
+
+from nonebot_plugin_htmlrender import html_to_pic
+import jinja2
+
 from .event import *
 from .draw import *
+
+body = []
+template_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Paimon_Calendar/template')
+env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_path), enable_async=True)
 
 
 def im2base64str(im):
@@ -12,34 +20,40 @@ def im2base64str(im):
 
 
 async def generate_day_schedule(server='cn'):
-    events = await get_events(server, 0, 15)
 
+    events = await get_events(server, 0, 15)
     has_prediction = False
+    """ 追加数据前先执行清除，以防数据叠加 """
+    body.clear()
+
     for event in events:
         if event['start_days'] > 0:
             has_prediction = True
-    if has_prediction:
-        im = create_image(len(events) + 2)
-    else:
-        im = create_image(len(events) + 1)
 
-    title = f'原神日历'
-    pcr_now = get_pcr_now(0)
-    draw_title(im, 0, title, pcr_now.strftime('%Y/%m/%d'), '正在进行')
-
-    if len(events) == 0:
-        draw_item(im, 1, 1, '无数据', 0, False)
-    i = 1
+    template = env.get_template('calendar.html')
     for event in events:
         if event['start_days'] <= 0:
-            draw_item(im, i, event['type'], event['title'],
-                      event['left_days'], event['forever'])
-            i += 1
+            time = '即将结束' if event["left_days"] == 0 else f'{str(event["left_days"])}天后结束'
+            body.append({
+                'title': event['title'],
+                'time': time,
+                'online': f'{datetime.strftime(event["start"], r"%m-%d")} ~ {datetime.strftime(event["end"], r"%m-%d")}',
+                'color': event['color'],
+                'banner': event['banner']
+            })
     if has_prediction:
-        draw_title(im, i, right='即将开始')
         for event in events:
             if event['start_days'] > 0:
-                i += 1
-                draw_item(im, i, event['type'], event['title'], -
-                          event['start_days'], event['forever'])
-    return im
+                time = '即将开始' if event["start_days"] == 0 else f'{str(event["start_days"])}天后开始'
+                body.append({
+                    'title': event['title'],
+                    'time': time,
+                    'online': f'{datetime.strftime(event["start"], r"%m-%d")} ~ {datetime.strftime(event["end"], r"%m-%d")}',
+                    'color': event['color'],
+                    'banner': event['banner']
+                })
+
+    content = await template.render_async(body=body, css_path=template_path)
+    return await html_to_pic(content, wait=0, viewport={"width": 600, "height": 100})
+
+
