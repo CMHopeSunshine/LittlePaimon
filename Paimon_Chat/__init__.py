@@ -73,7 +73,7 @@ def create_matcher(chat_word: str, pattern: str, cooldown: int, pro: float, resp
         return random.random() < pro
 
     def check_cooldown(event: Union[GroupMessageEvent, PrivateMessageEvent]) -> bool:
-        return chat_lmt.check(event.group_id, chat_word)
+        return isinstance(event, PrivateMessageEvent) or chat_lmt.check(event.group_id, chat_word)
 
     hammer = on_regex(pattern, priority=10, rule=Rule(check_group, check_pro, check_cooldown))
     hammer.plugin_name = 'Paimon_Chat'
@@ -81,7 +81,8 @@ def create_matcher(chat_word: str, pattern: str, cooldown: int, pro: float, resp
     @hammer.handle()
     async def handler(event: Union[GroupMessageEvent, PrivateMessageEvent]):
         try:
-            chat_lmt.start_cd(event.group_id, chat_word, cooldown)
+            if isinstance(event, GroupMessageEvent):
+                chat_lmt.start_cd(event.group_id, chat_word, cooldown)
             response: str = random.choice(responses)
             if response.endswith('.mp3'):
                 await hammer.finish(await MessageBuild.StaticRecord(url=f'LittlePaimon/voice/{response}'))

@@ -94,7 +94,7 @@ async def get_img(url: str,
                                         timeout=timeout,
                                         **kwargs)
                 resp = resp.read()
-                if 'NoSuchKey' in resp:
+                if b'NoSuchKey' in resp:
                     return 'No Such File'
                 img = Image.open(BytesIO(resp))
         except SSLCertVerificationError:
