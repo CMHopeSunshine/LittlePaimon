@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from utils.aiorequests import get
@@ -8,8 +8,7 @@ import functools
 import re
 
 
-res = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Paimon_Calendar/template')
-
+res = Path(__file__).parent / 'template'
 # type 0 普通常驻任务深渊 1 新闻 2 蛋池 3 限时活动H5
 event_data = {
     'cn': [],
@@ -172,7 +171,7 @@ async def load_event_cn():
                 'forever': False,
                 'type': 3,
                 'color': '#580dda',
-                'banner': res + '/sy.jpg'
+                'banner': res / 'sy.jpg'
             })
             event_data['cn'].append({
                 'title': '「深境螺旋」· 下半段 ',
@@ -181,7 +180,7 @@ async def load_event_cn():
                 'forever': False,
                 'type': 3,
                 'color': '#580dda',
-                'banner': res + '/sy.jpg'
+                'banner': res / 'sy.jpg'
             })
             i = i+1
 

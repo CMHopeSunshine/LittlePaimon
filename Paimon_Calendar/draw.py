@@ -1,8 +1,8 @@
 from PIL import Image, ImageDraw, ImageFont
-import os
+from pathlib import Path
 
-font_Path = res_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'res')
-font = ImageFont.truetype(os.path.join(res_path, 'wqy-microhei.ttc'), 20)
+res_path = Path(__file__).parent.parent / 'res'
+font = ImageFont.truetype(str(res_path / 'wqy-microhei.ttc'), 20)
 
 width = 500
 

@@ -1,10 +1,10 @@
-from nonebot import require, get_bot, on_command, logger
+from nonebot import get_bot, on_command, logger
 from nonebot.adapters.onebot.v11 import MessageEvent, Message, MessageSegment
 from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 
 from utils.file_handler import load_json, save_json
-from utils.message_util import MessageBuild, get_message_id
+from utils.message_util import get_message_id
 from .generate import *
 import re
 
@@ -22,7 +22,7 @@ __plugin_meta__ = PluginMetadata(
         'type':    '原神Wiki',
         'range':   ['private', 'group', 'guild'],
         "author":  "nicklly <1134741727@qq.com>",
-        "version": "1.0.0",
+        "version": "1.0.1",
     },
 )
 
@@ -79,7 +79,7 @@ async def _(event: MessageEvent, msg: Message = CommandArg()):
 
     if not msg:
         im = await generate_day_schedule(server)
-        await calendar.finish( MessageSegment.image(im))
+        await calendar.finish(MessageSegment.image(im))
     else:
         push_data = load_json('calender_push.json')
         if msg.startswith(('开启', 'on', '打开')):
