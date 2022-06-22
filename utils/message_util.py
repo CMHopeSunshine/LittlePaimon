@@ -54,7 +54,7 @@ class MessageBuild:
             if mode:
                 img = img.convert(mode)
         bio = BytesIO()
-        img.save(bio, format=img.format or 'JPEG', quality=quality)
+        img.save(bio, format='JPEG' if img.mode == 'RGB' else 'PNG', quality=quality)
         return MessageSegment.image(bio)
 
     @classmethod
@@ -96,19 +96,19 @@ class MessageBuild:
         if mode:
             img = img.convert(mode)
         bio = BytesIO()
-        img.save(bio, format=img.format or 'JPEG', quality=quality)
+        img.save(bio, format='JPEG' if img.mode == 'RGB' else 'PNG', quality=quality)
         return MessageSegment.image(bio)
 
     @classmethod
     def Text(cls, text: str) -> MessageSegment:
         """
-            过滤文本中的敏感词
+            过滤文本中的敏感违禁词
             :param text: 文本
             :return: MessageSegment.text
         """
-        for word in ban_word:
-            if word in text:
-                text = text.replace(word, '*')
+        for word in ban_word[2:]:
+            if word and word in text:
+                text = text.replace(word, '*' * len(word))
         return MessageSegment.text(text)
 
     @classmethod

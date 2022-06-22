@@ -65,9 +65,6 @@
 
 ## 丨更新日志
 > README只展示最近2条更新，全部更新日志详见[这里](https://github.com/CMHopeSunshine/LittlePaimon/blob/nonebot2/UPDATE_LOG.md)
-+ 6.19
-  - 新增`米游币商品兑换`功能，私聊机器人发送`myb`跟着一步步指引来做，目前该功能还没有机会做测试，出现问题请提issue
-  - `ysb`绑定cookie的方法增加腾讯文档
 + 6.21
   - 适配`nonebot2 beta4`插件元数据，请更新nb版本`pip install nonebot2 --upgrade`
   - `Paimon_Chat`现在可以发图片、视频等，可自行添加
@@ -76,6 +73,9 @@
   - 增加部分注释文档
   - 更换原神日历样式[@nicklly](https://github.com/nicklly) ，需用到htmlrender插件`pip install nonebot-plugin-htmlrender`
   - 添加`pyproject.toml`和`poetry.lock`
++ 6.22
+  - 增加文本敏感词过滤
+  - fix `原神日历`和发送图片bug
 
 ## 丨功能列表
 

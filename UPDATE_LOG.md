@@ -43,3 +43,6 @@
   - 增加部分注释文档
   - 更换原神日历样式[@nicklly](https://github.com/nicklly) ，需用到htmlrender插件`pip install nonebot-plugin-htmlrender`
   - 添加`pyproject.toml`和`poetry.lock`
++ 6.22
+  - 增加文本敏感词过滤
+  - fix `原神日历`和发送图片bug

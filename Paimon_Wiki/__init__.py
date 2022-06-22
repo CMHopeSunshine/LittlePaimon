@@ -68,7 +68,7 @@ async def genshinAttribute(event: MessageEvent):
             img = MessageBuild.Text(f'没有找到{name}的参考面板')
         await attribute.finish(img)
     else:
-        await attribute.finish(f'没有找到{name}的参考面板', at_sender=True)
+        await attribute.finish(MessageBuild.Text(f'没有找到{name}的参考面板'), at_sender=True)
 
 
 @daily_material.handle()
@@ -145,7 +145,7 @@ def create_choice_command(endswith: str, type_: str, url: str, tips: str = None,
                 await MessageBuild.StaticImage(url=url.format(match_alias[0]), tips=tips.format(match_alias[0])))
         else:
             if not match_alias:
-                await command.finish(f'没有{state["name"]}的{endswith}哦~', at_sender=True)
+                await command.finish(MessageBuild.Text(f'没有{state["name"]}的{endswith}哦~'), at_sender=True)
             else:
                 if isinstance(match_alias, dict):
                     match_alias = list(match_alias.keys())

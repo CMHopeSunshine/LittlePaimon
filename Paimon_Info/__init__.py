@@ -23,6 +23,7 @@ from utils.auth_util import check_cookie, FreqLimiter
 from utils.decorator import exception_handler
 from utils.enka_util import PlayerInfo
 from utils.message_util import get_uid_in_msg, uid_userId_to_dict, replace_all, transform_uid, get_message_id
+from utils.message_util import MessageBuild as MsgBd
 from .draw_abyss_info import draw_abyss_card
 from .draw_daily_note import draw_daily_note_card
 from .draw_month_info import draw_monthinfo_card
@@ -339,7 +340,7 @@ async def _(event: MessageEvent, state: T_State):
         state['choice'] = match_alias
     else:
         if not match_alias:
-            await ysc.finish(f'没有找到叫{name}的角色哦~', at_sender=True)
+            await ysc.finish(MsgBd.Text(f'没有找到叫{name}的角色哦~'), at_sender=True)
         elif 'choice' not in state:
             msg = f'你要找的角色是哪个呀：\n'
             # 将字典中每个键拼接到msg中，并添加序号
@@ -397,7 +398,7 @@ async def ysb_handler(event: MessageEvent, msg: Message = CommandArg()):
         # 获取方法：登录网页版米游社，在地址栏粘贴代码：\njavascript:(function(){prompt(document.domain,document.cookie)})(
         # );\n复制弹窗出来的字符串（手机要via或chrome浏览器才行）\n然后添加派蒙私聊发送ysb接刚刚复制的字符串，例如:ysb
         # UM_distinctid=17d131d...\ncookie是账号重要安全信息，请确保机器人持有者可信赖！ '''
-        res = '获取cookie的教程在这里哦：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1\n获取到后，添加派蒙好友私聊发送ysb接复制到的cookie就行啦~'
+        res = '获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1\n获取到后，添加派蒙好友私聊发送ysb接复制到的cookie就行啦~'
         await ysb.finish(res, at_sender=True)
     else:
         cookie_info, mys_id = await get_bind_game(cookie)
@@ -419,7 +420,7 @@ async def ysb_handler(event: MessageEvent, msg: Message = CommandArg()):
                 msg = f'{nickname}绑定成功啦!使用ys/ysa等指令和派蒙互动吧!'
                 if event.message_type != 'private':
                     msg += '\n当前是在群聊里绑定，建议旅行者把cookie撤回哦!'
-                await ysb.finish(msg, at_sender=True)
+                await ysb.finish(MsgBd.Text(msg), at_sender=True)
 
 
 @add_public_ck.handle()
@@ -586,7 +587,7 @@ async def _(event: MessageEvent, state: T_State):
     player_info = PlayerInfo(uid)
     roles_list = player_info.get_roles_list()
     if role not in roles_list:
-        await role_info.finish(f'派蒙还没有你{role}的信息哦，请先把该角色放在游戏内展柜中，然后使用 更新角色信息 命令更新~', at_sender=True)
+        await role_info.finish(MsgBd.Text(f'派蒙还没有你{role}的信息哦，请先把该角色放在游戏内展柜中，然后使用 更新角色信息 命令更新~'), at_sender=True)
     else:
         role_data = player_info.get_roles_info(role)
         img = await draw_role_card(uid, role_data)
