@@ -29,7 +29,7 @@ class MessageBuild:
               size: Optional[Union[Tuple[int, int], float]] = None,
               crop: Optional[Tuple[int, int, int, int]] = None,
               quality: Optional[int] = 100,
-              mode: Optional[str] = 'RGB'
+              mode: Optional[str] = None
               ) -> MessageSegment:
         """
         说明：
@@ -54,8 +54,7 @@ class MessageBuild:
             if mode:
                 img = img.convert(mode)
         bio = BytesIO()
-        img = img.convert(mode)
-        img.save(bio, format='JPEG' if mode == 'RGB' else 'PNG', quality=quality)
+        img.save(bio, format=img.format or 'JPEG', quality=quality)
         return MessageSegment.image(bio)
 
     @classmethod
@@ -89,7 +88,7 @@ class MessageBuild:
             path.parent.mkdir(parents=True, exist_ok=True)
             img = await aiorequests.get_img(url='https://static.cherishmoon.fun/' + url, save_path=path)
             if img == 'No Such File':
-                return MessageSegment.text(tips or '缺少该静态资源')
+                return MessageBuild.Text(tips or '缺少该静态资源')
         if size:
             img = img.resize(size)
         if crop:
@@ -97,7 +96,7 @@ class MessageBuild:
         if mode:
             img = img.convert(mode)
         bio = BytesIO()
-        img.save(bio, format=img.format, quality=quality)
+        img.save(bio, format=img.format or 'JPEG', quality=quality)
         return MessageSegment.image(bio)
 
     @classmethod
