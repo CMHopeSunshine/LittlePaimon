@@ -58,13 +58,10 @@ def get_match_alias(msg: str, type: str = 'roles', single_to_dict: bool = False)
         for role_id, alias in alias_list.items():
             match_list = difflib.get_close_matches(msg, alias, cutoff=0.6, n=3)
             if msg in match_list:
-                if single_to_dict:
-                    return {alias[0]: role_id}
-                else:
-                    return alias[0]
+                return {alias[0]: role_id} if single_to_dict else alias[0]
             elif match_list:
                 if len(match_list) == 1:
-                    return alias[0]
+                    return {alias[0]: role_id} if single_to_dict else alias[0]
                 possible[alias[0]] = role_id
         return possible
     elif type == 'weapons':

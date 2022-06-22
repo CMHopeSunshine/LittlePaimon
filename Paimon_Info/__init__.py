@@ -563,15 +563,19 @@ async def _(event: MessageEvent, state: T_State, msg: Message = CommandArg()):
             if msg_seg.type == "at":
                 user = msg_seg.data['qq']
         if user:
-            state['uid'] = await get_last_query(str(user))
+            uid = await get_last_query(str(user))
+            if uid:
+                state['uid'] = uid
         else:
-            state['uid'] = await get_last_query(str(event.user_id))
+            uid = await get_last_query(str(event.user_id))
+            if uid:
+                state['uid'] = uid
     msg = msg.extract_plain_text().replace(state['uid'], '').strip()
     if not msg:
         await role_info.finish('请把要查询角色名给派蒙哦~')
     else:
         match_alias = get_match_alias(msg, 'roles', True)
-        state['role'] = tuple(match_alias.keys())[0]
+        state['role'] = match_alias if isinstance(match_alias, str) else tuple(match_alias.keys())[0]
 
 
 @role_info.got('uid', prompt='请把要查询的uid给派蒙哦~')
