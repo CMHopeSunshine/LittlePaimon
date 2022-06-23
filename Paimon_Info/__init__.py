@@ -573,9 +573,14 @@ async def _(event: MessageEvent, state: T_State, msg: Message = CommandArg()):
     msg = msg.extract_plain_text().replace(state['uid'], '').strip()
     if not msg:
         await role_info.finish('请把要查询角色名给派蒙哦~')
+    if msg.startswith(('a', '全部', '所有', '查看')):
+        state['role'] = 'all'
     else:
         match_alias = get_match_alias(msg, 'roles', True)
-        state['role'] = match_alias if isinstance(match_alias, str) else tuple(match_alias.keys())[0]
+        if match_alias:
+            state['role'] = match_alias if isinstance(match_alias, str) else tuple(match_alias.keys())[0]
+        else:
+            await role_info.finish(MsgBd.Text(f'哪有名为{msg}的角色啊，别拿派蒙开玩笑!'))
 
 
 @role_info.got('uid', prompt='请把要查询的uid给派蒙哦~')
@@ -590,8 +595,16 @@ async def _(event: MessageEvent, state: T_State):
     role = state['role']
     player_info = PlayerInfo(uid)
     roles_list = player_info.get_roles_list()
+    if role == 'all':
+        if not roles_list:
+            await role_info.finish('你在派蒙这里没有角色面板信息哦，先用 更新角色信息 命令获取吧~', at_sender=True)
+        res = '目前已获取的角色面板有：\n'
+        for r in roles_list:
+            res += r
+            res += ' ' if (roles_list.index(r) + 1) % 4 else '\n'
+        await role_info.finish(res, at_sender=True)
     if role not in roles_list:
-        await role_info.finish(MsgBd.Text(f'派蒙还没有你{role}的信息哦，请先把该角色放在游戏内展柜中，然后使用 更新角色信息 命令更新~'), at_sender=True)
+        await role_info.finish(MsgBd.Text(f'派蒙还没有你{role}的信息哦，先用 更新角色信息 命令更新吧~'), at_sender=True)
     else:
         role_data = player_info.get_roles_info(role)
         img = await draw_role_card(uid, role_data)
@@ -709,7 +722,7 @@ async def daily_update():
     await reset_public_cookie()
 
 
-@scheduler.scheduled_job('cron', hour=3, misfire_grace_time=10)
+# @scheduler.scheduled_job('cron', hour=3, misfire_grace_time=10)
 async def all_update():
     uid_list = await get_all_query()
     logger.info('派蒙开始更新用户角色信息，共{}个用户'.format(len(uid_list)))

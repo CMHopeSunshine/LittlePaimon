@@ -64,9 +64,9 @@
 </details>
 
 ## 丨更新日志
-> README只展示最近2条更新，全部更新日志详见[这里](https://github.com/CMHopeSunshine/LittlePaimon/blob/nonebot2/UPDATE_LOG.md)
+> README只展示最近3条更新，全部更新日志详见[这里](https://github.com/CMHopeSunshine/LittlePaimon/blob/nonebot2/UPDATE_LOG.md)
 + 6.21
-  - 适配`nonebot2 beta4`插件元数据，请更新nb版本`pip install nonebot2 --upgrade`
+  - 适配`nonebot2 beta4`插件元数据，**请更新nb版本`pip install nonebot2 --upgrade`**
   - `Paimon_Chat`现在可以发图片、视频等，可自行添加
   - 修复`Paimon_Wiki`搜索对象名结果只有一个时仍需要选择的bug
   - 对对联功能api更换
@@ -76,7 +76,10 @@
 + 6.22
   - 增加文本敏感词过滤
   - fix `原神日历`和发送图片bug
-
++ 6.23
+  - 新增查看所有已获取面板信息的角色的列表`ysda`
+  - 暂时取消凌晨3点的自动更新角色面板操作
+  
 ## 丨功能列表
 
 详见我的博客[功能列表](https://blog.cherishmoon.fun/posts/nonebot2funclist.html) <br>
