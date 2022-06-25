@@ -64,7 +64,7 @@
 </details>
 
 ## 丨更新日志
-> README只展示最近3条更新，全部更新日志详见[这里](https://github.com/CMHopeSunshine/LittlePaimon/blob/nonebot2/UPDATE_LOG.md)
+> README只展示最近更新，全部更新日志详见[这里](https://github.com/CMHopeSunshine/LittlePaimon/blob/nonebot2/UPDATE_LOG.md)
 + 6.21
   - 适配`nonebot2 beta4`插件元数据，**请更新nb版本`pip install nonebot2 --upgrade`**
   - `Paimon_Chat`现在可以发图片、视频等，可自行添加
@@ -79,6 +79,8 @@
 + 6.23
   - 新增查看所有已获取面板信息的角色的列表`ysda`
   - 暂时取消凌晨3点的自动更新角色面板操作
++ 6.25
+  - 添加`requirements.txt`
   
 ## 丨功能列表
 
@@ -91,18 +93,19 @@
  + 部署NoneBot2和go-cqhttp
 
  + 在NoneBot2根目录，克隆本项目
-   `git clone -b nonebot2 https://github.com/CMHopeSunshine/LittlePaimon `
+   `git clone https://github.com/CMHopeSunshine/LittlePaimon `
    
  + 安装依赖
-   ```shell
-   # 定时任务插件
-   nb plugin install nonebot-plugin-apscheduler
-   # 需要的依赖库
-   pip install aiohttp xlsxwriter sqlitedict matplotlib aiofiles
+   ```bash
+   # 在插件目录运行:
+   pip install -r requirements.txt
+   
+   # 如果你使用poetry进行环境管理，可以：
+   poetry install
    ```
  + 启用插件
    ```python
-   # 编辑bot.py，添加：
+   # 编辑bot.py，在load_from_toml下面添加：
    nonebot.load_plugins("LittlePaimon")
    ```
    
