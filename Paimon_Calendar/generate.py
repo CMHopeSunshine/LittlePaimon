@@ -1,13 +1,14 @@
+import jinja2
 from nonebot import require
-
 require("nonebot_plugin_htmlrender")
 from nonebot_plugin_htmlrender import html_to_pic
-import jinja2
-
 from .event import *
-from .draw import *
+from datetime import datetime, timedelta
+
 
 body = []
+weeks = []
+weekList = ['一', '二', '三', '四', '五', '六', '日']
 template_path = Path(__file__).parent / 'template'
 env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_path), enable_async=True)
 
@@ -15,8 +16,24 @@ env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_path), enable_a
 async def generate_day_schedule(server='cn'):
     events = await get_events(server, 0, 15)
     has_prediction = False
-    """ 追加数据前先执行清除，以防数据叠加 """
     body.clear()
+    weeks.clear()
+    t = datetime.now()
+
+    for i in range(7):
+        d2 = (t + timedelta(days=i)).strftime("%Y-%m-%d")
+        """ 分割 [年|月|日]"""
+        date_full = str(d2).split("-")
+
+        current = 'm-events-calendar__table-header-current' if t.strftime("%d") == date_full[2] else ""
+        date = re.search(r'0\d+', date_full[1]).group(0).replace('0', '') if re.search(r'0\d+', date_full[1]) else date_full[1]
+
+        week = datetime(int(date_full[0]), int(date_full[1]), int(date_full[2])).isoweekday()
+        weeks.append({
+            'week': f'星期{weekList[week - 1]}',
+            'date': f'{date}.{date_full[2]}',
+            'current': current
+        })
 
     for event in events:
         if event['start_days'] > 0:
@@ -45,5 +62,5 @@ async def generate_day_schedule(server='cn'):
                     'banner': event['banner']
                 })
 
-    content = await template.render_async(body=body, css_path=template_path)
-    return await html_to_pic(content, wait=0, viewport={"width": 600, "height": 100})
+    content = await template.render_async(body=body, css_path=template_path, week=weeks)
+    return await html_to_pic(content, wait=0, viewport={"width": 600, "height": 10})
