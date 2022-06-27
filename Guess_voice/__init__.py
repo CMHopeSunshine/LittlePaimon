@@ -114,6 +114,7 @@ async def get_genshin_voice(bot: Bot, event: Union[GroupMessageEvent, PrivateMes
     else:
         language = '中'
         name = name.replace('中', '')
+    name = name.strip()
     await download_voice(bot, event)
     path = await get_random_voice(name, language)
     if not path:
