@@ -58,9 +58,15 @@ class PlayerInfo:
                 skill_detail = {'名称': role_skill['Name'][skill], '等级': data['skillLevelMap'][skill],
                                 '图标': role_skill['Icon'][skill]}
                 role_info['天赋'].append(skill_detail)
-            if role_name == '神里绫华':
+            if role_info['名称'] == '神里绫华':
                 role_info['天赋'][0], role_info['天赋'][-1] = role_info['天赋'][-1], role_info['天赋'][0]
                 role_info['天赋'][2], role_info['天赋'][-1] = role_info['天赋'][-1], role_info['天赋'][2]
+            if role_info['名称'] == '安柏':
+                role_info['天赋'][0], role_info['天赋'][-1] = role_info['天赋'][-1], role_info['天赋'][0]
+            if role_info['名称'] in ['空', '荧']:
+                role_info['天赋'][0], role_info['天赋'][-1] = role_info['天赋'][-1], role_info['天赋'][0]
+                role_info['天赋'][1], role_info['天赋'][-1] = role_info['天赋'][-1], role_info['天赋'][1]
+
 
             role_info['命座'] = []
             if 'talentIdList' in data:
