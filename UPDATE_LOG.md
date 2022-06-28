@@ -51,3 +51,9 @@
   - 暂时取消凌晨3点的自动更新角色面板操作
 + 6.25
   - 添加`requirements.txt`
++ 6.28
+  - `ysd`现在支持查看`旅行者`面板信息，增加地区图标显示
+  - 优化`ysd`圣遗物评分算法，现在以有效词条数来决定评级，能简单判断角色多种流派玩法[#40](https://github.com/CMHopeSunshine/LittlePaimon/issues/40)
+  - 优化`ysd`面板属性和圣遗物词条不对齐的问题
+  - `原神猜语音`新的角色也能正确匹配识别[#82](https://github.com/CMHopeSunshine/LittlePaimon/pull/82)
+  - 修复`获取抽卡记录`问题[#81](https://github.com/CMHopeSunshine/LittlePaimon/issues/81)

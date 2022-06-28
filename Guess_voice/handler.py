@@ -15,20 +15,13 @@ from sqlitedict import SqliteDict
 
 from .download_data import voice_list_by_mys, voice_detail_by_mys
 from .util import get_path, require_file
+from utils.alias_handler import get_alias_by_name
 
 scheduler = require('nonebot_plugin_apscheduler').scheduler
 
-# dir_data = os.path.join(os.path.dirname(__file__), 'data')
 dir_data = Path() / 'data' / 'LittlePaimon' / 'guess_voice' / 'data'
-
-# data_path = os.path.join(os.path.dirname(__file__), 'voice')
 data_path = Path() / 'data' / 'LittlePaimon' / 'guess_voice' / 'voice'
-
-# data2_path = os.path.join(os.path.dirname(__file__), 'voice2')
 data2_path = Path() / 'data' / 'LittlePaimon' / 'guess_voice' / 'voice2'
-
-# if not os.path.exists(dir_data):
-#     os.makedirs(dir_data)
 
 dir_data.mkdir(parents=True, exist_ok=True)
 
@@ -57,15 +50,23 @@ with open(os.path.join(os.path.dirname(__file__), 'character.json'), 'r', encodi
 
 
 def create_guess_matcher(role_name, second, group_id):
+    """
+    创建一个猜语音的正则匹配matcher，正则内容为角色的别名
+    :param role_name: 角色名
+    :param second: 结束时间（秒）
+    :param group_id: 进行的群组
+    :return: None
+    """
     def check_group(event: GroupMessageEvent):
         if event.group_id == group_id:
             return True
         return False
 
-    alias_list = character_json.get(role_name, [])
-    re_str = role_name + '|' + '|'.join(alias_list)
+    alias_list = get_alias_by_name(role_name)
+    re_str = '|'.join(alias_list)
     guess_matcher = on_regex(re_str, temp=True, rule=Rule(check_group))
     guess_matcher.plugin_name = "Guess_voice"
+    guess_matcher.expire_time = datetime.timedelta(seconds=second)
 
     @guess_matcher.handle()
     async def _(event: GroupMessageEvent):

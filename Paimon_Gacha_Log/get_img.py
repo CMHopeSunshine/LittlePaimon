@@ -141,4 +141,4 @@ async def get_gacha_log_img(gacha_data, pool):
     img_draw.text((595, 44), f'UID:{gacha_data["uid"]}', font=get_font(16), fill='black')
     img_draw.text((530, total_height - 45), 'Created by LittlePaimon', font=get_font(16), fill='black')
 
-    return MessageBuild.Image(img)
+    return MessageBuild.Image(img, mode='RGB')

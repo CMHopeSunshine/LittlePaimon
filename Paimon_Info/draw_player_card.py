@@ -495,4 +495,4 @@ async def draw_chara_card(data, skill_data, chara_name, uid):
 
     bg_draw.text((330, 371), 'Created by LittlePaimon', font=get_font(20), fill='white')
 
-    return MessageBuild.Image(bg_img, size=0.95, quality=80)
+    return MessageBuild.Image(bg_img, size=0.95, quality=80, mode='RGB')

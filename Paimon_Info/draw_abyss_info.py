@@ -155,4 +155,4 @@ async def draw_abyss_card(data, uid, floor_num):
         total_img.alpha_composite(floor_img, (5, 5 + 524 + 5 + h))
         h += 1210
 
-    return MessageBuild.Image(total_img, quality=75)
+    return MessageBuild.Image(total_img, quality=75, mode='RGB')

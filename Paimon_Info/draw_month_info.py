@@ -114,4 +114,4 @@ async def draw_monthinfo_card(data):
     bg_draw.text((49, 857), f'本月相比上个月，原石{ysstr}，摩拉{mlstr}', font=get_font(23), fill='#27384C')
     bg_draw.text((167, 900), 'Created by LittlePaimon', font=get_font(21), fill='#27384C')
 
-    return MessageBuild.Image(bg_img, quality=70)
+    return MessageBuild.Image(bg_img, quality=70, mode='RGB')

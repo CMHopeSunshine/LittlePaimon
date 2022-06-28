@@ -4,7 +4,7 @@ from utils import aiorequests
 
 
 def toApi(url):
-    spliturl = str(url).split("?")
+    spliturl = str(url).replace('amp;', '').split("?")
     if "webstatic-sea" in spliturl[0] or "hk4e-api-os" in spliturl[0]:
         spliturl[0] = "https://hk4e-api-os.mihoyo.com/event/gacha_info/api/getGachaLog"
     else:

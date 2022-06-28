@@ -1,8 +1,3 @@
-# -*- coding: UTF-8 -*-
-"""
-该脚本可以直接获取wiki上的语音文件 并保存进数据库中
-"""
-
 import json
 import os
 from pathlib import Path
@@ -14,7 +9,6 @@ from sqlitedict import SqliteDict  # TODO 加入requirements
 from utils import aiorequests
 from .util import get_path
 
-# OUT_PUT = Path(__file__).parent / 'voice'
 OUT_PUT = Path() / 'data' / 'LittlePaimon' / 'guess_voice' / 'voice'
 
 BASE_URL = 'https://wiki.biligame.com/ys/'
@@ -28,11 +22,8 @@ config = {
     'voice_language': ['日', '英', '韩']
 }
 
-# dir_data = os.path.join(os.path.dirname(__file__), 'data')
 dir_data = Path() / 'data' / 'LittlePaimon' / 'guess_voice' / 'data'
 
-# if not os.path.exists(dir_data):
-#     os.makedirs(dir_data)
 dir_data.mkdir(parents=True, exist_ok=True)
 
 

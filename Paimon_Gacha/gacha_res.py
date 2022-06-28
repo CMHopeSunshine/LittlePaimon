@@ -199,7 +199,7 @@ async def create_item(rank, item_type, name, element, count, dg_time):
     return bg
 
 
-async def ten(uid, gacha_data) -> PngImagePlugin.PngImageFile:
+async def ten(uid, gacha_data):
     gacha_list = []
     for i in range(0, 10):
         if gacha_data['gacha_type'] == 'all_star':
@@ -210,7 +210,6 @@ async def ten(uid, gacha_data) -> PngImagePlugin.PngImageFile:
             role = once(uid, gacha_data).copy()
         gacha_list.append(role)
     gacha_list.sort(key=lambda x: x["rank"], reverse=True)
-    img: PngImagePlugin.PngImageFile
     img = Image.open(os.path.join(RES_PATH, 'background.png'))
     i = 0
     for wish in gacha_list:
@@ -245,4 +244,4 @@ async def more_ten(uid, gacha_data, num, sd):
     draw = ImageDraw.Draw(img)
     draw.text((27, 575 * num - 30), ('@%s %s  Created By LittlePaimon' % (str(sd.nickname), time_str)), font=time_font,
               fill="#8E8E8E")
-    return MessageBuild.Image(img, quality=75)
+    return MessageBuild.Image(img, quality=75, mode='RGB')
