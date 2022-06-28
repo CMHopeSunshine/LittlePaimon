@@ -206,6 +206,8 @@ def get_effective(role_name: str, role_weapon: str, artifacts: list, element: st
     if role_name in ['荧', '空']:
         role_name = str(element) + '主'
     if role_name in ra_score['Role']:
+        if len(artifacts) < 5:
+            return ra_score['Role'][role_name]['常规']
         if role_name == '钟离':
             if artifacts[-2]['主属性']['属性名'] == '岩元素伤害加成':
                 return ra_score['Role'][role_name]['岩伤']
