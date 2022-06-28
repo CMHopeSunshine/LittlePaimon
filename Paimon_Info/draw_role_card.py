@@ -64,7 +64,8 @@ async def draw_role_card(uid, data):
     bg_draw.text((131, 100), f"UID{uid}", fill='white', font=get_font(48, 'number.ttf'))
     bg_draw.text((134, 150), data['名称'], fill='white', font=get_font(72, '优设标题黑.ttf'))
     bg.alpha_composite(level_mask, (298 + 60 * (len(data['名称']) - 2), 172))
-    draw_center_text(bg_draw, f'LV{data["等级"]}', 298 + 60 * (len(data['名称']) - 2), 298 + 60 * (len(data['名称']) - 2) + 171, 174, 'black', get_font(48, 'number.ttf'))
+    draw_center_text(bg_draw, f'LV{data["等级"]}', 298 + 60 * (len(data['名称']) - 2),
+                     298 + 60 * (len(data['名称']) - 2) + 171, 174, 'black', get_font(48, 'number.ttf'))
 
     # 属性值
     prop = data['属性']
@@ -110,7 +111,8 @@ async def draw_role_card(uid, data):
         data['天赋'].pop(2)
     for i in range(3):
         bg.alpha_composite(base_icon[data['元素']].resize((132, 142)), (564, 253 + 147 * i))
-        draw_center_text(bg_draw, str(data['天赋'][i]['等级']), 510, 552, 310 + 147 * i, 'black', get_font(34, 'number.ttf'))
+        draw_center_text(bg_draw, str(data['天赋'][i]['等级']), 510, 552, 310 + 147 * i, 'black',
+                         get_font(34, 'number.ttf'))
         skill_icon = res_path2 / 'skill' / f'{data["天赋"][i]["图标"]}.png'
         skill_icon = await aiorequests.get_img(url=skill_url.format(data["天赋"][i]["图标"]), size=(57, 57),
                                                save_path=skill_icon)
@@ -162,7 +164,8 @@ async def draw_role_card(uid, data):
         rank = 'SSS' if score >= 140 else 'SS' if 120 <= score < 140 else 'S' if 100 <= score < 120 else 'A' if 75 <= score < 100 else 'B' if 50 <= score < 75 else 'C'
         bg_draw.text((412 + 317 * i, 998), f'{rank}-{value}', fill='#ffde6b', font=get_font(28, 'number.ttf'))
         bg.alpha_composite(level_mask.resize((98, 30)), (412 + 317 * i, 1032))
-        draw_center_text(bg_draw, f"LV{artifact['等级']}", 412 + 317 * i, 412 + 317 * i + 98, 1033, 'black', get_font(27, 'number.ttf'))
+        draw_center_text(bg_draw, f"LV{artifact['等级']}", 412 + 317 * i, 412 + 317 * i + 98, 1033, 'black',
+                         get_font(27, 'number.ttf'))
         bg_draw.text((411 + 317 * i, 1069), artifact['主属性']['属性名'], fill='white', font=get_font(25))
         if artifact['主属性']['属性名'] not in ['生命值', '攻击力', '元素精通']:
             bg_draw.text((408 + 317 * i, 1100), f"+{artifact['主属性']['属性值']}%", fill='white',
@@ -254,20 +257,27 @@ async def draw_role_card(uid, data):
         artifact_path = await aiorequests.get_img(url=artifact_url.format(suit[0][1]), size=(110, 110),
                                                   save_path=artifact_path)
         bg.alpha_composite(artifact_path, (76, 1130))
-        bg.alpha_composite(artifact_path, (76, 1255))
-        bg_draw.text((184, 1168), f'{suit[0][0][:2]}四件套', fill='white', font=get_font(36))
-        bg_draw.text((184, 1292), f'{suit[0][0][:2]}四件套', fill='white', font=get_font(36))
+        bg_draw.text((184, 1168), f'{suit[0][0][:2]}二件套', fill='white', font=get_font(36))
+        bg_draw.text((184, 1292), '未激活套装', fill='white', font=get_font(36))
     else:
-        artifact_path1 = res_path2 / 'reli' / f'{suit[0][1]}.png'
-        artifact_path1 = await aiorequests.get_img(url=artifact_url.format(suit[0][1]), size=(110, 110),
-                                                   save_path=artifact_path1)
-        artifact_path2 = res_path2 / 'reli' / f'{suit[1][1]}.png'
-        artifact_path2 = await aiorequests.get_img(url=artifact_url.format(suit[1][1]), size=(110, 110),
-                                                   save_path=artifact_path2)
+        if suit[0][0] == suit[1][0]:
+            artifact_path1 = res_path2 / 'reli' / f'{suit[0][1]}.png'
+            artifact_path1 = artifact_path2 = await aiorequests.get_img(url=artifact_url.format(suit[0][1]),
+                                                                        size=(110, 110),
+                                                                        save_path=artifact_path1)
+            bg_draw.text((184, 1168), f'{suit[0][0][:2]}四件套', fill='white', font=get_font(36))
+            bg_draw.text((184, 1292), f'{suit[0][0][:2]}四件套', fill='white', font=get_font(36))
+        else:
+            artifact_path1 = res_path2 / 'reli' / f'{suit[0][1]}.png'
+            artifact_path1 = await aiorequests.get_img(url=artifact_url.format(suit[0][1]), size=(110, 110),
+                                                       save_path=artifact_path1)
+            artifact_path2 = res_path2 / 'reli' / f'{suit[1][1]}.png'
+            artifact_path2 = await aiorequests.get_img(url=artifact_url.format(suit[1][1]), size=(110, 110),
+                                                       save_path=artifact_path2)
+            bg_draw.text((184, 1168), f'{suit[0][0][:2]}两件套', fill='white', font=get_font(36))
+            bg_draw.text((184, 1292), f'{suit[1][0][:2]}两件套', fill='white', font=get_font(36))
         bg.alpha_composite(artifact_path1, (76, 1130))
         bg.alpha_composite(artifact_path2, (76, 1255))
-        bg_draw.text((184, 1168), f'{suit[0][0][:2]}两件套', fill='white', font=get_font(36))
-        bg_draw.text((184, 1292), f'{suit[1][0][:2]}两件套', fill='white', font=get_font(36))
 
     # 立绘
     paint_path = res_path / 'player_card2' / '立绘' / f'{data["名称"]}.png'

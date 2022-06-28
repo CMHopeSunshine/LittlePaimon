@@ -285,10 +285,9 @@ def get_artifact_suit(artifacts: list):
         if suit.count(s) >= 4:
             for r in artifacts:
                 if r['所属套装'] == s:
-                    return [[s, r['图标']]]
-    if len(suit2) == 2:
-        for r in artifacts:
-            if r['所属套装'] in suit2:
-                final_suit.append([r['所属套装'], r['图标']])
-                suit2.remove(r['所属套装'])
+                    return [(s, r['图标']), (s, r['图标'])]
+    for r in artifacts:
+        if r['所属套装'] in suit2:
+            final_suit.append((r['所属套装'], r['图标']))
+            suit2.remove(r['所属套装'])
     return final_suit
