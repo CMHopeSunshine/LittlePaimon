@@ -66,7 +66,7 @@ def create_guess_matcher(role_name, second, group_id):
     re_str = '|'.join(alias_list)
     guess_matcher = on_regex(re_str, temp=True, rule=Rule(check_group))
     guess_matcher.plugin_name = "Guess_voice"
-    guess_matcher.expire_time = datetime.timedelta(seconds=second)
+    guess_matcher.expire_time = datetime.datetime.now() + datetime.timedelta(seconds=second)
 
     @guess_matcher.handle()
     async def _(event: GroupMessageEvent):

@@ -1,4 +1,3 @@
-import traceback
 from io import BytesIO
 from pathlib import Path
 from ssl import SSLCertVerificationError
