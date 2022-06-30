@@ -57,3 +57,5 @@
   - 优化`ysd`面板属性和圣遗物词条不对齐的问题
   - `原神猜语音`新的角色也能正确匹配识别[#82](https://github.com/CMHopeSunshine/LittlePaimon/pull/82)
   - 修复`获取抽卡记录`问题[#81](https://github.com/CMHopeSunshine/LittlePaimon/issues/81)
++ 6.30
+  - `ysd`支持查看`钟离、胡桃、雷电将军`的伤害计算beta(~~可能BUG有点多~~)

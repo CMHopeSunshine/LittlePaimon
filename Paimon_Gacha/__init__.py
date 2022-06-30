@@ -37,7 +37,7 @@ __plugin_meta__ = PluginMetadata(
 sim_gacha = on_regex(r'^抽((?P<num>\d+)|(?:.*))十连(?P<pool>.*?)$', priority=5, block=True)
 sim_gacha.__paimon_help__ = {
     "usage": "抽[数量]十连[卡池]",
-    "introduce": "模拟抽卡，池有角色1|角色2|武器|常驻|菜单",
+    "introduce": "模拟抽卡，池有角色1|角色2|武器|常驻|彩蛋",
     "priority": 1
 }
 

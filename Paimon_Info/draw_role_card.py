@@ -5,6 +5,8 @@ from utils.file_handler import load_image, load_json
 from utils.enka_util import get_artifact_suit, artifact_total_value, get_expect_score, get_effective, check_effective
 from utils import aiorequests
 from utils.message_util import MessageBuild
+from utils.PIL_util import get_font, draw_right_text, draw_center_text
+from .damage_cal.damage import get_role_dmg
 
 res_path = Path(__file__).parent.parent / 'res'
 res_path2 = Path() / 'data' / 'LittlePaimon' / 'res'
@@ -37,25 +39,18 @@ loading = load_image(res_path / 'player_card2' / '加载中.png', mode='RGBA', s
 region = load_json(path=Path(__file__).parent.parent / 'utils' / 'json' / 'role_region.json')
 
 
-def get_font(size, font='hywh.ttf'):
-    return ImageFont.truetype(str(res_path / font), size)
-
-
-def draw_right_text(draw, text, width, height, fill, font):
-    text_length = draw.textlength(text, font=font)
-    draw.text((width - text_length, height), text, fill=fill,
-              font=font)
-
-
-def draw_center_text(draw, text, left_width, right_width, height, fill, font):
-    text_length = draw.textlength(text, font=font)
-    draw.text((left_width + (right_width - left_width - text_length) / 2, height), text, fill=fill,
-              font=font)
-
-
 async def draw_role_card(uid, data):
-    bg = Image.new('RGBA', (1080, 1920), (0, 0, 0, 0))
-    bg.alpha_composite(bg_card[data['元素']], (0, 0))
+    dmg_img = get_role_dmg(data['名称'], data)
+    if dmg_img:
+        bg = Image.new('RGBA', (1080, 1920 + dmg_img.size[1] + 20), (0, 0, 0, 0))
+        bg_card_center = bg_card[data['元素']].crop((0, 730, 1080, 1377)).resize((1080, dmg_img.size[1] + 667))
+        bg.alpha_composite(bg_card[data['元素']].crop((0, 0, 1080, 730)), (0, 0))
+        bg.alpha_composite(bg_card_center, (0, 730))
+        bg.alpha_composite(bg_card[data['元素']].crop((0, 1377, 1080, 1920)), (0, dmg_img.size[1] + 1397))
+        bg.alpha_composite(dmg_img, (71, 1846))
+    else:
+        bg = Image.new('RGBA', (1080, 1920), (0, 0, 0, 0))
+        bg.alpha_composite(bg_card[data['元素']], (0, 0))
     bg.alpha_composite(base_mask, (0, 0))
     if data['名称'] not in ['荧', '空', '埃洛伊']:
         region_icon = load_image(path=res_path / 'player_card2' / f'{region[data["名称"]]}.png', size=(130, 130))
@@ -96,7 +91,7 @@ async def draw_role_card(uid, data):
     draw_right_text(bg_draw, str(prop['元素精通']), 480, 553, 'white', get_font(34, 'number.ttf'))
 
     text = round(prop['元素充能效率'] * 100, 1)
-    bg_draw.text((89, 610), '充能效率', fill='white', font=get_font(34, 'hywh.ttf'))
+    bg_draw.text((89, 610), '元素充能效率', fill='white', font=get_font(34, 'hywh.ttf'))
     draw_right_text(bg_draw, f"{text}%", 480, 612, 'white', get_font(34, 'number.ttf'))
 
     max_element = max(prop['伤害加成'])
@@ -287,7 +282,10 @@ async def draw_role_card(uid, data):
     else:
         bg.alpha_composite(load_image(path=paint_path), (695, 234))
 
-    bg_draw.text((50, 1870), f'更新于{data["更新时间"].replace("2022-", "")}', fill='white', font=get_font(36, '优设标题黑.ttf'))
-    bg_draw.text((560, 1869), 'Created by LittlePaimon', fill='white', font=get_font(36, '优设标题黑.ttf'))
+    # 伤害计算
+
+    # 更新时间和Paimon标志
+    bg_draw.text((50, bg.size[1] - 50), f'更新于{data["更新时间"].replace("2022-", "")}', fill='white', font=get_font(36, '优设标题黑.ttf'))
+    bg_draw.text((560, bg.size[1] - 51), 'Created by LittlePaimon', fill='white', font=get_font(36, '优设标题黑.ttf'))
 
     return MessageBuild.Image(bg, quality=75, mode='RGB')
