@@ -1,17 +1,6 @@
 from utils.enka_util import get_artifact_suit
 
 
-def attribute(base_attribute: float, increase_attribute: float = 0, fixed_attribute: float = 0):
-    """
-    计算属性
-    :param base_attribute: 基础属性
-    :param increase_attribute: 百分比增加系数
-    :param fixed_attribute: 固定增加系数
-    :return: 最终属性
-    """
-    return base_attribute * (1 + increase_attribute) + fixed_attribute
-
-
 def resistance_coefficient(base_resistance: float = 0.1, reduction_rate: float = 0):
     """
     计算抗性系数

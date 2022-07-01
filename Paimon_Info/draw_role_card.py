@@ -1,4 +1,4 @@
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw
 from pathlib import Path
 
 from utils.file_handler import load_image, load_json
@@ -56,12 +56,11 @@ async def draw_role_card(uid, data):
         region_icon = load_image(path=res_path / 'player_card2' / f'{region[data["名称"]]}.png', size=(130, 130))
         bg.alpha_composite(region_icon, (0, 4))
     bg_draw = ImageDraw.Draw(bg)
-    bg_draw.text((131, 100), f"UID{uid}", fill='white', font=get_font(48, 'number.ttf'))
+    bg_draw.text((131, 100), f"UID {uid}", fill='white', font=get_font(48, 'number.ttf'))
     bg_draw.text((134, 150), data['名称'], fill='white', font=get_font(72, '优设标题黑.ttf'))
     bg.alpha_composite(level_mask, (298 + 60 * (len(data['名称']) - 2), 172))
     draw_center_text(bg_draw, f'LV{data["等级"]}', 298 + 60 * (len(data['名称']) - 2),
                      298 + 60 * (len(data['名称']) - 2) + 171, 174, 'black', get_font(48, 'number.ttf'))
-
     # 属性值
     prop = data['属性']
     bg_draw.text((89, 262), '生命值', fill='white', font=get_font(34, 'hywh.ttf'))
@@ -282,10 +281,8 @@ async def draw_role_card(uid, data):
     else:
         bg.alpha_composite(load_image(path=paint_path), (695, 234))
 
-    # 伤害计算
-
-    # 更新时间和Paimon标志
-    bg_draw.text((50, bg.size[1] - 50), f'更新于{data["更新时间"].replace("2022-", "")}', fill='white', font=get_font(36, '优设标题黑.ttf'))
-    bg_draw.text((560, bg.size[1] - 51), 'Created by LittlePaimon', fill='white', font=get_font(36, '优设标题黑.ttf'))
+    draw_center_text(bg_draw, f'更新于{data["更新时间"].replace("2022-", "")[:-3]}', 0, 1080, bg.size[1] - 95, '#afafaf', get_font(33, '优设标题黑.ttf'))
+    bg_draw.text((24, bg.size[1] - 50), 'Created by LittlePaimon | Powered by Enka.Network', fill='white',
+                 font=get_font(36, '优设标题黑.ttf'))
 
     return MessageBuild.Image(bg, quality=75, mode='RGB')
