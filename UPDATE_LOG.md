@@ -63,8 +63,10 @@
   - 伤害计算新增`魈`
 + 7.3
   - 重构部分代码
+  - **修改了插件加载方式**
+    - 如果你此前是在`bot.py`中使用`nonebot.load_plugins("LittlePaimon")`方式加载插件，请在更新后将`load_plugins`改为`load_plugin`，也就是去掉`s`
   - **修改静态资源和用户数据目录**
-    - 理论上会**自动迁移**，但`git pull`更新的话可能将资源删除，所以最好**手动迁移，同时备份**
+    - 理论上会**自动迁移**，但`git pull`更新可能会将资源删除，所以最好**手动迁移，同时备份**
     - 1、将派蒙的`res`文件夹改名`LittlePaimon`，移到nonebot根目录的`resources`中（没有`resources`就新建一个）
     - 2、将派蒙的`user_data`文件夹移到nonebot根目录的`data/LittlePaimon`目录中（同理，没有就新建）
   - 静态资源改为启动时自动下载

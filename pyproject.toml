@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "LittlePaimon"
-version = "1.0.1"
+version = "1.0.2"
 description = "小派蒙！原神qq群机器人，基于NoneBot2的UID查询、抽卡导出分析、模拟抽卡、实时便签、札记等多功能小助手。"
 authors = ["惜月 <277073121@qq.com>"]
 readme = "README.md"

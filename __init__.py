@@ -1,12 +1,15 @@
-import hashlib
 import asyncio
+import hashlib
+import os.path
+import shutil
+from pathlib import Path
 
 from littlepaimon_utils.files import load_json, download
-from pathlib import Path
-import shutil
 from nonebot import get_driver, logger
+from nonebot import load_plugins
 
-__version__ = '1.0.0'
+load_plugins(os.path.dirname(__file__))
+
 driver = get_driver()
 
 resource_list = load_json(path=Path(__file__).parent / 'resource_list.json')

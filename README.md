@@ -65,6 +65,8 @@
   - 伤害计算新增`魈`
 + 7.3
   - 重构部分代码
+  - **修改了插件加载方式**
+    - 如果你此前是在`bot.py`中使用`nonebot.load_plugins("LittlePaimon")`方式加载插件，请在更新后将`load_plugins`改为`load_plugin`，也就是去掉`s`
   - **修改静态资源和用户数据目录**
     - 理论上会**自动迁移**，但`git pull`更新可能会将资源删除，所以最好**手动迁移，同时备份**
     - 1、将派蒙的`res`文件夹改名`LittlePaimon`，移到nonebot根目录的`resources`中（没有`resources`就新建一个）
@@ -84,21 +86,33 @@
 
  + 部署NoneBot2和go-cqhttp
 
- + 安装派蒙
-   ```bash
-   # 在插件目录运行:
-   # pip方式
-   pip install littlepaimon
+ + 安装和启用派蒙
    
+   - git clone方式
+   
+   ```bash
+   # 在nonebot根目录运行:
+   
+   # 1、克隆派蒙源码
+   git clone https://github.com/CMHopeSunshine/LittlePaimon
+   
+   # 2、编辑bot.py，在load_from_toml下方添加一句
+   nonebot.load_plugin("LittlePaimon")
+   ```
+   
+   - pip方式
+   
+   ```bash
+   # 在nonebot目录运行:
+   
+   # 1、pip方式
+   pip install littlepaimon
    # 如果你使用poetry进行环境管理，可以：
    poetry add littlepaimon
-   ```
- + 启用插件
-   ```python
-   # 编辑bot.py，在load_from_toml下面添加：
-   nonebot.load_plugins("LittlePaimon")
-   ```
    
+   # 2、编辑pyproject.toml，在[tool.nonebot]下方的plugins里加入LittlePaimon
+   plugins = ["其他插件xxxx", "LittlePaimon"]
+   ```
 ### 我不熟悉NoneBot2
 **详细部署教程：**
 
