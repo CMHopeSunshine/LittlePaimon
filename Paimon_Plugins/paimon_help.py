@@ -31,8 +31,8 @@ help_.__paimon_help__ = {
     "priority":  99
 }
 
-font_path = Path(__file__).parent.parent / 'res'
-res_path = Path(__file__).parent.parent / 'res' / 'help'
+font_path = Path() / 'resources' / 'LittlePaimon'
+res_path = Path() / 'resources' / 'LittlePaimon' / 'help'
 
 
 def get_font(size, font='hywh.ttf') -> ImageFont:
