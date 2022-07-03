@@ -1,21 +1,21 @@
-import random
 import asyncio
-import re
-import time
 import os
+import random
+import re
 import threading
+import time
 
 from nonebot import on_message, require, get_bot, logger
-from nonebot.exception import ActionFailed
-from nonebot.typing import T_State
-from nonebot.rule import keyword, to_me, Rule
 from nonebot.adapters import Bot
 from nonebot.adapters.onebot.v11 import GroupMessageEvent
-from nonebot.permission import SUPERUSER
 from nonebot.adapters.onebot.v11 import permission
+from nonebot.exception import ActionFailed
+from nonebot.permission import SUPERUSER
+from nonebot.rule import keyword, to_me, Rule
+from nonebot.typing import T_State
 
 from .model import Chat
-from utils.config import config
+from ...utils.config import config
 
 message_id_lock = threading.Lock()
 message_id_dict = {}

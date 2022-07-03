@@ -1,20 +1,20 @@
 import datetime
 import os
 import random
+from pathlib import Path
 
 import matplotlib.pyplot as plt
 from PIL import Image, ImageDraw, ImageFont
+from littlepaimon_utils import aiorequests
+from littlepaimon_utils.files import load_image
 
-from pathlib import Path
-from utils import aiorequests
-from utils.message_util import MessageBuild
-from utils.file_handler import load_image
+from ..utils.message_util import MessageBuild
 
-res_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'res')
+res_path = Path() / 'resources' / 'LittlePaimon'
 
 
 def get_font(size, font='msyhbd.ttc'):
-    return ImageFont.truetype(os.path.join(res_path, font), size)
+    return ImageFont.truetype(str(res_path / font), size)
 
 
 async def draw_ring(per):

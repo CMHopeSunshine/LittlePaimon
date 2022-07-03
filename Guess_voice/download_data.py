@@ -3,10 +3,10 @@ import os
 from pathlib import Path
 
 from bs4 import BeautifulSoup
+from littlepaimon_utils import aiorequests
 from nonebot import logger
 from sqlitedict import SqliteDict  # TODO 加入requirements
 
-from utils import aiorequests
 from .util import get_path
 
 OUT_PUT = Path() / 'data' / 'LittlePaimon' / 'guess_voice' / 'voice'

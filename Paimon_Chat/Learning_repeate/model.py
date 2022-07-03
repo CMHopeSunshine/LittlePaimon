@@ -1,21 +1,20 @@
-from typing import Generator, List, Optional, Union, Tuple, Dict, Any
-from functools import cached_property, cmp_to_key
-from dataclasses import dataclass
-from collections import defaultdict
-
-import jieba_fast.analyse
-import threading
-import pypinyin
-import pymongo
-import time
+import atexit
 import random
 import re
-import atexit
+import threading
+import time
+from collections import defaultdict
+from dataclasses import dataclass
+from functools import cached_property, cmp_to_key
+from typing import Generator, List, Optional, Union, Tuple, Dict, Any
 
+import jieba_fast.analyse
+import pymongo
+import pypinyin
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, PrivateMessageEvent
 from nonebot.adapters.onebot.v11 import Message
 
-from utils.config import config
+from ...utils.config import config
 
 mongo_client = pymongo.MongoClient(config.paimon_mongodb_url)
 

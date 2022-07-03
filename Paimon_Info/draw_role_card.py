@@ -1,14 +1,15 @@
-from PIL import Image, ImageDraw
 from pathlib import Path
 
-from utils.file_handler import load_image, load_json
-from utils.enka_util import get_artifact_suit, artifact_total_value, get_expect_score, get_effective, check_effective
-from utils import aiorequests
-from utils.message_util import MessageBuild
-from utils.PIL_util import get_font, draw_right_text, draw_center_text
-from .damage_cal.damage import get_role_dmg
+from PIL import Image, ImageDraw, ImageFont
+from littlepaimon_utils import aiorequests
+from littlepaimon_utils.files import load_image, load_json
+from littlepaimon_utils.images import draw_right_text, draw_center_text
 
-res_path = Path(__file__).parent.parent / 'res'
+from .damage_cal.damage import get_role_dmg
+from ..utils.enka_util import get_artifact_suit, artifact_total_value, get_expect_score, get_effective, check_effective
+from ..utils.message_util import MessageBuild
+
+res_path = Path() / 'resources' / 'LittlePaimon'
 res_path2 = Path() / 'data' / 'LittlePaimon' / 'res'
 weapon_url = 'https://upload-bbs.mihoyo.com/game_record/genshin/equip/{}.png'
 artifact_url = 'https://upload-bbs.mihoyo.com/game_record/genshin/equip/{}.png'
@@ -16,48 +17,37 @@ talent_url = 'https://upload-bbs.mihoyo.com/game_record/genshin/constellation_ic
 skill_url = 'https://static.cherishmoon.fun/LittlePaimon/skill/{}.png'
 
 element_type = ['物理', '火元素', '雷元素', '水元素', '草元素', '风元素', '岩元素', '冰元素']
-element_list = ['火', '水', '冰', '雷', '岩', '风']
-bg_card = {}
-base_icon = {}
-base_mask = load_image(res_path / 'player_card2' / '底遮罩.png')
-level_mask = load_image(res_path / 'player_card2' / '等级遮罩.png')
-star = load_image(res_path / 'player_card2' / 'star.png')
-for e in element_list:
-    bg_card[e] = load_image(res_path / 'player_card2' / f'背景_{e}.png', mode='RGBA')
-    base_icon[e] = load_image(res_path / 'player_card2' / f'图标_{e}.png', mode='RGBA')
-base_icon['灰'] = load_image(res_path / 'player_card2' / '图标_灰.png', mode='RGBA')
-rank_list = ['S', 'A', 'B', 'C']
-rank_icon = {}
-for r in rank_list:
-    rank_icon[r] = load_image(res_path / 'player_card2' / f'评分{r}.png', mode='RGBA')
-weapon_bg = []
-for i in range(1, 6):
-    weapon_bg.append(load_image(res_path / 'other' / f'star{i}.png', size=(150, 150)))
-paint = load_image(res_path / 'player_card2' / '立绘框.png', mode='RGBA')
-lock = load_image(res_path / 'player_card2' / '锁.png', mode='RGBA', size=(45, 45))
-loading = load_image(res_path / 'player_card2' / '加载中.png', mode='RGBA', size=(120, 120))
-region = load_json(path=Path(__file__).parent.parent / 'utils' / 'json' / 'role_region.json')
+
+region = load_json(path=Path(__file__).parent.parent / 'utils' / 'json_data' / 'role_region.json')
+
+
+def get_font(size, font='hywh.ttf'):
+    return ImageFont.truetype(str(res_path / font), size)
 
 
 async def draw_role_card(uid, data):
+    bg_card = load_image(res_path / 'player_card2' / f'背景_{data["元素"]}.png', mode='RGBA')
     dmg_img = get_role_dmg(data['名称'], data)
     if dmg_img:
         bg = Image.new('RGBA', (1080, 1920 + dmg_img.size[1] + 20), (0, 0, 0, 0))
-        bg_card_center = bg_card[data['元素']].crop((0, 730, 1080, 1377)).resize((1080, dmg_img.size[1] + 667))
-        bg.alpha_composite(bg_card[data['元素']].crop((0, 0, 1080, 730)), (0, 0))
+        bg_card_center = bg_card.crop((0, 730, 1080, 1377)).resize((1080, dmg_img.size[1] + 667))
+        bg.alpha_composite(bg_card.crop((0, 0, 1080, 730)), (0, 0))
         bg.alpha_composite(bg_card_center, (0, 730))
-        bg.alpha_composite(bg_card[data['元素']].crop((0, 1377, 1080, 1920)), (0, dmg_img.size[1] + 1397))
+        bg.alpha_composite(bg_card.crop((0, 1377, 1080, 1920)), (0, dmg_img.size[1] + 1397))
         bg.alpha_composite(dmg_img, (71, 1846))
     else:
         bg = Image.new('RGBA', (1080, 1920), (0, 0, 0, 0))
-        bg.alpha_composite(bg_card[data['元素']], (0, 0))
+        bg.alpha_composite(bg_card, (0, 0))
+    base_mask = load_image(res_path / 'player_card2' / '底遮罩.png')
     bg.alpha_composite(base_mask, (0, 0))
     if data['名称'] not in ['荧', '空', '埃洛伊']:
         region_icon = load_image(path=res_path / 'player_card2' / f'{region[data["名称"]]}.png', size=(130, 130))
         bg.alpha_composite(region_icon, (0, 4))
     bg_draw = ImageDraw.Draw(bg)
-    bg_draw.text((131, 100), f"UID {uid}", fill='white', font=get_font(48, 'number.ttf'))
+    bg_draw.text((131, 100), f"UID{uid}", fill='white', font=get_font(48, 'number.ttf'))
     bg_draw.text((134, 150), data['名称'], fill='white', font=get_font(72, '优设标题黑.ttf'))
+
+    level_mask = load_image(res_path / 'player_card2' / '等级遮罩.png')
     bg.alpha_composite(level_mask, (298 + 60 * (len(data['名称']) - 2), 172))
     draw_center_text(bg_draw, f'LV{data["等级"]}', 298 + 60 * (len(data['名称']) - 2),
                      298 + 60 * (len(data['名称']) - 2) + 171, 174, 'black', get_font(48, 'number.ttf'))
@@ -101,10 +91,12 @@ async def draw_role_card(uid, data):
     draw_right_text(bg_draw, f"{text}%", 480, 671, 'white', get_font(34, 'number.ttf'))
 
     # 天赋
+    base_icon = load_image(res_path / 'player_card2' / f'图标_{data["元素"]}.png', mode='RGBA')
+    base_icon_grey = load_image(res_path / 'player_card2' / '图标_灰.png', mode='RGBA')
     if data['名称'] in ['神里绫华', '莫娜']:
         data['天赋'].pop(2)
     for i in range(3):
-        bg.alpha_composite(base_icon[data['元素']].resize((132, 142)), (564, 253 + 147 * i))
+        bg.alpha_composite(base_icon.resize((132, 142)), (564, 253 + 147 * i))
         draw_center_text(bg_draw, str(data['天赋'][i]['等级']), 510, 552, 310 + 147 * i, 'black',
                          get_font(34, 'number.ttf'))
         skill_icon = res_path2 / 'skill' / f'{data["天赋"][i]["图标"]}.png'
@@ -113,25 +105,28 @@ async def draw_role_card(uid, data):
         bg.alpha_composite(skill_icon, (603, 298 + 147 * i))
 
     # 命座
+    lock = load_image(res_path / 'player_card2' / '锁.png', mode='RGBA', size=(45, 45))
     t = 0
     for talent in data['命座']:
-        bg.alpha_composite((base_icon[data['元素']]).resize((83, 90)), (510 + t * 84, 790))
+        bg.alpha_composite(base_icon.resize((83, 90)), (510 + t * 84, 790))
         talent_icon = res_path2 / 'skill' / f'{talent["图标"]}.png'
         talent_icon = await aiorequests.get_img(url=talent_url.format(talent["图标"]), size=(45, 45),
                                                 save_path=talent_icon)
         bg.alpha_composite(talent_icon, (529 + t * 84, 813))
         t += 1
     for t2 in range(t, 6):
-        bg.alpha_composite((base_icon['灰']).resize((83, 90)), (510 + t2 * 84, 790))
+        bg.alpha_composite(base_icon_grey.resize((83, 90)), (510 + t2 * 84, 790))
         bg.alpha_composite(lock, (530 + t2 * 84, 813))
 
     # 武器
-    bg.alpha_composite(weapon_bg[data['武器']['星级'] - 1], (91, 760))
+    weapon_bg = load_image(res_path / 'other' / f'star{data["武器"]["星级"]}.png', size=(150, 150))
+    bg.alpha_composite(weapon_bg, (91, 760))
     weapon_icon = res_path2 / 'weapon' / f'{data["武器"]["图标"]}.png'
     weapon_icon = await aiorequests.get_img(url=weapon_url.format(data["武器"]["图标"]), size=(150, 150),
                                             save_path=weapon_icon)
     bg.alpha_composite(weapon_icon, (91, 760))
     bg_draw.text((268, 758), data['武器']['名称'], fill='white', font=get_font(34, 'hywh.ttf'))
+    star = load_image(res_path / 'player_card2' / 'star.png')
     for i in range(data['武器']['星级']):
         bg.alpha_composite(star, (267 + i * 30, 799))
     draw_center_text(bg_draw, f'LV{data["武器"]["等级"]}', 268, 268 + 98, 835, 'black', get_font(27, 'number.ttf'))
@@ -147,7 +142,8 @@ async def draw_role_card(uid, data):
             artifact = data['圣遗物'][i]
         except IndexError:
             break
-        bg.alpha_composite(weapon_bg[artifact['星级'] - 1].resize((100, 100)), (587 + 317 * i, 1002))
+        artifact_bg = load_image(res_path / 'other' / f'star{artifact["星级"]}.png', size=(100, 100))
+        bg.alpha_composite(artifact_bg, (587 + 317 * i, 1002))
         reli_path = res_path2 / 'reli' / f'{artifact["图标"]}.png'
         reli_path = await aiorequests.get_img(url=artifact_url.format(artifact["图标"]), size=(100, 100),
                                               save_path=reli_path)
@@ -188,7 +184,8 @@ async def draw_role_card(uid, data):
             artifact = data['圣遗物'][i + 2]
         except IndexError:
             break
-        bg.alpha_composite(weapon_bg[artifact['星级'] - 1].resize((100, 100)), (270 + 317 * i, 1439))
+        artifact_bg = load_image(res_path / 'other' / f'star{artifact["星级"]}.png', size=(100, 100))
+        bg.alpha_composite(artifact_bg, (270 + 317 * i, 1439))
         reli_path = res_path2 / 'reli' / f'{artifact["图标"]}.png'
         reli_path = await aiorequests.get_img(url=artifact_url.format(artifact["图标"]), size=(100, 100),
                                               save_path=reli_path)
@@ -228,17 +225,18 @@ async def draw_role_card(uid, data):
     bg_draw.text((119, 1057), '总有效词条数', fill='#afafaf', font=get_font(36))
     score_pro = total_score / (average * 5) * 100
     total_rank = 'SSS' if score_pro >= 140 else 'SS' if 120 <= score_pro < 140 else 'S' if 100 <= score_pro < 120 else 'A' if 75 <= score_pro < 100 else 'B' if 50 <= score_pro < 75 else 'C'
+    rank_icon = load_image(res_path / 'player_card2' / f'评分{total_rank[0]}.png', mode='RGBA')
     if len(total_rank) == 3:
-        bg.alpha_composite(rank_icon[total_rank[0]], (95, 964))
-        bg.alpha_composite(rank_icon[total_rank[0]], (145, 964))
-        bg.alpha_composite(rank_icon[total_rank[0]], (195, 964))
+        bg.alpha_composite(rank_icon, (95, 964))
+        bg.alpha_composite(rank_icon, (145, 964))
+        bg.alpha_composite(rank_icon, (195, 964))
         bg_draw.text((250, 974), str(round(total_score, 1)), fill='white', font=get_font(60, 'number.ttf'))
     elif len(total_rank) == 2:
-        bg.alpha_composite(rank_icon[total_rank[0]], (125, 964))
-        bg.alpha_composite(rank_icon[total_rank[0]], (175, 964))
+        bg.alpha_composite(rank_icon, (125, 964))
+        bg.alpha_composite(rank_icon, (175, 964))
         bg_draw.text((235, 974), str(round(total_score, 1)), fill='white', font=get_font(60, 'number.ttf'))
     else:
-        bg.alpha_composite(rank_icon[total_rank[0]], (143, 964))
+        bg.alpha_composite(rank_icon, (143, 964))
         bg_draw.text((217, 974), str(round(total_score, 1)), fill='white', font=get_font(60, 'number.ttf'))
 
     # 圣遗物套装
@@ -275,11 +273,7 @@ async def draw_role_card(uid, data):
 
     # 立绘
     paint_path = res_path / 'player_card2' / '立绘' / f'{data["名称"]}.png'
-    if not paint_path.exists():
-        bg.alpha_composite(paint, (695, 234))
-        bg.alpha_composite(loading, (872, 411))
-    else:
-        bg.alpha_composite(load_image(path=paint_path), (695, 234))
+    bg.alpha_composite(load_image(path=paint_path), (695, 234))
 
     draw_center_text(bg_draw, f'更新于{data["更新时间"].replace("2022-", "")[:-3]}', 0, 1080, bg.size[1] - 95, '#afafaf', get_font(33, '优设标题黑.ttf'))
     bg_draw.text((24, bg.size[1] - 50), 'Created by LittlePaimon | Powered by Enka.Network', fill='white',

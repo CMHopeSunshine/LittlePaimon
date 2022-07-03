@@ -1,14 +1,14 @@
 from pathlib import Path
-from PIL import Image, ImageDraw, ImageFont
 from typing import Dict, List
+
+from PIL import Image, ImageDraw, ImageFont
 from nonebot import on_command
 from nonebot import plugin as nb_plugin
-from nonebot.params import Depends
 from nonebot.adapters.onebot.v11 import MessageEvent
+from nonebot.params import Depends
 from nonebot.plugin import PluginMetadata
 
-from utils.message_util import MessageBuild
-
+from ..utils.message_util import MessageBuild
 
 __plugin_meta__ = PluginMetadata(
     name="帮助菜单",

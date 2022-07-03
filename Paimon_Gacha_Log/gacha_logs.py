@@ -2,7 +2,8 @@ import json
 import os
 from asyncio import sleep
 
-from utils import aiorequests
+from littlepaimon_utils import aiorequests
+
 from .UIGF_and_XLSX import convertUIGF, writeXLSX
 from .api import getApi
 from .meta_data import gachaQueryTypeIds, gachaQueryTypeDict

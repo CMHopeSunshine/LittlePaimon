@@ -1,4 +1,3 @@
-import base64
 import hashlib
 import json
 import random
@@ -6,29 +5,13 @@ import string
 from collections import defaultdict
 from time import time
 
+from littlepaimon_utils import aiorequests
 from nonebot import logger
 
-from . import aiorequests
 from .db_util import get_cookie_cache, update_cookie_cache, delete_cookie_cache
 from .db_util import get_private_cookie, delete_cookie
 from .db_util import get_public_cookie, limit_public_cookie
 from .message_util import send_cookie_delete_msg
-
-
-# 冷却时间限制器
-class FreqLimiter:
-    def __init__(self, default_cd_seconds: int = 60):
-        self.next_time = defaultdict(float)
-        self.default_cd = default_cd_seconds
-
-    def check(self, key) -> bool:
-        return bool(time() >= self.next_time[key])
-
-    def start_cd(self, key, cd_time=0):
-        self.next_time[key] = time() + (cd_time if cd_time > 0 else self.default_cd)
-
-    def left_time(self, key) -> int:
-        return int(self.next_time[key] - time()) + 1
 
 
 # 双参数冷却时间限制器

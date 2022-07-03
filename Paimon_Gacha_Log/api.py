@@ -1,6 +1,6 @@
 from urllib import parse
 
-from utils import aiorequests
+from littlepaimon_utils import aiorequests
 
 
 def toApi(url):

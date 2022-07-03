@@ -1,23 +1,16 @@
 import datetime
-import json
-import os
 import random
+from pathlib import Path
 
 import numpy
-from PIL import Image, PngImagePlugin, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont
+from littlepaimon_utils.files import load_json
 
-from utils.message_util import MessageBuild
 from .gacha_info import init_user_info, user_info, save_user_info
+from ..utils.message_util import MessageBuild
 
-RES_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'res', 'gacha_res')
-font_path = os.path.join(RES_PATH, 'zh-cn.ttf')
-count_font = ImageFont.truetype(font_path, 35)
-time_font = ImageFont.truetype(font_path, 20)
-with open(os.path.join(RES_PATH, 'type.json'), 'r', encoding="utf-8") as fp:
-    type_json = json.load(fp)
-
-cache_img = {}
-cache_item = {}
+RES_PATH = Path() / 'resources' / 'LittlePaimon' / 'gacha_res'
+font_path = Path() / 'resources' / 'LittlePaimon' / 'hywh.ttf'
 
 
 def random_int():
@@ -164,15 +157,17 @@ def once(uid, gacha_data):
 
 
 async def create_item(rank, item_type, name, element, count, dg_time):
-    bg = Image.open(os.path.join(RES_PATH, f'{rank}_background.png')).resize((143, 845))
-    item_img = Image.open(os.path.join(RES_PATH, item_type, f'{name}.png'))
-    rank_img = Image.open(os.path.join(RES_PATH, f'{rank}_star.png')).resize((119, 30))
+    type_json = load_json(RES_PATH / 'type.json', encoding="utf-8")
+    count_font = ImageFont.truetype(str(font_path), 35)
+    bg = Image.open(RES_PATH / f'{rank}_background.png').resize((143, 845))
+    item_img = Image.open(RES_PATH / item_type / f'{name}.png')
+    rank_img = Image.open(RES_PATH / f'{rank}_star.png').resize((119, 30))
 
     if item_type == '角色':
         item_img = item_img.resize((item_img.size[0] + 12, item_img.size[1] + 45))
         item_img.alpha_composite(rank_img, (4, 510))
 
-        item_type_icon = Image.open(os.path.join(RES_PATH, '元素', f'{element}.png')).resize((80, 80))
+        item_type_icon = Image.open(RES_PATH / '元素' / f'{element}.png').resize((80, 80))
         item_img.alpha_composite(item_type_icon, (25, 420))
         bg.alpha_composite(item_img, (3, 125))
 
@@ -182,7 +177,7 @@ async def create_item(rank, item_type, name, element, count, dg_time):
 
         item_type_icon = type_json.get(name)
         if item_type_icon:
-            item_type_icon = Image.open(os.path.join(RES_PATH, '类型', f'{item_type_icon}.png')).resize((100, 100))
+            item_type_icon = Image.open(RES_PATH / '类型' / f'{item_type_icon}.png').resize((100, 100))
 
             bg.alpha_composite(item_type_icon, (18, 530))
     if rank == 5 and count != -1:
@@ -200,6 +195,7 @@ async def create_item(rank, item_type, name, element, count, dg_time):
 
 
 async def ten(uid, gacha_data):
+    type_json = load_json(RES_PATH / 'type.json', encoding="utf-8")
     gacha_list = []
     for i in range(0, 10):
         if gacha_data['gacha_type'] == 'all_star':
@@ -210,7 +206,7 @@ async def ten(uid, gacha_data):
             role = once(uid, gacha_data).copy()
         gacha_list.append(role)
     gacha_list.sort(key=lambda x: x["rank"], reverse=True)
-    img = Image.open(os.path.join(RES_PATH, 'background.png'))
+    img = Image.open(RES_PATH / 'background.png')
     i = 0
     for wish in gacha_list:
         i += 1
@@ -234,6 +230,7 @@ async def ten(uid, gacha_data):
 
 async def more_ten(uid, gacha_data, num, sd):
     time_str = datetime.datetime.strftime(datetime.datetime.now(), '%m-%d %H:%M')
+    time_font = ImageFont.truetype(str(font_path), 20)
     if num == 1:
         img = await ten(uid, gacha_data)
     else:

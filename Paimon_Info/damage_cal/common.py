@@ -1,4 +1,9 @@
-from utils.enka_util import get_artifact_suit
+from pathlib import Path
+
+from ...utils.enka_util import get_artifact_suit
+
+text_font = str(Path() / 'resources' / 'LittlePaimon' / 'hywh.ttf')
+number_font = str(Path() / 'resources' / 'LittlePaimon' / 'number.ttf')
 
 
 def resistance_coefficient(base_resistance: float = 0.1, reduction_rate: float = 0):

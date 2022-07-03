@@ -2,19 +2,18 @@ import random
 from pathlib import Path
 from typing import Union
 
+from littlepaimon_utils.files import load_json_from_url
+from nonebot import get_driver
 from nonebot import on_regex, on_command, logger
+from nonebot.adapters.onebot.v11 import MessageEvent, GroupMessageEvent, PrivateMessageEvent
+from nonebot.exception import FinishedException
 from nonebot.matcher import matchers
 from nonebot.plugin import PluginMetadata
 from nonebot.rule import Rule
-from nonebot import get_driver
-from nonebot.adapters.onebot.v11 import Bot, MessageEvent, GroupMessageEvent, PrivateMessageEvent
-from nonebot.exception import FinishedException
 
-from utils.config import config
-from utils.auth_util import FreqLimiter2
-from utils.message_util import MessageBuild
-from utils.file_handler import load_json_from_url
-
+from ..utils.auth_util import FreqLimiter2
+from ..utils.config import config
+from ..utils.message_util import MessageBuild
 
 __plugin_meta__ = PluginMetadata(
     name="派蒙聊天",
@@ -36,7 +35,7 @@ if config.paimon_mongodb_url:
     except ImportError:
         logger.warning('派蒙机器学习聊天启用失败，可能是mongodb连接失败或缺少相关库（jieba_fast、pymongo、pypinyin）')
 else:
-    logger.warning('派蒙机器学习聊天启用失败，尚未配置mongodb连接url')
+    logger.warning('派蒙机器学习启用失败，未配置mongodb连接url，如无需该功能，可忽略')
 
 driver = get_driver()
 

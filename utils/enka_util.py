@@ -1,22 +1,23 @@
-from pathlib import Path
 import datetime
 import re
+from pathlib import Path
 
-from utils.alias_handler import get_name_by_id
-from utils.file_handler import load_json, save_json
+from littlepaimon_utils.files import load_json, save_json
 
-role_element = load_json(path=Path(__file__).parent / 'json' / 'role_element.json')
-role_skill = load_json(path=Path(__file__).parent / 'json' / 'role_skill.json')
-role_talent = load_json(path=Path(__file__).parent / 'json' / 'role_talent.json')
-weapon = load_json(path=Path(__file__).parent / 'json' / 'weapon.json')
-prop_list = load_json(path=Path(__file__).parent / 'json' / 'prop.json')
-artifact_list = load_json(path=Path(__file__).parent / 'json' / 'artifact.json')
-ra_score = load_json(path=Path(__file__).parent / 'json' / 'score.json')
+from ..utils.alias_handler import get_name_by_id
+
+role_element = load_json(path=Path(__file__).parent / 'json_data' / 'role_element.json')
+role_skill = load_json(path=Path(__file__).parent / 'json_data' / 'role_skill.json')
+role_talent = load_json(path=Path(__file__).parent / 'json_data' / 'role_talent.json')
+weapon = load_json(path=Path(__file__).parent / 'json_data' / 'weapon.json')
+prop_list = load_json(path=Path(__file__).parent / 'json_data' / 'prop.json')
+artifact_list = load_json(path=Path(__file__).parent / 'json_data' / 'artifact.json')
+ra_score = load_json(path=Path(__file__).parent / 'json_data' / 'score.json')
 
 
 class PlayerInfo:
     def __init__(self, uid: str):
-        self.path = Path(__file__).parent.parent / 'user_data' / 'player_info' / f'{uid}.json'
+        self.path = Path() / 'data' / 'LittlePaimon' / 'user_data' / 'player_info' / f'{uid}.json'
         self.data = load_json(path=self.path)
         self.player_info = self.data['玩家信息'] if '玩家信息' in self.data else {}
         self.roles = self.data['角色'] if '角色' in self.data else {}

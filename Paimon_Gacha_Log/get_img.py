@@ -1,19 +1,19 @@
-import os
+from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
 
-from utils.alias_handler import get_short_name
-from utils.message_util import MessageBuild
+from ..utils.alias_handler import get_short_name
+from ..utils.message_util import MessageBuild
 
-res_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'res')
+res_path = Path() / 'resources' / 'LittlePaimon'
 
 
 def get_font(size):
-    return ImageFont.truetype(os.path.join(res_path, 'msyh.ttc'), size)
+    return ImageFont.truetype(str(res_path / 'msyh.ttc'), size)
 
 
 async def get_circle_avatar(avatar, size):
-    avatar = Image.open(os.path.join(res_path, 'thumb', f'{avatar}.png'))
+    avatar = Image.open(res_path / 'thumb' / f'{avatar}.png')
     w, h = avatar.size
     bg = Image.new('RGBA', (w, h), (213, 153, 77, 255))
     bg.alpha_composite(avatar, (0, 0))
@@ -57,9 +57,9 @@ async def sort_data(gacha_data):
 async def draw_gacha_log(data):
     if data['total_num'] == 0:
         return None
-    top = Image.open(os.path.join(res_path, 'player_card', 'gacha_log_top.png'))
-    mid = Image.open(os.path.join(res_path, 'player_card', '卡片身体.png')).resize((768, 80))
-    bottom = Image.open(os.path.join(res_path, 'player_card', '卡片底部.png')).resize((768, 51))
+    top = Image.open(res_path / 'player_card' / 'gacha_log_top.png')
+    mid = Image.open(res_path / 'player_card' / '卡片身体.png').resize((768, 80))
+    bottom = Image.open(res_path / 'player_card' / '卡片底部.png').resize((768, 51))
     five_star = data['5_star']
     col = int(len(five_star) / 6)
     if not len(five_star) % 6 == 0:
@@ -115,6 +115,7 @@ async def draw_gacha_log(data):
 async def get_gacha_log_img(gacha_data, pool):
     all_gacha_data = await sort_data(gacha_data)
     if pool != 'all':
+        img = None
         for pd in all_gacha_data:
             if pd['type'] == pool:
                 img = await draw_gacha_log(pd)

@@ -60,16 +60,15 @@
 
 ## 丨更新日志
 > README只展示最近更新，全部更新日志详见[这里](https://github.com/CMHopeSunshine/LittlePaimon/blob/nonebot2/UPDATE_LOG.md)
-+ 6.28
-  - `ysd`现在支持查看`旅行者`面板信息，增加地区图标显示
-  - 优化`ysd`圣遗物评分算法，现在以有效词条数来决定评级，能简单判断角色多种流派玩法[#40](https://github.com/CMHopeSunshine/LittlePaimon/issues/40)
-  - 优化`ysd`面板属性和圣遗物词条不对齐的问题
-  - `原神猜语音`新的角色也能正确匹配识别[#82](https://github.com/CMHopeSunshine/LittlePaimon/pull/82)
-  - 修复`获取抽卡记录`问题[#81](https://github.com/CMHopeSunshine/LittlePaimon/issues/81)
 + 6.30
   - `ysd`支持查看`钟离、胡桃、雷电将军`的伤害计算(~~如果不准请反馈~~)
 + 7.1
   - 伤害计算新增`魈`
++ 7.3
+  - 重构部分代码
+  - 修改静态资源和用户数据目录(原`res`目录移到nb目录下的`resource`， 原`user_data`目录移到nb目录下的`data`，会**自动迁移**)
+  - 静态资源改为启动时自动下载
+  - **本次更新请注意备份`user_data`用户数据**
 ## 丨功能列表
 
 详见我的博客[功能列表](https://blog.cherishmoon.fun/posts/nonebot2funclist.html) <br>
@@ -116,6 +115,78 @@ javascript:(function(){prompt(document.domain,document.cookie)})();
 ```
 
 复制得到的cookie，向小派蒙发送`添加公共ck`和粘贴的内容，即可开始使用
+
+## 丨相关配置项
+
+> 以下配置为派蒙的默认配置，你可以在`.env.prod`文件中，添加以下配置来进行修改
+>
+> 例如你想将对联冷却改为2秒，就在`.env.prod`中加一句paimon_couplets_cd=2
+
+```python
+# 群组模拟抽卡冷却（秒）
+paimon_gacha_cd_group = 30
+# 个人模拟抽卡冷却（秒）
+paimon_gacha_cd_user = 60
+# 树脂提醒停止检查时间（小时）
+paimon_remind_start = 0
+paimon_remind_end = 8
+# 树脂提醒检查间隔（分钟）
+paimon_check_interval = 16
+# 树脂提醒每日提醒次数上限
+paimon_remind_limit = 3
+# 自动签到开始时间（小时）
+paimon_sign_hour = 0
+# 自动签到开始时间（分钟）
+paimon_sign_minute = 0
+
+# 对联冷却（秒）
+paimon_couplets_cd = 6
+# 猫图冷却（秒）
+paimon_cat_cd = 12
+# 二次元图冷却（秒）
+paimon_ecy_cd = 6
+# 原神壁纸图冷却（秒）
+paimon_ysp_cd = 10
+# 派蒙猜语音持续时间
+paimon_guess_voice = 30
+
+# 派蒙收到好友申请或群邀请时是否向超级管理员发通知
+paimon_request_remind = true
+# 是否自动通过好友请求
+paimon_add_friend = false
+# 是否自动通过群组请求
+paimon_add_group = false
+# 禁用群新成员欢迎语和龙王提醒的群号列表
+paimon_greet_ban = []
+
+# 以下为机器学习聊天模块配置
+# mongodb数据库连接url
+paimon_mongodb_url = None
+# 派蒙聊天&机器学习开启群组
+paimon_chat_group = []
+# 派蒙机器学习屏蔽用户
+paimon_chat_ban = []
+# 派蒙聊天学习阈值，越小学习越快
+paimon_answer_threshold = 3
+# 派蒙聊天上限阈值
+paimon_answer_limit_threshold = 25
+# N个群有相同的回复，就跨群作为全局回复
+paimon_cross_group_threshold = 2
+# 复读的阈值
+paimon_repeat_threshold = 3
+# 主动发言阈值，越小话越多
+paimon_speak_threshold = 3
+# 喝醉的概率
+paimon_drunk_probability = 0.07
+# 用文字转语音来回复的概率
+paimon_voice_probability = 0.03
+# 连续主动说话的概率
+paimon_speak_continuously_probability = 0.5
+# 主动说话加上随机戳一戳群友的概率
+paimon_speak_poke_probability = 0.5
+# 连续主动说话最多几句话
+paimon_speak_continuously_max_len = 3
+```
 
 ## 丨感谢
 

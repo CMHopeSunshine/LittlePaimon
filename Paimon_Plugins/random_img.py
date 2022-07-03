@@ -1,14 +1,14 @@
 import random
+
+from littlepaimon_utils.tools import FreqLimiter
 from nonebot import on_command, on_regex
-from nonebot.params import RegexGroup
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent, MessageSegment
+from nonebot.params import RegexGroup
 from nonebot.plugin import PluginMetadata
 
-from utils.config import config
-from utils.auth_util import FreqLimiter
-from utils.message_util import get_message_id
-from utils.decorator import auto_withdraw
-
+from ..utils.config import config
+from ..utils.decorator import auto_withdraw
+from ..utils.message_util import get_message_id
 
 __plugin_meta__ = PluginMetadata(
     name="随机图片",

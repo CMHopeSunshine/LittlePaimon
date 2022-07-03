@@ -15,7 +15,7 @@ from sqlitedict import SqliteDict
 
 from .download_data import voice_list_by_mys, voice_detail_by_mys
 from .util import get_path, require_file
-from utils.alias_handler import get_alias_by_name
+from ..utils.alias_handler import get_alias_by_name
 
 scheduler = require('nonebot_plugin_apscheduler').scheduler
 

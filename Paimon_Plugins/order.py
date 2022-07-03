@@ -1,12 +1,11 @@
 import random
+
+from littlepaimon_utils import aiorequests
+from littlepaimon_utils.tools import FreqLimiter
 from nonebot import on_command
-from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import Message, MessageEvent, MessageSegment
+from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
-
-from utils.auth_util import FreqLimiter
-from utils import aiorequests
-
 
 __plugin_meta__ = PluginMetadata(
     name="点餐",

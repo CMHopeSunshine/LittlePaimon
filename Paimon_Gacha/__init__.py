@@ -1,17 +1,16 @@
 import re
 from typing import Dict
 
+from littlepaimon_utils import aiorequests
+from littlepaimon_utils.tools import FreqLimiter
 from nonebot import on_command, on_regex
-from nonebot.adapters.onebot.v11 import MessageEvent, GroupMessageEvent, Message
+from nonebot.adapters.onebot.v11 import MessageEvent, Message
 from nonebot.params import RegexDict, CommandArg
 from nonebot.plugin import PluginMetadata
 
-from utils.config import config
-from utils import aiorequests
-from utils.auth_util import FreqLimiter
 from .gacha_info import *
 from .gacha_res import more_ten
-
+from ..utils.config import config
 
 __plugin_meta__ = PluginMetadata(
     name="原神模拟抽卡",

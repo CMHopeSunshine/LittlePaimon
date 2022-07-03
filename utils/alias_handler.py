@@ -1,7 +1,8 @@
 import difflib
-from typing import Union
-from .file_handler import load_json
 from pathlib import Path
+from typing import Union
+
+from littlepaimon_utils.files import load_json
 
 
 def get_short_name(name: str):
@@ -10,7 +11,7 @@ def get_short_name(name: str):
         :param name: 角色或武器名
         :return: 短名字符串
     """
-    short_name = load_json(path=Path(__file__).parent / 'json' / 'short_name.json')
+    short_name = load_json(path=Path(__file__).parent / 'json_data' / 'short_name.json')
     return name if name not in short_name.keys() else short_name[name]
 
 
@@ -20,7 +21,7 @@ def get_id_by_name(name: str):
         :param name: 角色名
         :return: id字符串
     """
-    alias_file = load_json(path=Path(__file__).parent / 'json' / 'alias.json')
+    alias_file = load_json(path=Path(__file__).parent / 'json_data' / 'alias.json')
     name_list = alias_file['roles']
     for role_id, alias in name_list.items():
         if name in alias:
@@ -33,7 +34,7 @@ def get_name_by_id(role_id: str):
         :param role_id: 角色id
         :return: 角色名字符串
     """
-    alias_file = load_json(path=Path(__file__).parent / 'json' / 'alias.json')
+    alias_file = load_json(path=Path(__file__).parent / 'json_data' / 'alias.json')
     name_list = alias_file['roles']
     if role_id in name_list:
         return name_list[role_id][0]
@@ -47,7 +48,7 @@ def get_alias_by_name(name: str):
         :param name: 角色名
         :return: 别名列表
     """
-    alias_file = load_json(path=Path(__file__).parent / 'json' / 'alias.json')
+    alias_file = load_json(path=Path(__file__).parent / 'json_data' / 'alias.json')
     name_list = alias_file['roles']
     for r in name_list.values():
         if name in r:
@@ -63,7 +64,7 @@ def get_match_alias(msg: str, type: str = 'roles', single_to_dict: bool = False)
         :param single_to_dict: 是否将角色单结果也转换成{角色:id}字典
         :return: 匹配的字符串、列表或字典
     """
-    alias_file = load_json(path=Path(__file__).parent / 'json' / 'alias.json')
+    alias_file = load_json(path=Path(__file__).parent / 'json_data' / 'alias.json')
     alias_list = alias_file[type]
     if msg in ['风主', '岩主', '雷主']:
         return msg

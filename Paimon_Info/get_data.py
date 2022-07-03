@@ -1,10 +1,12 @@
-from utils.auth_util import get_headers, get_sign_headers, get_use_cookie, get_own_cookie, check_retcode
-from utils.db_util import update_cookie_cache
-from utils.decorator import cache
-from utils import aiorequests
 import datetime
 import re
 from asyncio import sleep
+
+from littlepaimon_utils import aiorequests
+
+from ..utils.auth_util import get_headers, get_sign_headers, get_use_cookie, get_own_cookie, check_retcode
+from ..utils.db_util import update_cookie_cache
+from ..utils.decorator import cache
 
 
 @cache(ttl=datetime.timedelta(minutes=10))

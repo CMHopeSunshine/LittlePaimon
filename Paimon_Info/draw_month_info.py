@@ -1,25 +1,23 @@
 import os
 import random
+from pathlib import Path
 
 import matplotlib.pyplot as plt
 from PIL import Image, ImageDraw, ImageFont
-from utils.message_util import MessageBuild
-from utils.file_handler import load_image
+from littlepaimon_utils.files import load_image
 
-res_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'res')
+from ..utils.message_util import MessageBuild
 
-
-def get_font(size):
-    return ImageFont.truetype(os.path.join(res_path, 'msyh.ttc'), size)
+res_path = Path() / 'resources' / 'LittlePaimon'
 
 
-def get_font_bd(size):
-    return ImageFont.truetype(os.path.join(res_path, 'msyhbd.ttc'), size)
+def get_font(size, font='msyh.ttc'):
+    return ImageFont.truetype(str(res_path / font), size)
 
 
 async def get_box(t, num):
-    box = load_image(os.path.join(res_path, 'monthinfo', 'box.png'), mode='RGBA')
-    img = load_image(os.path.join(res_path, 'monthinfo', f'{t}.png'), mode='RGBA')
+    box = load_image(res_path / 'monthinfo' / 'box.png', mode='RGBA')
+    img = load_image(res_path / 'monthinfo' / f'{t}.png', mode='RGBA')
     box.alpha_composite(img, (11, 11))
     box_draw = ImageDraw.Draw(box)
     box_draw.text((83, 18), f'{t}：', font=get_font(25), fill='black')
@@ -63,15 +61,15 @@ async def draw_monthinfo_card(data):
     bg_draw = ImageDraw.Draw(bg_img)
     line = load_image(os.path.join(res_path, 'monthinfo', 'line.png'), mode='RGBA')
     # 顶标题
-    bg_draw.text((60, 42), f'旅行者{data["data_month"]}月札记', font=get_font_bd(30), fill='#27384C')
+    bg_draw.text((60, 42), f'旅行者{data["data_month"]}月札记', font=get_font(30, 'msyhbd.ttc'), fill='#27384C')
     bg_draw.text((300, 52), f'{data["nickname"]} {data["uid"]}', font=get_font(21), fill='#27384C')
     bg_img.alpha_composite(line, (64, 95))
     # 月获取
-    bg_draw.text((60, 110), '当月共获取：', font=get_font_bd(25), fill='#27384C')
+    bg_draw.text((60, 110), '当月共获取：', font=get_font(25, 'msyhbd.ttc'), fill='#27384C')
     bg_img.alpha_composite(await get_box('原石', data['month_data']['current_primogems']), (40, 150))
     bg_img.alpha_composite(await get_box('摩拉', data['month_data']['current_mora']), (40, 210))
     # 日获取
-    bg_draw.text((60, 288), '今日已获取：', font=get_font_bd(25), fill='#27384C')
+    bg_draw.text((60, 288), '今日已获取：', font=get_font(25, 'msyhbd.ttc'), fill='#27384C')
     bg_img.alpha_composite(await get_box('原石', data['day_data']['current_primogems']), (40, 328))
     bg_img.alpha_composite(await get_box('摩拉', data['day_data']['current_mora']), (40, 388))
     # 表情
@@ -83,7 +81,7 @@ async def draw_monthinfo_card(data):
 
     bg_img.alpha_composite(line, (64, 480))
     # 圆环比例图
-    bg_draw.text((60, 495), '原石收入组成：', font=get_font_bd(25), fill='#27384C')
+    bg_draw.text((60, 495), '原石收入组成：', font=get_font(25, 'msyhbd.ttc'), fill='#27384C')
     circle = load_image(os.path.join(res_path, 'monthinfo', 'circle.png'), mode='RGBA')
 
     bg_img.alpha_composite(circle, (50, 550))

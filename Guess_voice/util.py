@@ -2,8 +2,7 @@ import os
 from pathlib import Path
 
 import aiofiles
-
-from utils import aiorequests
+from littlepaimon_utils import aiorequests
 
 
 def get_path(dirname, filename):

@@ -1,6 +1,7 @@
-from pydantic import BaseModel
-from nonebot import get_driver
 from typing import List
+
+from nonebot import get_driver
+from pydantic import BaseModel
 
 
 class PluginConfig(BaseModel):

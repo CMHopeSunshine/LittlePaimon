@@ -1,15 +1,15 @@
 from copy import deepcopy
 from pathlib import Path
 from typing import Tuple
-from PIL import Image, ImageDraw
-from utils.PIL_util import get_font, draw_center_text
-from utils.file_handler import load_json, load_image
-from .common import resistance_coefficient as rc, defense_coefficient as dc, attr_common_fix, q_fix, e_fix, a_fix
 
-mask_top = load_image(path=Path(__file__).parent.parent.parent / 'res' / 'player_card2' / '遮罩top.png')
-mask_body = load_image(path=Path(__file__).parent.parent.parent / 'res' / 'player_card2' / '遮罩body.png')
-mask_bottom = load_image(path=Path(__file__).parent.parent.parent / 'res' / 'player_card2' / '遮罩bottom.png')
-skill_data = load_json(path=Path(__file__).parent.parent.parent / 'utils' / 'json' / 'roles_data.json')['钟离']['skill']
+from PIL import Image, ImageDraw
+from littlepaimon_utils.files import load_json, load_image
+from littlepaimon_utils.images import get_font, draw_center_text
+
+from .common import resistance_coefficient as rc, defense_coefficient as dc, attr_common_fix, q_fix, e_fix, a_fix, \
+    text_font, number_font
+
+skill_data = load_json(path=Path(__file__).parent.parent.parent / 'utils' / 'json_data' / 'roles_data.json')['钟离']['skill']
 
 
 def cal_shield_value(data: dict) -> float:
@@ -102,6 +102,10 @@ def cal_attack_dmg(data: dict, extra: dict) -> tuple:
 
 
 def draw_zhongli_dmg(data: dict):
+    mask_top = load_image(path=Path() / 'resources' / 'LittlePaimon' / 'player_card2' / '遮罩top.png')
+    mask_body = load_image(path=Path() / 'resources' / 'LittlePaimon' / 'player_card2' / '遮罩body.png')
+    mask_bottom = load_image(path=Path() / 'resources' / 'LittlePaimon' / 'player_card2' / '遮罩bottom.png')
+
     data = deepcopy(data)
     height = 5 * 60 - 20
     data['伤害描述'] = ['护盾减抗，无双岩']
@@ -125,40 +129,40 @@ def draw_zhongli_dmg(data: dict):
     bg_draw.line((0, 300, 948, 300), (255, 255, 255, 75), 2)
 
     # 顶栏
-    draw_center_text(bg_draw, '伤害计算', 0, 250, 11, 'white', get_font(30))
-    draw_center_text(bg_draw, '期望伤害', 250, 599, 11, 'white', get_font(30))
-    draw_center_text(bg_draw, '暴击伤害', 599, 948, 11, 'white', get_font(30))
+    draw_center_text(bg_draw, '伤害计算', 0, 250, 11, 'white', get_font(30, text_font))
+    draw_center_text(bg_draw, '期望伤害', 250, 599, 11, 'white', get_font(30, text_font))
+    draw_center_text(bg_draw, '暴击伤害', 599, 948, 11, 'white', get_font(30, text_font))
 
     # 护盾值
-    draw_center_text(bg_draw, '玉璋护盾', 0, 250, 73, 'white', get_font(30))
+    draw_center_text(bg_draw, '玉璋护盾', 0, 250, 73, 'white', get_font(30, text_font))
     shield = cal_shield_value(data)
-    draw_center_text(bg_draw, str(int(shield)), 250, 948, 76, 'white', get_font(30, 'number.ttf'))
+    draw_center_text(bg_draw, str(int(shield)), 250, 948, 76, 'white', get_font(30, number_font))
 
     # 共鸣伤害
-    draw_center_text(bg_draw, '共鸣伤害', 0, 250, 133, 'white', get_font(30))
+    draw_center_text(bg_draw, '共鸣伤害', 0, 250, 133, 'white', get_font(30, text_font))
     expect_dmg, crit_dmg = cal_resonance_dmg(data, e_value)
-    draw_center_text(bg_draw, str(int(expect_dmg)), 250, 599, 136, 'white', get_font(30, 'number.ttf'))
-    draw_center_text(bg_draw, str(int(crit_dmg)), 599, 948, 136, 'white', get_font(30, 'number.ttf'))
+    draw_center_text(bg_draw, str(int(expect_dmg)), 250, 599, 136, 'white', get_font(30, number_font))
+    draw_center_text(bg_draw, str(int(crit_dmg)), 599, 948, 136, 'white', get_font(30, number_font))
 
     # 天星伤害
-    draw_center_text(bg_draw, '天星伤害', 0, 250, 193, 'white', get_font(30))
+    draw_center_text(bg_draw, '天星伤害', 0, 250, 193, 'white', get_font(30, text_font))
     expect_dmg, crit_dmg = cal_star_dmg(data, q_value)
-    draw_center_text(bg_draw, str(int(expect_dmg)), 250, 599, 196, 'white', get_font(30, 'number.ttf'))
-    draw_center_text(bg_draw, str(int(crit_dmg)), 599, 948, 196, 'white', get_font(30, 'number.ttf'))
+    draw_center_text(bg_draw, str(int(expect_dmg)), 250, 599, 196, 'white', get_font(30, number_font))
+    draw_center_text(bg_draw, str(int(crit_dmg)), 599, 948, 196, 'white', get_font(30, number_font))
 
     # 踢枪伤害
-    draw_center_text(bg_draw, '踢枪伤害', 0, 250, 253, 'white', get_font(30))
+    draw_center_text(bg_draw, '踢枪伤害', 0, 250, 253, 'white', get_font(30, text_font))
     expect_dmg, crit_dmg = cal_attack_dmg(data, a_value)
     if isinstance(expect_dmg, tuple):
-        draw_center_text(bg_draw, f'{int(expect_dmg[0])}+{int(expect_dmg[1])}', 250, 599, 256, 'white', get_font(30, 'number.ttf'))
+        draw_center_text(bg_draw, f'{int(expect_dmg[0])}+{int(expect_dmg[1])}', 250, 599, 256, 'white', get_font(30, number_font))
     else:
-        draw_center_text(bg_draw, str(int(expect_dmg)), 250, 599, 256, 'white', get_font(30, 'number.ttf'))
+        draw_center_text(bg_draw, str(int(expect_dmg)), 250, 599, 256, 'white', get_font(30, number_font))
     if isinstance(crit_dmg, tuple):
-        draw_center_text(bg_draw, f'{int(crit_dmg[0])}+{int(crit_dmg[1])}', 599, 948, 256, 'white', get_font(30, 'number.ttf'))
+        draw_center_text(bg_draw, f'{int(crit_dmg[0])}+{int(crit_dmg[1])}', 599, 948, 256, 'white', get_font(30, number_font))
     else:
-        draw_center_text(bg_draw, str(int(crit_dmg)), 599, 948, 256, 'white', get_font(30, 'number.ttf'))
+        draw_center_text(bg_draw, str(int(crit_dmg)), 599, 948, 256, 'white', get_font(30, number_font))
 
     # 额外说明
-    draw_center_text(bg_draw, '额外说明', 0, 250, 313, 'white', get_font(30))
-    draw_center_text(bg_draw, '，'.join(data['伤害描述']), 250, 948, 313, 'white', get_font(30))
+    draw_center_text(bg_draw, '额外说明', 0, 250, 313, 'white', get_font(30, text_font))
+    draw_center_text(bg_draw, '，'.join(data['伤害描述']), 250, 948, 313, 'white', get_font(30, text_font))
     return bg

@@ -1,18 +1,16 @@
-import os
 import re
 import time
 
+from littlepaimon_utils.files import load_json_from_url
 from nonebot import on_endswith, on_command, on_regex
 from nonebot.adapters.onebot.v11 import MessageEvent, Message, MessageSegment
 from nonebot.params import RegexDict
-from nonebot.typing import T_State
 from nonebot.plugin import PluginMetadata
+from nonebot.typing import T_State
 
-from utils.alias_handler import get_match_alias
-from utils.file_handler import load_json_from_url
-from utils.message_util import MessageBuild
 from .abyss_rate_draw import draw_rate_rank, draw_teams_rate
-
+from ..utils.alias_handler import get_match_alias
+from ..utils.message_util import MessageBuild
 
 __paimon_help__ = {
     'type': '原神Wiki',
@@ -41,8 +39,6 @@ __plugin_meta__ = PluginMetadata(
     },
 )
 
-
-res_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'res')
 
 guide = on_endswith('角色攻略', priority=8)
 material = on_endswith('角色材料', priority=6, block=True)

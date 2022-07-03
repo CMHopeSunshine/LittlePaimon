@@ -1,4 +1,4 @@
-from utils import aiorequests
+from littlepaimon_utils import aiorequests
 
 # 数据源自微信公众号原神创意工坊
 headers = {
