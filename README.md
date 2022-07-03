@@ -8,17 +8,16 @@
     <a href="https://cdn.jsdelivr.net/gh/CMHopeSunshine/LittlePaimon@master/LICENSE"><img src="https://img.shields.io/github/license/CMHopeSunshine/LittlePaimon" alt="license"></a>
     <img src="https://img.shields.io/badge/Python-3.8+-yellow" alt="python">
     <img src="https://img.shields.io/badge/Nonebot-2.0.0b4-green" alt="python">
+    <a href="https://pypi.python.org/pypi/LittlePaimon">
+    <img src="https://img.shields.io/pypi/v/LittlePaimon" alt="pypi">
+</a>
     <a href="https://qun.qq.com/qqweb/qunpro/share?_wv=3&_wwv=128&inviteCode=MmWrI&from=246610&biz=ka"><img src="https://img.shields.io/badge/QQ频道交流-尘世闲游-blue?style=flat-square" alt="QQ guild"></a>
 </p>
+
 
 ## 丨简介
 
 原神多功能机器人，通过米游社接口查询uid的游戏信息，并提供WIKI查询和各种各样的好玩的功能。
-
-本README为NoneBot2版的介绍，Hoshino版详见对应分支(已停更)：
-
-+ [Github主页](https://github.com/CMHopeSunshine/LittlePaimon/tree/master)
-+ [README博客](https://blog.cherishmoon.fun/posts/littlepaimon-hoshino.html)
 
 ## 丨功能示例
 
@@ -66,9 +65,15 @@
   - 伤害计算新增`魈`
 + 7.3
   - 重构部分代码
-  - 修改静态资源和用户数据目录(原`res`目录移到nb目录下的`resource`， 原`user_data`目录移到nb目录下的`data`，会**自动迁移**)
+  - **修改静态资源和用户数据目录**
+    - 理论上会**自动迁移**，但`git pull`更新可能会将资源删除，所以最好**手动迁移，同时备份**
+    - 1、将派蒙的`res`文件夹改名`LittlePaimon`，移到nonebot根目录的`resources`中（没有`resources`就新建一个）
+    - 2、将派蒙的`user_data`文件夹移到nonebot根目录的`data/LittlePaimon`目录中（同理，没有就新建）
   - 静态资源改为启动时自动下载
-  - **本次更新请注意备份`user_data`用户数据**
+  - 上传至`pypi`
+    - 意味着你可以通过pip等包管理工具来下载派蒙，例子见下面的部署方法
+    - 上面的修改基本上都是为了上传`pypi`，以及减少仓库体积
+
 ## 丨功能列表
 
 详见我的博客[功能列表](https://blog.cherishmoon.fun/posts/nonebot2funclist.html) <br>
@@ -79,17 +84,14 @@
 
  + 部署NoneBot2和go-cqhttp
 
- + 在NoneBot2**根目录**，克隆本项目
-   `git clone https://github.com/CMHopeSunshine/LittlePaimon `
-   
- + 安装依赖
+ + 安装派蒙
    ```bash
    # 在插件目录运行:
    # pip方式
-   pip install -r requirements.txt
+   pip install littlepaimon
    
    # 如果你使用poetry进行环境管理，可以：
-   poetry install
+   poetry add littlepaimon
    ```
  + 启用插件
    ```python
