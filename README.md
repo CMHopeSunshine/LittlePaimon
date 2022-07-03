@@ -96,8 +96,13 @@
    # 1、克隆派蒙源码
    git clone https://github.com/CMHopeSunshine/LittlePaimon
    
+   
    # 2、编辑bot.py，在load_from_toml下方添加一句
    nonebot.load_plugin("LittlePaimon")
+   
+   # 3、进入LittlePaimon目录，安装依赖
+   cd LittlePaimon
+   pip install -r requirements.txt
    ```
    
    - pip方式
