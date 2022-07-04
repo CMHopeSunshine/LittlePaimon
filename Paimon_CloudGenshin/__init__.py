@@ -2,6 +2,7 @@ import json
 import re
 import uuid
 from typing import Union
+from pathlib import Path
 
 from littlepaimon_utils.files import load_json, save_json
 from nonebot import on_command, require, get_bot, logger
@@ -56,12 +57,12 @@ async def _handle(event: Union[GroupMessageEvent, MessageEvent], match: Matcher,
 async def _(event: Union[GroupMessageEvent, MessageEvent], choice: str = ArgPlainText('choice')):
     if choice == '是':
         user_id = str(event.user_id)
-        data = load_json('user_data.json')
+        data = load_json(Path() / 'data' / 'LittlePaimon' / 'CloudGenshin.json')
 
         del data[user_id]
         if scheduler.get_job('cloud_genshin_' + user_id):
             scheduler.remove_job("cloud_genshin_" + user_id)
-        save_json(data, 'user_data.json')
+        save_json(data, Path() / 'data' / 'LittlePaimon' / 'CloudGenshin.json')
 
         await rm_cloud_ys.finish('token已解绑并取消自动签到~', at_sender=True)
     elif choice == '否':
@@ -103,7 +104,7 @@ async def auto_sign_cgn(user_id, data):
 async def _(event: Union[GroupMessageEvent, MessageEvent], msg: Message = CommandArg(), uuid=uuid):
     param = msg.extract_plain_text().strip()
     user_id = str(event.user_id)
-    data = load_json('user_data.json')
+    data = load_json(Path() / 'data' / 'LittlePaimon' / 'CloudGenshin.json')
 
     action = re.search(r'(?P<action>(信息|info)|(绑定|bind))', param)
 
@@ -137,7 +138,7 @@ async def _(event: Union[GroupMessageEvent, MessageEvent], msg: Message = Comman
                 scheduler.remove_job("cloud_genshin_" + user_id)
 
             """ 保存数据 """
-            save_json(data, 'user_data.json')
+            save_json(data, Path() / 'data' / 'LittlePaimon' / 'CloudGenshin.json')
             """ 添加推送任务 """
             scheduler.add_job(
                 func=auto_sign_cgn,
@@ -173,7 +174,7 @@ async def _(event: Union[GroupMessageEvent, MessageEvent], msg: Message = Comman
             await cloud_ys.finish('参数错误！', at_sender=True)
 
 
-for user_id, data in load_json('user_data.json').items():
+for user_id, data in load_json(Path() / 'data' / 'LittlePaimon' / 'CloudGenshin.json').items():
     scheduler.add_job(
         func=auto_sign_cgn,
         trigger='cron',
