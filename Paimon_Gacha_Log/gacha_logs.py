@@ -1,14 +1,15 @@
 import json
-import os
+from pathlib import Path
 from asyncio import sleep
 
 from littlepaimon_utils import aiorequests
+from littlepaimon_utils.files import load_json, save_json
 
 from .UIGF_and_XLSX import convertUIGF, writeXLSX
 from .api import getApi
 from .meta_data import gachaQueryTypeIds, gachaQueryTypeDict
 
-data_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'user_data', 'gacha_log_data')
+data_path = Path() / 'data' / 'LittlePaimon' / 'user_data' / 'gacha_log_data'
 
 
 async def getGachaLogs(url, gachaTypeId):
@@ -73,21 +74,18 @@ async def get_data(url):
                 uid_flag = 0
 
     uid = gachaData["uid"]
-    localDataFilePath = os.path.join(data_path, f"gachaData-{uid}.json")
+    localDataFilePath = data_path / f"gachaData-{uid}.json"
 
-    if os.path.isfile(localDataFilePath):
-        with open(localDataFilePath, "r", encoding="utf-8") as f:
-            localData = json.load(f)
+    if localDataFilePath.is_file():
+        localData = load_json(localDataFilePath)
         mergeData = mergeDataFunc(localData, gachaData)
     else:
         mergeData = gachaData
     mergeData["gachaType"] = gachaQueryTypeDict
     # 写入json
-    with open(localDataFilePath, "w", encoding="utf-8") as f:
-        json.dump(mergeData, f, ensure_ascii=False, sort_keys=False, indent=4)
+    save_json(mergeData, localDataFilePath)
     # 写入UIGF、json
-    with open(os.path.join(data_path, f"UIGF_gachaData-{uid}.json"), "w", encoding="utf-8") as f:
-        UIGF_data = convertUIGF(mergeData['gachaLog'], uid)
-        json.dump(UIGF_data, f, ensure_ascii=False, sort_keys=False, indent=4)
+    UIGF_data = convertUIGF(mergeData['gachaLog'], uid)
+    save_json(UIGF_data, data_path / f"UIGF_gachaData-{uid}.json")
     # 写入xlsx
     writeXLSX(uid, mergeData['gachaLog'], gachaQueryTypeIds)

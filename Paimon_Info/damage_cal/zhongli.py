@@ -108,7 +108,7 @@ def draw_zhongli_dmg(data: dict):
 
     data = deepcopy(data)
     height = 5 * 60 - 20
-    data['伤害描述'] = ['护盾减抗，无双岩']
+    data['伤害描述'] = ['护盾减抗']
     data = attr_common_fix(data)
     data, q_value = q_fix(data)
     data, e_value = e_fix(data)

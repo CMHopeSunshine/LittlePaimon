@@ -8,9 +8,6 @@
     <a href="https://cdn.jsdelivr.net/gh/CMHopeSunshine/LittlePaimon@master/LICENSE"><img src="https://img.shields.io/github/license/CMHopeSunshine/LittlePaimon" alt="license"></a>
     <img src="https://img.shields.io/badge/Python-3.8+-yellow" alt="python">
     <img src="https://img.shields.io/badge/Nonebot-2.0.0b4-green" alt="python">
-    <a href="https://pypi.python.org/pypi/LittlePaimon">
-    <img src="https://img.shields.io/pypi/v/LittlePaimon" alt="pypi">
-</a>
     <a href="https://qun.qq.com/qqweb/qunpro/share?_wv=3&_wwv=128&inviteCode=MmWrI&from=246610&biz=ka"><img src="https://img.shields.io/badge/QQ频道交流-尘世闲游-blue?style=flat-square" alt="QQ guild"></a>
 </p>
 
@@ -61,20 +58,17 @@
 > README只展示最近更新，全部更新日志详见[这里](https://github.com/CMHopeSunshine/LittlePaimon/blob/nonebot2/UPDATE_LOG.md)
 + 7.3
   - 重构部分代码
-  - ~~修改了插件加载方式~~
-    - 不改了，回档了，依旧是用`nonebot.load_plugins`
   - **修改静态资源和用户数据目录**
     - 理论上会**自动迁移**，但`git pull`更新可能会将资源删除，所以最好**手动迁移，同时备份**
     - 1、将派蒙的`res`文件夹改名`LittlePaimon`，移到nonebot根目录的`resources`中（没有`resources`就新建一个）
     - 2、将派蒙的`user_data`文件夹移到nonebot根目录的`data/LittlePaimon`目录中（同理，没有就新建）
   - 静态资源改为启动时自动下载
-  - ~~上传至`pypi`~~
-    - ~~意味着你可以通过pip等包管理工具来下载派蒙，例子见下面的部署方法~~
-    - ~~上面的修改基本上都是为了上传`pypi`，以及减少仓库体积~~
-    - pip安装的话加载时存在导包问题，无法正确加载，~~算了吧~~
 + 7.4
   - 回档部分7.3的修改
+  - `ysd`新增`香菱、申鹤`伤害计算
   - 修复`60秒早报`接口bug
+  - 修复神里绫人被识别为绫华别名的bug
+  - 修复抽卡记录获取bug
   
 ## 丨功能列表
 

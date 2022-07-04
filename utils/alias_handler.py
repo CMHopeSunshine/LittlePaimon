@@ -75,9 +75,9 @@ def get_match_alias(msg: str, type: str = 'roles', single_to_dict: bool = False)
             if msg in match_list:
                 return {alias[0]: role_id} if single_to_dict else alias[0]
             elif match_list:
-                if len(match_list) == 1:
-                    return {alias[0]: role_id} if single_to_dict else alias[0]
                 possible[alias[0]] = role_id
+        if len(possible) == 1:
+            return {list(possible.keys())[0]: possible[list(possible.keys())[0]]} if single_to_dict else list(possible.keys())[0]
         return possible
     elif type == 'weapons':
         possible = []
