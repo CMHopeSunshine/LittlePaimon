@@ -36,7 +36,7 @@ async def check_resource():
     for resource in resource_list:
         res_path = new_resource_path / resource['path'].replace('LittlePaimon/', '')
         download_url = 'http://genshin.cherishmoon.fun/res/' + resource['path'].replace('LittlePaimon/', '')
-        if res_path.exists() and hashlib.md5(res_path.read_bytes()).hexdigest() == resource['hash']:
+        if res_path.exists() and (hashlib.md5(res_path.read_bytes()).hexdigest() == resource['hash'] or not resource['lock']):
             continue
         try:
             await download(download_url, res_path)

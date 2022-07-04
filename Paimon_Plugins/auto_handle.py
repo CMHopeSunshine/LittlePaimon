@@ -52,6 +52,7 @@ async def FriendNew(bot: Bot, event: FriendAddNoticeEvent):
 
 @notice_handle.handle()
 async def GroupNewMember(bot: Bot, event: GroupIncreaseNoticeEvent):
+    greet_emoticon = MessageBuild.Image(Path() / 'resources' / 'LittlePaimon' / 'emoticons' / '派蒙-干杯.png', mode='RGBA')
     if event.user_id == event.self_id:
         await sleep(random.randint(4, 8))
         await bot.send_group_msg(group_id=event.group_id, message=Message(
