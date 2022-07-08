@@ -69,7 +69,9 @@
   - 修复`60秒早报`接口bug
   - 修复神里绫人被识别为绫华别名的bug
   - 修复抽卡记录获取bug
-  
++ 7.8
+ - `ysd`增加`甘雨、夜兰、行秋、神里绫华、阿贝多、刻晴、八重神子`伤害计算
+
 ## 丨功能列表
 
 详见我的博客[功能列表](https://blog.cherishmoon.fun/posts/nonebot2funclist.html) <br>
@@ -83,10 +85,8 @@
  + 安装和启用派蒙
    
    - git clone方式
-   
    ```bash
    # 在nonebot根目录运行:
-   
    # 1、克隆派蒙源码
    git clone https://github.com/CMHopeSunshine/LittlePaimon
    
@@ -99,11 +99,8 @@
    pip install -r requirements.txt
    ```
 ### 我不熟悉NoneBot2
-**详细部署教程：**
 
-- [Linux](https://blog.cherishmoon.fun/posts/nonebot2deploy.html#linux)
-- [安卓系统](https://blog.cherishmoon.fun/posts/nonebot2deploy.html#%E5%9C%A8%E5%AE%89%E5%8D%93%E6%89%8B%E6%9C%BA%E4%B8%8A%E9%83%A8%E7%BD%B2)
-- [Windows](https://blog.cherishmoon.fun/posts/nonebot2deploy.html#windows)
+- [详细部署教程](https://blog.cherishmoon.fun/posts/nonebot2deploy.html)
 
 ### 添加公共cookie
 
@@ -115,7 +112,8 @@
 javascript:(function(){prompt(document.domain,document.cookie)})();
 ```
 
-复制得到的cookie，向小派蒙发送`添加公共ck`和粘贴的内容，即可开始使用
+复制得到的cookie，向小派蒙发送`添加公共ck`和粘贴的内容，即可开始使用<br>
+获取之后不能退出账号登录状态！推荐在无痕模式下取
 
 ## 丨相关配置项
 
@@ -213,18 +211,19 @@ paimon_speak_continuously_max_len = 3
 | 赞助者(排名不分先后)    | 金额  |
 |----------------|-----|
 | 深海             | 10  |
-| 夜空koi          | 30  |
+| 夜空koi          | 60  |
 | 情话             | 20  |
 | 爱发电用户_Mfms     | 15  |
 | 米特建木           | 10  |
 | 永远的皇珈骑士        | 30  |
-| 小兔和鹿           | 30  |
+| 小兔和鹿           | 50  |
 | el psy congroo | 20  |
 | SCU_OP         | 30  |
 | 南絮ヽ            | 30  |
 | 夜空koi我老婆       | 30  |
 | 昔。             | 5   |
 | dix            | 20  |
+| 凤御白            | 30  |
 ## 丨其他
 
 - 本项目仅供学习使用，禁止用于商业用途

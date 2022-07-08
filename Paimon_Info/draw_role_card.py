@@ -27,7 +27,7 @@ def get_font(size, font='hywh.ttf'):
 
 async def draw_role_card(uid, data):
     bg_card = load_image(res_path / 'player_card2' / f'背景_{data["元素"]}.png', mode='RGBA')
-    dmg_img = get_role_dmg(data['名称'], data)
+    dmg_img = get_role_dmg(data)
     if dmg_img:
         bg = Image.new('RGBA', (1080, 1920 + dmg_img.size[1] + 20), (0, 0, 0, 0))
         bg_card_center = bg_card.crop((0, 730, 1080, 1377)).resize((1080, dmg_img.size[1] + 667))
