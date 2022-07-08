@@ -571,7 +571,7 @@ async def _(event: MessageEvent, state: T_State, msg: Message = CommandArg()):
             uid = await get_last_query(str(event.user_id))
             if uid:
                 state['uid'] = uid
-    msg = msg.extract_plain_text().replace(state['uid'], '').strip()
+    msg = msg.extract_plain_text().replace(state['uid'] if 'uid' in state else 'ysd', '').strip()
     if not msg:
         await role_info.finish('请把要查询角色名给派蒙哦~')
     if msg.startswith(('a', '全部', '所有', '查看')):

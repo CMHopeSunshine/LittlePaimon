@@ -71,7 +71,7 @@ def get_role_dmg(data: dict):
         dmg_data['旋火轮'] = udc(dm['旋火轮'] * attack, (cr + vq['暴击率'], cd), db[1] + vq['增伤'], level_role, rcd=rcd)
         dmg_data['旋火轮蒸发'] = udc(dm['旋火轮'] * attack, (cr + vq['暴击率'], cd), db[1] + vq['增伤'], level_role, rcd=rcd, r=zf)
     elif data['名称'] == '魈':
-        va['下落攻击增伤'] += dm['靖妖傩舞']
+        va['下落攻击增伤'] += dm['B:靖妖傩舞']
         dmg_data = get_dmg_data(dm, attack, cr, cd, db[5], level_role, va, ve, vq)
     elif data['名称'] == '申鹤':
         dmg_data['冰翎加成'] = str(int(dm['冰翎'] * attack))
