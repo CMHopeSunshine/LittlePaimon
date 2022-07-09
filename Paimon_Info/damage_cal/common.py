@@ -691,7 +691,7 @@ def get_damage_multipiler(data: dict) -> dict:
             'A-e火-n2:普攻第一段': (1 + float(skill_data['焰硝庭火舞']['数值']['炽焰箭伤害'][level_e].replace('%普通攻击伤害', '')) / 100.0) * float(skill_data['普通攻击·烟火打扬']['数值']['一段伤害'][level_a].replace('%*2', '')) / 100.0,
             'A-e火-r蒸发1.5:普攻第三段蒸发': (1 + float(
                 skill_data['焰硝庭火舞']['数值']['炽焰箭伤害'][level_e].replace('%普通攻击伤害', '')) / 100.0) * float(
-                skill_data['普通攻击·烟火打扬']['数值']['三段伤害'][level_a].replace('%*2', '')) / 100.0,
+                skill_data['普通攻击·烟火打扬']['数值']['三段伤害'][level_a].replace('%', '')) / 100.0,
             'Q-e火:琉金火光爆炸': float(skill_data['琉金云间草']['数值']['琉金火光爆炸伤害'][level_q].replace('%', '')) / 100.0
         }
 
