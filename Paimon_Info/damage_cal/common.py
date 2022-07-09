@@ -519,7 +519,7 @@ def get_damage_multipiler(data: dict) -> dict:
     if data['名称'] == '魈':
         a = skill_data['普通攻击·卷积微尘']['数值']['低空/高空坠地冲击伤害'][level_a].split('/')
         return {
-            'B:l1-增伤-AX': float(skill_data['靖妖傩舞']['数值']['普通攻击/重击/下落攻击伤害提升'][level_q].replace('%', '')) / 100,
+            'B:l1-增伤-AX': (float(skill_data['靖妖傩舞']['数值']['普通攻击/重击/下落攻击伤害提升'][level_q].replace('%', '')) / 100, ),
             'E-e风:风轮两立': float(skill_data['风轮两立']['数值']['技能伤害'][level_e].replace('%', '')) / 100.0,
             'AX-e风:低空下落首戳': float(a[0].replace('%', '')) / 100,
             'AX-e风:高空下落首戳': float(a[1].replace('%', '')) / 100,

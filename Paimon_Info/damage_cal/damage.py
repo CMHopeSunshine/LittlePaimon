@@ -51,7 +51,7 @@ def get_role_dmg(data: dict):
         extra_energy = (data['属性']['元素充能效率'] - 1) * 0.6 if level_role >= 70 else 0
         dmg_data['梦想一心能量'] = (str(round(dm['梦想一心能量'] * (1 + extra_energy) * 5, 1)),)
     elif data['名称'] == '申鹤':
-        dmg_data['冰翎加成'] = str(int(dm['冰翎'] * attack))
+        dmg_data['冰翎加成'] = (str(int(dm['冰翎'] * attack)),)
         db[-1] += 0.15 if level_role >= 40 else 0
         vq['增伤'] += 0.15 if level_role >= 70 else 0
         dmg_data['战技长按'] = udc(dm['e长按'] * attack, (cr + ve['暴击率'], cd), db[-1] + ve['增伤'], level_role, rcd=dm['大招减抗'])
