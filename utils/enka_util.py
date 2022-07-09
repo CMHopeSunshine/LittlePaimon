@@ -67,7 +67,8 @@ class PlayerInfo:
             if role_info['名称'] in ['空', '荧']:
                 role_info['天赋'][0], role_info['天赋'][-1] = role_info['天赋'][-1], role_info['天赋'][0]
                 role_info['天赋'][1], role_info['天赋'][-1] = role_info['天赋'][-1], role_info['天赋'][1]
-
+            if role_info['名称'] == '达达利亚':
+                role_info['天赋'][0] += 1
 
             role_info['命座'] = []
             if 'talentIdList' in data:

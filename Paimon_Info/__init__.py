@@ -585,7 +585,7 @@ async def _(event: MessageEvent, state: T_State, msg: Message = CommandArg()):
 
 
 @role_info.got('uid', prompt='请把要查询的uid给派蒙哦~')
-# @exception_handler()
+@exception_handler()
 async def _(event: MessageEvent, state: T_State):
     uid = transform_uid(state['uid'])
     if uid:
