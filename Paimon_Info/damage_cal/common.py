@@ -554,7 +554,7 @@ def get_damage_multipiler(data: dict) -> dict:
             'B:c2-减防-*': (0.23, '二命减防'),
             'B:c6-增伤-*': (0.1, ),
             'AZ-e火:重击': float(skill_data['普通攻击·砰砰']['数值']['重击伤害'][level_a].replace('%', '')) / 100.0,
-            'E-e火:蹦蹦炸弹': float(skill_data['蹦蹦炸弹']['数值']['蹦蹦炸弹伤害'][level_q].replace('%', '')) / 100.0,
+            'E-e火:蹦蹦炸弹': float(skill_data['蹦蹦炸弹']['数值']['蹦蹦炸弹伤害'][level_e].replace('%', '')) / 100.0,
             'Q-e火:轰轰火花': float(skill_data['轰轰火花']['数值']['轰轰火花伤害'][level_q].replace('%', '')) / 100.0,
         }
     if data['名称'] == '八重神子':
@@ -623,12 +623,12 @@ def get_damage_multipiler(data: dict) -> dict:
     if data['名称'] == '达达利亚':
         e = skill_data['魔王武装·狂澜']['数值']['重击伤害'][level_e].split('+')
         return {
-            'E-e水:近战重击': (float(e[0].replace('%', '')), float(e[1].replace('%', ''))),
+            'E-e水:近战重击': (float(e[0].replace('%', '')) / 100.0, float(e[1].replace('%', '')) / 100.0),
             'E-e水:断流·斩': float(skill_data['魔王武装·狂澜']['数值']['断流·斩伤害'][level_q].replace('%', '')) / 100.0,
             'A-e水:断流·破': float(skill_data['普通攻击·断雨']['数值']['断流·破 伤害'][level_q].replace('%', '')) / 100.0,
             'Q-e水:近战大招': float(skill_data['极恶技·尽灭闪']['数值']['技能伤害·近战'][level_q].replace('%', '')) / 100.0,
             'Q-e水-r蒸发2.0:近战大招蒸发': float(skill_data['极恶技·尽灭闪']['数值']['技能伤害·近战'][level_q].replace('%', '')) / 100.0,
-            'Q-e水:断流·爆': float(skill_data['极恶技·尽灭闪']['数值']['断流·爆'][level_q].replace('%', '')) / 100.0
+            'Q-e水:断流·爆': float(skill_data['极恶技·尽灭闪']['数值']['断流·爆伤害'][level_q].replace('%', '')) / 100.0
         }
     if data['名称'] == '迪卢克':
         return {
@@ -654,6 +654,7 @@ def get_damage_multipiler(data: dict) -> dict:
         dm['E-e雷:奥兹攻击'] = float(skill_data['夜巡影翼']['数值']['奥兹攻击伤害'][level_e].replace('%', '')) / 100.0
         if len(data['命座']) >= 6:
             dm['E-e雷:奥兹协同攻击'] = 0.3
+        return dm
     if data['名称'] == '北斗':
         return {
             'B:c6-减抗-*': (0.15, '六命减抗'),
@@ -681,7 +682,17 @@ def get_damage_multipiler(data: dict) -> dict:
             'B:c6-暴击伤害-AZ': (0.7, ),
             'B:l1-攻击力': (float(skill_data['最恶鬼王·一斗轰临！！']['数值']['攻击力提高'][level_q].replace('%防御力', '')) / 100.0 * (data['属性']['基础防御'] + data['属性']['额外防御']), ),
             'AZ-e岩:荒泷逆袈裟连斩': float(skill_data['普通攻击·喧哗屋传说']['数值']['荒泷逆袈裟连斩伤害'][level_a].replace('%', '')) / 100.0,
-            'E-e岩:赤牛发破': float(skill_data['魔杀绝技·赤牛发破']['数值']['技能伤害'][level_e].replace('%', '')) / 100.0,
+            'E-e岩:赤牛发破': float(skill_data['魔杀绝技·赤牛发破！']['数值']['技能伤害'][level_e].replace('%', '')) / 100.0,
+        }
+    if data['名称'] == '宵宫':
+        return {
+            'B:l40-增伤-*': (0.2, '被动一满层'),
+            'B:c2-增伤-*': (0.25, '二命触发'),
+            'A-e火-n2:普攻第一段': (1 + float(skill_data['焰硝庭火舞']['数值']['炽焰箭伤害'][level_e].replace('%普通攻击伤害', '')) / 100.0) * float(skill_data['普通攻击·烟火打扬']['数值']['一段伤害'][level_a].replace('%*2', '')) / 100.0,
+            'A-e火-r蒸发1.5:普攻第三段蒸发': (1 + float(
+                skill_data['焰硝庭火舞']['数值']['炽焰箭伤害'][level_e].replace('%普通攻击伤害', '')) / 100.0) * float(
+                skill_data['普通攻击·烟火打扬']['数值']['三段伤害'][level_a].replace('%*2', '')) / 100.0,
+            'Q-e火:琉金火光爆炸': float(skill_data['琉金云间草']['数值']['琉金火光爆炸伤害'][level_q].replace('%', '')) / 100.0
         }
 
 
