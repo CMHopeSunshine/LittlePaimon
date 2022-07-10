@@ -489,8 +489,8 @@ async def mys_sign_auto_handler(event: MessageEvent, msg: Message = CommandArg()
                 await delete_auto_sign(str(event.user_id), uid)
                 await mys_sign_auto.finish('关闭米游社自动签到成功', at_sender=True)
         else:
-            await add_auto_sign(str(event.user_id), uid, str(event.group_id))
-            await mys_sign_auto.finish('开启米游社自动签到成功,派蒙会在每日0点帮你签到', at_sender=True)
+            # await add_auto_sign(str(event.user_id), uid, str(event.group_id))
+            await mys_sign_auto.finish('指令错误，在后面加 开启/关闭 来使用哦', at_sender=True)
 
 
 ud_lmt = FreqLimiter(300)
