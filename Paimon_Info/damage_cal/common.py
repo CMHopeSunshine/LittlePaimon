@@ -580,7 +580,7 @@ def get_damage_multipiler(data: dict) -> dict:
             'B:c6-增伤-AZ': (2.98, '满命触发'),
             'AZ-n3-e冰:重击': float(skill_data['普通攻击·神里流·倾']['数值']['重击伤害'][level_a].replace('%*3', '')) / 100.0,
             'E-e冰:冰华伤害': float(skill_data['神里流·冰华']['数值']['技能伤害'][level_e].replace('%', '')) / 100.0,
-            'Q-e冰:霜灭每段': float(skill_data['神里流·霜灭']['数值']['切割伤害'][level_q].replace('%', '')) / 100.0,
+            'Q-e冰:霜灭每段': float(skill_data['神里流·霜灭']['数值']['切割伤害'][level_q + 1].replace('%', '')) / 100.0,
         }
     if data['名称'] == '行秋':
         e = skill_data['古华剑·画雨笼山']['数值']['技能伤害'][level_e].split('+')
@@ -688,7 +688,7 @@ def get_damage_multipiler(data: dict) -> dict:
         return {
             'B:l40-增伤-*': (0.2, '被动一满层'),
             'B:c2-增伤-*': (0.25, '二命触发'),
-            'A-e火-n2:普攻第一段': (1 + float(skill_data['焰硝庭火舞']['数值']['炽焰箭伤害'][level_e].replace('%普通攻击伤害', '')) / 100.0) * float(skill_data['普通攻击·烟火打扬']['数值']['一段伤害'][level_a].replace('%*2', '')) / 100.0,
+            'A-e火-n2:普攻第一段': float(skill_data['焰硝庭火舞']['数值']['炽焰箭伤害'][level_e].replace('%普通攻击伤害', '')) / 100.0 * float(skill_data['普通攻击·烟火打扬']['数值']['一段伤害'][level_a].replace('%*2', '')) / 100.0,
             'A-e火-r蒸发1.5:普攻第三段蒸发': (1 + float(
                 skill_data['焰硝庭火舞']['数值']['炽焰箭伤害'][level_e].replace('%普通攻击伤害', '')) / 100.0) * float(
                 skill_data['普通攻击·烟火打扬']['数值']['三段伤害'][level_a].replace('%', '')) / 100.0,
