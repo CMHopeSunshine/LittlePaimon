@@ -226,6 +226,8 @@ paimon_speak_continuously_max_len = 3
 | 昔。             | 5   |
 | dix            | 20  |
 | 凤御白            | 30  |
+| RivenNero      | 5   |
+
 ## 丨其他
 
 - 本项目仅供学习使用，禁止用于商业用途
