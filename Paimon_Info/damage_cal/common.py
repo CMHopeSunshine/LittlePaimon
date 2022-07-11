@@ -482,7 +482,7 @@ all_skill_data = load_json(path=Path(__file__).parent.parent.parent / 'utils' / 
 
 def get_damage_multipiler(data: dict) -> dict:
     skill_data = all_skill_data[data['名称']]['skill']
-    level_q = data['天赋'][3]['等级'] - 1 if data['名称'] in ['神里绫华' ,'莫娜'] else level_q = data['天赋'][2]['等级'] - 1
+    level_q = data['天赋'][3]['等级'] - 1 if data['名称'] in ['神里绫华', '莫娜'] else data['天赋'][2]['等级'] - 1
     level_e = data['天赋'][1]['等级'] - 1
     level_a = data['天赋'][0]['等级'] - 1
     dm = {}
