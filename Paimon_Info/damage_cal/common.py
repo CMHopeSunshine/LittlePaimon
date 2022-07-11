@@ -482,7 +482,7 @@ all_skill_data = load_json(path=Path(__file__).parent.parent.parent / 'utils' / 
 
 def get_damage_multipiler(data: dict) -> dict:
     skill_data = all_skill_data[data['名称']]['skill']
-    level_q = data['天赋'][2]['等级'] - 1
+    level_q = data['天赋'][3]['等级'] - 1 if data['名称'] in ['神里绫华' ,'莫娜'] else level_q = data['天赋'][2]['等级'] - 1
     level_e = data['天赋'][1]['等级'] - 1
     level_a = data['天赋'][0]['等级'] - 1
     dm = {}
@@ -580,7 +580,7 @@ def get_damage_multipiler(data: dict) -> dict:
             'B:c6-增伤-AZ': (2.98, '满命触发'),
             'AZ-n3-e冰:重击': float(skill_data['普通攻击·神里流·倾']['数值']['重击伤害'][level_a].replace('%*3', '')) / 100.0,
             'E-e冰:冰华伤害': float(skill_data['神里流·冰华']['数值']['技能伤害'][level_e].replace('%', '')) / 100.0,
-            'Q-e冰:霜灭每段': float(skill_data['神里流·霜灭']['数值']['切割伤害'][level_q + 1].replace('%', '')) / 100.0,
+            'Q-e冰:霜灭每段': float(skill_data['神里流·霜灭']['数值']['切割伤害'][level_q].replace('%', '')) / 100.0,
         }
     if data['名称'] == '行秋':
         e = skill_data['古华剑·画雨笼山']['数值']['技能伤害'][level_e].split('+')
