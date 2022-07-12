@@ -57,6 +57,22 @@ def get_role_dmg(data: dict):
         dmg_data['战技长按'] = udc(dm['e长按'] * attack, (cr + ve['暴击率'], cd), db[-1] + ve['增伤'], level_role, rcd=dm['大招减抗'])
         dmg_data['大招持续伤害'] = udc(dm['大招持续'] * attack, (cr + vq['暴击率'], cd), db[-1] + vq['增伤'], level_role,
                                  rcd=dm['大招减抗'])
+    elif data['名称'] == '珊瑚宫心海':
+        health = data['属性']['基础生命'] + data['属性']['额外生命']
+        adb = 0.15 * data['属性']['治疗加成'] if level_role >= 70 else 0
+        if cons >= 6:
+            db[3] += 0.4
+            data['伤害描述'].insert(0, '六命触发')
+        ab = udc(dm['普攻第一段'] * attack, (cr + va['普攻暴击率'], cd), db[3] + va['普攻增伤'], level_role)
+        aq = udc(dm['普攻伤害提升'] * health, (cr + va['普攻暴击率'], cd), db[3] + adb + va['普攻增伤'], level_role)
+        if len(ab) == 1:
+            dmg_data['开大普攻第一段'] = (str(int(ab[0]) + int(aq[0])), )
+        else:
+            dmg_data['开大普攻第一段'] = (str(int(ab[0]) + int(aq[0])), str(int(ab[1]) + int(aq[1])))
+        dmg_data['开大战技伤害'] = udc(dm['水母伤害'] * attack + dm['E伤害提升'] * health, (cr + ve['暴击率'], cd), db[3] + ve['增伤'], level_role)
+        dmg_data['大招释放伤害'] = udc(dm['大招伤害'] * health, (cr + vq['暴击率'], cd), db[3] + vq['增伤'], level_role)
+        dmg_data['开大普攻治疗量'] = (str(int((float(dm['大招治疗量'][0].replace('%生命值上限', '')) / 100.0 * health + float(dm['大招治疗量'][1]) * (1 + data['属性']['治疗加成'])))),)
+        dmg_data['战技治疗量'] = (str(int((float(dm['水母治疗量'][0].replace('%生命值上限', '')) / 100.0 * health + float(dm['水母治疗量'][1]) * (1 + data['属性']['治疗加成'])))),)
     else:
         dmg_data = get_dmg_data(data, dm, va, ve, vq)
     if data['伤害描述']:
@@ -140,6 +156,8 @@ def get_dmg_data(data, dm, va, ve, vq):
                             v[para[2]][para[1]] += num[0]
                     if len(num) > 1 and num[1] not in data['伤害描述']:
                         data['伤害描述'].insert(0, num[1])
+        elif skill_type == 'T':
+            dmg_data[skill_name] = (str(num), )
         else:
             r = 1  # 反应系数
             n = '1'  # 段数
