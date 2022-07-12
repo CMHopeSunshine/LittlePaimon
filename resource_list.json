@@ -1296,7 +1296,7 @@
     },
     {
         "path": "LittlePaimon/gacha_res/type.json",
-        "hash": "7542bc2083f10bf723a8880dad6c9143",
+        "hash": "385a22dd32d8b209a2b944f69d7cc52b",
         "lock": true
     },
     {
@@ -1955,6 +1955,11 @@
         "lock": true
     },
     {
+        "path": "LittlePaimon/gacha_res/角色/鹿野院平藏.png",
+        "hash": "9bbaee128ebe77c339dd628e931a0fb5",
+        "lock": true
+    },
+    {
         "path": "LittlePaimon/help/bg.jpg",
         "hash": "d63eadd7fd2c49e828ace165866bf8c9",
         "lock": false
@@ -2232,6 +2237,11 @@
     {
         "path": "LittlePaimon/name_card/10000058.png",
         "hash": "33094e9aad830bc0455a9b5c70bae940",
+        "lock": true
+    },
+    {
+        "path": "LittlePaimon/name_card/10000059.png",
+        "hash": "5280f236ef87c93e6ae85f1dd74432a1",
         "lock": true
     },
     {
@@ -3135,6 +3145,11 @@
         "lock": true
     },
     {
+        "path": "LittlePaimon/role_card/10000059.png",
+        "hash": "a00f475ea693d089fdc3bf10f623cf7e",
+        "lock": true
+    },
+    {
         "path": "LittlePaimon/role_card/10000060.png",
         "hash": "8f9ac57fbd88f695917cf9142078626c",
         "lock": true
@@ -3167,251 +3182,6 @@
     {
         "path": "LittlePaimon/role_card/角色卡片3.png",
         "hash": "80939c8151c482e5594111f0cbc4da18",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/七七材料.png",
-        "hash": "9492e7b2305b1a36f99cace2c477737c",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/丽莎材料.png",
-        "hash": "1673aa0aa69be41a7bb2d2c97ebb58a9",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/久岐忍材料.png",
-        "hash": "79ec0b6bc98bfb8c552a39c84fcbf13d",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/九条裟罗材料.png",
-        "hash": "458e06d05bdac7a7aaba6629635248b1",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/云堇材料.png",
-        "hash": "059824cd5f5c2d8c4d0bc0325527ee4d",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/五郎材料.png",
-        "hash": "9ac3071561e87a4379337110719394ff",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/优菈材料.png",
-        "hash": "54f04f8c7418147d42164bcd5af1ada2",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/八重神子材料.png",
-        "hash": "f820355146e7f2f33e99769bd4b3bb26",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/凝光材料.png",
-        "hash": "c2f7cf76069a5d4edb3006595358f00a",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/凯亚材料.png",
-        "hash": "cf5e37343da14ae7a6f029ec89808fbf",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/刻晴材料.png",
-        "hash": "399bf7bbba2de96e6d7b41c7e33c3e22",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/北斗材料.png",
-        "hash": "be3b122ceaf2d3df30ee430b2b3aac4d",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/可莉材料.png",
-        "hash": "d70bd3c81508dc7016d1bedae839d83e",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/埃洛伊材料.png",
-        "hash": "3d6010f173cd74ffa5dadd970647f872",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/夜兰材料.png",
-        "hash": "608850ba65f9d468f8ddbcab58aae692",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/安柏材料.png",
-        "hash": "ab771a9f4754f9e3d9ec0efbcd4fde6d",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/宵宫材料.png",
-        "hash": "c3f6194a70c16c8cf6c34329d240fa21",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/托马材料.png",
-        "hash": "fddd267286295830670f40d2413da5f1",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/早柚材料.png",
-        "hash": "8a7e28a6e56821012f9eb960f699426d",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/枫原万叶材料.png",
-        "hash": "6c5cfe1256a0376489ee813e5a0f64f2",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/温迪材料.png",
-        "hash": "5456de5a594de25062621db1f4e56a3f",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/烟绯材料.png",
-        "hash": "9568f89dd89052bae52d938499740edf",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/珊瑚宫心海材料.png",
-        "hash": "73d91efe76fa555ee5ea611986bfe69b",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/班尼特材料.png",
-        "hash": "ec50d33d9f63f80dab000e989f5de265",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/琴材料.png",
-        "hash": "6200fa82de991f2b7ec92f5255194118",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/甘雨材料.png",
-        "hash": "84b97823fd079e0e4f58741ce9f04c76",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/申鹤材料.png",
-        "hash": "fa994c697d46e61ceac62ea1220d53ef",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/砂糖材料.png",
-        "hash": "c2f6d9b785d3e2a7ece2360b751b94ec",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/神里绫人材料.png",
-        "hash": "5f94ca104d286e96ab45e9034262e603",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/神里绫华材料.png",
-        "hash": "9984a4f13b49353047a2a051f6965363",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/罗莎莉亚材料.png",
-        "hash": "98934331b321b195234df8f17f698c18",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/胡桃材料.png",
-        "hash": "bd2a184de530ff438037bb0ffb8c5dce",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/芭芭拉材料.png",
-        "hash": "9ef9787264c447d6aa8669ada639bfa8",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/荒泷一斗材料.png",
-        "hash": "4e296ca708e06cd9a4e7850c7b1ca465",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/莫娜材料.png",
-        "hash": "2e24c10e89babdc60510ebf73eef25d3",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/菲谢尔材料.png",
-        "hash": "4a4807990ae65da59be6a415e9bffc95",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/行秋材料.png",
-        "hash": "efcaeb3b39612a4273bb38f1d44cf4ee",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/诺艾尔材料.png",
-        "hash": "41f23ff99956479b032e130a8620bb47",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/辛焱材料.png",
-        "hash": "de76a98f00ed1f742a26ba869a404b80",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/达达利亚材料.png",
-        "hash": "8eca5b0b3486ca2147b296ba5be60119",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/迪卢克材料.png",
-        "hash": "243e3605d74dda3c16253d7f206ba47e",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/迪奥娜材料.png",
-        "hash": "0148957db64bd3aa1c924327ea591f38",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/重云材料.png",
-        "hash": "0c8602bb49bc8064b144451ea96eac55",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/钟离材料.png",
-        "hash": "9d8f1e029260eb8e3ae132c7b95c81ba",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/阿贝多材料.png",
-        "hash": "2528a518a516b7f775286f4425c609fa",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/雷泽材料.png",
-        "hash": "7988e0e2a58d3392cc966991e503518e",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/雷电将军材料.png",
-        "hash": "7d9adffdda8f7e11e4f4b3ecb8fef503",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/香菱材料.png",
-        "hash": "547947248fca44697328cd74ac552b64",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_material/魈材料.png",
-        "hash": "5262b00205e235ba94b13a36bc852f57",
         "lock": true
     },
     {
@@ -3640,6 +3410,11 @@
         "lock": true
     },
     {
+        "path": "LittlePaimon/role_profile/10000059.png",
+        "hash": "d8c313559955785dca7a3f952c78a1c5",
+        "lock": true
+    },
+    {
         "path": "LittlePaimon/role_profile/10000060.png",
         "hash": "16f3de649689e9ea04128527cfa07f5a",
         "lock": true
@@ -3667,126 +3442,6 @@
     {
         "path": "LittlePaimon/role_profile/10000066.png",
         "hash": "4e85449ac167c48fd3db36556bb6fa55",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_side_card/.gitignore",
-        "hash": "dbf78601421d6e8875023e8a900b8b7d",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_side_card/10000002.png",
-        "hash": "d81b758629aed23522276d642b6eedaa",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_side_card/10000022.png",
-        "hash": "a02400c63b5d9dd2903d0027ca46428d",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_side_card/10000023.png",
-        "hash": "66c1f5a2fd5f3434ed3132d6f295ab4c",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_side_card/10000025.png",
-        "hash": "1c6ed9d0a9a9018f3f3e367eb26aea7b",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_side_card/10000026.png",
-        "hash": "6fed4f67d5a8349025ee33e00cd95005",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_side_card/10000027.png",
-        "hash": "6252c25e75543734c35afb949b222b5f",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_side_card/10000029.png",
-        "hash": "f3e1cd295ec4f0a8164e2eee777dcacc",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_side_card/10000030.png",
-        "hash": "c8eb328323d9144ed93b695ec8012f67",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_side_card/10000032.png",
-        "hash": "18ebeea30260bb72cf41ef132de07b69",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_side_card/10000033.png",
-        "hash": "6eda3f7dbf9d97cab4b458fb272202f6",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_side_card/10000036.png",
-        "hash": "510f53d18b3bdaedeacaeca8f7267a1b",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_side_card/10000037.png",
-        "hash": "6a47cb388a57c02050d2dcd16a18ebcb",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_side_card/10000039.png",
-        "hash": "7fb1a276e9acec323ee0212bd9e2b93f",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_side_card/10000042.png",
-        "hash": "8472bb668f376886f185f31d6cecf50a",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_side_card/10000043.png",
-        "hash": "0e6fc9872c10d934c45d3053e46768ff",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_side_card/10000046.png",
-        "hash": "12d0e46226bb38f37290080f58ef2cc6",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_side_card/10000047.png",
-        "hash": "0f5bfa79b36975c1113aac66d61e108e",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_side_card/10000049.png",
-        "hash": "11708c188fc7b476a00f876138a88f57",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_side_card/10000051.png",
-        "hash": "1ca685ad7ae0cf60f00819bcb1ba910f",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_side_card/10000052.png",
-        "hash": "c24bc268bad6796fc0bb667d245bba59",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_side_card/10000054.png",
-        "hash": "7998134b2f4519fb0a6c758aa98d79f1",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_side_card/10000058.png",
-        "hash": "cd2b11ce018b1a90b5cc031fb1ec9787",
-        "lock": true
-    },
-    {
-        "path": "LittlePaimon/role_side_card/10000063.png",
-        "hash": "0b75c82e2859b79e59b75c89a9156d1b",
         "lock": true
     },
     {
@@ -4042,6 +3697,11 @@
     {
         "path": "LittlePaimon/role_splash/魈.png",
         "hash": "5c6ff60677176b0799a652a1f5401a60",
+        "lock": true
+    },
+    {
+        "path": "LittlePaimon/role_splash/鹿野院平藏.png",
+        "hash": "accfc6b8c09f4777704a6bab02ff20b8",
         "lock": true
     },
     {
@@ -4912,6 +4572,11 @@
     {
         "path": "LittlePaimon/thumb/鸦羽弓.png",
         "hash": "df44078a4862daa070b3be1970950db6",
+        "lock": true
+    },
+    {
+        "path": "LittlePaimon/thumb/鹿野院平藏.png",
+        "hash": "4bf93852de5d8f1210fbe34bdebab621",
         "lock": true
     },
     {
