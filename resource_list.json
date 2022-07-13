@@ -1272,22 +1272,22 @@
     {
         "path": "LittlePaimon/gacha_res/DIY_gacha_pool/all_star.json",
         "hash": "a4c521cc32d5a72dc39fdabfe5a7c946",
-        "lock": true
+        "lock": false
     },
     {
         "path": "LittlePaimon/gacha_res/DIY_gacha_pool/role_1.json",
         "hash": "a2c4e088a2f2869bf8c82e79dc848947",
-        "lock": true
+        "lock": false
     },
     {
         "path": "LittlePaimon/gacha_res/DIY_gacha_pool/role_2.json",
         "hash": "592dd394b437f9f9db9c818a8ff02c09",
-        "lock": true
+        "lock": false
     },
     {
         "path": "LittlePaimon/gacha_res/DIY_gacha_pool/weapon.json",
         "hash": "ae5e9937426ee8a6eafc2940b7a5dd83",
-        "lock": true
+        "lock": false
     },
     {
         "path": "LittlePaimon/gacha_res/background.png",
@@ -1296,7 +1296,7 @@
     },
     {
         "path": "LittlePaimon/gacha_res/type.json",
-        "hash": "385a22dd32d8b209a2b944f69d7cc52b",
+        "hash": "95ec53c3f3ae22b20216fc2683686ce1",
         "lock": true
     },
     {
@@ -3146,7 +3146,7 @@
     },
     {
         "path": "LittlePaimon/role_card/10000059.png",
-        "hash": "a00f475ea693d089fdc3bf10f623cf7e",
+        "hash": "ff4996914a6f4a9a636240fbdcda8855",
         "lock": true
     },
     {
