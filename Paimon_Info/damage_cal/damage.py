@@ -80,7 +80,6 @@ def get_role_dmg(data: dict):
     return draw_dmg_pic(dmg_data) if dmg_data else None
 
 
-# def get_dmg_data(dm, attack, cr, cd, db, level_role, va, ve, vq, data):
 def get_dmg_data(data, dm, va, ve, vq):
     dmg_data = {}
     element_type = ['物理', '火', '雷', '水', '草', '风', '岩', '冰']
