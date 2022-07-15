@@ -694,7 +694,7 @@ def get_damage_multipiler(data: dict) -> dict:
             'A-e岩:普攻第一段': float(skill_data['普通攻击·西风剑术·女仆']['数值']['一段伤害'][level_a].replace('%', '')) / 100.0,
             'T:Q攻击力提高:':  int(
                 (float(skill_data['大扫除']['数值']['攻击力提高'][level_q].replace('%防御力', '')) / 100.0 + extra) * defense),
-            'T:E盾值':      int(float(e[0].replace('%防御力', '')) / 100.0 * defense + float(e[1])),
+            'T:E盾值':      int(float(e[0].replace('%防御力', '')) / 100.0 * defense + float(e[1]) * 1.5),
             'T:普攻治疗量/概率': str(int((float(ez[0].replace('%防御力', '')) / 100.0 * defense + float(ez[1])) * (
                     1 + data['属性']['治疗加成']))) + '/' + skill_data['护心铠']['数值']['治疗触发几率'][level_e]
         }

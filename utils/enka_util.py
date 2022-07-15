@@ -49,6 +49,12 @@ class PlayerInfo:
             else:
                 role_info['元素'] = role_element[role_name]
 
+            if 'talentIdList' in data:
+                if len(data['talentIdList']) >= 3:
+                    data['skillLevelMap'][list(data['skillLevelMap'].keys())[ra_score['Talent'][role_name][0]]] += 3
+                if len(data['talentIdList']) >= 5:
+                    data['skillLevelMap'][list(data['skillLevelMap'].keys())[ra_score['Talent'][role_name][1]]] += 3
+
             role_info['天赋'] = []
             for skill in data['skillLevelMap']:
                 skill_detail = {'名称': role_skill['Name'][skill], '等级': data['skillLevelMap'][skill],
@@ -67,10 +73,6 @@ class PlayerInfo:
 
             role_info['命座'] = []
             if 'talentIdList' in data:
-                if len(data['talentIdList']) >= 3:
-                    data['skillLevelMap'][list(data['skillLevelMap'].keys())[ra_score['Talent'][role_name][0]]] += 3
-                if len(data['talentIdList']) >= 5:
-                    data['skillLevelMap'][list(data['skillLevelMap'].keys())[ra_score['Talent'][role_name][1]]] += 3
                 for talent in data['talentIdList']:
                     talent_detail = {'名称': role_talent['Name'][str(talent)], '图标': role_talent['Icon'][str(talent)]}
                     role_info['命座'].append(talent_detail)

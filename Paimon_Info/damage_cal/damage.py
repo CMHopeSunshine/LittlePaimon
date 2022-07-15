@@ -24,7 +24,7 @@ def get_role_dmg(data: dict):
     if data['名称'] == '钟离':
         health = data['属性']['基础生命'] + data['属性']['额外生命']
         data['伤害描述'].insert(0, '护盾减抗')
-        dmg_data['玉璋护盾'] = (str(int((health * dm['玉璋护盾'][0] + dm['玉璋护盾'][1]) * (1 + data['属性']['护盾强效']))),)
+        dmg_data['玉璋护盾'] = (str(int((health * dm['玉璋护盾'][0] + dm['玉璋护盾'][1]) * (1 + data['属性']['护盾强效']) * 1.5)),)
         dmg_data['原岩共鸣'] = udc(dm['原岩共鸣'] * attack + (health * 0.019) if level_role >= 70 else 0, (cr + ve['暴击率'], cd),
                                db[6] + ve['增伤'], level_role, rcd=0.2)
         dmg_data['天星伤害'] = udc(dm['天星'] * attack + (health * 0.33) if level_role >= 70 else 0, (cr + vq['暴击率'], cd),
