@@ -232,7 +232,7 @@ async def get_enka_data(uid):
     for _ in range(3):
         try:
             url = f'https://enka.shinshin.moe/u/{uid}/__data.json'
-            resp = await aiorequests.get(url=url)
+            resp = await aiorequests.get(url=url, follow_redirects=True)
             data = resp.json()
             return data
         except Exception:
