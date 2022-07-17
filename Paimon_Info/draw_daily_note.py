@@ -1,6 +1,6 @@
 import datetime
-import os
 import random
+from io import BytesIO
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -30,9 +30,10 @@ async def draw_ring(per):
            wedgeprops={'width': 0.18},
            startangle=90,
            colors=colors)
-    plt.savefig('temp.png', transparent=True)
-    img = Image.open('temp.png').resize((266, 266)).convert('RGBA')
-    os.remove('temp.png')
+    bio = BytesIO()
+    plt.savefig(bio, transparent=True)
+    bio.seek(0)
+    img = Image.open(bio).resize((266, 266)).convert('RGBA')
     plt.cla()
     plt.close("all")
     return img
@@ -48,9 +49,9 @@ async def draw_daily_note_card(data, uid):
     elif data['retcode'] != 0:
         return f'派蒙获取{uid}数据失败了，获取状态：\n{data["message"]},{data["retcode"]}'
     data = data['data']
-    circle_img = load_image(os.path.join(res_path, 'daily_note', '透明圆.png'))
-    finished_icon = load_image(os.path.join(res_path, 'daily_note', 'finished.png'))
-    bg_img = load_image(os.path.join(res_path, 'daily_note', 'ssbq.png'), mode='RGBA')
+    circle_img = load_image(res_path / 'daily_note' / '透明圆.png')
+    finished_icon = load_image(res_path / 'daily_note' / 'finished.png')
+    bg_img = load_image(res_path / 'daily_note' / 'ssbq.png', mode='RGBA')
 
     bg_draw = ImageDraw.Draw(bg_img)
     # uid文字
@@ -66,7 +67,8 @@ async def draw_daily_note_card(data, uid):
         recover_time_str = f'将于{recover_time_day}{recover_time.strftime("%H:%M")}回满'
         bg_draw.text((780, 480), recover_time_str, fill='white', font=get_font(40, '优设标题黑.ttf'))
     # 宝钱文字
-    bg_draw.text((337, 701), f"{data['current_home_coin']}/{data['max_home_coin']}", fill='white', font=get_font(48, 'number.ttf'))
+    bg_draw.text((337, 701), f"{data['current_home_coin']}/{data['max_home_coin']}", fill='white',
+                 font=get_font(48, 'number.ttf'))
     bg_img.alpha_composite(await draw_ring(data['current_home_coin'] / data['max_home_coin']), (98, 593))
     if data['current_home_coin'] == data['max_home_coin']:
         bg_draw.text((820, 701), f"洞天宝钱满了哦~", fill='white', font=get_font(40, '优设标题黑.ttf'))
@@ -93,10 +95,14 @@ async def draw_daily_note_card(data, uid):
         bg_draw.text((337, 1147), f"{7 - data['transformer']['recovery_time']['Day']}/7", fill='white',
                      font=get_font(48, 'number.ttf'))
         bg_img.alpha_composite(await draw_ring((7 - data['transformer']['recovery_time']['Day']) / 7), (98, 1039))
-        if data['transformer']['recovery_time']['Day'] == 0:
+        rt = data['transformer']['recovery_time']
+        if rt['Day'] == 0 and rt['reached']:
             bg_draw.text((465, 1147), "可使用", fill='white', font=get_font(40, '优设标题黑.ttf'))
+        elif rt['Day'] == 0 and not rt['reached']:
+            bg_draw.text((463, 1127), f"{rt['Hour']}时后", fill='white', font=get_font(40, '优设标题黑.ttf'))
+            bg_draw.text((465, 1167), "可使用", fill='white', font=get_font(40, '优设标题黑.ttf'))
         else:
-            bg_draw.text((471, 1127), f"{data['transformer']['recovery_time']['Day']}天后", fill='white',
+            bg_draw.text((471, 1127), f"{rt['Day']}天后", fill='white',
                          font=get_font(40, '优设标题黑.ttf'))
             bg_draw.text((465, 1167), "可使用", fill='white', font=get_font(40, '优设标题黑.ttf'))
     else:
@@ -116,44 +122,53 @@ async def draw_daily_note_card(data, uid):
     abyss_new_day = 16 if datetime.datetime.now().day < 16 else 1
     abyss_new = datetime.datetime.strptime('2022.' + str(abyss_new_month) + '.' + str(abyss_new_day) + '.00:00',
                                            '%Y.%m.%d.%H:%M') - datetime.datetime.now()
-    bg_draw.text((337, 1358), f"{abyss_new.days}/15", fill='white',
+    abyss_new_total = datetime.datetime.strptime('2022.' + str(abyss_new_month) + '.' + str(abyss_new_day) + '.00:00',
+                                                 '%Y.%m.%d.%H:%M') - datetime.datetime.strptime(
+        '2022.' + str(abyss_new_month if abyss_new_month == datetime.datetime.now().month else abyss_new_month - 1) + '.' + str(1 if datetime.datetime.now().day < 16 else 16) + '.00:00',
+        '%Y.%m.%d.%H:%M')
+    bg_draw.text((337, 1358), f"{abyss_new.days}/{abyss_new_total.days}", fill='white',
                  font=get_font(48, 'number.ttf'))
-    bg_draw.text((745, 1358), f"本期深渊还有{abyss_new.days if abyss_new.days <= 15 else 15}天结束", fill='white',
+    bg_draw.text((745, 1358), f"本期深渊还有{abyss_new.days if abyss_new.days <= abyss_new_total.days else abyss_new_total.days}天结束", fill='white',
                  font=get_font(40, '优设标题黑.ttf'))
-    bg_img.alpha_composite(await draw_ring(abyss_new.days if abyss_new.days <= 15 else 15 / 15), (100, 1249))
+    bg_img.alpha_composite(await draw_ring(abyss_new.days / abyss_new_total.days), (100, 1249))
 
     # 派遣情况
     exp = data['expeditions']
-    i = 0
-    for role in exp:
-        role_avatar = Path() / 'data' / 'LittlePaimon' / 'res' / 'avatar_side' / role['avatar_side_icon'].split('/')[-1]
-        role_avatar = await aiorequests.get_img(url=role['avatar_side_icon'], size=(135, 135), mode='RGBA', save_path=role_avatar)
-        bg_img.alpha_composite(role_avatar, (i * 200 + 168, 1537))
-        bg_img.alpha_composite(await draw_ring(1 - int(role['remained_time']) / 72000), (i * 201 + 101, 1490))
-        if role['status'] == 'Ongoing':
-            bg_img.alpha_composite(circle_img, (i * 201 + 172, 1559))
-            hour = int(role['remained_time']) // 3600
-            bg_draw.text((i * 200 + 212, 1580), f"{hour}h", fill='white', font=get_font(40, 'number.ttf'))
-            minute = int(role['remained_time']) % 3600 // 60
-            bg_draw.text((i * 200 + 197, 1620), f"{minute}m", fill='white', font=get_font(40, 'number.ttf'))
+    if exp:
+        i = 0
+        for role in exp:
+            role_avatar = Path() / 'data' / 'LittlePaimon' / 'res' / 'avatar_side' / \
+                          role['avatar_side_icon'].split('/')[-1]
+            role_avatar = await aiorequests.get_img(url=role['avatar_side_icon'], size=(135, 135), mode='RGBA',
+                                                    save_path=role_avatar)
+            bg_img.alpha_composite(role_avatar, (i * 200 + 168, 1537))
+            bg_img.alpha_composite(await draw_ring(1 - int(role['remained_time']) / 72000), (i * 201 + 101, 1490))
+            if role['status'] == 'Ongoing':
+                bg_img.alpha_composite(circle_img, (i * 201 + 172, 1559))
+                hour = int(role['remained_time']) // 3600
+                bg_draw.text((i * 200 + 212, 1580), f"{hour}h", fill='white', font=get_font(40, 'number.ttf'))
+                minute = int(role['remained_time']) % 3600 // 60
+                bg_draw.text((i * 200 + 197, 1620), f"{minute}m", fill='white', font=get_font(40, 'number.ttf'))
+            else:
+                bg_img.alpha_composite(finished_icon, (i * 200 + 191, 1576))
+            i += 1
+
+        bg_draw.text((1220, 1580), "派遣全部", fill="#5680d2", font=get_font(40, '优设标题黑.ttf'))
+        bg_draw.text((1220, 1620), "完成时间", fill="#5680d2", font=get_font(40, '优设标题黑.ttf'))
+        max_time = int(max([s['remained_time'] for s in exp]))
+        if max_time == 0:
+            bg_draw.text((1410, 1583), "已全部完成~", fill="#5680d2",
+                         font=get_font(60, '优设标题黑.ttf'))
         else:
-            bg_img.alpha_composite(finished_icon, (i * 200 + 191, 1576))
-        i += 1
-
-    bg_draw.text((1220, 1580), "派遣全部", fill="#5680d2", font=get_font(40, '优设标题黑.ttf'))
-    bg_draw.text((1220, 1620), "完成时间", fill="#5680d2", font=get_font(40, '优设标题黑.ttf'))
-    max_time = int(max([s['remained_time'] for s in exp]))
-    if max_time == 0:
-        bg_draw.text((1410, 1583), "已全部完成~", fill="#5680d2",
-                     font=get_font(60, '优设标题黑.ttf'))
+            last_finish_time = datetime.datetime.now() + datetime.timedelta(seconds=max_time)
+            last_finish_day = last_finish_time.day > datetime.datetime.now().day and '明天' or '今天'
+            last_finish_str = f'{last_finish_day}{last_finish_time.strftime("%H:%M")}'
+            bg_draw.text((1408, 1588), last_finish_str, fill="#5680d2",
+                         font=get_font(60, '优设标题黑.ttf'))
     else:
-        last_finish_time = datetime.datetime.now() + datetime.timedelta(seconds=max_time)
-        last_finish_day = last_finish_time.day > datetime.datetime.now().day and '明天' or '今天'
-        last_finish_str = f'{last_finish_day}{last_finish_time.strftime("%H:%M")}'
-        bg_draw.text((1408, 1588), last_finish_str, fill="#5680d2",
+        bg_draw.text((1408, 1588), '未安排派遣', fill="#5680d2",
                      font=get_font(60, '优设标题黑.ttf'))
-
-    role_img = load_image(os.path.join(res_path, 'emoticons', random.choice(os.listdir(os.path.join(res_path, 'emoticons')))), size=3.5, mode='RGBA')
+    role_img = load_image(random.choice(list((res_path / 'emoticons').iterdir())), size=3.5, mode='RGBA')
     bg_img.alpha_composite(role_img, (1220, 200))
     now = datetime.datetime.now().strftime('%m月%d日%H:%M')
     bg_draw.text((554, 1794), 'Created by LittlePaimon·' + now, fill='#5680d2', font=get_font(40, '优设标题黑.ttf'))

@@ -502,6 +502,8 @@ def get_damage_multipiler(data: dict) -> dict:
     level_q = data['天赋'][3]['等级'] - 1 if data['名称'] in ['神里绫华', '莫娜'] else data['天赋'][2]['等级'] - 1
     level_e = data['天赋'][1]['等级'] - 1
     level_a = data['天赋'][0]['等级'] - 1
+    attack = data['属性']['基础攻击'] + data['属性']['额外攻击']
+    health = data['属性']['基础生命'] + data['属性']['额外生命']
     defense = data['属性']['基础防御'] + data['属性']['额外防御']
     dm = {}
     if data['名称'] == '钟离':
@@ -515,7 +517,7 @@ def get_damage_multipiler(data: dict) -> dict:
     if data['名称'] == '胡桃':
         dm = {'B:l70-增伤-*': (0.33, '半血以下',)}
         dm['B:l1-攻击力'] = (float(skill_data['蝶引来生']['数值']['攻击力提高'][level_e].replace('%生命值上限', '')) / 100.0 * (
-                data['属性']['基础生命'] + data['属性']['额外生命']), '开E后')
+            health), '开E后')
         dm['AZ-e火:裸重击'] = float(skill_data['普通攻击·往生秘传枪法']['数值']['重击伤害'][level_a].replace('%', '')) / 100.0
         dm['AZ-e火-r蒸发1.5:重击蒸发'] = float(skill_data['普通攻击·往生秘传枪法']['数值']['重击伤害'][level_a].replace('%', '')) / 100.0
         dm['E-e火-r蒸发1.5:雪梅香蒸发'] = float(skill_data['蝶引来生']['数值']['血梅香伤害'][level_e].replace('%', '')) / 100.0
@@ -704,7 +706,7 @@ def get_damage_multipiler(data: dict) -> dict:
             'B:c1-增伤-A':   (0.4, '一命增伤'),
             'B:l1-额外倍率-A': (
                 float(skill_data['神里流·镜花']['数值']['浪闪伤害值提高'][level_e].replace('%最大生命值/层', '')) / 100.0 * n * (
-                        data['属性']['基础生命'] + data['属性']['额外生命']),),
+                    health),),
             'B:l1-增伤-A':   (float(skill_data['神里流·水囿']['数值']['普通攻击伤害提升'][level_q].replace('%', '')) / 100.0,),
             'A-e水:瞬水剑第一段': float(skill_data['神里流·镜花']['数值']['一段瞬水剑伤害'][level_e].replace('%', '')) / 100.0,
             'Q-e水:大招每下':   float(skill_data['神里流·水囿']['数值']['水花剑伤害'][level_q].replace('%', '')) / 100.0
@@ -757,26 +759,101 @@ def get_damage_multipiler(data: dict) -> dict:
         data['属性']['元素精通'] += 200 if len(data['命座']) >= 2 else 0
         up = data['属性']['扩散系数'] if '扩散系数' in data['属性'] else 0
         return {
-            'B:d': ['技能仅计算风伤部分'],
-            'B:c6-增伤-AX': (data['属性']['元素精通'] * 0.002, ),
-            'AX-e风:E后高空下落': float(skill_data['普通攻击·我流剑术']['数值']['低空/高空坠地冲击伤害'][level_a].split('/')[1].replace('%', '')) / 100.0,
-            'E-e风:E点按伤害': float(skill_data['千早振']['数值']['点按技能伤害'][level_e].replace('%', '')) / 100.0,
-            'Q-e风:大招斩击': float(skill_data['万叶之一刀']['数值']['斩击伤害'][level_q].replace('%', '')) / 100.0,
-            'Q-e风:大招持续': float(skill_data['万叶之一刀']['数值']['持续伤害'][level_q].replace('%', '')) / 100.0,
-            # '大招附加': float(skill_data['万叶之一刀']['数值']['附加元素伤害'][level_q].replace('%', '')) / 100.0,
-            'T:扩散伤害': int(upheaval_reaction(data['等级'], '扩散', data['属性']['元素精通'], up))
+            'B:d':          ['技能仅计算风伤部分'],
+            'B:c6-增伤-AX':   (data['属性']['元素精通'] * 0.002,),
+            'AX-e风:E后高空下落': float(
+                skill_data['普通攻击·我流剑术']['数值']['低空/高空坠地冲击伤害'][level_a].split('/')[1].replace('%', '')) / 100.0,
+            'E-e风:E点按伤害':   float(skill_data['千早振']['数值']['点按技能伤害'][level_e].replace('%', '')) / 100.0,
+            'Q-e风:大招斩击':    float(skill_data['万叶之一刀']['数值']['斩击伤害'][level_q].replace('%', '')) / 100.0,
+            'Q-e风:大招持续':    float(skill_data['万叶之一刀']['数值']['持续伤害'][level_q].replace('%', '')) / 100.0,
+            'T:扩散伤害':       int(upheaval_reaction(data['等级'], '扩散', data['属性']['元素精通'], up))
         }
     if data['名称'] == '鹿野院平藏':
         e = skill_data['勠心拳']['数值']
         data['属性']['元素精通'] += 80 if data['等级'] >= 70 else 0
         up = data['属性']['扩散系数'] if '扩散系数' in data['属性'] else 0
         return {
-            'B:c6-暴击率-E': (0.16, ),
+            'B:c6-暴击率-E':  (0.16,),
             'B:c6-暴击伤害-E': (0.32,),
-            'AZ-e风:重击': float(skill_data['普通攻击·不动流格斗术']['数值']['重击伤害'][level_a].replace('%', '')) / 100.0,
-            'E-e风:满层勠心拳': (float(e['技能伤害'][level_e].replace('%', '')) + 4 * float(e['变格伤害提升'][level_e].replace('%/层', '')) + float(e['正论伤害提升'][level_e].replace('%', ''))) / 100.0,
+            'AZ-e风:重击':    float(skill_data['普通攻击·不动流格斗术']['数值']['重击伤害'][level_a].replace('%', '')) / 100.0,
+            'E-e风:满层勠心拳':  (float(e['技能伤害'][level_e].replace('%', '')) + 4 * float(
+                e['变格伤害提升'][level_e].replace('%/层', '')) + float(e['正论伤害提升'][level_e].replace('%', ''))) / 100.0,
             'Q-e风:聚风蹴真空弹': float(skill_data['聚风蹴']['数值']['不动流·真空弹伤害'][level_q].replace('%', '')) / 100.0,
-            'T:扩散伤害': int(upheaval_reaction(data['等级'], '扩散', data['属性']['元素精通'], up))
+            'T:扩散伤害':      int(upheaval_reaction(data['等级'], '扩散', data['属性']['元素精通'], up))
+        }
+    if data['名称'] == '班尼特':
+        attack_increase = float(skill_data['美妙旅程']['数值']['攻击力加成比例'][level_q].replace('%', '')) / 100.0 + (
+            0.2 if len(data['命座']) >= 1 else 0)
+        hp_recover = skill_data['美妙旅程']['数值']['持续治疗'][level_q].split('+')
+        return {
+            'B:c6-增伤-E':   (0.15,),
+            'B:l1-攻击力':    (int(attack_increase * data['属性']['基础攻击']),),
+            'E-e火:元素战技点按': float(skill_data['热情过载']['数值']['点按伤害'][level_e].replace('%', '')) / 100.0,
+            'Q-e火:大招伤害':   float(skill_data['美妙旅程']['数值']['技能伤害'][level_q].replace('%', '')) / 100.0,
+            'T:大招攻击加成':    int(attack_increase * data['属性']['基础攻击']),
+            'T:大招持续治疗':    int(
+                (float(hp_recover[0].replace('每秒', '').replace('%生命值上限', '')) / 100.0 * health + int(hp_recover[1])) * (
+                            1 + data['属性']['治疗加成'])),
+        }
+    if data['名称'] == '温迪':
+        up = data['属性']['扩散系数'] if '扩散系数' in data['属性'] else 0
+        return {
+            'B:d':         ['技能仅计算风伤部分'],
+            'B:c2-减抗-*':   (0.24, '二命减抗'),
+            'B:c4-增伤-*':   (0.25, '四命增伤'),
+            'B:c6-减抗-*':   (0.2, '六命减抗'),
+            'E-e风:E点按伤害':  float(skill_data['高天之歌']['数值']['点按伤害'][level_e].replace('%', '')) / 100.0,
+            'Q-e风:大招持续伤害': float(skill_data['风神之诗']['数值']['持续伤害'][level_q].replace('%', '')) / 100.0,
+            'T:扩散伤害':      int(upheaval_reaction(data['等级'], '扩散', data['属性']['元素精通'], up))
+        }
+    if data['名称'] == '莫娜':
+        if len(data['命座']) >= 1:
+            if '蒸发系数' in data['属性']:
+                data['属性']['蒸发系数'] += 0.15
+            else:
+                data['属性']['蒸发系数'] = 0.15
+        return {
+            'B:c4-暴击率-*':         (0.15,),
+            'B:c6-增伤-AZ':         (1.8, '六命重击增伤满层'),
+            'B:l1-增伤-*':          (float(skill_data['星命定轨']['数值']['伤害加成'][level_q].replace('%', '')) / 100.0, '星异增伤'),
+            'AZ-e水:重击':           float(skill_data['普通攻击·因果点破']['数值']['重击伤害'][level_a].replace('%', '')) / 100.0,
+            'E-e水:E持续伤害':         float(skill_data['水中幻愿']['数值']['持续伤害'][level_e].replace('%', '')) / 100.0,
+            'Q-e水:泡影破裂':          float(skill_data['星命定轨']['数值']['泡影破裂伤害'][level_q].replace('%', '')) / 100.0,
+            'Q-e水-r蒸发2.0:泡影破裂蒸发': float(skill_data['星命定轨']['数值']['泡影破裂伤害'][level_q].replace('%', '')) / 100.0,
+        }
+    if data['名称'] == '琴':
+        recovery1 = skill_data['蒲公英之风']['数值']['领域发动治疗量'][level_q].split('+')
+        recovery2 = skill_data['蒲公英之风']['数值']['持续治疗'][level_q].split('+')
+        return {
+            'B:c1-增伤-E':     (0.4, '战技长按1秒'),
+            'B:c4-减抗-E':     (0.4, '四命减抗'),
+            'B:c4-减抗-Q':     (0.4,),
+            'AZ:重击':         float(skill_data['普通攻击·西风剑术']['数值']['重击伤害'][level_a].replace('%', '')) / 100.0,
+            'E-e风:风压剑':      float(skill_data['风压剑']['数值']['技能伤害'][level_e].replace('%', '')) / 100.0,
+            'Q-e风:大招爆发伤害':   float(skill_data['蒲公英之风']['数值']['爆发伤害'][level_q].replace('%', '')) / 100.0,
+            'Q-e风:大招出入领域伤害': float(skill_data['蒲公英之风']['数值']['出入领域伤害'][level_q].replace('%', '')) / 100.0,
+            'T:大招瞬时治疗':      int((float(recovery1[0].replace('%攻击力', '')) / 100.0 * attack + int(recovery1[1])) * (
+                        1 + data['属性']['治疗加成'])),
+            'T:大招持续治疗':      int(
+                (float(recovery2[0].replace('每秒', '').replace('%攻击力', '')) / 100.0 * attack + int(recovery2[1])) * (
+                        1 + data['属性']['治疗加成'])),
+        }
+    if data['名称'] == '七七':
+        a = skill_data['普通攻击·云来古剑法']['数值']['重击伤害'][level_a].split('+')
+        a_rec = skill_data['仙法·寒病鬼差']['数值']['命中治疗量'][level_e].split('+')
+        e_rec = skill_data['仙法·寒病鬼差']['数值']['持续治疗量'][level_e].split('+')
+        q_rec = skill_data['仙法·救苦度厄']['数值']['治疗量'][level_e].split('+')
+        return {
+            'B:c1-增伤-AZ': (0.15,),
+            'AZ:重击':      (float(a[0].replace('%', '')) / 100.0, float(a[0].replace('%', '')) / 100.0),
+            'E-e冰:E释放伤害': float(skill_data['仙法·寒病鬼差']['数值']['技能伤害'][level_e].replace('%', '')) / 100.0,
+            'T:开E后普攻治疗量': int(
+                (float(a_rec[0].replace('%攻击力', '')) / 100.0 * attack + int(a_rec[1])) * (1 + data['属性']['治疗加成'])),
+            'T:E持续治疗量':   int(
+                (float(e_rec[0].replace('%攻击力', '')) / 100.0 * attack + int(e_rec[1])) * (1 + data['属性']['治疗加成'])),
+            'T:挂符每次治疗量':  int(
+                (float(q_rec[0].replace('%攻击力', '')) / 100.0 * attack + int(q_rec[1])) * (1 + data['属性']['治疗加成'])),
+            'Q-e冰:大招伤害':  float(skill_data['仙法·救苦度厄']['数值']['技能伤害'][level_q].replace('%', '')) / 100.0,
         }
 
 

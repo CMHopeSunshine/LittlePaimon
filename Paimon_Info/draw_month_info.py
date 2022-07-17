@@ -1,5 +1,5 @@
-import os
 import random
+from io import BytesIO
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -35,9 +35,10 @@ async def draw_ring(per, colors):
            wedgeprops={'width': 0.29},
            startangle=90,
            colors=colors)
-    plt.savefig('temp.png', transparent=True)
-    img = Image.open('temp.png').resize((378, 378)).convert('RGBA')
-    os.remove('temp.png')
+    bio = BytesIO()
+    plt.savefig(bio, transparent=True)
+    bio.seek(0)
+    img = Image.open(bio).resize((378, 378)).convert('RGBA')
     plt.cla()
     plt.close("all")
     return img
@@ -57,9 +58,9 @@ async def draw_monthinfo_card(data):
     elif data['retcode'] != 0:
         return f'派蒙获取数据失败了，获取状态：\n{data["message"]},{data["retcode"]}'
     data = data['data']
-    bg_img = load_image(os.path.join(res_path, 'monthinfo', 'bg.png'), mode='RGBA')
+    bg_img = load_image(res_path / 'monthinfo' / 'bg.png', mode='RGBA')
     bg_draw = ImageDraw.Draw(bg_img)
-    line = load_image(os.path.join(res_path, 'monthinfo', 'line.png'), mode='RGBA')
+    line = load_image(res_path / 'monthinfo' / 'line.png', mode='RGBA')
     # 顶标题
     bg_draw.text((60, 42), f'旅行者{data["data_month"]}月札记', font=get_font(30, 'msyhbd.ttc'), fill='#27384C')
     bg_draw.text((300, 52), f'{data["nickname"]} {data["uid"]}', font=get_font(21), fill='#27384C')
@@ -73,16 +74,16 @@ async def draw_monthinfo_card(data):
     bg_img.alpha_composite(await get_box('原石', data['day_data']['current_primogems']), (40, 328))
     bg_img.alpha_composite(await get_box('摩拉', data['day_data']['current_mora']), (40, 388))
     # 表情
-
-    emoticon1 = load_image(os.path.join(res_path, 'emoticons', random.choice(os.listdir(os.path.join(res_path, 'emoticons')))), mode='RGBA')
+    emos = list((res_path / 'emoticons').iterdir())
+    emoticon1 = load_image(random.choice(emos), mode='RGBA')
     bg_img.alpha_composite(emoticon1, (360, 140))
-    emoticon2 = load_image(os.path.join(res_path, 'emoticons', random.choice(os.listdir(os.path.join(res_path, 'emoticons')))), mode='RGBA')
+    emoticon2 = load_image(random.choice(emos), mode='RGBA')
     bg_img.alpha_composite(emoticon2, (360, 317))
 
     bg_img.alpha_composite(line, (64, 480))
     # 圆环比例图
     bg_draw.text((60, 495), '原石收入组成：', font=get_font(25, 'msyhbd.ttc'), fill='#27384C')
-    circle = load_image(os.path.join(res_path, 'monthinfo', 'circle.png'), mode='RGBA')
+    circle = load_image(res_path / 'monthinfo' / 'circle.png', mode='RGBA')
 
     bg_img.alpha_composite(circle, (50, 550))
     color = {'每日活跃': '#BD9A5A', '深境螺旋': '#739970', '活动奖励': '#5A7EA0', '邮件奖励': '#7A6CA7', '冒险奖励': '#D56564',

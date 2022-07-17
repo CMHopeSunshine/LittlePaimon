@@ -9,7 +9,6 @@ from ..utils.db_util import update_cookie_cache
 from ..utils.decorator import cache
 
 
-@cache(ttl=datetime.timedelta(minutes=10))
 async def get_abyss_data(user_id, uid, schedule_type="1", use_cache=True):
     server_id = "cn_qd01" if uid[0] == '5' else "cn_gf01"
     url = "https://api-takumi-record.mihoyo.com/game_record/app/genshin/api/spiralAbyss"

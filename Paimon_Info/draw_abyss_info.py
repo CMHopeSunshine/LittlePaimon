@@ -29,8 +29,7 @@ def get_chan_time(timeStamp1, timeStamp2):
     date = dateArray1.strftime("%Y.%m.%d")
     otherStyleTime1 = dateArray1.strftime("%H:%M:%S")
     otherStyleTime2 = dateArray2.strftime("%H:%M:%S")
-    time_consumed = timeStamp2 - timeStamp1
-    return f'{date} {otherStyleTime1}-{otherStyleTime2} {str(time_consumed // 60).rjust(2, "0")}分{str(time_consumed % 60).rjust(2, "0")}秒'
+    return f'{date}  结束时间 上{otherStyleTime1} 下{otherStyleTime2}'
 
 
 async def draw_abyss_floor_card(floor, floor_n):
@@ -46,7 +45,7 @@ async def draw_abyss_floor_card(floor, floor_n):
             star_w += 50
         battles = j['battles']
         if not battles:
-            floor_draw.text((183, h + 135), '未有战斗记录', font=get_font(25), fill='white')
+            return None
         else:
             floor_draw.text((140, h), str(get_chan_time(int(battles[0]['timestamp']), int(battles[1]['timestamp']))),
                             font=get_font(21), fill='white')
@@ -150,17 +149,24 @@ async def draw_abyss_card(data, uid, floor_num):
 
     floor_img_list = []
     for floor_n in floor_num:
-        floor = data['floors'][floor_n - 9]
+        try:
+            floor = data['floors'][floor_n - 9]
+        except IndexError:
+            break
         if not floor['levels']:
             break
         floor_img = await draw_abyss_floor_card(floor, floor_n)
-        floor_img_list.append(floor_img)
-    floor_img_num = len(floor_img_list)
-    total_img = Image.new("RGBA", (700, 5 + 524 + 5 + floor_img_num * 1210), (255, 255, 255, 255))
-    total_img.alpha_composite(top_img, (5, 5))
-    h = 0
-    for floor_img in floor_img_list:
-        total_img.alpha_composite(floor_img, (5, 5 + 524 + 5 + h))
-        h += 1210
+        if floor_img:
+            floor_img_list.append(floor_img)
+    if floor_img_list:
+        floor_img_num = len(floor_img_list)
+        total_img = Image.new("RGBA", (700, 5 + 524 + 5 + floor_img_num * 1210), (255, 255, 255, 255))
+        total_img.alpha_composite(top_img, (5, 5))
+        h = 0
+        for floor_img in floor_img_list:
+            total_img.alpha_composite(floor_img, (5, 5 + 524 + 5 + h))
+            h += 1210
 
-    return MessageBuild.Image(total_img, quality=75, mode='RGB')
+        return MessageBuild.Image(total_img, quality=75, mode='RGB')
+    else:
+        return MessageBuild.Image(top_img, quality=75, mode='RGB')

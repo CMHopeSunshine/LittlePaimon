@@ -37,7 +37,6 @@ from ..utils.message_util import get_uid_in_msg, uid_userId_to_dict, replace_all
 require('nonebot_plugin_apscheduler')
 from nonebot_plugin_apscheduler import scheduler
 
-
 __plugin_meta__ = PluginMetadata(
     name="Paimon_Info",
     description="小派蒙的原神信息查询模块",
@@ -68,13 +67,12 @@ __plugin_meta__ = PluginMetadata(
         "[ysd 角色名 uid]查看指定角色的详细面板信息\n"
     ),
     extra={
-        'type': '原神信息查询',
-        'range': ['private', 'group', 'guild'],
-        "author": "惜月 <277073121@qq.com>",
+        'type':    '原神信息查询',
+        'range':   ['private', 'group', 'guild'],
+        "author":  "惜月 <277073121@qq.com>",
         "version": "0.1.3",
     },
 )
-
 
 sy = on_command('sy', aliases={'深渊信息', '深境螺旋信息'}, priority=7, block=True)
 sy.__paimon_help__ = {
@@ -469,8 +467,12 @@ async def mys_sign_handler(event: MessageEvent, msg: Message = CommandArg()):
 @mys_sign_auto.handle()
 @exception_handler()
 async def mys_sign_auto_handler(event: MessageEvent, msg: Message = CommandArg()):
-    if event.message_type != 'group':
-        await mys_sign_auto.finish('自动签到功能暂时只限Q群内使用哦')
+    if event.message_type == 'group':
+        remind_id = str(event.group_id)
+    elif event.message_type == 'private':
+        remind_id = 'q' + str(event.user_id)
+    else:
+        await mys_sign_auto.finish('自动签到功能暂时不支持频道使用哦')
     msg = str(msg).strip()
     find_uid = re.search(r'(?P<uid>(1|2|5)\d{8})', msg)
     if not find_uid:
@@ -483,13 +485,12 @@ async def mys_sign_auto_handler(event: MessageEvent, msg: Message = CommandArg()
                 cookie = await get_private_cookie(uid, key='uid')
                 if not cookie:
                     await mys_sign_auto.finish('你的该uid还没绑定cookie哦，先用ysb绑定吧!', at_sender=True)
-                await add_auto_sign(str(event.user_id), uid, str(event.group_id))
+                await add_auto_sign(str(event.user_id), uid, remind_id)
                 await mys_sign_auto.finish('开启米游社自动签到成功,派蒙会在每日0点帮你签到', at_sender=True)
             elif find_action.group('action') in ['关闭', '禁用', 'off']:
                 await delete_auto_sign(str(event.user_id), uid)
                 await mys_sign_auto.finish('关闭米游社自动签到成功', at_sender=True)
         else:
-            # await add_auto_sign(str(event.user_id), uid, str(event.group_id))
             await mys_sign_auto.finish('指令错误，在后面加 开启/关闭 来使用哦', at_sender=True)
 
 
@@ -630,18 +631,25 @@ async def auto_sign():
         ann = defaultdict(lambda: defaultdict(list))
         logger.info('---派蒙开始执行米游社自动签到---')
         sign_list = await get_sign_list()
-        for user_id, uid, group_id in data:
+        for user_id, uid, remind_id in data:
             await sleep(random.randint(3, 8))
             sign_result = await sign(uid)
             if not isinstance(sign_result, str):
                 await sleep(1)
                 sign_info = await get_sign_info(uid)
                 sign_day = sign_info['data']['total_sign_day'] - 1
-                ann[group_id]['成功'].append(
-                    f'.UID{uid}-{sign_list["data"]["awards"][sign_day]["name"]}*{sign_list["data"]["awards"][sign_day]["cnt"]}')
+                if remind_id.startswith('q'):
+                    await get_bot().send_private_msg(user_id=remind_id[1:],
+                                                     message=f'你的uid{uid}自动签到成功!签到奖励为{sign_list["data"]["awards"][sign_day]["name"]}*{sign_list["data"]["awards"][sign_day]["cnt"]}')
+                else:
+                    ann[remind_id]['成功'].append(
+                        f'.UID{uid}-{sign_list["data"]["awards"][sign_day]["name"]}*{sign_list["data"]["awards"][sign_day]["cnt"]}')
             else:
                 await delete_auto_sign(user_id, uid)
-                ann[group_id]['失败'].append(f'.UID{uid}')
+                if remind_id.startswith('q'):
+                    await get_bot().send_private_msg(user_id=remind_id[1:], message=f'你的uid{uid}签到失败，请重新绑定cookie再开启自动签到')
+                else:
+                    ann[remind_id]['失败'].append(f'.UID{uid}')
         for group_id, content in ann.items():
             group_str = '米游社自动签到结果：\n'
             for type, ann_list in content.items():
