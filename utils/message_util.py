@@ -159,8 +159,10 @@ async def get_at_target(msg):
 # message预处理，获取uid、干净的msg、user_id、是否缓存
 async def get_uid_in_msg(event: MessageEvent, msg: Message):
     msg = str(msg).strip()
+    logger.info(msg)
     if not msg:
         uid = await get_last_query(str(event.user_id))
+        logger.info(uid)
         return uid, '', str(event.user_id), True
     user_id = await get_at_target(event.message) or str(event.user_id)
     msg = re.sub(r'\[CQ.*?\]', '', msg)

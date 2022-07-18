@@ -1,13 +1,19 @@
 import datetime
+from distutils.log import info
 import re
 from asyncio import sleep
 
 from littlepaimon_utils import aiorequests
 
 from ..utils.auth_util import get_headers, get_sign_headers, get_use_cookie, get_own_cookie, check_retcode
-from ..utils.db_util import update_cookie_cache
+from ..utils.db_util import get_private_cookie, update_cookie_cache, update_private_cookie
 from ..utils.decorator import cache
 
+from httpx import AsyncClient
+
+from nonebot import logger
+
+o_url = 'https://api-takumi.mihoyo.com'
 
 async def get_abyss_data(user_id, uid, schedule_type="1", use_cache=True):
     server_id = "cn_qd01" if uid[0] == '5' else "cn_gf01"
@@ -154,6 +160,27 @@ async def get_bind_game(cookie):
     data = resp.json()
     return data, uid
 
+#添加stoken
+async def addStoken(stoken,uid):
+    login_ticket = re.search(r'login_ticket=([0-9a-zA-Z]+)', stoken).group(0).split('=')[1]
+    logger.info(login_ticket)
+    # mys_id = re.search(r'login_uid=([0-9]+)', mes).group(0).split('=')[1]
+    ck = await get_private_cookie(uid,key='uid')
+    logger.info(ck)
+    if not ck:
+        return NULL,NULL
+    ck = ck[0][1]
+    mys_id = re.search(r'account_id=(\d*)', ck).group(0).split('=')[1]
+    logger.info("run1")
+    logger.info(mys_id)
+    raw_data = await get_stoken_by_login_ticket(login_ticket, mys_id)
+    logger.info(raw_data)
+    logger.info("run2")
+    stoken = raw_data['data']['list'][0]['token']
+    logger.info("run3")
+    s_cookies = 'stuid={};stoken={}'.format(mys_id, stoken)
+    logger.info(s_cookies)
+    return s_cookies,mys_id,raw_data
 
 # 获取今日签到信息
 async def get_sign_info(uid):
@@ -237,4 +264,14 @@ async def get_enka_data(uid):
         except Exception:
             await sleep(1.5)
 
-
+async def get_stoken_by_login_ticket(loginticket, mys_id):
+    async with AsyncClient() as client:
+        req = await client.get(
+            url= o_url + '/auth/api/getMultiTokenByLoginTicket',
+            params={
+                'login_ticket': loginticket,
+                'token_types' : '3',
+                'uid'         : mys_id
+            }
+        )
+    return req.json()
