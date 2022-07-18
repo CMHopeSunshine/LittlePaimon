@@ -9,7 +9,7 @@ all_skill_data = load_json(path=Path(__file__).parent.parent.parent / 'utils' / 
 
 
 def get_role_dmg(data: dict):
-    dm = get_damage_multipiler(data)
+    dm = get_damage_multipiler(deepcopy(data))
     if not dm:
         return None
     dmg_data = {}

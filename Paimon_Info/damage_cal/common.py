@@ -647,8 +647,8 @@ def get_damage_multipiler(data: dict) -> dict:
         e = skill_data['魔王武装·狂澜']['数值']['重击伤害'][level_e].split('+')
         return {
             'E-e水:近战重击':          (float(e[0].replace('%', '')) / 100.0, float(e[1].replace('%', '')) / 100.0),
-            'E-e水:断流·斩':          float(skill_data['魔王武装·狂澜']['数值']['断流·斩伤害'][level_q].replace('%', '')) / 100.0,
-            'A-e水:断流·破':          float(skill_data['普通攻击·断雨']['数值']['断流·破 伤害'][level_q].replace('%', '')) / 100.0,
+            'E-e水:断流·斩':          float(skill_data['魔王武装·狂澜']['数值']['断流·斩伤害'][level_e].replace('%', '')) / 100.0,
+            'A-e水:断流·破':          float(skill_data['普通攻击·断雨']['数值']['断流·破 伤害'][level_a].replace('%', '')) / 100.0,
             'Q-e水:近战大招':          float(skill_data['极恶技·尽灭闪']['数值']['技能伤害·近战'][level_q].replace('%', '')) / 100.0,
             'Q-e水-r蒸发2.0:近战大招蒸发': float(skill_data['极恶技·尽灭闪']['数值']['技能伤害·近战'][level_q].replace('%', '')) / 100.0,
             'Q-e水:断流·爆':          float(skill_data['极恶技·尽灭闪']['数值']['断流·爆伤害'][level_q].replace('%', '')) / 100.0
