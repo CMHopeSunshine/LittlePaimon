@@ -840,10 +840,10 @@ async def get_mys_coin_auto_handler(event: MessageEvent, msg: Message = CommandA
         remind_id = 'q' + str(event.user_id)
     else:
         await get_mys_coin_auto.finish('米游币自动获取功能暂时不支持频道使用哦')
-    msg = str(msg).strip()
+    msg = msg.extract_plain_text().strip()
     find_uid = re.search(r'(?P<uid>(1|2|5)\d{8})', msg)
     if not find_uid:
-        await mys_sign_auto.finish('请把正确的需要帮忙获取的uid给派蒙哦!', at_sender=True)
+        await get_mys_coin_auto.finish('请把正确的需要帮忙获取的uid给派蒙哦!', at_sender=True)
     else:
         uid = find_uid.group('uid')
         find_action = re.search(r'(?P<action>开启|启用|打开|关闭|禁用|on|off)', msg)
@@ -852,18 +852,18 @@ async def get_mys_coin_auto_handler(event: MessageEvent, msg: Message = CommandA
                 sk = await get_private_stoken(uid, key='uid')
                 stoken = sk[0][4]
                 if not stoken:
-                    await mys_sign_auto.finish('你的该uid还没绑定stoken哦，先用添加stoken绑定吧!', at_sender=True)
+                    await get_mys_coin_auto.finish('你的该uid还没绑定stoken哦，先用添加stoken绑定吧!', at_sender=True)
                 await add_coin_auto_sign(str(event.user_id), uid, remind_id)
-                await mys_sign_auto.finish('开启米游币自动获取成功,派蒙会在每日0点帮你签到', at_sender=True)
+                await get_mys_coin_auto.finish('开启米游币自动获取成功,派蒙会在每日0点帮你签到', at_sender=True)
             elif find_action.group('action') in ['关闭', '禁用', 'off']:
                 await delete_coin_auto_sign(str(event.user_id), uid)
-                await mys_sign_auto.finish('关闭米游币自动获取成功', at_sender=True)
+                await get_mys_coin_auto.finish('关闭米游币自动获取成功', at_sender=True)
         else:
-            await mys_sign_auto.finish('指令错误，在后面加 开启/关闭 来使用哦', at_sender=True)
+            await get_mys_coin_auto.finish('指令错误，在后面加 开启/关闭 来使用哦', at_sender=True)
 
 
 @add_stoken.handle()
-# @exception_handler()
+@exception_handler()
 async def add_stoken_handler(event: MessageEvent, msg: Message = CommandArg()):
     stoken = msg.extract_plain_text().strip()
     if stoken == '':
