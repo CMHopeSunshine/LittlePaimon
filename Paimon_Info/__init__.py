@@ -24,11 +24,12 @@ from .get_data import get_monthinfo_data, get_player_card_data, get_chara_detail
 from ..utils.alias_handler import get_match_alias
 from ..utils.auth_util import check_cookie
 from ..utils.config import config
-from ..utils.db_util import get_auto_sign, delete_auto_sign, get_last_query, get_private_stoken, update_private_stoken,get_coin_auto_sign
+from ..utils.db_util import get_auto_sign, delete_auto_sign, get_last_query, get_private_stoken, update_private_stoken, \
+    get_coin_auto_sign
 from ..utils.db_util import insert_public_cookie, update_private_cookie, delete_cookie_cache, delete_private_cookie, \
     update_last_query, reset_public_cookie
 from ..utils.db_util import update_note_remind2, update_note_remind, get_note_remind, delete_note_remind, \
-    update_day_remind_count, get_private_cookie, add_auto_sign, get_all_query,add_coin_auto_sign,delete_coin_auto_sign
+    update_day_remind_count, get_private_cookie, add_auto_sign, get_all_query, add_coin_auto_sign, delete_coin_auto_sign
 from ..utils.decorator import exception_handler
 from ..utils.enka_util import PlayerInfo
 from ..utils.message_util import MessageBuild as MsgBd
@@ -663,7 +664,8 @@ async def auto_sign():
             else:
                 await delete_auto_sign(user_id, uid)
                 if remind_id.startswith('q'):
-                    await get_bot().send_private_msg(user_id=remind_id[1:], message=f'你的uid{uid}签到失败，请重新绑定cookie再开启自动签到')
+                    await get_bot().send_private_msg(user_id=remind_id[1:],
+                                                     message=f'你的uid{uid}签到失败，请重新绑定cookie再开启自动签到')
                 else:
                     ann[remind_id]['失败'].append(f'.UID{uid}')
         for group_id, content in ann.items():
@@ -686,8 +688,8 @@ async def coin_auto_sign():
     ann = defaultdict(lambda: defaultdict(list))
     if data:
         logger.info('---派蒙开始执行米游币自动获取---')
-        for user_id,uid,remind_id in data:
-            sk = await get_private_stoken(uid,key='uid')
+        for user_id, uid, remind_id in data:
+            sk = await get_private_stoken(uid, key='uid')
             stoken = sk[0][4]
             get_coin_task = MihoyoBBSCoin(stoken)
             data = await get_coin_task.task_run()
@@ -811,12 +813,12 @@ async def all_update():
 
 @get_mys_coin.handle()
 @exception_handler()
-async def get_mys_coin_handler(event: MessageEvent, msg: Message = CommandArg()):\
-    #获取UID
+async def get_mys_coin_handler(event: MessageEvent, msg: Message = CommandArg()): \
+        # 获取UID
     uid, msg, user_id, use_cache = await get_uid_in_msg(event, msg)
     if not uid:
         await get_mys_coin.finish('没有找到你的uid哦')
-    sk = await get_private_stoken(uid,key='uid')
+    sk = await get_private_stoken(uid, key='uid')
     if not sk:
         await get_mys_coin.finish('请旅行者先添加cookie和stoken哦')
     cookie = sk[0][1]
@@ -847,7 +849,7 @@ async def get_mys_coin_auto_handler(event: MessageEvent, msg: Message = CommandA
         find_action = re.search(r'(?P<action>开启|启用|打开|关闭|禁用|on|off)', msg)
         if find_action:
             if find_action.group('action') in ['开启', '启用', '打开', 'on']:
-                sk= await get_private_stoken(uid, key='uid')
+                sk = await get_private_stoken(uid, key='uid')
                 stoken = sk[0][4]
                 if not stoken:
                     await mys_sign_auto.finish('你的该uid还没绑定stoken哦，先用添加stoken绑定吧!', at_sender=True)
@@ -861,17 +863,17 @@ async def get_mys_coin_auto_handler(event: MessageEvent, msg: Message = CommandA
 
 
 @add_stoken.handle()
-@exception_handler()
+# @exception_handler()
 async def add_stoken_handler(event: MessageEvent, msg: Message = CommandArg()):
-    stoken = str(msg).strip()
+    stoken = msg.extract_plain_text().strip()
     if stoken == '':
         res = '获取stoken的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1\n获取到后，添加派蒙好友私聊发送ysb接复制到的cookie就行啦~'
         await add_stoken.finish(res, at_sender=True)
     else:
-        uid = (await get_private_cookie(event.user_id,key='user_id'))[0][2]
-        stoken, mys_id, stoken_info = await addStoken(stoken,uid)
+        uid = (await get_private_cookie(event.user_id, key='user_id'))[0][2]
+        stoken, mys_id, stoken_info, m = await addStoken(stoken, uid)
         if not stoken_info and not mys_id:
-            await add_stoken.finish('请旅行者先使用ysb添加cookie哦~')
+            await add_stoken.finish(m)
         if not stoken_info or stoken_info['retcode'] != 0:
             msg = cookie_error_msg
             if event.message_type != 'private':
@@ -879,7 +881,8 @@ async def add_stoken_handler(event: MessageEvent, msg: Message = CommandArg()):
             await add_stoken.finish(msg, at_sender=True)
         else:
             if uid:
-                await update_private_stoken(user_id=str(event.user_id), uid=uid, mys_id=mys_id, cookie='',stoken=stoken)
+                await update_private_stoken(user_id=str(event.user_id), uid=uid, mys_id=mys_id, cookie='',
+                                            stoken=stoken)
                 await update_last_query(str(event.user_id), uid, 'uid')
                 msg = f'stoken绑定成功啦!'
                 if event.message_type != 'private':

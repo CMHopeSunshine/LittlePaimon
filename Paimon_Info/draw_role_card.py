@@ -104,7 +104,7 @@ async def draw_role_card(uid, data):
                          get_font(34, 'number.ttf'))
         skill_icon = res_path2 / 'skill' / f'{data["天赋"][i]["图标"]}.png'
         skill_icon = await aiorequests.get_img(url=skill_url.format(data["天赋"][i]["图标"]), size=(57, 57),
-                                               save_path=skill_icon)
+                                               save_path=skill_icon, mode='RGBA')
         bg.alpha_composite(skill_icon, (603, 298 + 147 * i))
 
     # 命座
@@ -114,7 +114,7 @@ async def draw_role_card(uid, data):
         bg.alpha_composite(base_icon.resize((83, 90)), (510 + t * 84, 790))
         talent_icon = res_path2 / 'skill' / f'{talent["图标"]}.png'
         talent_icon = await aiorequests.get_img(url=talent_url.format(talent["图标"]), size=(45, 45),
-                                                save_path=talent_icon)
+                                                save_path=talent_icon, mode='RGBA')
         bg.alpha_composite(talent_icon, (529 + t * 84, 813))
         t += 1
     for t2 in range(t, 6):
@@ -126,7 +126,7 @@ async def draw_role_card(uid, data):
     bg.alpha_composite(weapon_bg, (91, 760))
     weapon_icon = res_path2 / 'weapon' / f'{data["武器"]["图标"]}.png'
     weapon_icon = await aiorequests.get_img(url=weapon_url.format(data["武器"]["图标"]), size=(150, 150),
-                                            save_path=weapon_icon)
+                                            save_path=weapon_icon, mode='RGBA')
     bg.alpha_composite(weapon_icon, (91, 760))
     bg_draw.text((268, 758), data['武器']['名称'], fill='white', font=get_font(34, 'hywh.ttf'))
     star = load_image(res_path / 'player_card2' / 'star.png')
@@ -149,7 +149,7 @@ async def draw_role_card(uid, data):
         bg.alpha_composite(artifact_bg, (587 + 317 * i, 1002))
         reli_path = res_path2 / 'reli' / f'{artifact["图标"]}.png'
         reli_path = await aiorequests.get_img(url=artifact_url.format(artifact["图标"]), size=(100, 100),
-                                              save_path=reli_path)
+                                              save_path=reli_path, mode='RGBA')
         bg.alpha_composite(reli_path, (587 + 317 * i, 1002))
         bg_draw.text((411 + 317 * i, 951), artifact['名称'], fill='white', font=get_font(40))
         value, score = artifact_total_value(data['属性'], artifact, effective)
@@ -191,7 +191,7 @@ async def draw_role_card(uid, data):
         bg.alpha_composite(artifact_bg, (270 + 317 * i, 1439))
         reli_path = res_path2 / 'reli' / f'{artifact["图标"]}.png'
         reli_path = await aiorequests.get_img(url=artifact_url.format(artifact["图标"]), size=(100, 100),
-                                              save_path=reli_path)
+                                              save_path=reli_path, mode='RGBA')
         bg.alpha_composite(reli_path, (270 + 317 * i, 1439))
         bg_draw.text((94 + 317 * i, 1388), artifact['名称'], fill='white', font=get_font(40))
         value, score = artifact_total_value(data['属性'], artifact, effective)
@@ -250,7 +250,7 @@ async def draw_role_card(uid, data):
     elif len(suit) == 1:
         artifact_path = res_path2 / 'reli' / f'{suit[0][1]}.png'
         artifact_path = await aiorequests.get_img(url=artifact_url.format(suit[0][1]), size=(110, 110),
-                                                  save_path=artifact_path)
+                                                  save_path=artifact_path, mode='RGBA')
         bg.alpha_composite(artifact_path, (76, 1130))
         bg_draw.text((184, 1168), f'{suit[0][0][:2]}二件套', fill='white', font=get_font(36))
         bg_draw.text((184, 1292), '未激活套装', fill='white', font=get_font(36))
@@ -259,16 +259,19 @@ async def draw_role_card(uid, data):
             artifact_path1 = res_path2 / 'reli' / f'{suit[0][1]}.png'
             artifact_path1 = artifact_path2 = await aiorequests.get_img(url=artifact_url.format(suit[0][1]),
                                                                         size=(110, 110),
-                                                                        save_path=artifact_path1)
+                                                                        save_path=artifact_path1,
+                                                                        mode='RGBA')
             bg_draw.text((184, 1168), f'{suit[0][0][:2]}四件套', fill='white', font=get_font(36))
             bg_draw.text((184, 1292), f'{suit[0][0][:2]}四件套', fill='white', font=get_font(36))
         else:
             artifact_path1 = res_path2 / 'reli' / f'{suit[0][1]}.png'
             artifact_path1 = await aiorequests.get_img(url=artifact_url.format(suit[0][1]), size=(110, 110),
-                                                       save_path=artifact_path1)
+                                                       save_path=artifact_path1,
+                                                       mode='RGBA')
             artifact_path2 = res_path2 / 'reli' / f'{suit[1][1]}.png'
             artifact_path2 = await aiorequests.get_img(url=artifact_url.format(suit[1][1]), size=(110, 110),
-                                                       save_path=artifact_path2)
+                                                       save_path=artifact_path2,
+                                                       mode='RGBA')
             bg_draw.text((184, 1168), f'{suit[0][0][:2]}两件套', fill='white', font=get_font(36))
             bg_draw.text((184, 1292), f'{suit[1][0][:2]}两件套', fill='white', font=get_font(36))
         bg.alpha_composite(artifact_path1, (76, 1130))
