@@ -20,6 +20,10 @@ class PluginConfig(BaseModel):
     paimon_sign_hour: int = 0
     # 自动签到开始时间（分钟）
     paimon_sign_minute: int = 0
+    # 自动米游币获取开始时间（小时）
+    paimon_coin_hour: int = 0
+    # 自动米游币获取开始时间（分钟）
+    paimon_coin_minute: int = 5
     # 对联冷却（秒）
     paimon_couplets_cd: int = 6
     # 猫图冷却（秒）

@@ -66,6 +66,8 @@
   - `sy`修正深渊信息时间介绍
   - `sy`没有绑定cookie时将不再错误的展示空阵容信息
   - `ssbq`修复没有派遣时会报错的bug
++ 7.19
+  - 新增`米游币自动获取`#124，不确保一定可用，如产生其他bug请反馈
 
 ## 丨功能列表
 
@@ -137,7 +139,11 @@ paimon_remind_limit = 3
 paimon_sign_hour = 0
 # 自动签到开始时间（分钟）
 paimon_sign_minute = 0
-
+# 自动米游币获取开始时间（小时）
+paimon_coin_hour = 0
+# 自动米游币获取开始时间（分钟）
+paimon_coin_minute = 5
+    
 # 对联冷却（秒）
 paimon_couplets_cd = 6
 # 猫图冷却（秒）

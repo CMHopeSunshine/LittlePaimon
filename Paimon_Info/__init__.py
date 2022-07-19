@@ -3,7 +3,6 @@ import random
 import re
 from asyncio import sleep
 from collections import defaultdict
-from cv2 import log
 
 from littlepaimon_utils.tools import FreqLimiter
 from nonebot import on_command, require, logger, get_bot
@@ -146,19 +145,20 @@ role_info.__paimon_help__ = {
     "introduce": "查看指定角色的详细面板信息",
     "priority":  4
 }
-get_mys_coin = on_command('myb获取',aliases={'米游币获取','获取米游币'},priority=7,block=True)
-get_mys_coin_auto = on_command('myb自动获取',aliases={'米游币自动获取','自动获取米游币'},priority=7,block=True)
+get_mys_coin = on_command('myb获取', aliases={'米游币获取', '获取米游币'}, priority=7, block=True)
+get_mys_coin_auto = on_command('myb自动获取', aliases={'米游币自动获取', '自动获取米游币'}, priority=7, block=True)
 get_mys_coin_auto.__paimon_help__ = {
     "usage":     "myb自动获取<on|off uid>",
     "introduce": "自动获取米游币",
     "priority":  10
-} 
-add_stoken = on_command('添加stoken',priority=7,block=True)
+}
+add_stoken = on_command('添加stoken', priority=7, block=True)
 add_stoken.__paimon_help__ = {
     "usage":     "添加stoken[stoken]",
     "introduce": "添加stoken以获取米游币",
     "priority":  99
 }
+
 
 @sy.handle()
 @ys.handle()
@@ -404,18 +404,14 @@ async def _(event: MessageEvent, state: T_State):
     await ysc.finish(total_result)
 
 
-cookie_error_msg = '这个cookie无效哦，请旅行者确认是否正确\n1.ck要登录mys帐号后获取,且不能退出登录\n2.ck中要有cookie_token和account_id两个参数\n3.建议在无痕模式下取'
+cookie_error_msg = '这个cookie无效哦，请旅行者确认是否正确\n1.ck要登录mys帐号后获取,且不能退出登录\n\n获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1\n'
 
 
 @ysb.handle()
 @exception_handler()
 async def ysb_handler(event: MessageEvent, msg: Message = CommandArg()):
-    cookie = str(msg).strip()
+    cookie = msg.extract_plain_text().strip()
     if cookie == '':
-        # res = '''旅行者好呀，你可以直接用ys/ysa等指令附上uid来使用派蒙\n如果想看全部角色信息和实时便笺等功能，要把cookie给派蒙哦\ncookie
-        # 获取方法：登录网页版米游社，在地址栏粘贴代码：\njavascript:(function(){prompt(document.domain,document.cookie)})(
-        # );\n复制弹窗出来的字符串（手机要via或chrome浏览器才行）\n然后添加派蒙私聊发送ysb接刚刚复制的字符串，例如:ysb
-        # UM_distinctid=17d131d...\ncookie是账号重要安全信息，请确保机器人持有者可信赖！ '''
         res = '获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1\n获取到后，添加派蒙好友私聊发送ysb接复制到的cookie就行啦~'
         await ysb.finish(res, at_sender=True)
     else:
@@ -426,6 +422,7 @@ async def ysb_handler(event: MessageEvent, msg: Message = CommandArg()):
                 msg += '\n当前是在群聊里绑定，建议旅行者添加派蒙好友私聊绑定!'
             await ysb.finish(msg, at_sender=True)
         else:
+            uid = nickname = None
             for data in cookie_info['data']['list']:
                 if data['game_id'] == 2:
                     uid = data['game_role_id']
@@ -682,7 +679,8 @@ async def auto_sign():
             except Exception as e:
                 logger.error(f'米游社签到结果发送失败：{e}')
 
-@scheduler.scheduled_job('cron', hour=config.paimon_sign_hour, minute=config.paimon_sign_minute, misfire_grace_time=10)
+
+@scheduler.scheduled_job('cron', hour=config.paimon_coin_hour, minute=config.paimon_coin_minute, misfire_grace_time=10)
 async def coin_auto_sign():
     data = await get_coin_auto_sign()
     ann = defaultdict(lambda: defaultdict(list))
@@ -694,23 +692,30 @@ async def coin_auto_sign():
             get_coin_task = MihoyoBBSCoin(stoken)
             data = await get_coin_task.task_run()
             if get_coin_task.is_Right is False:
-                ann[remind_id]['失败'].append(f'.UID{uid}')
-                await delete_coin_auto_sign(user_id,uid)
+                await delete_coin_auto_sign(user_id, uid)
+                if remind_id.startswith('q'):
+                    await get_bot().send_private_msg(user_id=remind_id[1:],
+                                                     message=f'你的uid{uid}米游币获取失败，请重新绑定cookie再开启')
+                else:
+                    ann[remind_id]['失败'].append(f'.UID{uid}')
             else:
-                ann[remind_id]['成功'].append(
-                        f'.UID{uid}获取myb成功')
+                if remind_id.startswith('q'):
+                    await get_bot().send_private_msg(user_id=remind_id[1:],
+                                                     message=f'你的uid{uid}米游币自动获取成功')
+                else:
+                    ann[remind_id]['成功'].append(f'.UID{uid}')
         for group_id, content in ann.items():
-            group_str = '米游社自动签到结果：\n'
+            group_str = '米游币自动获取结果：\n'
             for type, ann_list in content.items():
                 if ann_list:
-                    group_str += f'签到{type}：\n'
+                    group_str += f'{type}：\n'
                     for u in ann_list:
                         group_str += str(ann_list.index(u) + 1) + u + '\n'
             try:
                 await get_bot().send_group_msg(group_id=group_id, message=group_str)
                 await sleep(random.randint(3, 8))
             except Exception as e:
-                logger.error(f'米游社签到结果发送失败：{e}')      
+                logger.error(f'米游币自动获取结果发送失败：{e}')
 
 
 @scheduler.scheduled_job('cron', minute=f'*/{config.paimon_check_interval}', misfire_grace_time=10)
@@ -823,6 +828,7 @@ async def get_mys_coin_handler(event: MessageEvent, msg: Message = CommandArg())
     msg = "米游币获取完成\n" + data
     await get_mys_coin.finish(msg)
 
+
 @get_mys_coin_auto.handle()
 @exception_handler()
 async def get_mys_coin_auto_handler(event: MessageEvent, msg: Message = CommandArg()):
@@ -846,12 +852,13 @@ async def get_mys_coin_auto_handler(event: MessageEvent, msg: Message = CommandA
                 if not stoken:
                     await mys_sign_auto.finish('你的该uid还没绑定stoken哦，先用添加stoken绑定吧!', at_sender=True)
                 await add_coin_auto_sign(str(event.user_id), uid, remind_id)
-                await mys_sign_auto.finish('开启米游币自动签到成功,派蒙会在每日0点帮你签到', at_sender=True)
+                await mys_sign_auto.finish('开启米游币自动获取成功,派蒙会在每日0点帮你签到', at_sender=True)
             elif find_action.group('action') in ['关闭', '禁用', 'off']:
                 await delete_coin_auto_sign(str(event.user_id), uid)
-                await mys_sign_auto.finish('关闭米游币自动签到成功', at_sender=True)
+                await mys_sign_auto.finish('关闭米游币自动获取成功', at_sender=True)
         else:
             await mys_sign_auto.finish('指令错误，在后面加 开启/关闭 来使用哦', at_sender=True)
+
 
 @add_stoken.handle()
 @exception_handler()

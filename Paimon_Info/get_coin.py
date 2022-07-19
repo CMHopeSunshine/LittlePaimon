@@ -18,35 +18,35 @@ bbs_Shareurl = 'https://bbs-api.mihoyo.com/apihub/api/getShareConf?entity_id={}&
 bbs_Likeurl = 'https://bbs-api.mihoyo.com/apihub/sapi/upvotePost'  # post json 
 
 mihoyobbs_List = [{
-    'id'     : '1',
+    'id':      '1',
     'forumId': '1',
-    'name'   : '崩坏3',
-    'url'    : 'https://bbs.mihoyo.com/bh3/'
+    'name':    '崩坏3',
+    'url':     'https://bbs.mihoyo.com/bh3/'
 }, {
-    'id'     : '2',
+    'id':      '2',
     'forumId': '26',
-    'name'   : '原神',
-    'url'    : 'https://bbs.mihoyo.com/ys/'
+    'name':    '原神',
+    'url':     'https://bbs.mihoyo.com/ys/'
 }, {
-    'id'     : '3',
+    'id':      '3',
     'forumId': '30',
-    'name'   : '崩坏2',
-    'url'    : 'https://bbs.mihoyo.com/bh2/'
+    'name':    '崩坏2',
+    'url':     'https://bbs.mihoyo.com/bh2/'
 }, {
-    'id'     : '4',
+    'id':      '4',
     'forumId': '37',
-    'name'   : '未定事件簿',
-    'url'    : 'https://bbs.mihoyo.com/wd/'
+    'name':    '未定事件簿',
+    'url':     'https://bbs.mihoyo.com/wd/'
 }, {
-    'id'     : '5',
+    'id':      '5',
     'forumId': '34',
-    'name'   : '大别野',
-    'url'    : 'https://bbs.mihoyo.com/dby/'
+    'name':    '大别野',
+    'url':     'https://bbs.mihoyo.com/dby/'
 }, {
-    'id'     : '6',
+    'id':      '6',
     'forumId': '52',
-    'name'   : '崩坏：星穹铁道',
-    'url'    : 'https://bbs.mihoyo.com/sr/'
+    'name':    '崩坏：星穹铁道',
+    'url':     'https://bbs.mihoyo.com/sr/'
 }]
 
 
@@ -58,34 +58,34 @@ class MihoyoBBSCoin:
     def __init__(self, cookies):
         self.postsList = None
         self.headers = {
-            'DS'                : old_version_get_ds_token(True),
-            'cookie'            : cookies,
-            'x-rpc-client_type' : '2',
-            'x-rpc-app_version' : '2.7.0',
-            'x-rpc-sys_version' : '6.0.1',
-            'x-rpc-channel'     : 'mihoyo',
-            'x-rpc-device_id'   : random_hex(32),
-            'x-rpc-device_name' : random_text(random.randint(1, 10)),
+            'DS':                 old_version_get_ds_token(True),
+            'cookie':             cookies,
+            'x-rpc-client_type':  '2',
+            'x-rpc-app_version':  '2.7.0',
+            'x-rpc-sys_version':  '6.0.1',
+            'x-rpc-channel':      'mihoyo',
+            'x-rpc-device_id':    random_hex(32),
+            'x-rpc-device_name':  random_text(random.randint(1, 10)),
             'x-rpc-device_model': 'Mi 10',
-            'Referer'           : 'https://app.mihoyo.com',
-            'Host'              : 'bbs-api.mihoyo.com',
-            'User-Agent'        : 'okhttp/4.8.0'
+            'Referer':            'https://app.mihoyo.com',
+            'Host':               'bbs-api.mihoyo.com',
+            'User-Agent':         'okhttp/4.8.0'
         }
         self.Task_do = {
-            'bbs_Sign'          : False,
-            'bbs_Read_posts'    : False,
+            'bbs_Sign':           False,
+            'bbs_Read_posts':     False,
             'bbs_Read_posts_num': 3,
-            'bbs_Like_posts'    : False,
+            'bbs_Like_posts':     False,
             'bbs_Like_posts_num': 5,
-            'bbs_Share'         : False
+            'bbs_Share':          False
         }
         self.mihoyobbs_List_Use = []
         self.Today_getcoins = 0
         self.Today_have_getcoins = 0  # 这个变量以后可能会用上，先留着了
         self.Have_coins = 0
-        self.is_Right = True #判断stoken是否失效
+        self.is_Right = True  # 判断stoken是否失效
 
-    #开始运行
+    # 开始运行
     async def task_run(self):
         await self.load_mihoyo_bbs_list_use()
         start = await self.get_tasks_list()
@@ -107,13 +107,13 @@ class MihoyoBBSCoin:
 
     # 获取任务列表，用来判断做了哪些任务
     async def get_tasks_list(self):
-        logger.info('正在获取任务列表')
+        # logger.info('正在获取任务列表')
         async with AsyncClient() as client:
             req = await client.get(url=bbs_Taskslist, headers=self.headers)
         data = req.json()
         if 'err' in data['message'] or data['retcode'] == -100:
             self.is_Right = False
-            logger.info('stoken或cookie失效')
+            # logger.info('stoken或cookie失效')
             return '你的Cookies或Stoken已失效。'
             # log.error('获取任务列表失败，你的cookie可能已过期，请重新设置cookie。')
         else:
@@ -129,10 +129,10 @@ class MihoyoBBSCoin:
             else:
                 # 如果第0个大于或等于62则直接判定任务没做
                 if data['data']['states'][0]['mission_id'] >= 62:
-                    logger.info(f'新的一天，今天可以获得{self.Today_getcoins}个米游币')
+                    # logger.info(f'新的一天，今天可以获得{self.Today_getcoins}个米游币')
                     pass
                 else:
-                    logger.info(f'似乎还有任务没完成，今天还能获得{self.Today_getcoins}')
+                    # logger.info(f'似乎还有任务没完成，今天还能获得{self.Today_getcoins}')
                     for i in data['data']['states']:
                         # 58是讨论区签到
                         if i['mission_id'] == 58:
@@ -161,19 +161,19 @@ class MihoyoBBSCoin:
     # 获取要帖子列表
     async def get_list(self) -> list:
         temp_list = []
-        logger.info('正在获取帖子列表......')
+        # logger.info('正在获取帖子列表......')
         async with AsyncClient() as client:
             req = await client.get(url=bbs_Listurl.format(self.mihoyobbs_List_Use[0]['forumId']), headers=self.headers)
         data = req.json()
         for n in range(5):
             temp_list.append([data['data']['list'][n]['post']['post_id'], data['data']['list'][n]['post']['subject']])
-        logger.info('已获取{}个帖子'.format(len(temp_list)))
+        # logger.info('已获取{}个帖子'.format(len(temp_list)))
         return temp_list
 
     # 进行签到操作
     async def signing(self):
         if self.Task_do['bbs_Sign']:
-            logger.info("讨论区任务已经完成过了~")
+            # logger.info("讨论区任务已经完成过了~")
             return '讨论区任务已经完成过了~'
         else:
             for i in self.mihoyobbs_List_Use:
@@ -183,14 +183,14 @@ class MihoyoBBSCoin:
                 if 'err' not in data['message']:
                     time.sleep(random.randint(2, 8))
                 else:
-                    logger.info("cookie或stoken已失效")
+                    # logger.info("cookie或stoken已失效")
                     return '你的Cookies已失效。'
             return 'SignM:完成!'
 
     # 看帖子
     async def read_posts(self):
         if self.Task_do['bbs_Read_posts']:
-            logger.info("看帖任务已经完成过了~'")
+            # logger.info("看帖任务已经完成过了~'")
             return '看帖任务已经完成过了~'
         else:
             num_ok = 0
@@ -201,13 +201,13 @@ class MihoyoBBSCoin:
                 if data['message'] == 'OK':
                     num_ok += 1
                 time.sleep(random.randint(2, 8))
-            logger.info('ReadM:成功!Read:{}!'.format(str(num_ok)))
+            # logger.info('ReadM:成功!Read:{}!'.format(str(num_ok)))
             return 'ReadM:成功!Read:{}!'.format(str(num_ok))
 
     # 点赞
     async def like_posts(self):
         if self.Task_do['bbs_Like_posts']:
-            logger.info('Like任务已经完成过了~')
+            # logger.info('Like任务已经完成过了~')
             return 'Like任务已经完成过了~'
         else:
             num_ok = 0
@@ -229,13 +229,13 @@ class MihoyoBBSCoin:
                     if data['message'] == 'OK':
                         num_cancel += 1
                 time.sleep(random.randint(2, 8))
-            logger.info('LikeM:完成!like:{}，dislike:{}!'.format(str(num_ok), str(num_cancel)))
+            # logger.info('LikeM:完成!like:{}，dislike:{}!'.format(str(num_ok), str(num_cancel)))
             return 'LikeM:完成!like:{}，dislike:{}!'.format(str(num_ok), str(num_cancel))
             # 分享操作
 
     async def share_post(self):
         if self.Task_do['bbs_Share']:
-            logger.info( '分享任务已经完成过了~')
+            # logger.info('分享任务已经完成过了~')
             return '分享任务已经完成过了~'
         else:
             for _ in range(3):
@@ -249,13 +249,15 @@ class MihoyoBBSCoin:
             time.sleep(random.randint(2, 8))
 
 
-
-#add function
+# add function
 import hashlib
+
+
 def md5(text):
     md5_func = hashlib.md5()
     md5_func.update(text.encode())
     return md5_func.hexdigest()
+
 
 def old_version_get_ds_token(mysbbs=False):
     if mysbbs:
@@ -266,6 +268,7 @@ def old_version_get_ds_token(mysbbs=False):
     r = ''.join(random.sample(string.ascii_lowercase + string.digits, 6))
     c = md5('salt=' + n + '&t=' + i + '&r=' + r)
     return i + ',' + r + ',' + c
+
 
 def random_hex(length):
     result = hex(random.randint(0, 16 ** length)).replace('0x', '').upper()
