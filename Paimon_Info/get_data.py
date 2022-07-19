@@ -169,26 +169,21 @@ async def addStoken(stoken, uid):
         login_ticket = login_ticket.group(0).split('=')[1]
     else:
         return None, None, None, '你的cookie中没有login_ticket字段哦，请重新获取'
-    # logger.info(login_ticket)
-    # mys_id = re.search(r'login_uid=([0-9]+)', mes).group(0).split('=')[1]
     ck = await get_private_cookie(uid, key='uid')
-    # logger.info(ck)
     if not ck:
         return None, None, None, '你还没绑定私人cookie哦，请先用ysb绑定吧'
     ck = ck[0][1]
-    mys_id = re.search(r'account_id=(\d*)', ck).group(0).split('=')[1]
-    # logger.info("run1")
-    # logger.info(mys_id)
+    mys_id = re.search(r'account_id=(\d*)', ck)
+    if mys_id:
+        mys_id = mys_id.group(0).split('=')[1]
+    else:
+        return None, None, None, '你的cookie中没有account_id字段哦，请重新获取'
     raw_data = await get_stoken_by_login_ticket(login_ticket, mys_id)
-    # logger.info(raw_data)
-    # logger.info("run2")
     try:
         stoken = raw_data['data']['list'][0]['token']
     except TypeError:
         return None, None, None, '该stoken无效获取过期了，请重新获取'
-    # logger.info("run3")
     s_cookies = 'stuid={};stoken={}'.format(mys_id, stoken)
-    # logger.info(s_cookies)
     return s_cookies, mys_id, raw_data, 'OK'
 
 
