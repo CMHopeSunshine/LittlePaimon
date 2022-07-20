@@ -157,13 +157,13 @@ async def get_at_target(msg):
 
 
 # message预处理，获取uid、干净的msg、user_id、是否缓存
-async def get_uid_in_msg(event: MessageEvent, msg: Message):
-    msg = msg.extract_plain_text().strip()
+async def get_uid_in_msg(event: MessageEvent, msg: Union[Message, str]):
+    if isinstance(msg, Message):
+        msg = msg.extract_plain_text().strip()
     if not msg:
         uid = await get_last_query(str(event.user_id))
         return uid, '', str(event.user_id), True
     user_id = await get_at_target(event.message) or str(event.user_id)
-    # msg = re.sub(r'\[CQ.*?\]', '', msg)
     use_cache = False if '-r' in msg else True
     msg = msg.replace('-r', '').strip()
     find_uid = r'(?P<uid>(1|2|5)\d{8})'
