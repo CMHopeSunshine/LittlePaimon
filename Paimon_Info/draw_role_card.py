@@ -162,7 +162,7 @@ async def draw_role_card(uid, data):
         bg_draw.text((411 + 317 * i, 1069), artifact['主属性']['属性名'], fill='white', font=get_font(25))
         if artifact['主属性']['属性名'] not in ['生命值', '攻击力', '元素精通']:
             bg_draw.text((408 + 317 * i, 1100), f"+{artifact['主属性']['属性值']}%", fill='white',
-                         font=get_font(25, 'number.ttf'))
+                         font=get_font(48, 'number.ttf'))
         else:
             bg_draw.text((408 + 317 * i, 1100), f"+{artifact['主属性']['属性值']}", fill='white',
                          font=get_font(48, 'number.ttf'))
