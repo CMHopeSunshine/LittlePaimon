@@ -1,5 +1,4 @@
 import datetime
-from distutils.log import info
 import re
 from asyncio import sleep
 
@@ -8,12 +7,6 @@ from littlepaimon_utils import aiorequests
 from ..utils.auth_util import get_headers, get_sign_headers, get_use_cookie, get_own_cookie, check_retcode
 from ..utils.db_util import get_private_cookie, update_cookie_cache, update_private_cookie
 from ..utils.decorator import cache
-
-from httpx import AsyncClient
-
-from nonebot import logger
-
-o_url = 'https://api-takumi.mihoyo.com'
 
 
 async def get_abyss_data(user_id, uid, schedule_type="1", use_cache=True):
@@ -202,7 +195,6 @@ async def get_sign_info(uid):
         'Cookie':            cookie['cookie'],
         'User-Agent':        'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS '
                              'X) AppleWebKit/605.1.15 (KHTML, like Gecko) miHoYoBBS/2.11.1',
-
     }
     params = {
         'act_id': 'e202009291139501',
@@ -271,13 +263,10 @@ async def get_enka_data(uid):
 
 
 async def get_stoken_by_login_ticket(loginticket, mys_id):
-    async with AsyncClient() as client:
-        req = await client.get(
-            url=o_url + '/auth/api/getMultiTokenByLoginTicket',
-            params={
-                'login_ticket': loginticket,
-                'token_types':  '3',
-                'uid':          mys_id
-            }
-        )
+    req = await aiorequests.get(url='https://api-takumi.mihoyo.com/auth/api/getMultiTokenByLoginTicket',
+                                params={
+                                    'login_ticket': loginticket,
+                                    'token_types':  '3',
+                                    'uid':          mys_id
+                                })
     return req.json()

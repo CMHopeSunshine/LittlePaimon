@@ -24,7 +24,7 @@ async def draw_rate_rank(type: str = 'role', mode: str = 'used'):
     bg_img = Image.new('RGBA', (1080, top_img.height + col * 220 + bottom_img.height + 50))
     bg_img.paste(top_img, (0, 0))
     bg_draw = ImageDraw.Draw(bg_img)
-    bg_draw.text((70, 55), '2.7深境螺旋登场率排行榜', fill='black', font=get_font(40, 'msyhbd.ttc'))
+    bg_draw.text((70, 55), '2.8深境螺旋登场率排行榜', fill='black', font=get_font(40, 'msyhbd.ttc'))
     bg_draw.text((70, 110), f'当前共{data["result"]["userCount"]}份样本数据', fill='black', font=get_font(35))
     for i in range(0, col + 1):
         bg_img.paste(body_img, (0, top_img.height + i * body_img.height))
@@ -52,7 +52,7 @@ async def draw_teams_rate(floor='上半半'):
     bg_img = Image.new('RGBA', (1080, top_img.height + 10 * body_img.height + bottom_img.height - 130))
     bg_img.paste(top_img, (0, 0))
     bg_draw = ImageDraw.Draw(bg_img)
-    bg_draw.text((70, 55), f'2.7深境螺旋阵容出场率 | {floor}', fill='black', font=get_font(40, 'msyhbd.ttc'))
+    bg_draw.text((70, 55), f'2.8深境螺旋阵容出场率 | {floor}', fill='black', font=get_font(40, 'msyhbd.ttc'))
     bg_draw.text((70, 110), f'当前共{data["result"]["userCount"]}份样本数据', fill='black', font=get_font(35))
     for i in range(0, 10):
         bg_img.paste(body_img, (0, top_img.height + i * body_img.height))
