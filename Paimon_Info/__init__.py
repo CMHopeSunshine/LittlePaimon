@@ -825,6 +825,7 @@ async def get_mys_coin_handler(event: MessageEvent, msg: Message = CommandArg())
     if not cookie:
         await get_mys_coin.finish('你的该uid还没绑定cookie哦，先用ysb绑定吧')
     stoken = sk[0][4]
+    await get_mys_coin.send('开始执行米游社获取，请稍等哦~')
     get_coin_task = MihoyoBBSCoin(stoken)
     data = await get_coin_task.task_run()
     msg = "米游币获取完成\n" + data
@@ -887,4 +888,4 @@ async def add_stoken_handler(event: MessageEvent, msg: Message = CommandArg()):
                 msg = f'stoken绑定成功啦!'
                 if event.message_type != 'private':
                     msg += '\n当前是在群聊里绑定，建议旅行者把stoken撤回哦!'
-                await ysb.finish(MsgBd.Text(msg), at_sender=True)
+                await add_stoken.finish(MsgBd.Text(msg), at_sender=True)
