@@ -28,12 +28,16 @@ xlsxwriter = "^3.0.3"
 sqlitedict = "^2.0.0"
 aiofiles = "^0.8.0"
 jieba_fast = "^0.53"
+tortoise-orm = "^0.19.2"
+tqdm = "^4.64.0"
+"ruamel.yaml" = "^0.17.21"
 
 [tool.poetry.dev-dependencies]
 nb-cli = "^0.6.6"
 
 [tool.nonebot]
-plugins = ["nonebot_plugin_gocqhttp"]
+#plugins = ["nonebot_plugin_gocqhttp"]
+plugins = []
 plugin_dirs = ["src/plugins"]
 
 [build-system]

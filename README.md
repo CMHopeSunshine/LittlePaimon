@@ -15,17 +15,17 @@
 
 原神多功能机器人，通过米游社接口查询uid的游戏信息，并提供WIKI查询和各种各样的好玩的功能。
 
-本分支为将派蒙功能拆分成独立的Nonebot2插件所用，请勿直接克隆本分支内容，派蒙主要分支在：
+该分支正在**开发中**，暂不可用于生产环境，可用版本在以下分支：
 
 + [nonebot2分支](https://github.com/CMHopeSunshine/LittlePaimon/tree/nonebot2)
 
-## 丨适配进度
+## 丨已完成
 
-已完成：
 
-- 米游币自动兑换 [nonebot-plugin-myb-exchange](https://github.com/CMHopeSunshine/LittlePaimon/tree/Bot/src/plugins/nonebot_plugin_myb_exchange)
+- 米游币自动兑换插件 [nonebot-plugin-myb-exchange](https://github.com/CMHopeSunshine/LittlePaimon/tree/Bot/src/plugins/nonebot_plugin_myb_exchange)
 
-施工中：
-
-- 原神信息查询 nonebot-plugin-paimon-info
-- 原神Wiki nonebot-plugin-paimon-wiki
+## 丨开发中
+- 数据库ORM
+- 插件管理器
+- 昵称和好感系统
+- 更多原神功能、UI重构
