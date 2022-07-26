@@ -7,6 +7,10 @@ from nonebot.adapters.onebot.v11 import Message, MessageEvent, MessageSegment
 from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 
+"""
+由于点餐api已经失效，本功能暂不可用，直到找到其他可用的点餐api
+"""
+
 __plugin_meta__ = PluginMetadata(
     name="点餐",
     description="点餐查看食物图片",

@@ -62,21 +62,21 @@ async def ecy_img_handler(bot: Bot, event: MessageEvent, regexGroup=RegexGroup()
         'https://www.dmoe.cc/random.php',
         'https://acg.toubiec.cn/random.php',
         'https://api.ixiaowai.cn/api/api.php',
-        'https://iw233.cn/api.php?sort=iw233'
+        'https://dev.iw233.cn/api.php?sort=iw233'
     ]
     img_type = regexGroup[0]
     if img_type in ['二次元', '二刺螈']:
         url = random.choice(urls)
     elif img_type == '银发':
-        url = 'https://iw233.cn/api.php?sort=yin'
+        url = 'https://dev.iw233.cn/api.php?sort=yin'
     elif img_type == '兽耳':
-        url = 'https://iw233.cn/api.php?sort=cat'
+        url = 'https://dev.iw233.cn/api.php?sort=cat'
     elif img_type == '星空':
-        url = 'https://iw233.cn/api.php?sort=xing'
+        url = 'https://dev.iw233.cn/api.php?sort=xing'
     elif img_type == '竖屏':
-        url = 'https://iw233.cn/api.php?sort=mp'
+        url = 'https://dev.iw233.cn/api.php?sort=mp'
     elif img_type == '横屏':
-        url = 'https://iw233.cn/api.php?sort=pc'
+        url = 'https://dev.iw233.cn/api.php?sort=pc'
     else:
         url = ''
     if not ecy_lmt.check(get_message_id(event)):
@@ -91,7 +91,6 @@ async def ecy_img_handler(bot: Bot, event: MessageEvent, regexGroup=RegexGroup()
 @auto_withdraw(30)
 async def ys_img_handler(event: MessageEvent):
     urls = [
-        'https://api.dujin.org/img/yuanshen/',
         'https://api.dreamofice.cn/random-v0/img.php?game=ys'
     ]
     if not ys_lmt.check(get_message_id(event)):
