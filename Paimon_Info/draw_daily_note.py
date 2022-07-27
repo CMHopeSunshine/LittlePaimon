@@ -69,7 +69,7 @@ async def draw_daily_note_card(data, uid):
     # 宝钱文字
     bg_draw.text((337, 701), f"{data['current_home_coin']}/{data['max_home_coin']}", fill='white',
                  font=get_font(48, 'number.ttf'))
-    bg_img.alpha_composite(await draw_ring(data['current_home_coin'] / data['max_home_coin']), (98, 593))
+    bg_img.alpha_composite(await draw_ring(data['current_home_coin'] / min(data['max_home_coin'], -1)), (98, 593))
     if data['current_home_coin'] == data['max_home_coin']:
         bg_draw.text((820, 701), f"洞天宝钱满了哦~", fill='white', font=get_font(40, '优设标题黑.ttf'))
     else:
