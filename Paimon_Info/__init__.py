@@ -279,7 +279,7 @@ async def myzj_handler(event: MessageEvent, msg: Message = CommandArg()):
     elif month_now == 2:
         month_list = ['12', '1', '2']
     else:
-        month_list = [str(month_now - 2), str(month_now - 1), month_now]
+        month_list = [str(month_now - 2), str(month_now - 1), str(month_now)]
     find_month = '(?P<month>' + '|'.join(month_list) + ')'
     match = re.search(find_month, msg)
     month = match.group('month') if match else month_now
