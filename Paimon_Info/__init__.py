@@ -551,10 +551,10 @@ async def _(event: MessageEvent, uid: Message = Arg('uid')):
     await update_info.send('派蒙开始更新信息~请稍等哦~')
     enka_data = await get_enka_data(uid)
     if not enka_data:
-        if uid[0] == '5' or uid[0] == '2':
+        if uid[0] == '5':
             await update_info.finish('暂不支持B服账号哦~请等待开发者更新吧~')
         else:
-            await update_info.finish('派蒙没有查到该uid的信息哦~')
+            await update_info.finish('派蒙没有获取到该uid的信息哦，可能是接口服务出现问题，稍候再试吧~')
     ud_lmt.start_cd(uid, 300)
     ud_lmt.start_cd(get_message_id(event), 15)
     player_info = PlayerInfo(uid)
@@ -825,7 +825,7 @@ async def get_mys_coin_handler(event: MessageEvent, msg: Message = CommandArg())
     if not cookie:
         await get_mys_coin.finish('你的该uid还没绑定cookie哦，先用ysb绑定吧')
     stoken = sk[0][4]
-    await get_mys_coin.send('开始执行米游社获取，请稍等哦~')
+    await get_mys_coin.send('开始执行米游币获取，请稍等哦~')
     get_coin_task = MihoyoBBSCoin(stoken)
     data = await get_coin_task.task_run()
     msg = "米游币获取完成\n" + data
