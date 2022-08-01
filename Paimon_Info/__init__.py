@@ -123,6 +123,12 @@ ysb.__paimon_help__ = {
     "introduce": "绑定私人cookie以开启更多功能",
     "priority":  99
 }
+ysbjc = on_command('ysbjc', aliases={'原神绑定检查', '检查cookie绑定状态'}, priority=7, block=True)
+ysbjc.__paimon_help__ = {
+    "usage":     "ysbjc(uid)",
+    "introduce": "检查私人cookie绑定状态，可检查指定的uid是否绑定cookie",
+    "priority":  99
+}
 mys_sign = on_command('mys_sign', aliases={'mys签到', '米游社签到'}, priority=7, block=True)
 mys_sign_auto = on_command('mys_sign_auto', aliases={'mys自动签到', '米游社自动签到'}, priority=7, block=True)
 mys_sign_auto.__paimon_help__ = {
@@ -437,6 +443,23 @@ async def ysb_handler(event: MessageEvent, msg: Message = CommandArg()):
                 if event.message_type != 'private':
                     msg += '\n当前是在群聊里绑定，建议旅行者把cookie撤回哦!'
                 await ysb.finish(MsgBd.Text(msg), at_sender=True)
+
+@ysbjc.handle()
+@exception_handler()
+async def ysbjc_handler(event: MessageEvent, msg: Message = CommandArg()):
+    cookie = await get_private_cookie(event.user_id)
+    if len(cookie) == 0:
+        await ysbjc.finish("旅行者当前未绑定私人cookie")
+        return
+    uid = transform_uid(str(msg))
+    if not uid:
+        await ysbjc.finish(f"旅行者当前已绑定{len(cookie)}条私人cookie")
+        return
+    for data in cookie:
+        if data['uid'] == uid:
+            await ysbjc.finish("旅行者已为此uid绑定私人cookie！")
+            return
+    await ysbjc.finish("旅行者还没有为此uid绑定私人cookie哦~")
 
 
 @add_public_ck.handle()
