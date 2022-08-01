@@ -260,11 +260,11 @@ async def ssbq_handler(event: MessageEvent, msg: Message = CommandArg()):
                 await update_note_remind2(user_id, uid, gid, 1)
                 await ssbq.finish('开启提醒成功', at_sender=True)
         elif find_remind_enable.group('action') == '关闭提醒':
-            await ssbq.finish('关闭提醒成功', at_sender=True)
             await update_note_remind2(user_id, uid, gid, 0)
+            await ssbq.finish('关闭提醒成功', at_sender=True)
         elif find_remind_enable.group('action') == '删除提醒':
-            await ssbq.finish('删除提醒成功', at_sender=True)
             await delete_note_remind(user_id, uid)
+            await ssbq.finish('删除提醒成功', at_sender=True)
     else:
         data = await get_daily_note_data(uid)
         if isinstance(data, str):
