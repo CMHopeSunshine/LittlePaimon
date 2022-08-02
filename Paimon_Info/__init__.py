@@ -574,10 +574,7 @@ async def _(event: MessageEvent, uid: Message = Arg('uid')):
     await update_info.send('派蒙开始更新信息~请稍等哦~')
     enka_data = await get_enka_data(uid)
     if not enka_data:
-        if uid[0] == '5':
-            await update_info.finish('暂不支持B服账号哦~请等待开发者更新吧~')
-        else:
-            await update_info.finish('派蒙没有获取到该uid的信息哦，可能是接口服务出现问题，稍候再试吧~')
+        await update_info.finish('派蒙没有获取到该uid的信息哦，可能是enka接口服务出现问题，稍候再试吧~')
     ud_lmt.start_cd(uid, 300)
     ud_lmt.start_cd(get_message_id(event), 15)
     player_info = PlayerInfo(uid)

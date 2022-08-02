@@ -252,14 +252,16 @@ async def get_sign_list():
 
 
 async def get_enka_data(uid):
-    for _ in range(3):
-        try:
-            url = f'https://enka.network/u/{uid}/__data.json'
-            resp = await aiorequests.get(url=url, headers={'User-Agent': 'LittlePaimon'}, follow_redirects=True)
-            data = resp.json()
-            return data
-        except Exception:
-            await sleep(1.5)
+    try:
+        url = f'https://enka.network/u/{uid}/__data.json'
+        resp = await aiorequests.get(url=url, headers={'User-Agent': 'LittlePaimon/2.0'}, follow_redirects=True)
+        data = resp.json()
+        return data
+    except Exception:
+        url = f'https://enka.microgg.cn/u/{uid}/__data.json'
+        resp = await aiorequests.get(url=url, headers={'User-Agent': 'LittlePaimon/2.0'}, follow_redirects=True)
+        data = resp.json()
+        return data
 
 
 async def get_stoken_by_login_ticket(loginticket, mys_id):
