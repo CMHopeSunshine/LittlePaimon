@@ -40,15 +40,30 @@ __plugin_meta__ = PluginMetadata(
 )
 
 
-guide = on_endswith('角色攻略', priority=8)
-material = on_endswith('角色材料', priority=6, block=True)
 attribute = on_endswith('参考面板', priority=6, block=True)
-attribute2 = on_endswith('收益曲线', priority=6, block=True)
+attribute.__paimon_help__ = {
+        "usage":  '<角色名> 参考面板',
+        "introduce": "查看该角色的小毕业参考面板",
+        "priority": 3
+    }
 daily_material = on_endswith(('材料', '天赋材料', '突破材料'), priority=6, block=True)
+daily_material.__paimon_help__ = {
+        "usage":  '<今日|周x>材料',
+        "introduce": "查看可刷取的素材表",
+        "priority": 4
+    }
 abyss_rate = on_command('syrate', aliases={'深渊登场率', '深境螺旋登场率', '深渊登场率排行', '深渊排行'}, priority=6, block=True)
+abyss_rate.__paimon_help__ = {
+        "usage":  '深渊登场率',
+        "introduce": "查看本期深渊的角色登场率",
+        "priority": 5
+    }
 abyss_team = on_regex(r'^(深渊|深境螺旋)(?P<floor>上半|下半)阵容(排行|出场率)?$', priority=5, block=True)
-weapon_guide = on_endswith('武器攻略', priority=6, block=True)
-monster_map = on_endswith('原魔图鉴', priority=6, block=True)
+abyss_team.__paimon_help__ = {
+        "usage":  '深渊<上半|下半>阵容排行',
+        "introduce": "查看本期深渊的阵容出场率排行",
+        "priority": 5
+    }
 
 
 @attribute.handle()

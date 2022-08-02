@@ -95,7 +95,9 @@
 + 7.23
   - 深渊登场率数据改为2.8
 + 8.2
-  - `点餐`功能恢复，但又引入了2个新依赖库，为不影响使用，默认关闭，有需要者请自行`pip install cssselect aiohttp`后，将`Paimon_plugins/_order.py`的`_`去掉#154
-  - 修复无法关闭和删除ssbq提醒的bug#154
-  - 新增`ysbjc`查看自己绑定的私人ck#153
+  - `点餐`功能恢复，但又引入了2个新依赖库，为不影响使用，默认关闭，有需要者请自行`pip install cssselect aiohttp`后，将`Paimon_plugins/_order.py`的`_`去掉 [#154](https://github.com/CMHopeSunshine/LittlePaimon/pull/154)
+  - 修复无法关闭和删除ssbq提醒的bug [#154](https://github.com/CMHopeSunshine/LittlePaimon/pull/154)
+  - 新增`ysbjc`查看自己绑定的私人ck [#153](https://github.com/CMHopeSunshine/LittlePaimon/pull/153)
   - 修改请求enka用的`User-Agent`
+  - 修复`ysd`中优菈的`菈`不能显示的问题
+  - 补充WIKI的`help`
