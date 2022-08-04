@@ -330,7 +330,7 @@ upLearning = on_message(
     permission=permission.GROUP_ADMIN | permission.GROUP_OWNER | SUPERUSER
 )
 upLearning.__paimon_help__ = {
-    "usage":     "@派蒙 <派蒙快学>",
+    "usage":     "@派蒙 <多说点话>",
     "introduce": "增强派蒙的学习能力",
     "priority":  98
 }
@@ -355,7 +355,7 @@ downLearning = on_message(
     permission=permission.GROUP_ADMIN | permission.GROUP_OWNER | SUPERUSER
 )
 downLearning.__paimon_help__ = {
-    "usage":     "@派蒙 <派蒙变笨>",
+    "usage":     "@派蒙 <笨比派蒙>",
     "introduce": "降低派蒙的学习能力",
     "priority":  99
 }
@@ -370,3 +370,81 @@ async def _(bot: Bot, event: GroupMessageEvent):
         Chat.speak_threshold += 1
         Chat.answer_threshold = Chat.speak_threshold
         await downLearning.finish("知道了知道了，旅行者就是嫌派蒙吵了")
+
+
+add_ban_word = on_message(
+    rule=to_me() & Rule(checkGroup) & keyword('添加禁用词', '不准说'),
+    priority=4,
+    block=True,
+    permission=permission.GROUP_ADMIN | permission.GROUP_OWNER | SUPERUSER
+)
+add_ban_word.__paimon_help__ = {
+    "usage":     "@派蒙 <不准说> (关键词)",
+    "introduce": "禁用某些不想让派蒙说的关键词, 括号(英语)内部为关键词内容",
+    "priority":  99
+}
+@add_ban_word.handle()
+async def _(bot: Bot, event: GroupMessageEvent):
+    msg = str(event.message)
+    msg = re.findall(re.compile(r"[(](.*)[)]", re.S), msg)
+    if msg:
+        msg = str(msg[0])
+        if '&#91;' in msg:
+            msg = msg.replace('&#91;', '[')
+        if '&#93;' in msg:
+            msg = msg.replace('&#93;', ']')
+        Chat.chat_word_ban.append(msg)
+        await add_ban_word.finish('派蒙不会说这个词了')
+    else:
+        await add_ban_word.finish('那你倒是告诉派蒙什么不能说啊😡😡😡')
+
+del_ban_word = on_message(
+    rule=to_me() & Rule(checkGroup) & keyword('删除禁用词', '可以说'),
+    priority=4,
+    block=True,
+    permission = permission.GROUP_ADMIN | permission.GROUP_OWNER | SUPERUSER
+)
+del_ban_word.__paimon_help__ = {
+    "usage":     "@派蒙 <可以说> (关键词)",
+    "introduce": "让派蒙可以说某些关键词, 括号(英语)内部为关键词内容",
+    "priority":  99
+}
+@del_ban_word.handle()
+async def _(bot: Bot, event: GroupMessageEvent):
+    msg = str(event.message)
+    msg = re.findall(re.compile(r"[(](.*)[)]", re.S), msg)
+    if msg:
+        msg = str(msg[0])
+        if '&#91;' in msg:
+            msg = msg.replace('&#91;', '[')
+        if '&#93;' in msg:
+            msg = msg.replace('&#93;', ']')
+        answer = '怎么又允许派蒙说了捏？'
+        try:
+            Chat.chat_word_ban.remove(msg)
+        except:
+            answer = '没有ban这个词, 不要耍我'
+        await del_ban_word.finish(answer)
+    else:
+        await del_ban_word.finish('可以说你是🤡吗')
+
+check_ban_word = on_message(
+    rule=to_me() & Rule(checkGroup) & keyword('查看禁用词', '哪些不准说'),
+    priority=4,
+    block=True,
+    permission = permission.GROUP_ADMIN | permission.GROUP_OWNER | SUPERUSER
+)
+check_ban_word.__paimon_help__ = {
+    "usage":     "@派蒙 <查看禁用词>",
+    "introduce": "查看当前的禁用词内容",
+    "priority":  99
+}
+@check_ban_word.handle()
+async def _(bot: Bot, event: GroupMessageEvent):
+    msg = '当前的违禁词: '
+    if Chat.chat_word_ban:
+        for word in Chat.chat_word_ban:
+            msg += str(word) + ' | '
+        await check_ban_word.finish(msg)
+    else:
+        await check_ban_word.finish('当前还没有违禁词哦')
