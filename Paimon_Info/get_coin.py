@@ -61,7 +61,7 @@ class MihoyoBBSCoin:
             'DS':                 old_version_get_ds_token(True),
             'cookie':             cookies,
             'x-rpc-client_type':  '2',
-            'x-rpc-app_version':  '2.7.0',
+            'x-rpc-app_version':  '2.28.1',
             'x-rpc-sys_version':  '6.0.1',
             'x-rpc-channel':      'mihoyo',
             'x-rpc-device_id':    random_hex(32),
@@ -261,7 +261,7 @@ def md5(text):
 
 def old_version_get_ds_token(mysbbs=False):
     if mysbbs:
-        n = 'fd3ykrh7o1j54g581upo1tvpam0dsgtf'
+        n = 'dWCcD2FsOUXEstC5f9xubswZxEeoBOTc'
     else:
         n = 'h8w582wxwgqvahcdkpvdhbh2w9casgfl'
     i = str(int(time.time()))
