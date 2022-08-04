@@ -411,7 +411,7 @@ async def _(event: MessageEvent, state: T_State):
     await ysc.finish(total_result)
 
 
-cookie_error_msg = '这个cookie无效哦，请旅行者确认是否正确\n1.ck要登录mys帐号后获取,且不能退出登录\n\n获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1\n'
+cookie_error_msg = '这个cookie无效哦，请旅行者确认是否正确\n获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1\n'
 
 
 @ysb.handle()
@@ -443,6 +443,7 @@ async def ysb_handler(event: MessageEvent, msg: Message = CommandArg()):
                 if event.message_type != 'private':
                     msg += '\n当前是在群聊里绑定，建议旅行者把cookie撤回哦!'
                 await ysb.finish(MsgBd.Text(msg), at_sender=True)
+
 
 @ysbjc.handle()
 @exception_handler()

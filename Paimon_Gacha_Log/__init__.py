@@ -108,7 +108,7 @@ async def update_ckjl(event: MessageEvent, msg: Message = CommandArg()):
     if apiRes != 'OK':
         await gacha_log_update.finish(apiRes, at_sender=True)
     await gacha_log_update.send('抽卡记录开始获取，请给派蒙一点时间...')
-    await get_data(url)
+    uid = await get_data(url)
 
     local_data = data_path / f'gachaData-{uid}.json'
     gacha_data = load_json(local_data)

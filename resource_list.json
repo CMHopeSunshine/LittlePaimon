@@ -1296,7 +1296,7 @@
     },
     {
         "path": "LittlePaimon/gacha_res/type.json",
-        "hash": "95ec53c3f3ae22b20216fc2683686ce1",
+        "hash": "d715b36bd5754f2e5473a794f9f1e999",
         "lock": true
     },
     {
@@ -4632,6 +4632,11 @@
     {
         "path": "LittlePaimon/优设标题黑.ttf",
         "hash": "f78122875a8fe70ab9b577cfb80c685b",
+        "lock": true
+    },
+    {
+        "path": "LittlePaimon/gacha_res/武器/斫峰之刃.png",
+        "hash": "c85e4a37f277f828e60a520d6adf7150",
         "lock": true
     }
 ]

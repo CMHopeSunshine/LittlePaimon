@@ -1,4 +1,3 @@
-import json
 from pathlib import Path
 from asyncio import sleep
 
@@ -89,3 +88,4 @@ async def get_data(url):
     save_json(UIGF_data, data_path / f"UIGF_gachaData-{uid}.json")
     # 写入xlsx
     writeXLSX(uid, mergeData['gachaLog'], gachaQueryTypeIds)
+    return uid
