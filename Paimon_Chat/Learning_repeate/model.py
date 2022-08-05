@@ -105,6 +105,8 @@ class Chat:
 
     learningGroup = config.paimon_chat_group# 机器学习群组
 
+    chat_word_ban = config.paimon_chat_word_ban# 禁用关键词
+
     def __init__(self, data: Union[ChatData, GroupMessageEvent, PrivateMessageEvent]):
 
         if isinstance(data, ChatData):
@@ -180,7 +182,7 @@ class Chat:
             # # 不回复太短的对话，大部分是“？”、“草”
             # if self.chat_data.is_plain_text and len(self.chat_data.plain_text) < 2:
             #     return None
-
+        
             if len(group_bot_replies):
                 latest_reply = group_bot_replies[-1]
                 # 限制发音频率，最多 6 秒一次
@@ -196,6 +198,10 @@ class Chat:
         results = self._context_find()
 
         if results:
+            # 判断是否有被禁用的关键词
+            for word in self.chat_word_ban:
+                if word in results[0][0]:
+                    return None
             raw_message = self.chat_data.raw_message
             keywords = self.chat_data.keywords
             with Chat._reply_lock:

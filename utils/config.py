@@ -65,7 +65,10 @@ class PluginConfig(BaseModel):
     paimon_speak_poke_probability: float = 0.5
     # 连续主动说话最多几句话
     paimon_speak_continuously_max_len: int = 3
-
+    # 禁用词 (如果需要禁用@某人的话格式为 '[CQ:at,qq=(这个人的QQ号)]' 
+    # 如: paimon_chat_word_ban: List[str] = ['[CQ:at,qq=12345678]'])
+    # 如需禁用全部的@可以填写为 '[CQ:at' , 'at' 等等
+    paimon_chat_word_ban: List[str] = []
     # 派蒙收到好友申请或群邀请时是否向超级管理员发通知
     paimon_request_remind: bool = True
     # 是否自动通过好友请求
