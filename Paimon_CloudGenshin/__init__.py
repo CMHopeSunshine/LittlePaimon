@@ -57,11 +57,13 @@ async def _(event: Union[GroupMessageEvent, MessageEvent], choice: str = ArgPlai
     if choice == '是':
         user_id = str(event.user_id)
         data = load_json(Path() / 'data' / 'LittlePaimon' / 'CloudGenshin.json')
-
-        del data[user_id]
-        if scheduler.get_job(f'cloud_genshin_{user_id}'):
-            scheduler.remove_job(f"cloud_genshin_{user_id}")
-        save_json(data, Path() / 'data' / 'LittlePaimon' / 'CloudGenshin.json')
+        try:
+            del data[user_id]
+            if scheduler.get_job(f'cloud_genshin_{user_id}'):
+                scheduler.remove_job(f"cloud_genshin_{user_id}")
+            save_json(data, Path() / 'data' / 'LittlePaimon' / 'CloudGenshin.json')
+        except:
+            await rm_cloud_ys.finish("你尚未绑定cookie！ 解绑失败", at_sender=True)
 
         await rm_cloud_ys.finish('token已解绑并取消自动签到~', at_sender=True)
     else:
