@@ -4,38 +4,40 @@ import re
 from asyncio import sleep
 from collections import defaultdict
 
+from littlepaimon_utils.tools import FreqLimiter
 from nonebot import on_command, require, logger, get_bot
 from nonebot.adapters.onebot.v11 import MessageEvent, Message, Bot, MessageSegment
 from nonebot.params import CommandArg, Arg
-from nonebot.plugin import PluginMetadata
-from nonebot.typing import T_State
 from nonebot.permission import SUPERUSER
+from nonebot.plugin import PluginMetadata
 from nonebot.rule import to_me
+from nonebot.typing import T_State
 
-from utils.alias_handler import get_match_alias
-from utils.config import config
-from utils.db_util import get_auto_sign, delete_auto_sign, get_last_query
-from utils.db_util import insert_public_cookie, update_private_cookie, delete_cookie_cache, delete_private_cookie, \
-    update_last_query, reset_public_cookie
-from utils.db_util import update_note_remind2, update_note_remind, get_note_remind, delete_note_remind, \
-    update_day_remind_count, get_private_cookie, add_auto_sign, get_all_query
-from utils.auth_util import check_cookie, FreqLimiter
-from utils.decorator import exception_handler
-from utils.enka_util import PlayerInfo
-from utils.message_util import get_uid_in_msg, uid_userId_to_dict, replace_all, transform_uid, get_message_id
-from utils.message_util import MessageBuild as MsgBd
 from .draw_abyss_info import draw_abyss_card
 from .draw_daily_note import draw_daily_note_card
 from .draw_month_info import draw_monthinfo_card
 from .draw_player_card import draw_player_card, draw_all_chara_card, draw_chara_card
-from .get_data import get_bind_game, get_sign_info, sign, get_sign_list, get_abyss_data, get_daily_note_data, \
+from .draw_role_card import draw_role_card
+from .get_data import addStoken, get_bind_game, get_sign_info, sign, get_sign_list, get_abyss_data, get_daily_note_data, \
     get_enka_data
 from .get_data import get_monthinfo_data, get_player_card_data, get_chara_detail_data, get_chara_skill_data
-from .draw_role_card import draw_role_card
+from ..utils.alias_handler import get_match_alias
+from ..utils.auth_util import check_cookie
+from ..utils.config import config
+from ..utils.db_util import get_auto_sign, delete_auto_sign, get_last_query, get_private_stoken, update_private_stoken, \
+    get_coin_auto_sign
+from ..utils.db_util import insert_public_cookie, update_private_cookie, delete_cookie_cache, delete_private_cookie, \
+    update_last_query, reset_public_cookie
+from ..utils.db_util import update_note_remind2, update_note_remind, get_note_remind, delete_note_remind, \
+    update_day_remind_count, get_private_cookie, add_auto_sign, get_all_query, add_coin_auto_sign, delete_coin_auto_sign
+from ..utils.decorator import exception_handler
+from ..utils.enka_util import PlayerInfo
+from ..utils.message_util import MessageBuild as MsgBd
+from ..utils.message_util import get_uid_in_msg, uid_userId_to_dict, replace_all, transform_uid, get_message_id
 
 require('nonebot_plugin_apscheduler')
 from nonebot_plugin_apscheduler import scheduler
-
+from .get_coin import MihoyoBBSCoin
 
 __plugin_meta__ = PluginMetadata(
     name="Paimon_Info",
@@ -65,15 +67,19 @@ __plugin_meta__ = PluginMetadata(
         "--------\n"
         "[更新角色信息 uid]更新游戏内展柜8个角色的面板信息\n"
         "[ysd 角色名 uid]查看指定角色的详细面板信息\n"
+        "--------\n"
+        "[myb获取]手动进行一次米游币获取\n"
+        "[myb自动获取开启uid/关闭]开启米游币原神自动获取\n"
+        "--------\n"
+        "[添加stoken+stoken]添加stoken"
     ),
     extra={
-        'type': '原神信息查询',
-        'range': ['private', 'group', 'guild'],
-        "author": "惜月 <277073121@qq.com>",
+        'type':    '原神信息查询',
+        'range':   ['private', 'group', 'guild'],
+        "author":  "惜月 <277073121@qq.com>",
         "version": "0.1.3",
     },
 )
-
 
 sy = on_command('sy', aliases={'深渊信息', '深境螺旋信息'}, priority=7, block=True)
 sy.__paimon_help__ = {
@@ -117,6 +123,12 @@ ysb.__paimon_help__ = {
     "introduce": "绑定私人cookie以开启更多功能",
     "priority":  99
 }
+ysbjc = on_command('ysbjc', aliases={'原神绑定检查', '检查cookie绑定状态'}, priority=7, block=True)
+ysbjc.__paimon_help__ = {
+    "usage":     "ysbjc(uid)",
+    "introduce": "检查私人cookie绑定状态，可检查指定的uid是否绑定cookie",
+    "priority":  99
+}
 mys_sign = on_command('mys_sign', aliases={'mys签到', '米游社签到'}, priority=7, block=True)
 mys_sign_auto = on_command('mys_sign_auto', aliases={'mys自动签到', '米游社自动签到'}, priority=7, block=True)
 mys_sign_auto.__paimon_help__ = {
@@ -139,6 +151,19 @@ role_info.__paimon_help__ = {
     "usage":     "ysd<角色名>(uid)",
     "introduce": "查看指定角色的详细面板信息",
     "priority":  4
+}
+get_mys_coin = on_command('myb获取', aliases={'米游币获取', '获取米游币'}, priority=7, block=True)
+get_mys_coin_auto = on_command('myb自动获取', aliases={'米游币自动获取', '自动获取米游币'}, priority=7, block=True)
+get_mys_coin_auto.__paimon_help__ = {
+    "usage":     "myb自动获取<on|off uid>",
+    "introduce": "自动获取米游币",
+    "priority":  10
+}
+add_stoken = on_command('添加stoken', priority=7, block=True)
+add_stoken.__paimon_help__ = {
+    "usage":     "添加stoken[stoken]",
+    "introduce": "添加stoken以获取米游币",
+    "priority":  99
 }
 
 
@@ -235,11 +260,11 @@ async def ssbq_handler(event: MessageEvent, msg: Message = CommandArg()):
                 await update_note_remind2(user_id, uid, gid, 1)
                 await ssbq.finish('开启提醒成功', at_sender=True)
         elif find_remind_enable.group('action') == '关闭提醒':
-            await ssbq.finish('关闭提醒成功', at_sender=True)
             await update_note_remind2(user_id, uid, gid, 0)
+            await ssbq.finish('关闭提醒成功', at_sender=True)
         elif find_remind_enable.group('action') == '删除提醒':
-            await ssbq.finish('删除提醒成功', at_sender=True)
             await delete_note_remind(user_id, uid)
+            await ssbq.finish('删除提醒成功', at_sender=True)
     else:
         data = await get_daily_note_data(uid)
         if isinstance(data, str):
@@ -260,7 +285,7 @@ async def myzj_handler(event: MessageEvent, msg: Message = CommandArg()):
     elif month_now == 2:
         month_list = ['12', '1', '2']
     else:
-        month_list = [str(month_now - 2), str(month_now - 1)]
+        month_list = [str(month_now - 2), str(month_now - 1), str(month_now)]
     find_month = '(?P<month>' + '|'.join(month_list) + ')'
     match = re.search(find_month, msg)
     month = match.group('month') if match else month_now
@@ -386,18 +411,14 @@ async def _(event: MessageEvent, state: T_State):
     await ysc.finish(total_result)
 
 
-cookie_error_msg = '这个cookie无效哦，请旅行者确认是否正确\n1.ck要登录mys帐号后获取,且不能退出登录\n2.ck中要有cookie_token和account_id两个参数\n3.建议在无痕模式下取'
+cookie_error_msg = '这个cookie无效哦，请旅行者确认是否正确\n获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1\n'
 
 
 @ysb.handle()
 @exception_handler()
 async def ysb_handler(event: MessageEvent, msg: Message = CommandArg()):
-    cookie = str(msg).strip()
+    cookie = msg.extract_plain_text().strip()
     if cookie == '':
-        # res = '''旅行者好呀，你可以直接用ys/ysa等指令附上uid来使用派蒙\n如果想看全部角色信息和实时便笺等功能，要把cookie给派蒙哦\ncookie
-        # 获取方法：登录网页版米游社，在地址栏粘贴代码：\njavascript:(function(){prompt(document.domain,document.cookie)})(
-        # );\n复制弹窗出来的字符串（手机要via或chrome浏览器才行）\n然后添加派蒙私聊发送ysb接刚刚复制的字符串，例如:ysb
-        # UM_distinctid=17d131d...\ncookie是账号重要安全信息，请确保机器人持有者可信赖！ '''
         res = '获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1\n获取到后，添加派蒙好友私聊发送ysb接复制到的cookie就行啦~'
         await ysb.finish(res, at_sender=True)
     else:
@@ -408,6 +429,7 @@ async def ysb_handler(event: MessageEvent, msg: Message = CommandArg()):
                 msg += '\n当前是在群聊里绑定，建议旅行者添加派蒙好友私聊绑定!'
             await ysb.finish(msg, at_sender=True)
         else:
+            uid = nickname = None
             for data in cookie_info['data']['list']:
                 if data['game_id'] == 2:
                     uid = data['game_role_id']
@@ -421,6 +443,24 @@ async def ysb_handler(event: MessageEvent, msg: Message = CommandArg()):
                 if event.message_type != 'private':
                     msg += '\n当前是在群聊里绑定，建议旅行者把cookie撤回哦!'
                 await ysb.finish(MsgBd.Text(msg), at_sender=True)
+
+
+@ysbjc.handle()
+@exception_handler()
+async def ysbjc_handler(event: MessageEvent, msg: Message = CommandArg()):
+    cookie = await get_private_cookie(event.user_id)
+    if len(cookie) == 0:
+        await ysbjc.finish("旅行者当前未绑定私人cookie")
+        return
+    uid = transform_uid(str(msg))
+    if not uid:
+        await ysbjc.finish(f"旅行者当前已绑定{len(cookie)}条私人cookie")
+        return
+    for data in cookie:
+        if data['uid'] == uid:
+            await ysbjc.finish("旅行者已为此uid绑定私人cookie！")
+            return
+    await ysbjc.finish("旅行者还没有为此uid绑定私人cookie哦~")
 
 
 @add_public_ck.handle()
@@ -468,8 +508,12 @@ async def mys_sign_handler(event: MessageEvent, msg: Message = CommandArg()):
 @mys_sign_auto.handle()
 @exception_handler()
 async def mys_sign_auto_handler(event: MessageEvent, msg: Message = CommandArg()):
-    if event.message_type != 'group':
-        await mys_sign_auto.finish('自动签到功能暂时只限Q群内使用哦')
+    if event.message_type == 'group':
+        remind_id = str(event.group_id)
+    elif event.message_type == 'private':
+        remind_id = 'q' + str(event.user_id)
+    else:
+        await mys_sign_auto.finish('自动签到功能暂时不支持频道使用哦')
     msg = str(msg).strip()
     find_uid = re.search(r'(?P<uid>(1|2|5)\d{8})', msg)
     if not find_uid:
@@ -482,41 +526,32 @@ async def mys_sign_auto_handler(event: MessageEvent, msg: Message = CommandArg()
                 cookie = await get_private_cookie(uid, key='uid')
                 if not cookie:
                     await mys_sign_auto.finish('你的该uid还没绑定cookie哦，先用ysb绑定吧!', at_sender=True)
-                await add_auto_sign(str(event.user_id), uid, str(event.group_id))
+                await add_auto_sign(str(event.user_id), uid, remind_id)
                 await mys_sign_auto.finish('开启米游社自动签到成功,派蒙会在每日0点帮你签到', at_sender=True)
             elif find_action.group('action') in ['关闭', '禁用', 'off']:
                 await delete_auto_sign(str(event.user_id), uid)
                 await mys_sign_auto.finish('关闭米游社自动签到成功', at_sender=True)
         else:
-            await add_auto_sign(str(event.user_id), uid, str(event.group_id))
-            await mys_sign_auto.finish('开启米游社自动签到成功,派蒙会在每日0点帮你签到', at_sender=True)
+            await mys_sign_auto.finish('指令错误，在后面加 开启/关闭 来使用哦', at_sender=True)
 
 
-ud_lmt = FreqLimiter(300)
+ud_lmt = FreqLimiter(180)
 ud_p_lmt = FreqLimiter(15)
 
 
 @update_info.handle()
 async def _(event: MessageEvent, state: T_State, msg: Message = CommandArg()):
-    uid = re.search(r'(?P<uid>(1|2|5)\d{8})', msg.extract_plain_text())
-    if uid:
+    if uid := re.search(r'(?P<uid>(1|2|5|8)\d{8})', msg.extract_plain_text().strip()):
         state['uid'] = uid.group('uid')
     else:
-        user = ''
-        for msg_seg in msg:
-            if msg_seg.type == "at":
-                user = msg_seg.data['qq']
-                break
-        if user:
+        if user := next((msg_seg.data['qq'] for msg_seg in msg if msg_seg.type == "at"), ''):
             uid = await get_last_query(str(user))
-            if uid:
-                state['uid'] = uid
         else:
             uid = await get_last_query(str(event.user_id))
-            if uid:
-                state['uid'] = uid
+        if uid:
+            state['uid'] = uid
     if 'uid' in state and not ud_lmt.check(state['uid']):
-        await update_info.finish(f'每个uid每5分钟才能更新一次信息，请稍等一下吧~(剩余{ud_lmt.left_time(state["uid"])}秒)')
+        await update_info.finish(f'每个uid每3分钟才能更新一次信息，请稍等一下吧~(剩余{ud_lmt.left_time(state["uid"])}秒)')
     if not ud_p_lmt.check(get_message_id(event)):
         await update_info.finish(f'每个会话每15秒才能更新一次信息，请稍等一下吧~(剩余{ud_lmt.left_time(get_message_id(event))}秒)')
 
@@ -532,11 +567,8 @@ async def _(event: MessageEvent, uid: Message = Arg('uid')):
     await update_info.send('派蒙开始更新信息~请稍等哦~')
     enka_data = await get_enka_data(uid)
     if not enka_data:
-        if uid[0] == '5' or uid[0] == '2':
-            await update_info.finish('暂不支持B服账号哦~请等待开发者更新吧~')
-        else:
-            await update_info.finish('派蒙没有查到该uid的信息哦~')
-    ud_lmt.start_cd(uid, 300)
+        await update_info.finish('派蒙没有获取到该uid的信息哦，可能是enka接口服务出现问题，稍候再试吧~')
+    ud_lmt.start_cd(uid, 180)
     ud_lmt.start_cd(get_message_id(event), 15)
     player_info = PlayerInfo(uid)
     player_info.set_player(enka_data['playerInfo'])
@@ -553,8 +585,7 @@ async def _(event: MessageEvent, uid: Message = Arg('uid')):
 
 @role_info.handle()
 async def _(event: MessageEvent, state: T_State, msg: Message = CommandArg()):
-    uid = re.search(r'(?P<uid>(1|2|5)\d{8})', msg.extract_plain_text())
-    if uid:
+    if uid := re.search(r'(?P<uid>(1|2|5|8)\d{8})', msg.extract_plain_text().strip()):
         state['uid'] = uid.group('uid')
         await update_last_query(str(event.user_id), uid.group('uid'))
     else:
@@ -564,13 +595,11 @@ async def _(event: MessageEvent, state: T_State, msg: Message = CommandArg()):
                 user = msg_seg.data['qq']
         if user:
             uid = await get_last_query(str(user))
-            if uid:
-                state['uid'] = uid
         else:
             uid = await get_last_query(str(event.user_id))
-            if uid:
-                state['uid'] = uid
-    msg = msg.extract_plain_text().replace(state['uid'], '').strip()
+        if uid:
+            state['uid'] = uid
+    msg = msg.extract_plain_text().replace(state['uid'] if 'uid' in state else 'ysd', '').strip()
     if not msg:
         await role_info.finish('请把要查询角色名给派蒙哦~')
     if msg.startswith(('a', '全部', '所有', '查看')):
@@ -629,18 +658,26 @@ async def auto_sign():
         ann = defaultdict(lambda: defaultdict(list))
         logger.info('---派蒙开始执行米游社自动签到---')
         sign_list = await get_sign_list()
-        for user_id, uid, group_id in data:
+        for user_id, uid, remind_id in data:
             await sleep(random.randint(3, 8))
             sign_result = await sign(uid)
             if not isinstance(sign_result, str):
                 await sleep(1)
                 sign_info = await get_sign_info(uid)
                 sign_day = sign_info['data']['total_sign_day'] - 1
-                ann[group_id]['成功'].append(
-                    f'.UID{uid}-{sign_list["data"]["awards"][sign_day]["name"]}*{sign_list["data"]["awards"][sign_day]["cnt"]}')
+                if remind_id.startswith('q'):
+                    await get_bot().send_private_msg(user_id=remind_id[1:],
+                                                     message=f'你的uid{uid}自动签到成功!签到奖励为{sign_list["data"]["awards"][sign_day]["name"]}*{sign_list["data"]["awards"][sign_day]["cnt"]}')
+                else:
+                    ann[remind_id]['成功'].append(
+                        f'.UID{uid}-{sign_list["data"]["awards"][sign_day]["name"]}*{sign_list["data"]["awards"][sign_day]["cnt"]}')
             else:
                 await delete_auto_sign(user_id, uid)
-                ann[group_id]['失败'].append(f'.UID{uid}')
+                if remind_id.startswith('q'):
+                    await get_bot().send_private_msg(user_id=remind_id[1:],
+                                                     message=f'你的uid{uid}签到失败，请重新绑定cookie再开启自动签到')
+                else:
+                    ann[remind_id]['失败'].append(f'.UID{uid}')
         for group_id, content in ann.items():
             group_str = '米游社自动签到结果：\n'
             for type, ann_list in content.items():
@@ -653,6 +690,44 @@ async def auto_sign():
                 await sleep(random.randint(3, 8))
             except Exception as e:
                 logger.error(f'米游社签到结果发送失败：{e}')
+
+
+@scheduler.scheduled_job('cron', hour=config.paimon_coin_hour, minute=config.paimon_coin_minute, misfire_grace_time=10)
+async def coin_auto_sign():
+    data = await get_coin_auto_sign()
+    ann = defaultdict(lambda: defaultdict(list))
+    if data:
+        logger.info('---派蒙开始执行米游币自动获取---')
+        for user_id, uid, remind_id in data:
+            sk = await get_private_stoken(uid, key='uid')
+            stoken = sk[0][4]
+            get_coin_task = MihoyoBBSCoin(stoken, user_id, uid)
+            data = await get_coin_task.run()
+            if get_coin_task.state is False:
+                await delete_coin_auto_sign(user_id, uid)
+                if remind_id.startswith('q'):
+                    await get_bot().send_private_msg(user_id=remind_id[1:],
+                                                     message=f'你的uid{uid}米游币获取失败，请重新绑定cookie再开启')
+                else:
+                    ann[remind_id]['失败'].append(f'.UID{uid}')
+            else:
+                if remind_id.startswith('q'):
+                    await get_bot().send_private_msg(user_id=remind_id[1:],
+                                                     message=f'你的uid{uid}米游币自动获取成功')
+                else:
+                    ann[remind_id]['成功'].append(f'.UID{uid}')
+        for group_id, content in ann.items():
+            group_str = '米游币自动获取结果：\n'
+            for type, ann_list in content.items():
+                if ann_list:
+                    group_str += f'{type}：\n'
+                    for u in ann_list:
+                        group_str += str(ann_list.index(u) + 1) + u + '\n'
+            try:
+                await get_bot().send_group_msg(group_id=group_id, message=group_str)
+                await sleep(random.randint(3, 8))
+            except Exception as e:
+                logger.error(f'米游币自动获取结果发送失败：{e}')
 
 
 @scheduler.scheduled_job('cron', minute=f'*/{config.paimon_check_interval}', misfire_grace_time=10)
@@ -725,7 +800,7 @@ async def daily_update():
 # @scheduler.scheduled_job('cron', hour=3, misfire_grace_time=10)
 async def all_update():
     uid_list = await get_all_query()
-    logger.info('派蒙开始更新用户角色信息，共{}个用户'.format(len(uid_list)))
+    logger.info(f'派蒙开始更新用户角色信息，共{len(uid_list)}个用户')
     failed_time = 0
     for uid in uid_list:
         try:
@@ -743,4 +818,84 @@ async def all_update():
             failed_time += 1
             if failed_time > 5:
                 break
-    return '玩家信息uid更新共{}个，更新完成'.format(len(uid_list))
+    return f'玩家信息uid更新共{len(uid_list)}个，更新完成'
+
+
+@get_mys_coin.handle()
+@exception_handler()
+async def get_mys_coin_handler(event: MessageEvent, msg: Message = CommandArg()): \
+        # 获取UID
+    uid, msg, user_id, use_cache = await get_uid_in_msg(event, msg)
+    if not uid:
+        await get_mys_coin.finish('没有找到你的uid哦')
+    sk = await get_private_stoken(uid, key='uid')
+    if not sk:
+        await get_mys_coin.finish('请旅行者先添加cookie和stoken哦')
+    cookie = sk[0][1]
+    if not cookie:
+        await get_mys_coin.finish('你的该uid还没绑定cookie哦，先用ysb绑定吧')
+    stoken = sk[0][4]
+    await get_mys_coin.send('开始执行米游币获取，请稍等哦~')
+    get_coin_task = MihoyoBBSCoin(stoken, str(event.user_id), uid)
+    data = await get_coin_task.run()
+    msg = "米游币获取完成\n" + data
+    await get_mys_coin.finish(msg)
+
+
+@get_mys_coin_auto.handle()
+@exception_handler()
+async def get_mys_coin_auto_handler(event: MessageEvent, msg: Message = CommandArg()):
+    if event.message_type == 'group':
+        remind_id = str(event.group_id)
+    elif event.message_type == 'private':
+        remind_id = 'q' + str(event.user_id)
+    else:
+        await get_mys_coin_auto.finish('米游币自动获取功能暂时不支持频道使用哦')
+    msg = msg.extract_plain_text().strip()
+    find_uid = re.search(r'(?P<uid>(1|2|5)\d{8})', msg)
+    if not find_uid:
+        await get_mys_coin_auto.finish('请把正确的需要帮忙获取的uid给派蒙哦!', at_sender=True)
+    else:
+        uid = find_uid.group('uid')
+        find_action = re.search(r'(?P<action>开启|启用|打开|关闭|禁用|on|off)', msg)
+        if find_action:
+            if find_action.group('action') in ['开启', '启用', '打开', 'on']:
+                sk = await get_private_stoken(uid, key='uid')
+                stoken = sk[0][4]
+                if not stoken:
+                    await get_mys_coin_auto.finish('你的该uid还没绑定stoken哦，先用添加stoken绑定吧!', at_sender=True)
+                await add_coin_auto_sign(str(event.user_id), uid, remind_id)
+                await get_mys_coin_auto.finish('开启米游币自动获取成功,派蒙会在每日0点帮你签到', at_sender=True)
+            elif find_action.group('action') in ['关闭', '禁用', 'off']:
+                await delete_coin_auto_sign(str(event.user_id), uid)
+                await get_mys_coin_auto.finish('关闭米游币自动获取成功', at_sender=True)
+        else:
+            await get_mys_coin_auto.finish('指令错误，在后面加 开启/关闭 来使用哦', at_sender=True)
+
+
+@add_stoken.handle()
+@exception_handler()
+async def add_stoken_handler(event: MessageEvent, msg: Message = CommandArg()):
+    stoken = msg.extract_plain_text().strip()
+    if stoken == '':
+        res = '获取stoken的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1\n获取到后，添加派蒙好友私聊发送ysb接复制到的cookie就行啦~'
+        await add_stoken.finish(res, at_sender=True)
+    else:
+        uid = (await get_private_cookie(event.user_id, key='user_id'))[0][2]
+        stoken, mys_id, stoken_info, m = await addStoken(stoken, uid)
+        if not stoken_info and not mys_id:
+            await add_stoken.finish(m)
+        if not stoken_info or stoken_info['retcode'] != 0:
+            msg = cookie_error_msg
+            if event.message_type != 'private':
+                msg += '\n当前是在群聊里绑定，建议旅行者添加派蒙好友私聊绑定!'
+            await add_stoken.finish(msg, at_sender=True)
+        else:
+            if uid:
+                await update_private_stoken(user_id=str(event.user_id), uid=uid, mys_id=mys_id, cookie='',
+                                            stoken=stoken)
+                await update_last_query(str(event.user_id), uid, 'uid')
+                msg = f'stoken绑定成功啦!'
+                if event.message_type != 'private':
+                    msg += '\n当前是在群聊里绑定，建议旅行者把stoken撤回哦!'
+                await add_stoken.finish(MsgBd.Text(msg), at_sender=True)

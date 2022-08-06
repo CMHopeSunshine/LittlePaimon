@@ -1,13 +1,14 @@
-from utils.auth_util import get_headers, get_sign_headers, get_use_cookie, get_own_cookie, check_retcode
-from utils.db_util import update_cookie_cache
-from utils.decorator import cache
-from utils import aiorequests
 import datetime
 import re
 from asyncio import sleep
 
+from littlepaimon_utils import aiorequests
 
-@cache(ttl=datetime.timedelta(minutes=10))
+from ..utils.auth_util import get_headers, get_sign_headers, get_use_cookie, get_own_cookie, check_retcode
+from ..utils.db_util import get_private_cookie, update_cookie_cache, update_private_cookie
+from ..utils.decorator import cache
+
+
 async def get_abyss_data(user_id, uid, schedule_type="1", use_cache=True):
     server_id = "cn_qd01" if uid[0] == '5' else "cn_gf01"
     url = "https://api-takumi-record.mihoyo.com/game_record/app/genshin/api/spiralAbyss"
@@ -154,6 +155,31 @@ async def get_bind_game(cookie):
     return data, uid
 
 
+# 添加stoken
+async def addStoken(stoken, uid):
+    login_ticket = re.search(r'login_ticket=([0-9a-zA-Z]+)', stoken)
+    if login_ticket:
+        login_ticket = login_ticket.group(0).split('=')[1]
+    else:
+        return None, None, None, '你的cookie中没有login_ticket字段哦，请重新获取'
+    ck = await get_private_cookie(uid, key='uid')
+    if not ck:
+        return None, None, None, '你还没绑定私人cookie哦，请先用ysb绑定吧'
+    ck = ck[0][1]
+    mys_id = re.search(r'account_id=(\d*)', ck)
+    if mys_id:
+        mys_id = mys_id.group(0).split('=')[1]
+    else:
+        return None, None, None, '你的cookie中没有account_id字段哦，请重新获取'
+    raw_data = await get_stoken_by_login_ticket(login_ticket, mys_id)
+    try:
+        stoken = raw_data['data']['list'][0]['token']
+    except TypeError:
+        return None, None, None, '该stoken无效获取过期了，请重新获取'
+    s_cookies = 'stuid={};stoken={}'.format(mys_id, stoken)
+    return s_cookies, mys_id, raw_data, 'OK'
+
+
 # 获取今日签到信息
 async def get_sign_info(uid):
     server_id = "cn_qd01" if uid[0] == '5' else "cn_gf01"
@@ -169,7 +195,6 @@ async def get_sign_info(uid):
         'Cookie':            cookie['cookie'],
         'User-Agent':        'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS '
                              'X) AppleWebKit/605.1.15 (KHTML, like Gecko) miHoYoBBS/2.11.1',
-
     }
     params = {
         'act_id': 'e202009291139501',
@@ -227,13 +252,23 @@ async def get_sign_list():
 
 
 async def get_enka_data(uid):
-    for _ in range(3):
-        try:
-            url = f'https://enka.shinshin.moe/u/{uid}/__data.json'
-            resp = await aiorequests.get(url=url)
-            data = resp.json()
-            return data
-        except Exception:
-            await sleep(1.5)
+    try:
+        url = f'https://enka.network/u/{uid}/__data.json'
+        resp = await aiorequests.get(url=url, headers={'User-Agent': 'LittlePaimon/2.0'}, follow_redirects=True)
+        data = resp.json()
+        return data
+    except Exception:
+        url = f'https://enka.microgg.cn/u/{uid}/__data.json'
+        resp = await aiorequests.get(url=url, headers={'User-Agent': 'LittlePaimon/2.0'}, follow_redirects=True)
+        data = resp.json()
+        return data
 
 
+async def get_stoken_by_login_ticket(loginticket, mys_id):
+    req = await aiorequests.get(url='https://api-takumi.mihoyo.com/auth/api/getMultiTokenByLoginTicket',
+                                params={
+                                    'login_ticket': loginticket,
+                                    'token_types':  '3',
+                                    'uid':          mys_id
+                                })
+    return req.json()

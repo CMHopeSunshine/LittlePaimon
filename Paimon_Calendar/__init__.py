@@ -1,12 +1,13 @@
+import re
+
+from littlepaimon_utils.files import load_json, save_json
 from nonebot import get_bot, on_command, logger
 from nonebot.adapters.onebot.v11 import MessageEvent, Message, MessageSegment
 from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 
-from utils.file_handler import load_json, save_json
-from utils.message_util import get_message_id
 from .generate import *
-import re
+from ..utils.message_util import get_message_id
 
 require('nonebot_plugin_apscheduler')
 from nonebot_plugin_apscheduler import scheduler
@@ -81,7 +82,7 @@ async def _(event: MessageEvent, msg: Message = CommandArg()):
         im = await generate_day_schedule(server)
         await calendar.finish(MessageSegment.image(im))
     else:
-        push_data = load_json('calender_push.json')
+        push_data = load_json(Path() / 'data' / 'LittlePaimon' / 'calender_push.json')
         if msg.startswith(('开启', 'on', '打开')):
             # 添加定时推送任务
             time_str = re.search(r'(\d{1,2}):(\d{2})', msg)
@@ -100,7 +101,7 @@ async def _(event: MessageEvent, msg: Message = CommandArg()):
                 if scheduler.get_job('genshin_calendar_' + push_id):
                     scheduler.remove_job("genshin_calendar_" + push_id)
 
-                save_json(push_data, 'calender_push.json')
+                save_json(push_data, Path() / 'data' / 'LittlePaimon' / 'calender_push.json')
 
                 scheduler.add_job(
                     func=send_calendar,
@@ -121,7 +122,7 @@ async def _(event: MessageEvent, msg: Message = CommandArg()):
                 del push_data[str(get_message_id(event))]
                 if scheduler.get_job("genshin_calendar_" + str(get_message_id(event))):
                     scheduler.remove_job("genshin_calendar_" + str(get_message_id(event)))
-                save_json(push_data, 'calender_push.json')
+                save_json(push_data, Path() / 'data' / 'LittlePaimon' / 'calender_push.json')
             await calendar.finish('原神日程推送已关闭', at_sender=True)
         elif msg.startswith(('状态', 'status', 'setting')):
             if str(get_message_id(event)) not in push_data:
@@ -136,7 +137,7 @@ async def _(event: MessageEvent, msg: Message = CommandArg()):
 
 
 # 自动推送任务
-for push_id, push_data in load_json('calender_push.json').items():
+for push_id, push_data in load_json(Path() / 'data' / 'LittlePaimon' / 'calender_push.json').items():
     scheduler.add_job(
         func=send_calendar,
         trigger='cron',

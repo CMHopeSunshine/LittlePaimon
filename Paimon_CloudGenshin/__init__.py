@@ -2,6 +2,9 @@ import json
 import re
 import uuid
 from typing import Union
+from pathlib import Path
+
+from littlepaimon_utils.files import load_json, save_json
 from nonebot import on_command, require, get_bot, logger
 from nonebot.adapters.onebot.v11 import MessageEvent, Message, GroupMessageEvent
 from nonebot.internal.matcher import Matcher
@@ -10,9 +13,7 @@ from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 
 from .data_source import get_Info, get_Notification, check_token
-from utils.decorator import exception_handler
-from utils.file_handler import load_json, save_json
-
+from ..utils.decorator import exception_handler
 
 __plugin_meta__ = PluginMetadata(
     name="云原神",
@@ -47,8 +48,7 @@ uuid = str(uuid.uuid4())
 
 @rm_cloud_ys.handle()
 async def _handle(event: Union[GroupMessageEvent, MessageEvent], match: Matcher, args: Message = CommandArg()):
-    plan_text = args.extract_plain_text()
-    if plan_text:
+    if plan_text := args.extract_plain_text():
         match.set_arg('choice', plan_text)
 
 
@@ -56,16 +56,16 @@ async def _handle(event: Union[GroupMessageEvent, MessageEvent], match: Matcher,
 async def _(event: Union[GroupMessageEvent, MessageEvent], choice: str = ArgPlainText('choice')):
     if choice == '是':
         user_id = str(event.user_id)
-        data = load_json('user_data.json')
-
-        del data[user_id]
-        if scheduler.get_job('cloud_genshin_' + user_id):
-            scheduler.remove_job("cloud_genshin_" + user_id)
-        save_json(data, 'user_data.json')
+        data = load_json(Path() / 'data' / 'LittlePaimon' / 'CloudGenshin.json')
+        try:
+            del data[user_id]
+            if scheduler.get_job(f'cloud_genshin_{user_id}'):
+                scheduler.remove_job(f"cloud_genshin_{user_id}")
+            save_json(data, Path() / 'data' / 'LittlePaimon' / 'CloudGenshin.json')
+        except:
+            await rm_cloud_ys.finish("你尚未绑定cookie！ 解绑失败", at_sender=True)
 
         await rm_cloud_ys.finish('token已解绑并取消自动签到~', at_sender=True)
-    elif choice == '否':
-        await rm_cloud_ys.finish()
     else:
         await rm_cloud_ys.finish()
 
@@ -103,7 +103,7 @@ async def auto_sign_cgn(user_id, data):
 async def _(event: Union[GroupMessageEvent, MessageEvent], msg: Message = CommandArg(), uuid=uuid):
     param = msg.extract_plain_text().strip()
     user_id = str(event.user_id)
-    data = load_json('user_data.json')
+    data = load_json(Path() / 'data' / 'LittlePaimon' / 'CloudGenshin.json')
 
     action = re.search(r'(?P<action>(信息|info)|(绑定|bind))', param)
 
@@ -137,7 +137,7 @@ async def _(event: Union[GroupMessageEvent, MessageEvent], msg: Message = Comman
                 scheduler.remove_job("cloud_genshin_" + user_id)
 
             """ 保存数据 """
-            save_json(data, 'user_data.json')
+            save_json(data, Path() / 'data' / 'LittlePaimon' / 'CloudGenshin.json')
             """ 添加推送任务 """
             scheduler.add_job(
                 func=auto_sign_cgn,
@@ -173,7 +173,7 @@ async def _(event: Union[GroupMessageEvent, MessageEvent], msg: Message = Comman
             await cloud_ys.finish('参数错误！', at_sender=True)
 
 
-for user_id, data in load_json('user_data.json').items():
+for user_id, data in load_json(Path() / 'data' / 'LittlePaimon' / 'CloudGenshin.json').items():
     scheduler.add_job(
         func=auto_sign_cgn,
         trigger='cron',

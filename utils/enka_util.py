@@ -1,25 +1,26 @@
-from pathlib import Path
 import datetime
+import re
+from pathlib import Path
 
-from utils.alias_handler import get_name_by_id
-from utils.file_handler import load_json, save_json
+from littlepaimon_utils.files import load_json, save_json
 
-role_element = load_json(path=Path(__file__).parent / 'json' / 'role_element.json')
-role_skill = load_json(path=Path(__file__).parent / 'json' / 'role_skill.json')
-role_talent = load_json(path=Path(__file__).parent / 'json' / 'role_talent.json')
-weapon = load_json(path=Path(__file__).parent / 'json' / 'weapon.json')
-prop_list = load_json(path=Path(__file__).parent / 'json' / 'prop.json')
-artifact_list = load_json(path=Path(__file__).parent / 'json' / 'artifact.json')
-ra_score = load_json(path=Path(__file__).parent / 'json' / 'score.json')
+from ..utils.alias_handler import get_name_by_id
+
+role_element = load_json(path=Path(__file__).parent / 'json_data' / 'role_element.json')
+role_skill = load_json(path=Path(__file__).parent / 'json_data' / 'role_skill.json')
+role_talent = load_json(path=Path(__file__).parent / 'json_data' / 'role_talent.json')
+weapon = load_json(path=Path(__file__).parent / 'json_data' / 'weapon.json')
+prop_list = load_json(path=Path(__file__).parent / 'json_data' / 'prop.json')
+artifact_list = load_json(path=Path(__file__).parent / 'json_data' / 'artifact.json')
+ra_score = load_json(path=Path(__file__).parent / 'json_data' / 'score.json')
 
 
 class PlayerInfo:
     def __init__(self, uid: str):
-        self.path = Path(__file__).parent.parent / 'user_data' / 'player_info' / f'{uid}.json'
+        self.path = Path() / 'data' / 'LittlePaimon' / 'user_data' / 'player_info' / f'{uid}.json'
         self.data = load_json(path=self.path)
         self.player_info = self.data['玩家信息'] if '玩家信息' in self.data else {}
         self.roles = self.data['角色'] if '角色' in self.data else {}
-        # self.artifacts = self.data['圣遗物'] if '圣遗物' in self.data else transform_artifacts(self.roles)
 
     def set_player(self, data: dict):
         self.player_info['昵称'] = data.get('nickname', 'unknown')
@@ -35,26 +36,40 @@ class PlayerInfo:
     def set_role(self, data: dict):
         role_info = {}
         role_name = get_name_by_id(str(data['avatarId']))
-        if role_name not in ['荧', '空']:
+        if role_name not in ['unknown', 'None']:
             role_info['名称'] = role_name
             role_info['角色ID'] = data['avatarId']
             role_info['等级'] = int(data['propMap']['4001']['val'])
             role_info['好感度'] = data['fetterInfo']['expLevel']
-            role_info['元素'] = role_element[role_name]
+            if role_name in ['荧', '空']:
+                traveler_skill = role_skill['Name'][list(data['skillLevelMap'].keys())[-1]]
+                find_element = re.search(r'(风|雷|岩|草|水|火|冰)', traveler_skill).group(1)
+                role_info['元素'] = find_element
+                role_name = find_element + '主'
+            else:
+                role_info['元素'] = role_element[role_name]
 
-            role_info['天赋'] = []
             if 'talentIdList' in data:
                 if len(data['talentIdList']) >= 3:
                     data['skillLevelMap'][list(data['skillLevelMap'].keys())[ra_score['Talent'][role_name][0]]] += 3
                 if len(data['talentIdList']) >= 5:
                     data['skillLevelMap'][list(data['skillLevelMap'].keys())[ra_score['Talent'][role_name][1]]] += 3
+
+            role_info['天赋'] = []
             for skill in data['skillLevelMap']:
                 skill_detail = {'名称': role_skill['Name'][skill], '等级': data['skillLevelMap'][skill],
                                 '图标': role_skill['Icon'][skill]}
                 role_info['天赋'].append(skill_detail)
-            if role_name == '神里绫华':
+            if role_info['名称'] == '神里绫华':
                 role_info['天赋'][0], role_info['天赋'][-1] = role_info['天赋'][-1], role_info['天赋'][0]
                 role_info['天赋'][2], role_info['天赋'][-1] = role_info['天赋'][-1], role_info['天赋'][2]
+            if role_info['名称'] == '安柏':
+                role_info['天赋'][0], role_info['天赋'][-1] = role_info['天赋'][-1], role_info['天赋'][0]
+            if role_info['名称'] in ['空', '荧']:
+                role_info['天赋'][0], role_info['天赋'][-1] = role_info['天赋'][-1], role_info['天赋'][0]
+                role_info['天赋'][1], role_info['天赋'][-1] = role_info['天赋'][-1], role_info['天赋'][1]
+            if role_info['名称'] == '达达利亚':
+                role_info['天赋'][0]['等级'] += 1
 
             role_info['命座'] = []
             if 'talentIdList' in data:
@@ -118,33 +133,11 @@ class PlayerInfo:
                 artifact_info['词条'] = []
                 for reliquary in artifact['flat']['reliquarySubstats']:
                     artifact_info['词条'].append({'属性名': prop_list[reliquary['appendPropId']],
-                                                '属性值': reliquary['statValue'],
-                                                '评分':  artifact_score(role_name, prop_list[reliquary['appendPropId']],
-                                                                      reliquary['statValue'], artifact_info['部位'])})
+                                                '属性值': reliquary['statValue']})
                 artifacts.append(artifact_info)
             role_info['圣遗物'] = artifacts
             role_info['更新时间'] = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S')
-            self.roles[role_name] = role_info
-            # self.set_artifacts(data)
-
-    # def set_artifacts(self, data):
-    #     for artifact in data['equipList'][:-1]:
-    #         artifact_info = {}
-    #         artifact_info['名称'] = artifact_list['Name'][artifact['flat']['icon']]
-    #         artifact_info['图标'] = artifact['flat']['icon']
-    #         artifact_info['部位'] = artifact_list['Piece'][artifact['flat']['icon'].split('_')[-1]][1]
-    #         artifact_info['所属套装'] = artifact_list['Mapping'][artifact_info['名称']]
-    #         artifact_info['等级'] = artifact['reliquary']['level'] - 1
-    #         artifact_info['星级'] = artifact['flat']['rankLevel']
-    #         artifact_info['主属性'] = {'属性名': prop_list[artifact['flat']['reliquaryMainstat']['mainPropId']],
-    #                                 '属性值': artifact['flat']['reliquaryMainstat']['statValue']}
-    #         artifact_info['词条'] = []
-    #         for reliquary in artifact['flat']['reliquarySubstats']:
-    #             artifact_info['词条'].append({'属性名': prop_list[reliquary['appendPropId']],
-    #                                         '属性值': reliquary['statValue']})
-    #         artifact_info['角色名'] = get_name_by_id(str(data['avatarId']))
-    #         if artifact_info not in self.artifacts:
-    #             self.artifacts.append(artifact_info)
+            self.roles[role_info['名称']] = role_info
 
     def get_player_info(self):
         return self.player_info
@@ -173,69 +166,110 @@ def dictList_to_list(data):
     new_data = {}
     for d in data:
         name = get_name_by_id(str(d['avatarId']))
-        if name not in ['荧', '空']:
-            new_data[name] = d['avatarId']
+        new_data[name] = d['avatarId']
     return new_data
 
 
-# def transform_artifacts(data):
-#     artifacts = []
-#     for role in data.values():
-#         for artifact in role['圣遗物']:
-#             artifacts_temp = {}
-#             artifacts_temp['名称'] = artifact['名称']
-#             artifacts_temp['图标'] = artifact['图标']
-#             artifacts_temp['部位'] = artifact['部位']
-#             artifacts_temp['所属套装'] = artifact['所属套装']
-#             artifacts_temp['等级'] = artifact['等级']
-#             artifacts_temp['星级'] = artifact['星级']
-#             artifacts_temp['主属性'] = artifact['主属性']
-#             artifacts_temp['词条'] = []
-#             for reliquary in artifact['词条']:
-#                 artifacts_temp['词条'].append({'属性名': reliquary['属性名'],
-#                                             '属性值': reliquary['属性值']})
-#             artifacts_temp['角色名'] = role['名称']
-#             artifacts.append(artifacts_temp)
-#     return artifacts
+def artifact_value(role_prop: dict, prop_name: str, prop_value: float, effective: dict):
+    """
+    计算圣遗物单词条的有效词条数
+    :param role_prop: 角色基础属性
+    :param prop_name: 属性名
+    :param prop_value: 属性值
+    :param effective: 有效词条列表
+    :return: 评分
+    """
+    prop_map = {'攻击力': 4.975, '生命值': 4.975, '防御力': 6.2, '暴击率': 3.3, '暴击伤害': 6.6, '元素精通': 19.75, '元素充能效率': 5.5}
+    if prop_name in effective.keys() and prop_name in ['攻击力', '生命值', '防御力']:
+        return round(prop_value / role_prop[prop_name] * 100 / prop_map[prop_name] * effective[prop_name], 2)
+    if prop_name.replace('百分比', '') in effective.keys():
+        return round(prop_value / prop_map[prop_name.replace('百分比', '')] * effective[prop_name.replace('百分比', '')], 2)
+    return 0
 
 
-def artifact_score(role_name, prop_name, prop_value, artifact_type):
-    effective = ra_score['Role'][role_name]
-    score = 0
-    if '攻击力' in effective:
-        if prop_name == '攻击力':
-            score = prop_value * 0.24
-        elif prop_name == '百分比攻击力':
-            score = prop_value * 1
-    if '生命值' in effective:
-        if prop_name == '生命值':
-            score = prop_value * 0.014
-        elif prop_name == '百分比生命值':
-            score = prop_value * 0.86
-    if '防御力' in effective:
-        if prop_name == '防御力':
-            score = prop_value * 0.18
-        elif prop_name == '百分比防御力':
-            score = prop_value * 0.7
-    if '元素精通' in effective and prop_name == '元素精通':
-        score = prop_value * 0.25
-    if '元素充能效率' in effective and prop_name == '元素充能效率':
-        score = prop_value * 0.65
-    if '暴击率' in effective and prop_name == '暴击率':
-        if artifact_type == '理之冠':
-            score = prop_value * 3
-        else:
-            score = prop_value * 2
-    if '暴击伤害' in effective and prop_name == '暴击伤害':
-        if artifact_type == '理之冠':
-            score = prop_value * 1.5
-        else:
-            score = prop_value * 1
-    return round(score, 2)
+def artifact_total_value(role_prop: dict, artifact: dict, effective: dict):
+    """
+    计算圣遗物总有效词条数以及评分
+    :param role_prop: 角色基础属性
+    :param artifact: 圣遗物信息
+    :param effective: 有效词条列表
+    :return: 总词条数，评分
+    """
+    new_role_prop = {'攻击力': role_prop['基础攻击'], '生命值': role_prop['基础生命'], '防御力': role_prop['基础防御']}
+    value = 0
+    for i in artifact['词条']:
+        value += artifact_value(new_role_prop, i['属性名'], i['属性值'], effective)
+    value = round(value, 2)
+    return value, round(value / get_expect_score(effective) * 100, 1)
 
 
-def check_effective(role_name, prop_name):
-    effective = ra_score['Role'][role_name]
+def get_effective(role_name: str, role_weapon: str, artifacts: list, element: str = '风'):
+    """
+    根据角色的武器、圣遗物来判断获取该角色有效词条列表
+    :param role_name: 角色名
+    :param role_weapon: 角色武器
+    :param artifacts: 角色圣遗物列表
+    :param element: 角色元素，仅需主角传入
+    :return: 有效词条列表
+    """
+    if role_name in ['荧', '空']:
+        role_name = str(element) + '主'
+    if role_name in ra_score['Role']:
+        if len(artifacts) < 5:
+            return ra_score['Role'][role_name]['常规']
+        if role_name == '钟离':
+            if artifacts[-2]['主属性']['属性名'] == '岩元素伤害加成':
+                return ra_score['Role'][role_name]['岩伤']
+            elif artifacts[-2]['主属性']['属性名'] in ['物理伤害加成', '火元素伤害加成', '冰元素伤害加成']:
+                return ra_score['Role'][role_name]['武神']
+        if role_name == '班尼特' and artifacts[-2]['主属性']['属性名'] == '火元素伤害加成':
+            return ra_score['Role'][role_name]['输出']
+        if role_name == '甘雨':
+            suit = get_artifact_suit(artifacts)
+            if suit and ('乐团' in suit[0][0] or (len(suit) == 2 and '乐团' in suit[1][0])):
+                return ra_score['Role'][role_name]['融化']
+        if role_name == '申鹤' and artifacts[-2]['主属性']['属性名'] == '冰元素伤害加成':
+            return ra_score['Role'][role_name]['输出']
+        if role_name == '七七' and artifacts[-2]['主属性']['属性名'] == '物理伤害加成':
+            return ra_score['Role'][role_name]['输出']
+        if role_name in ['枫原万叶', '温迪', '砂糖'] and artifacts[-2]['主属性']['属性名'] == '风元素伤害加成':
+            return ra_score['Role'][role_name]['输出']
+        if '西风' in role_weapon and '西风' in ra_score['Role'][role_name]:
+            return ra_score['Role'][role_name]['西风']
+        return ra_score['Role'][role_name]['常规']
+    else:
+        return {'攻击力': 1, '暴击率': 1, '暴击伤害': 1}
+
+
+def get_expect_score(effective: dict):
+    """
+    计算单个圣遗物小毕业所需的期望词条数
+    :param effective: 有效词条列表
+    :return: 期望词条数
+    """
+    total = 0
+    if len(effective.keys()) == 2:
+        average = 15 / 5
+    elif effective.keys() == '西风':
+        average = 17 / 5
+    elif len(effective.keys()) == 3:
+        average = 24 / 5
+    elif len(effective.keys()) == 4:
+        average = 28 / 5
+    else:
+        average = 30 / 5
+    for name, value in effective.items():
+        total += value * average
+    return round(total / len(effective.keys()), 2)
+
+
+def check_effective(prop_name: str, effective: dict):
+    """
+    检查词条是否有效
+    :param prop_name: 词条属性名
+    :param effective: 有效词条列表
+    :return: 是否有效
+    """
     if '攻击力' in effective and '攻击力' in prop_name:
         return True
     if '生命值' in effective and '生命值' in prop_name:
@@ -245,8 +279,26 @@ def check_effective(role_name, prop_name):
     return prop_name in effective
 
 
-def artifact_total_score(data):
-    score = 0
-    for i in data:
-        score += i['评分']
-    return round(score, 1)
+def get_artifact_suit(artifacts: list):
+    """
+    获取圣遗物套装
+    :param artifacts: 圣遗物列表
+    :return: 套装列表
+    """
+    suit = []
+    suit2 = []
+    final_suit = []
+    for artifact in artifacts:
+        suit.append(artifact['所属套装'])
+    for s in suit:
+        if s not in suit2 and 1 < suit.count(s) < 4:
+            suit2.append(s)
+        if suit.count(s) >= 4:
+            for r in artifacts:
+                if r['所属套装'] == s:
+                    return [(s, r['图标']), (s, r['图标'])]
+    for r in artifacts:
+        if r['所属套装'] in suit2:
+            final_suit.append((r['所属套装'], r['图标']))
+            suit2.remove(r['所属套装'])
+    return final_suit

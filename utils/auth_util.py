@@ -1,4 +1,3 @@
-import base64
 import hashlib
 import json
 import random
@@ -6,29 +5,13 @@ import string
 from collections import defaultdict
 from time import time
 
+from littlepaimon_utils import aiorequests
 from nonebot import logger
 
-from . import aiorequests
 from .db_util import get_cookie_cache, update_cookie_cache, delete_cookie_cache
 from .db_util import get_private_cookie, delete_cookie
 from .db_util import get_public_cookie, limit_public_cookie
 from .message_util import send_cookie_delete_msg
-
-
-# 冷却时间限制器
-class FreqLimiter:
-    def __init__(self, default_cd_seconds: int = 60):
-        self.next_time = defaultdict(float)
-        self.default_cd = default_cd_seconds
-
-    def check(self, key) -> bool:
-        return bool(time() >= self.next_time[key])
-
-    def start_cd(self, key, cd_time=0):
-        self.next_time[key] = time() + (cd_time if cd_time > 0 else self.default_cd)
-
-    def left_time(self, key) -> int:
-        return int(self.next_time[key] - time()) + 1
 
 
 # 双参数冷却时间限制器
@@ -133,6 +116,15 @@ def random_hex(length):
     return result
 
 
+def random_text(length: int) -> str:
+    """
+    生成指定长度的随机字符串
+    :param length: 长度
+    :return: 随机字符串
+    """
+    return ''.join(random.sample(string.ascii_lowercase + string.digits, length))
+
+
 # 米游社headers的ds_token，对应版本2.11.1
 def get_ds(q="", b=None) -> str:
     if b:
@@ -161,11 +153,17 @@ def get_headers(cookie, q='', b=None):
     return headers
 
 
-def get_old_version_ds() -> str:
-    s = 'h8w582wxwgqvahcdkpvdhbh2w9casgfl'
+def get_old_version_ds(mhy_bbs: bool = False) -> str:
+    """
+    生成米游社旧版本headers的ds_token
+    """
+    if mhy_bbs:
+        s = 'dWCcD2FsOUXEstC5f9xubswZxEeoBOTc'
+    else:
+        s = 'h8w582wxwgqvahcdkpvdhbh2w9casgfl'
     t = str(int(time()))
     r = ''.join(random.sample(string.ascii_lowercase + string.digits, 6))
-    c = md5("salt=" + s + "&t=" + t + "&r=" + r)
+    c = md5(f"salt={s}&t={t}&r={r}")
     return f"{t},{r},{c}"
 
 
@@ -179,10 +177,9 @@ def get_sign_headers(cookie):
         'Origin':            'https://webstatic.mihoyo.com',
         'X_Requested_With':  'com.mihoyo.hyperion',
         'DS':                get_old_version_ds(),
-        'x-rpc-client_type': '5',
-        'Referer':           'https://webstatic.mihoyo.com/bbs/event/signin-ys/index.html?bbs_auth_required=true&act_id'
-                             '=e202009291139501&utm_source=bbs&utm_medium=mys&utm_campaign=icon',
-        'x-rpc-app_version': '2.3.0'
+        'x-rpc-client_type': '2',
+        'Referer':           'https://webstatic.mihoyo.com/bbs/event/signin-ys/index.html?bbs_auth_required=true&act_id=e202009291139501&utm_source=bbs&utm_medium=mys&utm_campaign=icon',
+        'x-rpc-app_version': '2.28.1'
     }
     return headers
 

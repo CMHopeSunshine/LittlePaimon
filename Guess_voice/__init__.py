@@ -10,10 +10,10 @@ from nonebot.params import CommandArg
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
 
-from utils.config import config
 from . import download_data
 from . import util
 from .handler import Guess, get_random_voice
+from ..utils.config import config
 
 setting_time = config.paimon_guess_voice  # 游戏持续时间
 
@@ -114,6 +114,7 @@ async def get_genshin_voice(bot: Bot, event: Union[GroupMessageEvent, PrivateMes
     else:
         language = '中'
         name = name.replace('中', '')
+    name = name.strip()
     await download_voice(bot, event)
     path = await get_random_voice(name, language)
     if not path:

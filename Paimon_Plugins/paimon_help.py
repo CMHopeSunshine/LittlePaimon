@@ -1,14 +1,14 @@
 from pathlib import Path
-from PIL import Image, ImageDraw, ImageFont
 from typing import Dict, List
+
+from PIL import Image, ImageDraw, ImageFont
 from nonebot import on_command
 from nonebot import plugin as nb_plugin
-from nonebot.params import Depends
 from nonebot.adapters.onebot.v11 import MessageEvent
+from nonebot.params import Depends
 from nonebot.plugin import PluginMetadata
 
-from utils.message_util import MessageBuild
-
+from ..utils.message_util import MessageBuild
 
 __plugin_meta__ = PluginMetadata(
     name="帮助菜单",
@@ -31,8 +31,8 @@ help_.__paimon_help__ = {
     "priority":  99
 }
 
-font_path = Path(__file__).parent.parent / 'res'
-res_path = Path(__file__).parent.parent / 'res' / 'help'
+font_path = Path() / 'resources' / 'LittlePaimon'
+res_path = Path() / 'resources' / 'LittlePaimon' / 'help'
 
 
 def get_font(size, font='hywh.ttf') -> ImageFont:

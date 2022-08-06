@@ -1,5 +1,6 @@
 import json
-from ..utils.aiorequests import *
+
+from littlepaimon_utils import aiorequests
 
 host = 'https://api-cloudgame.mihoyo.com/'
 
@@ -26,7 +27,7 @@ def get_header(uuid: str, token: str):
 
 async def check_token(uuid: str, cookie: str):
     headers = get_header(uuid, cookie)
-    req = await post(host + 'hk4e_cg_cn/gamer/api/login', headers=headers)
+    req = await aiorequests.post(host + 'hk4e_cg_cn/gamer/api/login', headers=headers)
     data = json.loads(req.text)
     if data['retcode'] == 0 and data['message'] == 'OK':
         return True
@@ -35,19 +36,19 @@ async def check_token(uuid: str, cookie: str):
 
 async def get_Info(uuid: str, cookie: str):
     headers = get_header(uuid, cookie)
-    req = await get(host + 'hk4e_cg_cn/wallet/wallet/get', headers=headers)
+    req = await aiorequests.get(host + 'hk4e_cg_cn/wallet/wallet/get', headers=headers)
     return json.loads(req.text)
 
 
 async def get_Announcement(uuid: str, cookie: str):
     headers = get_header(uuid, cookie)
-    req = await get(host + 'hk4e_cg_cn/gamer/api/getAnnouncementInfo', headers=headers)
+    req = await aiorequests.get(host + 'hk4e_cg_cn/gamer/api/getAnnouncementInfo', headers=headers)
     return json.loads(req.text)
 
 
 async def get_Notification(uuid: str, cookie: str):
     headers = get_header(uuid, cookie)
-    req = await get(
+    req = await aiorequests.get(
         host + 'hk4e_cg_cn/gamer/api/listNotifications?status=NotificationStatusUnread&type=NotificationTypePopup'
                '&is_sort=true',
         headers=headers)

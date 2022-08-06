@@ -1,11 +1,11 @@
-import os
+from pathlib import Path
 import time
 
 import xlsxwriter
 
 from .meta_data import *
 
-data_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'user_data', 'gacha_log_data')
+data_path = Path() / 'data' / 'LittlePaimon' / 'user_data' / 'gacha_log_data'
 
 
 def id_generator():
@@ -48,7 +48,7 @@ def convertUIGF(gachaLog, uid):
 
 def writeXLSX(uid, gachaLog, gachaTypeIds):
     t = time.strftime("%Y%m%d%H%M%S", time.localtime())
-    workbook = xlsxwriter.Workbook(os.path.join(data_path, f"gachaExport-{uid}.xlsx"))
+    workbook = xlsxwriter.Workbook(data_path / f"gachaExport-{uid}.xlsx")
     for id in gachaTypeIds:
         gachaDictList = gachaLog[id]
         gachaTypeName = gachaQueryTypeDict[id]

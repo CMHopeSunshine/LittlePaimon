@@ -1,14 +1,14 @@
 from urllib.parse import quote
+
+from littlepaimon_utils import aiorequests
+from littlepaimon_utils.tools import FreqLimiter
 from nonebot import on_command
-from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import MessageEvent
+from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 
-from utils.auth_util import FreqLimiter
-from utils.message_util import get_message_id
-from utils.config import config
-from utils import aiorequests
-
+from ..utils.config import config
+from ..utils.message_util import get_message_id
 
 __plugin_meta__ = PluginMetadata(
     name="对对联",

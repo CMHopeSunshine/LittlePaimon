@@ -1,17 +1,16 @@
 import re
 from typing import Dict
 
+from littlepaimon_utils import aiorequests
+from littlepaimon_utils.tools import FreqLimiter
 from nonebot import on_command, on_regex
-from nonebot.adapters.onebot.v11 import MessageEvent, GroupMessageEvent, Message
+from nonebot.adapters.onebot.v11 import MessageEvent, Message
 from nonebot.params import RegexDict, CommandArg
 from nonebot.plugin import PluginMetadata
 
-from utils.config import config
-from utils import aiorequests
-from utils.auth_util import FreqLimiter
 from .gacha_info import *
 from .gacha_res import more_ten
-
+from ..utils.config import config
 
 __plugin_meta__ = PluginMetadata(
     name="原神模拟抽卡",
@@ -37,7 +36,7 @@ __plugin_meta__ = PluginMetadata(
 sim_gacha = on_regex(r'^抽((?P<num>\d+)|(?:.*))十连(?P<pool>.*?)$', priority=5, block=True)
 sim_gacha.__paimon_help__ = {
     "usage": "抽[数量]十连[卡池]",
-    "introduce": "模拟抽卡，池有角色1|角色2|武器|常驻|菜单",
+    "introduce": "模拟抽卡，池有角色1|角色2|武器|常驻|彩蛋",
     "priority": 1
 }
 

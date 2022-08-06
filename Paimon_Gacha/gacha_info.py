@@ -1,12 +1,13 @@
-import os
-from utils.file_handler import load_json, save_json
+from pathlib import Path
 
-RES_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'res', 'gacha_res')
-USER_INFO_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'user_data', 'user_gacha_info.json')
-ROLE_1_PATH = os.path.join(RES_PATH, "DIY_gacha_pool", "role_1.json")
-ROLE_2_PATH = os.path.join(RES_PATH, "DIY_gacha_pool", "role_2.json")
-WEAPON_PATH = os.path.join(RES_PATH, "DIY_gacha_pool", "weapon.json")
-All_STAR_PATH = os.path.join(RES_PATH, "DIY_gacha_pool", "all_star.json")
+from littlepaimon_utils.files import load_json, save_json
+
+RES_PATH = Path() / 'resources' / 'LittlePaimon' / 'gacha_res'
+USER_INFO_PATH = Path() / 'data' / 'LittlePaimon' / 'user_data' / 'user_gacha_info.json'
+ROLE_1_PATH = RES_PATH / "DIY_gacha_pool" / "role_1.json"
+ROLE_2_PATH = RES_PATH / "DIY_gacha_pool" / "role_2.json"
+WEAPON_PATH = RES_PATH / "DIY_gacha_pool" / "weapon.json"
+All_STAR_PATH = RES_PATH / "DIY_gacha_pool" / "all_star.json"
 
 user_info = load_json(path=USER_INFO_PATH)
 role_1_pool = load_json(path=ROLE_1_PATH)

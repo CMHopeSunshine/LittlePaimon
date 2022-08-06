@@ -1,23 +1,19 @@
-# -*- coding: UTF-8 -*-
-"""
-该脚本可以直接获取wiki上的语音文件 并保存进数据库中
-"""
-
 import json
 import os
 from pathlib import Path
 
 from bs4 import BeautifulSoup
+from littlepaimon_utils import aiorequests
 from nonebot import logger
 from sqlitedict import SqliteDict  # TODO 加入requirements
 
-from utils import aiorequests
 from .util import get_path
 
-# OUT_PUT = Path(__file__).parent / 'voice'
 OUT_PUT = Path() / 'data' / 'LittlePaimon' / 'guess_voice' / 'voice'
 
 BASE_URL = 'https://wiki.biligame.com/ys/'
+BASE_URL_MYS = 'https://bbs.mihoyo.com'
+BASE_URL_MYS_CHARACTERS_LIST = '/ys/obc/channel/map/189/25?bbs_presentation_style=no_header'
 
 API = {'character_list': '角色', 'voice': '%s语音'}
 
@@ -26,11 +22,8 @@ config = {
     'voice_language': ['日', '英', '韩']
 }
 
-# dir_data = os.path.join(os.path.dirname(__file__), 'data')
 dir_data = Path() / 'data' / 'LittlePaimon' / 'guess_voice' / 'data'
 
-# if not os.path.exists(dir_data):
-#     os.makedirs(dir_data)
 dir_data.mkdir(parents=True, exist_ok=True)
 
 
@@ -90,6 +83,66 @@ async def get_voice_info(character_name: str):
     return info_list
 
 
+# 获取角色语音，通过米游社途径。可获取完整的中日英韩语音。
+async def get_voice_info_mys(character_name: str):
+    character_name = character_name.strip()
+    logger.info('获取数据: %s' % character_name)
+    html = await aiorequests.get(url=(BASE_URL_MYS + BASE_URL_MYS_CHARACTERS_LIST))
+    soup = BeautifulSoup(html.text, 'lxml')
+    soup_char_container = soup.select('.collection-avatar')[0]
+    url_char_page = None
+    for char_soup in soup_char_container.select('.collection-avatar__title'):
+        if char_soup.text.find(character_name) != -1:
+            url_char_page = char_soup.parent.attrs.get('href', None)
+            break
+    if url_char_page is None:
+        return None
+    html = await aiorequests.get(url=(BASE_URL_MYS + url_char_page))
+    soup = BeautifulSoup(html.text, 'lxml')
+    soup_voice_languages, soup_voice_lists = soup.select('[data-part="voiceTab"] > ul')
+    language_tab_indices = {
+        '中': -1,
+        '日': -1,
+        '英': -1,
+        '韩': -1
+    }
+    for soup_lan in soup_voice_languages.select('li'):
+        language = soup_lan.text
+        language_tab_index = int(soup_lan.attrs.get('data-index'))
+        if language.find('中') != -1 or language.find('汉') != -1:
+            language_tab_indices['中'] = language_tab_index
+        elif language.find('日') != -1:
+            language_tab_indices['日'] = language_tab_index
+        elif language.find('英') != -1:
+            language_tab_indices['英'] = language_tab_index
+        elif language.find('韩') != -1:
+            language_tab_indices['韩'] = language_tab_index
+    language_voices = {
+        '中': [],
+        '日': [],
+        '英': [],
+        '韩': []
+    }
+    for lan, voice_list in language_voices.items():
+        for soup_row in soup_voice_lists.select(f'li[data-index="{language_tab_indices[lan]}"] > table:nth-of-type(2) > tbody > tr'):
+            soup_source = soup_row.select('audio > source')
+            voice_list.append(soup_source[0].attrs.get('src') if len(soup_source) != 0 else '')
+
+    info_list = []
+    soup_title = soup_voice_lists.select('li:first-child > table:nth-of-type(2) > tbody > tr td:nth-child(1)')
+    soup_text = soup_voice_lists.select('li:first-child > table:nth-of-type(2) > tbody > tr td:nth-child(2) > div > span')
+    for index in range(len(soup_title)):
+        info_list.append({
+            'title': soup_title[index].text.strip(),
+            'text': soup_text[index].text.strip(),
+            '中': language_voices['中'][index],
+            '日': language_voices['日'][index],
+            '英': language_voices['英'][index],
+            '韩': language_voices['韩'][index],
+        })
+    return info_list
+
+
 # 下载音频文件到本地
 async def download(url, path):
     res = await aiorequests.get(url=url, timeout=30)
@@ -102,7 +155,7 @@ async def update_voice_data():
     # 获取全部人物列表
     char_list = await get_character_list()
     for char in char_list:
-        info = await get_voice_info(char)
+        info = await get_voice_info_mys(char)
         if not info:
             continue
         data = []

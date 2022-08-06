@@ -51,3 +51,56 @@
   - 暂时取消凌晨3点的自动更新角色面板操作
 + 6.25
   - 添加`requirements.txt`
++ 6.28
+  - `ysd`现在支持查看`旅行者`面板信息，增加地区图标显示
+  - 优化`ysd`圣遗物评分算法，现在以有效词条数来决定评级，能简单判断角色多种流派玩法[#40](https://github.com/CMHopeSunshine/LittlePaimon/issues/40)
+  - 优化`ysd`面板属性和圣遗物词条不对齐的问题
+  - `原神猜语音`新的角色也能正确匹配识别[#82](https://github.com/CMHopeSunshine/LittlePaimon/pull/82)
+  - 修复`获取抽卡记录`问题[#81](https://github.com/CMHopeSunshine/LittlePaimon/issues/81)
++ 6.30
+  - `ysd`支持查看`钟离、胡桃、雷电将军`的伤害计算(~~如果不准请反馈~~)
++ 7.1
+  - 伤害计算新增`魈`
++ 7.3
+  - 重构部分代码
+  - **修改静态资源和用户数据目录**
+    - 理论上会**自动迁移**，但`git pull`更新可能会将资源删除，所以最好**手动迁移，同时备份**
+    - 1、将派蒙的`res`文件夹改名`LittlePaimon`，移到nonebot根目录的`resources`中（没有`resources`就新建一个）
+    - 2、将派蒙的`user_data`文件夹移到nonebot根目录的`data/LittlePaimon`目录中（同理，没有就新建）
+  - 静态资源改为启动时自动下载
++ 7.4
+  - 回档部分7.3的修改
+  - `ysd`新增`香菱、申鹤`伤害计算
+  - 修复`60秒早报`接口bug
+  - 修复神里绫人被识别为绫华别名的bug
+  - 修复抽卡记录获取bug
++ 7.8
+  - 增加`甘雨、夜兰、行秋、神里绫华、阿贝多、刻晴、八重神子`伤害计算
++ 7.9
+  - 增加`优菈、达达利亚、迪卢克、凝光、菲谢尔、北斗、神里绫人、荒泷一斗、宵宫`伤害计算
++ 7.13
+  - 增加`诺艾尔、烟绯、珊瑚宫心海`伤害计算
++ 7.14
+  - ysd支持`鹿野院平藏`，增加`枫原万叶、鹿野院平藏`伤害计算
++ 7.15
+  - 增加新武器的攻略，修复`ysd`命座天赋加成以及岩元素护盾数值
++ 7.17
+  - `ysd`新增`班尼特、莫娜、七七、琴、温迪`伤害计算
+  - `mys自动签到`支持私聊
+  - `sy`修正深渊信息时间介绍
+  - `sy`没有绑定cookie时将不再错误的展示空阵容信息
+  - `ssbq`修复没有派遣时会报错的bug
++ 7.19
+  - 新增`米游币自动获取`#124，不确保一定可用，如产生其他bug请反馈
++ 7.23
+  - 深渊登场率数据改为2.8
++ 8.2
+  - `点餐`功能恢复，但又引入了2个新依赖库，为不影响使用，默认关闭，有需要者请自行`pip install cssselect aiohttp`后，将`Paimon_plugins/_order.py`的`_`去掉 [#154](https://github.com/CMHopeSunshine/LittlePaimon/pull/154)
+  - 修复无法关闭和删除ssbq提醒的bug [#154](https://github.com/CMHopeSunshine/LittlePaimon/pull/154)
+  - 新增`ysbjc`查看自己绑定的私人ck [#153](https://github.com/CMHopeSunshine/LittlePaimon/pull/153)
+  - 修改请求enka用的`User-Agent`
+  - 修复`ysd`中优菈的`菈`不能显示的问题
+  - 补充WIKI的`help`
++ 8.4
+  - 补充`斫峰之刃`抽卡资源
+  - 修复`获取抽卡记录`可能出现的bug

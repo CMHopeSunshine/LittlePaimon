@@ -1,21 +1,20 @@
 import re
+from io import BytesIO
+from pathlib import Path
 from time import time
+from typing import Union, Optional, Tuple
 
 from PIL import Image
-from pathlib import Path
-from typing import Union, Optional, Tuple
-from io import BytesIO
-
+from littlepaimon_utils import aiorequests
+from littlepaimon_utils.files import load_image
 from nonebot import get_bot, logger
 from nonebot.adapters.onebot.v11 import MessageEvent, Message, MessageSegment
 
 from .db_util import get_last_query, update_last_query
-from .file_handler import load_image
-from . import aiorequests
 
 # 加载敏感违禁词列表
 ban_word = []
-with open(Path(__file__).parent / 'json' / 'ban_word.txt', 'r', encoding='utf-8') as f:
+with open(Path(__file__).parent / 'json_data' / 'ban_word.txt', 'r', encoding='utf-8') as f:
     for line in f:
         ban_word.append(line.strip())
 
@@ -80,7 +79,7 @@ class MessageBuild:
             :param check_time_day: 检查本地图片最后修改时间的天数，超过该天数则重新下载图片
             :return: MessageSegment.image
         """
-        path = Path() / 'data' / url
+        path = Path() / 'resources' / url
         if path.exists() and (
                 not is_check_time or (is_check_time and not check_time(path.stat().st_mtime, check_time_day))):
             img = Image.open(path)
@@ -158,13 +157,13 @@ async def get_at_target(msg):
 
 
 # message预处理，获取uid、干净的msg、user_id、是否缓存
-async def get_uid_in_msg(event: MessageEvent, msg: Message):
-    msg = str(msg).strip()
+async def get_uid_in_msg(event: MessageEvent, msg: Union[Message, str]):
+    if isinstance(msg, Message):
+        msg = msg.extract_plain_text().strip()
     if not msg:
         uid = await get_last_query(str(event.user_id))
         return uid, '', str(event.user_id), True
     user_id = await get_at_target(event.message) or str(event.user_id)
-    msg = re.sub(r'\[CQ.*?\]', '', msg)
     use_cache = False if '-r' in msg else True
     msg = msg.replace('-r', '').strip()
     find_uid = r'(?P<uid>(1|2|5)\d{8})'

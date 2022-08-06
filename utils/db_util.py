@@ -1,61 +1,8 @@
 import sqlite3
-import os
 from datetime import datetime
+from pathlib import Path
 
-db_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'user_data', 'user_data.db')
-
-
-# 初始化数据库，将原json数据导入数据库
-def init_db():
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
-
-    cursor.execute('SELECT NAME FROM sqlite_master WHERE TYPE="table" and NAME="private_cookies"')
-    if not cursor.fetchone():
-        cursor.execute('''CREATE TABLE private_cookies
-            (
-                user_id TEXT NOT NULL,
-                uid TEXT NOT NULL,
-                mys_id TEXT,
-                cookie TEXT,
-                stoken TEXT,
-                PRIMARY KEY (user_id, uid)
-            );''')
-        cursor.execute('DROP TABLE IF EXISTS last_query;')
-        cursor.execute('''CREATE TABLE last_query
-        (
-            user_id TEXT PRIMARY KEY NOT NULL,
-            uid TEXT,
-            mys_id TEXT,
-            last_time datetime
-        );''')
-        # try:
-        #     with open(os.path.join(os.path.dirname(__file__), 'user_data', 'user_cookies.json'), 'r',
-        #               encoding='utf-8') as f:
-        #         data = json.load(f)
-        #     for d in data['私人'].items():
-        #         for c in d[1]['cookies']:
-        #             match = re.search(r'account_id=(\d{6,12})', c['cookie'])
-        #             mys_id = match.group(1) if match else ''
-        #             cursor.execute('INSERT INTO private_cookies (user_id, uid, mys_id, cookie) VALUES (?, ?, ?, ?);',
-        #                            (d[0], c['uid'], mys_id, c['cookie']))
-        #         cursor.execute('INSERT INTO last_query (user_id, uid, last_time) VALUES (?, ?, ?);',
-        #                        (d[0], d[1]['last_query'], datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
-        #     cursor.execute('''CREATE TABLE IF NOT EXISTS public_cookies (
-        #         no int IDENTITY(1,1) PRIMARY KEY,
-        #         cookie TEXT,
-        #         status TEXT);''')
-        #     for d in data['通用']:
-        #         if d['cookie']:
-        #             try:
-        #                 cursor.execute('INSERT INTO public_cookies VALUES (?, ?, "OK");', (d['no'], d['cookie']))
-        #             except:
-        #                 pass
-        #     logger.info('---派蒙初始化数据库成功，已导入原json数据---')
-        # except:
-        #     logger.error('---派蒙初始化数据库失败，请检查user_cookies.json文件是否存在---')
-    conn.commit()
-    conn.close()
+db_path = Path() / 'data' / 'LittlePaimon' / 'user_data' / 'user_data.db'
 
 
 # 获取公共cookie
@@ -118,16 +65,75 @@ async def reset_public_cookie():
 async def get_private_cookie(value, key='user_id'):
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS private_cookies
+        (
+            user_id TEXT NOT NULL,
+            uid TEXT NOT NULL,
+            mys_id TEXT,
+            cookie TEXT,
+            stoken TEXT,
+            PRIMARY KEY (user_id, uid)
+        );''')
     cursor.execute(f'SELECT user_id, cookie, uid, mys_id FROM private_cookies WHERE {key}="{value}";')
     cookie = cursor.fetchall()
     conn.close()
     return cookie
 
 
+# 通过key(如user_id, uid)获取私人Stoken
+async def get_private_stoken(value, key='user_id'):
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS private_cookies
+        (
+            user_id TEXT NOT NULL,
+            uid TEXT NOT NULL,
+            mys_id TEXT,
+            cookie TEXT,
+            stoken TEXT,
+            PRIMARY KEY (user_id, uid)
+        );''')
+    cursor.execute(f'SELECT user_id, cookie, uid, mys_id,stoken FROM private_cookies WHERE {key}="{value}";')
+    stoken = cursor.fetchall()
+    conn.close()
+    return stoken
+
+
 # 更新cookie
 async def update_private_cookie(user_id, uid='', mys_id='', cookie='', stoken=''):
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS private_cookies
+        (
+            user_id TEXT NOT NULL,
+            uid TEXT NOT NULL,
+            mys_id TEXT,
+            cookie TEXT,
+            stoken TEXT,
+            PRIMARY KEY (user_id, uid)
+        );''')
+    cursor.execute('REPLACE INTO private_cookies VALUES (?, ?, ?, ?, ?);', (user_id, uid, mys_id, cookie, stoken))
+    conn.commit()
+    conn.close()
+
+
+# 更新stoken
+async def update_private_stoken(user_id, uid='', mys_id='', cookie='', stoken=''):
+    # 保证cookie不被更新
+    ck = await get_private_cookie(uid, key='uid')
+    cookie = ck[0][1]
+
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS private_cookies
+        (
+            user_id TEXT NOT NULL,
+            uid TEXT NOT NULL,
+            mys_id TEXT,
+            cookie TEXT,
+            stoken TEXT,
+            PRIMARY KEY (user_id, uid)
+        );''')
     cursor.execute('REPLACE INTO private_cookies VALUES (?, ?, ?, ?, ?);', (user_id, uid, mys_id, cookie, stoken))
     conn.commit()
     conn.close()
@@ -137,6 +143,15 @@ async def update_private_cookie(user_id, uid='', mys_id='', cookie='', stoken=''
 async def delete_private_cookie(user_id):
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS private_cookies
+        (
+            user_id TEXT NOT NULL,
+            uid TEXT NOT NULL,
+            mys_id TEXT,
+            cookie TEXT,
+            stoken TEXT,
+            PRIMARY KEY (user_id, uid)
+        );''')
     cursor.execute('DELETE FROM private_cookies WHERE user_id=?', (user_id,))
     conn.commit()
     conn.close()
@@ -159,7 +174,8 @@ async def get_cookie_cache(value, key='uid'):
     cursor.execute('''CREATE TABLE IF NOT EXISTS cookie_cache(
         uid TEXT PRIMARY KEY NOT NULL,
         mys_id TEXT,
-        cookie TEXT);''')
+        cookie TEXT
+        stoken TEXT);''')
     cursor.execute(f'SELECT cookie FROM cookie_cache WHERE {key}="{value}"')
     res = cursor.fetchone()
     if res:
@@ -167,7 +183,7 @@ async def get_cookie_cache(value, key='uid'):
             cursor.execute('SELECT user_id, uid, mys_id FROM private_cookies WHERE cookie=?;', (res[0],))
             is_in_private = cursor.fetchone()
             if is_in_private:
-                return {'type': 'private', 'user_id': is_in_private[0], 'cookie': res[0], 'uid': is_in_private[1],
+                return {'type':   'private', 'user_id': is_in_private[0], 'cookie': res[0], 'uid': is_in_private[1],
                         'mys_id': is_in_private[2]}
         except:
             pass
@@ -408,6 +424,52 @@ async def delete_auto_sign(user_id, uid):
     conn.close()
 
 
+async def get_coin_auto_sign():
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS coin_bbs_sign
+    (
+        user_id TEXT NOT NULL,
+        uid TEXT NOT NULL,
+        group_id TEXT,
+        PRIMARY KEY (user_id, uid)
+    );''')
+    cursor.execute('SELECT user_id,uid,group_id FROM coin_bbs_sign;')
+    res = cursor.fetchall()
+    conn.close()
+    return res
+
+
+async def add_coin_auto_sign(user_id, uid, group_id):
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS coin_bbs_sign
+    (
+        user_id TEXT NOT NULL,
+        uid TEXT NOT NULL,
+        group_id TEXT,
+        PRIMARY KEY (user_id, uid)
+    );''')
+    cursor.execute('REPLACE INTO coin_bbs_sign VALUES (?, ?, ?);', (user_id, uid, group_id))
+    conn.commit()
+    conn.close()
+
+
+async def delete_coin_auto_sign(user_id, uid):
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS coin_bbs_sign
+    (
+        user_id TEXT NOT NULL,
+        uid TEXT NOT NULL,
+        group_id TEXT,
+        PRIMARY KEY (user_id, uid)
+    );''')
+    cursor.execute('DELETE FROM coin_bbs_sign WHERE user_id=? AND uid=?;', (user_id, uid))
+    conn.commit()
+    conn.close()
+
+
 async def get_all_myb_exchange():
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
@@ -481,6 +543,3 @@ async def delete_myb_exchange(user_id):
     cursor.execute('DELETE FROM myb_exchange WHERE user_id=?;', (user_id,))
     conn.commit()
     conn.close()
-
-
-init_db()

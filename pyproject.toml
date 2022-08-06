@@ -1,9 +1,29 @@
 [tool.poetry]
 name = "LittlePaimon"
-version = "0.1.0"
-description = "小派蒙！原神qq群机器人，基于NoneBot2和HoshinoBot的UID查询、抽卡导出分析、模拟抽卡、实时便签、札记等多功能小助手。"
+version = "1.0.2.1"
+description = "小派蒙！原神qq群机器人，基于NoneBot2的UID查询、抽卡导出分析、模拟抽卡、实时便签、札记等多功能小助手。"
 authors = ["惜月 <277073121@qq.com>"]
+readme = "README.md"
 license = "AGPL"
+keywords = ["nonebot", "nonebot2", "mihoyo", "genshin"]
+homepage = "https://github.com/CMHopeSunshine/LittlePaimon"
+repository = "https://github.com/CMHopeSunshine/LittlePaimon"
+documentation = "https://github.com/CMHopeSunshine/LittlePaimon#readme"
+packages = [
+    { include = "LittlePaimon/Guess_voice", from = ".."},
+    { include = "LittlePaimon/Paimon_Calendar", from = ".."},
+    { include = "LittlePaimon/Paimon_Chat", from = ".."},
+    { include = "LittlePaimon/Paimon_CloudGenshin", from = ".."},
+    { include = "LittlePaimon/Paimon_Exchange", from = ".."},
+    { include = "LittlePaimon/Paimon_Gacha", from = ".."},
+    { include = "LittlePaimon/Paimon_Gacha_Log", from = ".."},
+    { include = "LittlePaimon/Paimon_Info", from = ".."},
+    { include = "LittlePaimon/Paimon_Plugins", from = ".."},
+    { include = "LittlePaimon/Paimon_Wiki", from = ".."},
+    { include = "LittlePaimon/utils", from = ".."},
+    { include = "LittlePaimon/__init__.py", from = ".."},
+    { include = "LittlePaimon/resource_list.json", from = ".."}
+]
 
 [[tool.poetry.source]]
 name = "ali"
@@ -21,12 +41,10 @@ httpx = "^0.23.0"
 lxml = "^4.8.0"
 Pillow = "^9.1.0"
 matplotlib = "^3.5.1"
-pypinyin = "^0.46.0"
-pymongo = "^4.1.0"
 xlsxwriter = "^3.0.3"
 sqlitedict = "^2.0.0"
 aiofiles = "^0.8.0"
-jieba_fast = "^0.53"
+littlepaimon_utils = "^1.0.2"
 
 [tool.poetry.dev-dependencies]
 
