@@ -535,31 +535,23 @@ async def mys_sign_auto_handler(event: MessageEvent, msg: Message = CommandArg()
             await mys_sign_auto.finish('指令错误，在后面加 开启/关闭 来使用哦', at_sender=True)
 
 
-ud_lmt = FreqLimiter(300)
+ud_lmt = FreqLimiter(180)
 ud_p_lmt = FreqLimiter(15)
 
 
 @update_info.handle()
 async def _(event: MessageEvent, state: T_State, msg: Message = CommandArg()):
-    uid = re.search(r'(?P<uid>(1|2|5)\d{8})', msg.extract_plain_text())
-    if uid:
+    if uid := re.search(r'(?P<uid>(1|2|5|8)\d{8})', msg.extract_plain_text().strip()):
         state['uid'] = uid.group('uid')
     else:
-        user = ''
-        for msg_seg in msg:
-            if msg_seg.type == "at":
-                user = msg_seg.data['qq']
-                break
-        if user:
+        if user := next((msg_seg.data['qq'] for msg_seg in msg if msg_seg.type == "at"), ''):
             uid = await get_last_query(str(user))
-            if uid:
-                state['uid'] = uid
         else:
             uid = await get_last_query(str(event.user_id))
-            if uid:
-                state['uid'] = uid
+        if uid:
+            state['uid'] = uid
     if 'uid' in state and not ud_lmt.check(state['uid']):
-        await update_info.finish(f'每个uid每5分钟才能更新一次信息，请稍等一下吧~(剩余{ud_lmt.left_time(state["uid"])}秒)')
+        await update_info.finish(f'每个uid每3分钟才能更新一次信息，请稍等一下吧~(剩余{ud_lmt.left_time(state["uid"])}秒)')
     if not ud_p_lmt.check(get_message_id(event)):
         await update_info.finish(f'每个会话每15秒才能更新一次信息，请稍等一下吧~(剩余{ud_lmt.left_time(get_message_id(event))}秒)')
 
@@ -576,7 +568,7 @@ async def _(event: MessageEvent, uid: Message = Arg('uid')):
     enka_data = await get_enka_data(uid)
     if not enka_data:
         await update_info.finish('派蒙没有获取到该uid的信息哦，可能是enka接口服务出现问题，稍候再试吧~')
-    ud_lmt.start_cd(uid, 300)
+    ud_lmt.start_cd(uid, 180)
     ud_lmt.start_cd(get_message_id(event), 15)
     player_info = PlayerInfo(uid)
     player_info.set_player(enka_data['playerInfo'])
@@ -593,8 +585,7 @@ async def _(event: MessageEvent, uid: Message = Arg('uid')):
 
 @role_info.handle()
 async def _(event: MessageEvent, state: T_State, msg: Message = CommandArg()):
-    uid = re.search(r'(?P<uid>(1|2|5)\d{8})', msg.extract_plain_text())
-    if uid:
+    if uid := re.search(r'(?P<uid>(1|2|5|8)\d{8})', msg.extract_plain_text().strip()):
         state['uid'] = uid.group('uid')
         await update_last_query(str(event.user_id), uid.group('uid'))
     else:
@@ -604,12 +595,10 @@ async def _(event: MessageEvent, state: T_State, msg: Message = CommandArg()):
                 user = msg_seg.data['qq']
         if user:
             uid = await get_last_query(str(user))
-            if uid:
-                state['uid'] = uid
         else:
             uid = await get_last_query(str(event.user_id))
-            if uid:
-                state['uid'] = uid
+        if uid:
+            state['uid'] = uid
     msg = msg.extract_plain_text().replace(state['uid'] if 'uid' in state else 'ysd', '').strip()
     if not msg:
         await role_info.finish('请把要查询角色名给派蒙哦~')
@@ -712,9 +701,9 @@ async def coin_auto_sign():
         for user_id, uid, remind_id in data:
             sk = await get_private_stoken(uid, key='uid')
             stoken = sk[0][4]
-            get_coin_task = MihoyoBBSCoin(stoken)
-            data = await get_coin_task.task_run()
-            if get_coin_task.is_Right is False:
+            get_coin_task = MihoyoBBSCoin(stoken, user_id, uid)
+            data = await get_coin_task.run()
+            if get_coin_task.state is False:
                 await delete_coin_auto_sign(user_id, uid)
                 if remind_id.startswith('q'):
                     await get_bot().send_private_msg(user_id=remind_id[1:],
@@ -811,7 +800,7 @@ async def daily_update():
 # @scheduler.scheduled_job('cron', hour=3, misfire_grace_time=10)
 async def all_update():
     uid_list = await get_all_query()
-    logger.info('派蒙开始更新用户角色信息，共{}个用户'.format(len(uid_list)))
+    logger.info(f'派蒙开始更新用户角色信息，共{len(uid_list)}个用户')
     failed_time = 0
     for uid in uid_list:
         try:
@@ -829,7 +818,7 @@ async def all_update():
             failed_time += 1
             if failed_time > 5:
                 break
-    return '玩家信息uid更新共{}个，更新完成'.format(len(uid_list))
+    return f'玩家信息uid更新共{len(uid_list)}个，更新完成'
 
 
 @get_mys_coin.handle()
@@ -847,8 +836,8 @@ async def get_mys_coin_handler(event: MessageEvent, msg: Message = CommandArg())
         await get_mys_coin.finish('你的该uid还没绑定cookie哦，先用ysb绑定吧')
     stoken = sk[0][4]
     await get_mys_coin.send('开始执行米游币获取，请稍等哦~')
-    get_coin_task = MihoyoBBSCoin(stoken)
-    data = await get_coin_task.task_run()
+    get_coin_task = MihoyoBBSCoin(stoken, str(event.user_id), uid)
+    data = await get_coin_task.run()
     msg = "米游币获取完成\n" + data
     await get_mys_coin.finish(msg)
 

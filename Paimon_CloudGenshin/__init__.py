@@ -48,8 +48,7 @@ uuid = str(uuid.uuid4())
 
 @rm_cloud_ys.handle()
 async def _handle(event: Union[GroupMessageEvent, MessageEvent], match: Matcher, args: Message = CommandArg()):
-    plan_text = args.extract_plain_text()
-    if plan_text:
+    if plan_text := args.extract_plain_text():
         match.set_arg('choice', plan_text)
 
 
@@ -60,13 +59,11 @@ async def _(event: Union[GroupMessageEvent, MessageEvent], choice: str = ArgPlai
         data = load_json(Path() / 'data' / 'LittlePaimon' / 'CloudGenshin.json')
 
         del data[user_id]
-        if scheduler.get_job('cloud_genshin_' + user_id):
-            scheduler.remove_job("cloud_genshin_" + user_id)
+        if scheduler.get_job(f'cloud_genshin_{user_id}'):
+            scheduler.remove_job(f"cloud_genshin_{user_id}")
         save_json(data, Path() / 'data' / 'LittlePaimon' / 'CloudGenshin.json')
 
         await rm_cloud_ys.finish('token已解绑并取消自动签到~', at_sender=True)
-    elif choice == '否':
-        await rm_cloud_ys.finish()
     else:
         await rm_cloud_ys.finish()
 

@@ -116,6 +116,15 @@ def random_hex(length):
     return result
 
 
+def random_text(length: int) -> str:
+    """
+    生成指定长度的随机字符串
+    :param length: 长度
+    :return: 随机字符串
+    """
+    return ''.join(random.sample(string.ascii_lowercase + string.digits, length))
+
+
 # 米游社headers的ds_token，对应版本2.11.1
 def get_ds(q="", b=None) -> str:
     if b:
@@ -144,12 +153,17 @@ def get_headers(cookie, q='', b=None):
     return headers
 
 
-def get_old_version_ds() -> str:
-    # s = 'h8w582wxwgqvahcdkpvdhbh2w9casgfl'
-    s = 'dWCcD2FsOUXEstC5f9xubswZxEeoBOTc'
+def get_old_version_ds(mhy_bbs: bool = False) -> str:
+    """
+    生成米游社旧版本headers的ds_token
+    """
+    if mhy_bbs:
+        s = 'dWCcD2FsOUXEstC5f9xubswZxEeoBOTc'
+    else:
+        s = 'h8w582wxwgqvahcdkpvdhbh2w9casgfl'
     t = str(int(time()))
     r = ''.join(random.sample(string.ascii_lowercase + string.digits, 6))
-    c = md5("salt=" + s + "&t=" + t + "&r=" + r)
+    c = md5(f"salt={s}&t={t}&r={r}")
     return f"{t},{r},{c}"
 
 
