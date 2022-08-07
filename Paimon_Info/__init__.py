@@ -700,22 +700,29 @@ async def coin_auto_sign():
         logger.info('---派蒙开始执行米游币自动获取---')
         for user_id, uid, remind_id in data:
             sk = await get_private_stoken(uid, key='uid')
-            stoken = sk[0][4]
-            get_coin_task = MihoyoBBSCoin(stoken, user_id, uid)
-            data = await get_coin_task.run()
-            if get_coin_task.state is False:
+            try:
+                stoken = sk[0][4]
+                get_coin_task = MihoyoBBSCoin(stoken, user_id, uid)
+                data = await get_coin_task.run()
+                if get_coin_task.state is False:
+                    await delete_coin_auto_sign(user_id, uid)
+                    if remind_id.startswith('q'):
+                        await get_bot().send_private_msg(user_id=remind_id[1:],
+                                                        message=f'你的uid{uid}米游币获取失败，请重新绑定stoken再开启')
+                    else:
+                        ann[remind_id]['失败'].append(f'.UID{uid}')
+                else:
+                    if remind_id.startswith('q'):
+                        await get_bot().send_private_msg(user_id=remind_id[1:],
+                                                        message=f'你的uid{uid}米游币自动获取成功')
+                    else:
+                        ann[remind_id]['成功'].append(f'.UID{uid}')
+            except:
                 await delete_coin_auto_sign(user_id, uid)
                 if remind_id.startswith('q'):
                     await get_bot().send_private_msg(user_id=remind_id[1:],
-                                                     message=f'你的uid{uid}米游币获取失败，请重新绑定cookie再开启')
-                else:
-                    ann[remind_id]['失败'].append(f'.UID{uid}')
-            else:
-                if remind_id.startswith('q'):
-                    await get_bot().send_private_msg(user_id=remind_id[1:],
-                                                     message=f'你的uid{uid}米游币自动获取成功')
-                else:
-                    ann[remind_id]['成功'].append(f'.UID{uid}')
+                                    message=f'你的uid{uid}米游币获取失败，请重新绑定stoken再开启')
+                logger.info('该成员未绑定stoken 获取失败, 已删除自动获取任务')
         for group_id, content in ann.items():
             group_str = '米游币自动获取结果：\n'
             for type, ann_list in content.items():
