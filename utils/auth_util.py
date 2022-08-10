@@ -176,7 +176,7 @@ def get_sign_headers(cookie):
         'x-rpc-device_id':   random_hex(32),
         'Origin':            'https://webstatic.mihoyo.com',
         'X_Requested_With':  'com.mihoyo.hyperion',
-        'DS':                get_old_version_ds(),
+        'DS':                get_old_version_ds(mhy_bbs=True),
         'x-rpc-client_type': '2',
         'Referer':           'https://webstatic.mihoyo.com/bbs/event/signin-ys/index.html?bbs_auth_required=true&act_id=e202009291139501&utm_source=bbs&utm_medium=mys&utm_campaign=icon',
         'x-rpc-app_version': '2.28.1'
