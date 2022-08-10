@@ -30,8 +30,8 @@ __plugin_meta__ = PluginMetadata(
     },
 )
 
-cloud_ys = on_command('云原神', aliases={'云原神', 'yys'}, priority=16, block=True)
-rm_cloud_ys = on_command('云原神解绑', aliases={'yys解绑', 'yys解除绑定', 'yysdel'}, priority=16, block=True)
+cloud_ys = on_command('云原神', priority=16, block=True)
+rm_cloud_ys = on_command('云原神解绑', priority=16, block=True)
 cloud_ys.__paimon_help__ = {
     "usage": "云原神",
     "introduce": "查询云原神账户信息, 绑定token进行签到",
@@ -47,7 +47,7 @@ uuid = str(uuid.uuid4())
 
 
 @rm_cloud_ys.handle()
-async def _handle(event: Union[GroupMessageEvent, MessageEvent], match: Matcher, args: Message = CommandArg()):
+async def _handle(match: Matcher, args: Message = CommandArg()):
     if plan_text := args.extract_plain_text():
         match.set_arg('choice', plan_text)
 
@@ -105,72 +105,92 @@ async def _(event: Union[GroupMessageEvent, MessageEvent], msg: Message = Comman
     user_id = str(event.user_id)
     data = load_json(Path() / 'data' / 'LittlePaimon' / 'CloudGenshin.json')
 
-    action = re.search(r'(?P<action>(信息|info)|(绑定|bind))', param)
+    action = re.match(r'(?P<action>(信息|info)|(绑定|bind)|(签到|sign))', param)
 
     if event.message_type == 'guild':
-        await cloud_ys.finish('该功能暂不支持频道推送哦~', at_sender=True)
+        await cloud_ys.finish('派蒙提醒您: 该功能不支持群组或频道推送哦~', at_sender=True)
 
     if not param:
-        message = f'亲爱的旅行者: {user_id}\n\n' \
-                    '本插件食用方法:\n' \
-                    '<云原神/yys> [绑定/bind] 绑定云原神token\n' \
-                    '<云原神/yys> [信息/info] 查询云原神账户信息\n\n' \
-                    '<yys[解绑/解除绑定/del]> 解绑token并取消自动签到\n\n' \
-                    '有关如何抓取token的方法:\n' \
-                    '请前往 https://blog.ethreal.cn/archives/yysgettoken 查阅'
+        message = f'亲爱的旅行者: {user_id}！ 欢迎使用云原神自动签到功能\n\n' \
+                  '云原神指令:\n' \
+                  '[绑定|bind] <cookie> - 绑定cookie到派蒙（cookie不能为空）\n' \
+                  '[信息|info] - 查询当前绑定uid的剩余游戏时间\n' \
+                  '[签到|sign] - 手动签到所绑定的uid（一般绑定之后默认开启自动签到）\n\n' \
+                  '云原神解绑 - 解绑当前cookie并自动取消签到（此为单独指令）\n\n' \
+                  '有关如何抓取token的方法:\n' \
+                  '请前往 https://blog.ethreal.cn/archives/yysgettoken 查阅'
         await cloud_ys.finish(message, at_sender=True)
     else:
-        if action.group('action') in ['绑定', 'bind']:
-            match = re.search(r'oi=\d+', param.split(" ")[1])
-            if match:
-                uid = str(match.group()).split('=')[1]
-
-            data[user_id] = {
-                'uid': uid,
-                'uuid': uuid,
-                'limit': 600,
-                'isFullTime': False,
-                'token': param.split(" ")[1]
-            }
-
-            if scheduler.get_job('cloud_genshin_' + user_id):
-                scheduler.remove_job("cloud_genshin_" + user_id)
-
-            """ 保存数据 """
-            save_json(data, Path() / 'data' / 'LittlePaimon' / 'CloudGenshin.json')
-            """ 添加推送任务 """
-            scheduler.add_job(
-                func=auto_sign_cgn,
-                trigger='cron',
-                hour=6,
-                id="cloud_genshin_" + user_id,
-                args=(user_id, data[user_id]),
-                misfire_grace_time=10
-            )
-            await cloud_ys.finish(f'[UID:{uid}]已绑定token, 将在每天6点为你自动签到!', at_sender=True)
-
-        elif action.group('action') in ['信息', 'info']:
-
-            token = data[user_id]['token']
-            uid = data[user_id]['uid']
-            uuid = data[user_id]['uuid']
-
-            result = await get_Info(uuid, token)
-
-            """ 米云币 """
-            coins = result['data']['coin']['coin_num']
-            """ 免费时间 """
-            free_time = result['data']['free_time']['free_time']
-            """ 畅玩卡 """
-            card = result['data']['play_card']['short_msg']
-
-            message = '======== UID: {0} ========\n' \
-                      '剩余米云币: {1}\n' \
-                      '剩余免费时间: {2}分钟\n' \
-                      '畅玩卡状态: {3}'.format(uid, coins, free_time, card)
-            await cloud_ys.finish(message)
+        if action is None:
+            await cloud_ys.finish('派蒙提醒您: 指令参数错误辣!', at_sender=True)
         else:
-            await cloud_ys.finish('参数错误！', at_sender=True)
+            if action.group('action') in ['绑定', 'bind']:
+                if len(param.split(" ")) == 1:
+                    await cloud_ys.finish('派蒙提醒您: cookie捏？没有cookie的话.. 绑空气哦', at_sender=True)
+
+                match = re.search(r'oi=\d+', param.split(" ")[1])
+                if match:
+                    uid = str(match.group()).split('=')[1]
+                else:
+                    await cloud_ys.finish('派蒙提醒您: cookie格式错误哦~ 请按照https://blog.ethreal.cn/archives/yysgettoken所写的方法获取cookie~')
+                data[user_id] = {
+                    'uid': uid,
+                    'uuid': uuid,
+                    'limit': 600,
+                    'isFullTime': False,
+                    'token': param.split(" ")[1]
+                }
+
+                if scheduler.get_job('cloud_genshin_' + user_id):
+                    scheduler.remove_job("cloud_genshin_" + user_id)
+
+                """ 保存数据 """
+                save_json(data, Path() / 'data' / 'LittlePaimon' / 'CloudGenshin.json')
+                """ 添加推送任务 """
+                scheduler.add_job(
+                    func=auto_sign_cgn,
+                    trigger='cron',
+                    hour=6,
+                    id="cloud_genshin_" + user_id,
+                    args=(user_id, data[user_id]),
+                    misfire_grace_time=10
+                )
+                await cloud_ys.finish(f'派蒙提醒您: [UID:{uid}]已绑定成功辣~, 我将在每天6点为你自动签到哦!', at_sender=True)
+
+            elif action.group('action') in ['信息', 'info']:
+
+                token = data[user_id]['token']
+                uid = data[user_id]['uid']
+                uuid = data[user_id]['uuid']
+
+                result = await get_Info(uuid, token)
+
+                """ 米云币 """
+                coins = result['data']['coin']['coin_num']
+                """ 免费时间 """
+                free_time = result['data']['free_time']['free_time']
+                """ 畅玩卡 """
+                card = result['data']['play_card']['short_msg']
+
+                message = '======== UID: {0} ========\n' \
+                          '剩余米云币: {1}\n' \
+                          '剩余免费时间: {2}分钟\n' \
+                          '畅玩卡状态: {3}'.format(uid, coins, free_time, card)
+                await cloud_ys.finish(message)
+
+            elif action.group('action') in ['签到', 'sign']:
+
+                token = data[user_id]['token']
+                uuid = data[user_id]['uuid']
+
+                if await check_token(uuid, token):
+                    d1 = await get_Notification(uuid, token)
+                if not list(d1['data']['list']):
+                    await cloud_ys.finish('派蒙提醒您: 你今天已签到了哦~', at_sender=True)
+                else:
+                    signInfo = json.loads(d1['data']['list'][0]['msg'])
+                    if signInfo:
+                        await cloud_ys.finish(f'派蒙提醒您: 旅行者!你已签到成功辣~ {signInfo["msg"]}: {signInfo["num"]}分钟', at_sender=True)
 
 
 for user_id, data in load_json(Path() / 'data' / 'LittlePaimon' / 'CloudGenshin.json').items():
