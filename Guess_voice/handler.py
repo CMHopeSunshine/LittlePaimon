@@ -321,7 +321,10 @@ class Guess:
         num = 0
         msg = '本群猜语音排行榜:'
         for user, data in user_list[:10]:
-            user = await bot.get_group_member_info(group_id=event.group_id, user_id=user)
+            try:
+                user = await bot.get_group_member_info(group_id=event.group_id, user_id=user)
+            except:
+                user = {'card': user, 'nickname': user}
             num += 1
             msg += f"\n第{num}名: {escape(user['card']) or escape(user['nickname'])}, 猜对{data['count']}次"
         return msg

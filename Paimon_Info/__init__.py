@@ -659,7 +659,7 @@ async def auto_sign():
         logger.info('---派蒙开始执行米游社自动签到---')
         sign_list = await get_sign_list()
         for user_id, uid, remind_id in data:
-            await sleep(random.randint(3, 8))
+            await sleep(random.randint(20, 35))
             sign_result = await sign(uid)
             if not isinstance(sign_result, str):
                 await sleep(1)
@@ -687,7 +687,7 @@ async def auto_sign():
                         group_str += str(ann_list.index(u) + 1) + u + '\n'
             try:
                 await get_bot().send_group_msg(group_id=group_id, message=group_str)
-                await sleep(random.randint(3, 8))
+                await sleep(random.randint(5, 10))
             except Exception as e:
                 logger.error(f'米游社签到结果发送失败：{e}')
 
@@ -699,6 +699,7 @@ async def coin_auto_sign():
     if data:
         logger.info('---派蒙开始执行米游币自动获取---')
         for user_id, uid, remind_id in data:
+            await sleep(random.randint(20, 35))
             sk = await get_private_stoken(uid, key='uid')
             try:
                 stoken = sk[0][4]
@@ -791,7 +792,7 @@ async def check_note():
                                                                message=f'[CQ:at,qq={user_id}]⚠️你的树脂已经达到了{now_data["data"]["current_resin"]},记得清理哦!⚠️')
                         except Exception as e:
                             logger.error(f'---派蒙发送树脂提醒失败:{e}---')
-                await sleep(3)
+                await sleep(random.randint(8, 15))
 
 
 @scheduler.scheduled_job('cron', hour=0, misfire_grace_time=10)
