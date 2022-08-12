@@ -497,12 +497,16 @@ async def mys_sign_handler(event: MessageEvent, msg: Message = CommandArg()):
     else:
         sign_day = sign_info['data']['total_sign_day']
         sign_action = await sign(uid)
-        if isinstance(sign_action, str):
-            await mys_sign.finish(sign_action, at_sender=True)
-        else:
-            await mys_sign.finish(
-                f'签到成功,获得的奖励为:\n{sign_list["data"]["awards"][sign_day]["name"]} * {sign_list["data"]["awards"][sign_day]["cnt"]}',
-                at_sender=True)
+        for _ in range(5):
+            if isinstance(sign_action, dict):
+                if sign_action['data']['success'] == 0:
+                    await mys_sign.finish(
+                        f'签到成功,获得的奖励为:\n{sign_list["data"]["awards"][sign_day]["name"]} * {sign_list["data"]["awards"][sign_day]["cnt"]}',
+                        at_sender=True)
+                else:
+                    await sleep(random.randint(3, 6))
+            else:
+                await mys_sign.finish(sign_action, at_sender=True)
 
 
 @mys_sign_auto.handle()
@@ -660,24 +664,31 @@ async def auto_sign():
         sign_list = await get_sign_list()
         for user_id, uid, remind_id in data:
             await sleep(random.randint(20, 35))
-            sign_result = await sign(uid)
-            if not isinstance(sign_result, str):
-                await sleep(1)
-                sign_info = await get_sign_info(uid)
-                sign_day = sign_info['data']['total_sign_day'] - 1
-                if remind_id.startswith('q'):
-                    await get_bot().send_private_msg(user_id=remind_id[1:],
-                                                     message=f'你的uid{uid}自动签到成功!签到奖励为{sign_list["data"]["awards"][sign_day]["name"]}*{sign_list["data"]["awards"][sign_day]["cnt"]}')
+            for _ in range(5):
+                sign_result = await sign(uid)
+                if isinstance(sign_result, dict):
+                    # success为0则说明没有出现验证码，不为0则有验证码，等待5-10秒再重试，重试最多5次
+                    if sign_result['data']['success'] == 0:
+                        await sleep(1)
+                        sign_info = await get_sign_info(uid)
+                        sign_day = sign_info['data']['total_sign_day'] - 1
+                        if remind_id.startswith('q'):
+                            await get_bot().send_private_msg(user_id=remind_id[1:],
+                                                             message=f'你的uid{uid}自动签到成功!签到奖励为{sign_list["data"]["awards"][sign_day]["name"]}*{sign_list["data"]["awards"][sign_day]["cnt"]}')
+                        else:
+                            ann[remind_id]['成功'].append(
+                                f'.UID{uid}-{sign_list["data"]["awards"][sign_day]["name"]}*{sign_list["data"]["awards"][sign_day]["cnt"]}')
+                        break
+                    else:
+                        await sleep(random.randint(5, 10))
                 else:
-                    ann[remind_id]['成功'].append(
-                        f'.UID{uid}-{sign_list["data"]["awards"][sign_day]["name"]}*{sign_list["data"]["awards"][sign_day]["cnt"]}')
-            else:
-                await delete_auto_sign(user_id, uid)
-                if remind_id.startswith('q'):
-                    await get_bot().send_private_msg(user_id=remind_id[1:],
-                                                     message=f'你的uid{uid}签到失败，请重新绑定cookie再开启自动签到')
-                else:
-                    ann[remind_id]['失败'].append(f'.UID{uid}')
+                    await delete_auto_sign(user_id, uid)
+                    if remind_id.startswith('q'):
+                        await get_bot().send_private_msg(user_id=remind_id[1:],
+                                                         message=f'你的uid{uid}签到失败，请重新绑定cookie再开启自动签到')
+                    else:
+                        ann[remind_id]['失败'].append(f'.UID{uid}')
+                    break
         for group_id, content in ann.items():
             group_str = '米游社自动签到结果：\n'
             for type, ann_list in content.items():

@@ -1,8 +1,8 @@
 import datetime
 import re
-from asyncio import sleep
 
 from littlepaimon_utils import aiorequests
+from nonebot import logger
 
 from ..utils.auth_util import get_headers, get_sign_headers, get_use_cookie, get_own_cookie, check_retcode
 from ..utils.db_util import get_private_cookie, update_cookie_cache, update_private_cookie
@@ -223,10 +223,8 @@ async def sign(uid):
         'region': server_id
     }
     resp = await aiorequests.post(url=url, headers=headers, json=json_data)
-    try:
-        data = resp.json()
-    except:
-        return resp.read()
+    data = resp.json()
+    logger.info(f'---UID{uid}的签到状态码为{data["retcode"]}，结果为{data["message"]}---')
     if await check_retcode(data, cookie, uid):
         return data
     else:
