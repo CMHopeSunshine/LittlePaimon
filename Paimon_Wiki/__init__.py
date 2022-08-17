@@ -1,16 +1,18 @@
 import re
 import time
 
-from littlepaimon_utils.files import load_json_from_url
 from nonebot import on_endswith, on_command, on_regex
 from nonebot.adapters.onebot.v11 import MessageEvent, Message, MessageSegment
-from nonebot.params import RegexDict
+from nonebot.adapters.onebot.v11.helpers import is_cancellation
+from nonebot.adapters.onebot.v11.exception import ActionFailed
+from nonebot.adapters import MessageTemplate
+from nonebot.params import RegexDict, ArgPlainText
 from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
 
-from .abyss_rate_draw import draw_rate_rank, draw_teams_rate
-from ..utils.alias_handler import get_match_alias
 from ..utils.message_util import MessageBuild
+from ..utils.alias_handler import get_match_alias
+from .abyss_rate_draw import draw_rate_rank, draw_teams_rate
 
 __paimon_help__ = {
     'type': '原神Wiki',
@@ -18,9 +20,9 @@ __paimon_help__ = {
 }
 
 __plugin_meta__ = PluginMetadata(
-    name="Paimon_Wiki",
-    description="小派蒙的wiki查询模块",
-    usage=(
+    name='Paimon_Wiki',
+    description='原神WIKI百科',
+    usage="""
         "1.[xx角色攻略]查看西风驿站出品的角色一图流攻略\n"
         "2.[xx角色材料]查看惜月出品的角色材料统计\n"
         "3.[xx参考面板]查看blue菌hehe出品的参考面板攻略\n"
@@ -30,7 +32,7 @@ __plugin_meta__ = PluginMetadata(
         "7.[深渊上半/下半阵容出场率]查看2.6深渊阵容出场率\n"
         "8.[xx武器攻略]查看武器攻略\n"
         "9.[xx原魔图鉴]查看原魔图鉴\n"
-    ),
+    """,
     extra={
         'type': '原神Wiki',
         'range': ['private', 'group', 'guild'],
@@ -39,13 +41,6 @@ __plugin_meta__ = PluginMetadata(
     },
 )
 
-
-attribute = on_endswith('参考面板', priority=6, block=True)
-attribute.__paimon_help__ = {
-        "usage":  '<角色名> 参考面板',
-        "introduce": "查看该角色的小毕业参考面板",
-        "priority": 3
-    }
 daily_material = on_endswith(('材料', '天赋材料', '突破材料'), priority=6, block=True)
 daily_material.__paimon_help__ = {
         "usage":  '<今日|周x>材料',
@@ -60,57 +55,42 @@ abyss_rate.__paimon_help__ = {
     }
 abyss_team = on_regex(r'^(深渊|深境螺旋)(?P<floor>上半|下半)阵容(排行|出场率)?$', priority=5, block=True)
 abyss_team.__paimon_help__ = {
-        "usage":  '深渊<上半|下半>阵容排行',
-        "introduce": "查看本期深渊的阵容出场率排行",
-        "priority": 5
-    }
-
-
-@attribute.handle()
-async def genshinAttribute(event: MessageEvent):
-    name = event.message.extract_plain_text().replace('参考面板', '').strip()
-    realname = get_match_alias(name)
-    if realname:
-        blue = await load_json_from_url('https://static.cherishmoon.fun/LittlePaimon/blue/blue.json')
-        if realname in blue.keys():
-            img = await MessageBuild.StaticImage(url=f'LittlePaimon/blue/{blue[realname][0]}.jpg',
-                                                 crop=(0, int(blue[realname][1][0]), 1080, int(blue[realname][1][1])))
-        else:
-            img = MessageBuild.Text(f'没有找到{name}的参考面板')
-        await attribute.finish(img)
-    else:
-        await attribute.finish(MessageBuild.Text(f'没有找到{name}的参考面板'), at_sender=True)
+    'name':        '深渊阵容出场率排行',
+    'description': '查看本期深渊的阵容出场率排行',
+    'usage':       '深渊<上半|下半>阵容排行'
+}
 
 
 @daily_material.handle()
 async def daily_material_handle(event: MessageEvent):
-    week = event.message.extract_plain_text().replace('材料', '').replace('天赋材料', '').replace('突破材料', '').strip()
-    if week:
-        find_week = re.search(r'(?P<week>今日|今天|现在|明天|明日|后天|后日|周一|周二|周三|周四|周五|周六|周日)', week)
-        if find_week:
-            if find_week.group('week') in ['今日', '今天', '现在']:
-                week = time.strftime("%w")
-            elif find_week.group('week') in ['明日', '明天']:
-                week = str(int(time.strftime("%w")) + 1)
-            elif find_week.group('week') in ['后日', '后天']:
-                week = str(int(time.strftime("%w")) + 2)
-            elif find_week.group('week') in ['周一', '周四']:
-                week = '1'
-            elif find_week.group('week') in ['周二', '周五']:
-                week = '2'
-            elif find_week.group('week') in ['周三', '周六']:
-                week = '3'
-            else:
-                week = '0'
-            if week == "0":
-                await daily_material.finish('周日所有材料都可以刷哦!', at_sender=True)
-            elif week in ['1', '4']:
-                url = 'LittlePaimon/DailyMaterials/周一周四.jpg'
-            elif week in ['2', '5']:
-                url = 'LittlePaimon/DailyMaterials/周二周五.jpg'
-            else:
-                url = 'LittlePaimon/DailyMaterials/周三周六.jpg'
-            await daily_material.finish(await MessageBuild.StaticImage(url=url))
+    if not (
+            week := event.message.extract_plain_text().replace('材料', '').replace('天赋材料', '').replace('突破材料',
+                                                                                                     '').strip()):
+        return
+    if find_week := re.search('(?P<week>今日|今天|现在|明天|明日|后天|后日|周一|周二|周三|周四|周五|周六|周日)', week):
+        if find_week['week'] in ['今日', '今天', '现在']:
+            week = time.strftime("%w")
+        elif find_week['week'] in ['明日', '明天']:
+            week = str(int(time.strftime("%w")) + 1)
+        elif find_week['week'] in ['后日', '后天']:
+            week = str(int(time.strftime("%w")) + 2)
+        elif find_week['week'] in ['周一', '周四']:
+            week = '1'
+        elif find_week['week'] in ['周二', '周五']:
+            week = '2'
+        elif find_week['week'] in ['周三', '周六']:
+            week = '3'
+        else:
+            week = '0'
+        if week == "0":
+            await daily_material.finish('周日所有材料都可以刷哦!', at_sender=True)
+        elif week in ['1', '4']:
+            url = 'LittlePaimon/DailyMaterials/周一周四.jpg'
+        elif week in ['2', '5']:
+            url = 'LittlePaimon/DailyMaterials/周二周五.jpg'
+        else:
+            url = 'LittlePaimon/DailyMaterials/周三周六.jpg'
+        await daily_material.finish(await MessageBuild.StaticImage(url=url))
 
 
 @abyss_rate.handle()
@@ -125,71 +105,96 @@ async def abyss_team_handler(event: MessageEvent, reGroup=RegexDict()):
     await abyss_team.finish(abyss_img)
 
 
-def create_choice_command(endswith: str, type_: str, url: str, tips: str = None, help_tips: str = None):
-    command = on_endswith(endswith, priority=6, block=True)
-    command.plugin_name = 'Paimon_Wiki'
-    command.__paimon_help__ = {
-        "usage":  f'<{help_tips}名> ' + endswith,
-        "introduce": f"查看该{help_tips}的{endswith}",
-        "priority": 3
-    }
+def create_wiki_matcher(pattern: str, help_fun: str, help_name: str):
+    maps = on_regex(pattern, priority=10, block=True)
+    maps.plugin_name = 'Paimon_Wiki'
+    maps.__paimon_help__ = {'introduce': f"查看该{help_name}的{help_fun}",
+                            'usage': f'<{help_name}名> {help_fun}', 'priority': 3}
 
-    @command.handle()
-    async def _(event: MessageEvent, state: T_State):
-        name = event.message.extract_plain_text().replace(endswith, '').strip()
+    @maps.handle()
+    async def _(event: MessageEvent, state: T_State, regex_dict: dict = RegexDict()):
+        name = regex_dict['name1'] or regex_dict['name2']
+        state['type'] = regex_dict['type']
+        if '武器' in state['type']:
+            state['type'] = '武器'
+            state['img_url'] = 'https://static.cherishmoon.fun/LittlePaimon/WeaponMaps/{}.jpg'
+        elif '圣遗物' in state['type']:
+            state['type'] = '圣遗物'
+            state['img_url'] = 'https://static.cherishmoon.fun/LittlePaimon/ArtifactMaps/{}.jpg'
+        elif '怪物' in state['type'] or '原魔' in state['type']:
+            state['type'] = '原魔'
+            state['img_url'] = 'https://static.cherishmoon.fun/LittlePaimon/MonsterMaps/{}.jpg'
+        elif state['type'] == '角色攻略':
+            state['type'] = '角色'
+            state['img_url'] = 'https://static.cherishmoon.fun/LittlePaimon/XFGuide/{}.jpg'
+        elif state['type'] == '角色材料':
+            state['type'] = '角色'
+            state['img_url'] = 'https://static.cherishmoon.fun/LittlePaimon/RoleMaterials/{}.jpg'
+        elif state['type'] == '收益曲线':
+            state['type'] = '角色'
+            state['img_url'] = 'https://static.cherishmoon.fun/LittlePaimon/blue/{}.jpg'
+        elif state['type'] == '参考面板':
+            state['type'] = '角色'
+            state['img_url'] = 'https://static.cherishmoon.fun/LittlePaimon/blueRefer/{}.jpg'
         if name:
             state['name'] = name
 
-    @command.got('name', prompt=f'请把要查询的{help_tips}告诉我哦~')
+    @maps.got('name', prompt=Message.template('请提供要查询的{type}'))
     async def _(event: MessageEvent, state: T_State):
         name = state['name']
         if isinstance(name, Message):
+            if is_cancellation(name):
+                await maps.finish()
             name = name.extract_plain_text().strip()
-            if name == 'q':
-                await command.finish()
-        match_alias = get_match_alias(name, type_)
-        if isinstance(match_alias, str):
-            await command.finish(
-                await MessageBuild.StaticImage(url=url.format(match_alias), tips=tips.format(match_alias)))
-        elif isinstance(match_alias, list) and len(match_alias) == 1:
-            await command.finish(
-                await MessageBuild.StaticImage(url=url.format(match_alias[0]), tips=tips.format(match_alias[0])))
+        match_alias = get_match_alias(name, state['type'])
+        true_name = match_alias[0] if (
+                isinstance(match_alias, list) and len(match_alias) == 1) else match_alias if isinstance(match_alias,
+                                                                                                        str) else None
+        if true_name:
+            try:
+                await maps.finish(MessageSegment.image(state['img_url'].format(match_alias)))
+            except ActionFailed:
+                await maps.finish(f'没有找到该{state["type"]}的图鉴')
+        elif match_alias:
+            if isinstance(match_alias, dict):
+                match_alias = list(match_alias.keys())
+            if 'choice' not in state:
+                msg = f'你要查询的{state["type"]}是：\n'
+                msg += '\n'.join([f'{int(i) + 1}. {name}' for i, name in enumerate(match_alias)])
+                await maps.send(msg + '\n回答\"取消\"来取消查询', at_sender=True)
+            state['match_alias'] = match_alias
         else:
-            if not match_alias:
-                await command.finish(MessageBuild.Text(f'没有{state["name"]}的{endswith}哦~'), at_sender=True)
-            else:
-                if isinstance(match_alias, dict):
-                    match_alias = list(match_alias.keys())
-                if 'choice' not in state:
-                    msg = f'你要找的{endswith[0:2]}是哪个呀：\n'
-                    msg += '\n'.join([f'{int(i) + 1}. {name}' for i, name in enumerate(match_alias)])
-                    await command.send(msg + '\n回答\"q\"可以取消查询', at_sender=True)
-                state['match_alias'] = match_alias
+            await maps.finish(f'没有找到该{state["type"]}的图鉴')
 
-    @command.got('choice')
-    async def _(event: MessageEvent, state: T_State):
+    @maps.got('choice')
+    async def _(event: MessageEvent, state: T_State, choice: str = ArgPlainText('choice')):
         match_alias = state['match_alias']
-        choice = state['choice']
-        choice = choice.extract_plain_text().strip().replace(endswith, '')
-        if choice == 'q':
-            await command.finish()
+        if is_cancellation(choice):
+            await maps.finish()
         if choice.isdigit() and (1 <= int(choice) <= len(match_alias)):
-            await command.finish(
-                await MessageBuild.StaticImage(url=url.format(match_alias[int(choice) - 1]),
-                                               tips=tips.format(match_alias[int(choice) - 1])))
+            try:
+                await maps.finish(MessageSegment.image(state['img_url'].format(match_alias[int(choice) - 1])))
+            except ActionFailed:
+                await maps.finish(f'没有找到该{state["type"]}的图鉴')
         if choice not in match_alias:
             state['times'] = state['times'] + 1 if 'times' in state else 1
             if state['times'] == 1:
-                await command.reject(f'请旅行者从上面的{endswith[0:2]}中选一个问派蒙\n回答\"q\"可以取消查询', at_sender=True)
+                await maps.reject(f'请旅行者从上面的{state["type"]}中选一个问派蒙\n回答\"q\"可以取消查询', at_sender=True)
+
             elif state['times'] == 2:
-                await command.reject(f'别调戏派蒙啦，快选一个吧，不想问了请回答\"q\"！', at_sender=True)
+                await maps.reject(f'别调戏派蒙啦，快选一个吧，不想问了请回答\"q\"！', at_sender=True)
             elif state['times'] >= 3:
-                await command.finish(f'看来旅行者您有点神志不清哦(，下次再问派蒙吧' + MessageSegment.face(146), at_sender=True)
-        await command.finish(await MessageBuild.StaticImage(url=url.format(choice), tips=tips.format(choice)))
+                await maps.finish(f'看来旅行者您有点神志不清哦(，下次再问派蒙吧{MessageSegment.face(146)}', at_sender=True)
+        try:
+            await maps.finish(MessageSegment.image(state['img_url'].format(choice)))
+        except ActionFailed:
+            await maps.finish(f'没有找到该{state["type"]}的图鉴')
 
 
-create_choice_command('原魔图鉴', 'monsters', 'LittlePaimon/MonsterMaps/{}.jpg', '暂时没有{}的原魔图鉴哦~', '原魔')
-create_choice_command('武器攻略', 'weapons', 'LittlePaimon/WeaponGuild/{}.png', '暂时没有{}的武器攻略哦~', '武器')
-create_choice_command('角色攻略', 'roles', 'LittlePaimon/XFGuide/{}.jpg', '暂时没有{}的角色攻略哦~', '角色')
-create_choice_command('角色材料', 'roles', 'LittlePaimon/RoleMaterials/{}材料.jpg', '暂时没有{}的角色材料哦~', '角色')
-create_choice_command('收益曲线', 'roles', 'LittlePaimon/blue/{}.jpg', '暂时没有{}的收益曲线哦~', '角色')
+create_wiki_matcher(r'(?P<name1>\w*)(?P<type>(原魔|怪物)(图鉴|攻略))(?P<name2>\w*)', '原魔图鉴', '原魔')
+create_wiki_matcher(r'(?P<name1>\w*)(?P<type>武器(图鉴|攻略))(?P<name2>\w*)', '武器图鉴', '武器')
+create_wiki_matcher(r'(?P<name1>\w*)(?P<type>圣遗物(图鉴|攻略))(?P<name2>\w*)', '圣遗物图鉴', '圣遗物')
+create_wiki_matcher(r'(?P<name1>\w*)(?P<type>角色攻略)(?P<name2>\w*)', '角色攻略', '角色')
+create_wiki_matcher(r'(?P<name1>\w*)(?P<type>角色材料)(?P<name2>\w*)', '角色材料', '角色')
+create_wiki_matcher(r'(?P<name1>\w*)(?P<type>收益曲线)(?P<name2>\w*)', '收益曲线', '角色')
+create_wiki_matcher(r'(?P<name1>\w*)(?P<type>参考面板)(?P<name2>\w*)', '参考面板', '角色')

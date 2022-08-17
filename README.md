@@ -59,16 +59,6 @@
  
 ### 近期进行全新版本重构，具体详见`Bot`分支，本分支暂缓更新，预计一到两周内重构完成。
 
-+ 7.17
-  - `ysd`新增`班尼特、莫娜、七七、琴、温迪`伤害计算
-  - `mys自动签到`支持私聊
-  - `sy`修正深渊信息时间介绍
-  - `sy`没有绑定cookie时将不再错误的展示空阵容信息
-  - `ssbq`修复没有派遣时会报错的bug
-+ 7.19
-  - 新增`米游币自动获取`#124，不确保一定可用，如产生其他bug请反馈
-+ 7.23
-  - 深渊登场率数据改为2.8
 + 8.2
   - `点餐`功能恢复，但又引入了2个新依赖库，为不影响使用，默认关闭，有需要者请自行`pip install cssselect aiohttp`后，将`Paimon_plugins/_order.py`的`_`去掉 [#154](https://github.com/CMHopeSunshine/LittlePaimon/pull/154)
   - 修复无法关闭和删除ssbq提醒的bug [#154](https://github.com/CMHopeSunshine/LittlePaimon/pull/154)
@@ -79,6 +69,9 @@
 + 8.4
   - 补充`斫峰之刃`抽卡资源
   - 修复`获取抽卡记录`可能出现的bug
++ 8.17
+  - 新增`圣遗物图鉴`
+  - 补充`poetry.lock`
 
 ## 丨功能列表
 
