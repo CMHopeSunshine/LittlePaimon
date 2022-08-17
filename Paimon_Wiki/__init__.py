@@ -1,7 +1,6 @@
-import re
 import time
 
-from nonebot import on_endswith, on_command, on_regex
+from nonebot import on_command, on_regex
 from nonebot.adapters.onebot.v11 import MessageEvent, Message, MessageSegment
 from nonebot.adapters.onebot.v11.helpers import is_cancellation
 from nonebot.adapters.onebot.v11.exception import ActionFailed
@@ -40,7 +39,7 @@ __plugin_meta__ = PluginMetadata(
     },
 )
 
-daily_material = on_endswith(('材料', '天赋材料', '突破材料'), priority=6, block=True)
+daily_material = on_regex(r'(?P<week>今日|今天|现在|明天|明日|后天|后日|周一|周二|周三|周四|周五|周六|周日)(天赋|角色)?材料', priority=12, block=True)
 daily_material.__paimon_help__ = {
         "usage":  '<今日|周x>材料',
         "introduce": "查看可刷取的素材表",
@@ -61,35 +60,32 @@ abyss_team.__paimon_help__ = {
 
 
 @daily_material.handle()
-async def daily_material_handle(event: MessageEvent):
-    if not (
-            week := event.message.extract_plain_text().replace('材料', '').replace('天赋材料', '').replace('突破材料',
-                                                                                                     '').strip()):
-        return
-    if find_week := re.search('(?P<week>今日|今天|现在|明天|明日|后天|后日|周一|周二|周三|周四|周五|周六|周日)', week):
-        if find_week['week'] in ['今日', '今天', '现在']:
-            week = time.strftime("%w")
-        elif find_week['week'] in ['明日', '明天']:
-            week = str(int(time.strftime("%w")) + 1)
-        elif find_week['week'] in ['后日', '后天']:
-            week = str(int(time.strftime("%w")) + 2)
-        elif find_week['week'] in ['周一', '周四']:
-            week = '1'
-        elif find_week['week'] in ['周二', '周五']:
-            week = '2'
-        elif find_week['week'] in ['周三', '周六']:
-            week = '3'
-        else:
-            week = '0'
-        if week == "0":
-            await daily_material.finish('周日所有材料都可以刷哦!', at_sender=True)
-        elif week in ['1', '4']:
-            url = 'LittlePaimon/DailyMaterials/周一周四.jpg'
-        elif week in ['2', '5']:
-            url = 'LittlePaimon/DailyMaterials/周二周五.jpg'
-        else:
-            url = 'LittlePaimon/DailyMaterials/周三周六.jpg'
-        await daily_material.finish(await MessageBuild.StaticImage(url=url))
+async def daily_material_handle(event: MessageEvent, find_week: dict = RegexDict()):
+    if find_week['week'] in ['今日', '今天', '现在']:
+        week = time.strftime("%w")
+    elif find_week['week'] in ['明日', '明天']:
+        week = str(int(time.strftime("%w")) + 1)
+    elif find_week['week'] in ['后日', '后天']:
+        week = str(int(time.strftime("%w")) + 2)
+    elif find_week['week'] in ['周一', '周四']:
+        week = '1'
+    elif find_week['week'] in ['周二', '周五']:
+        week = '2'
+    elif find_week['week'] in ['周三', '周六']:
+        week = '3'
+    else:
+        week = '0'
+    if week == "0":
+        await daily_material.finish('周日所有材料都可以刷哦!', at_sender=True)
+    elif week in ['1', '4']:
+        await daily_material.finish(
+            MessageSegment.image(file='https://static.cherishmoon.fun/LittlePaimon/DailyMaterials/周一周四.jpg'))
+    elif week in ['2', '5']:
+        await daily_material.finish(
+            MessageSegment.image(file='https://static.cherishmoon.fun/LittlePaimon/DailyMaterials/周二周五.jpg'))
+    else:
+        await daily_material.finish(
+            MessageSegment.image(file='https://static.cherishmoon.fun/LittlePaimon/DailyMaterials/周三周六.jpg'))
 
 
 @abyss_rate.handle()
@@ -128,7 +124,7 @@ def create_wiki_matcher(pattern: str, help_fun: str, help_name: str):
             state['img_url'] = 'https://static.cherishmoon.fun/LittlePaimon/XFGuide/{}.jpg'
         elif state['type'] == '角色材料':
             state['type'] = '角色'
-            state['img_url'] = 'https://static.cherishmoon.fun/LittlePaimon/RoleMaterials/{}.jpg'
+            state['img_url'] = 'https://static.cherishmoon.fun/LittlePaimon/RoleMaterials/{}材料.jpg'
         elif state['type'] == '收益曲线':
             state['type'] = '角色'
             state['img_url'] = 'https://static.cherishmoon.fun/LittlePaimon/blue/{}.jpg'
