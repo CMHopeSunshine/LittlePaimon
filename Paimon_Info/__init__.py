@@ -361,7 +361,7 @@ async def _(event: MessageEvent, state: T_State):
         name = replace_all(name.extract_plain_text().strip().replace('ysc', ''), state['uid'])
         if name == 'q':
             await ysc.finish()
-    match_alias = get_match_alias(name, 'roles', True)
+    match_alias = get_match_alias(name, '角色', True)
     if len(match_alias) == 1:
         state['choice'] = match_alias
     else:
@@ -610,7 +610,7 @@ async def _(event: MessageEvent, state: T_State, msg: Message = CommandArg()):
     if msg.startswith(('a', '全部', '所有', '查看')):
         state['role'] = 'all'
     else:
-        match_alias = get_match_alias(msg, 'roles', True)
+        match_alias = get_match_alias(msg, '角色', True)
         if match_alias:
             state['role'] = match_alias if isinstance(match_alias, str) else tuple(match_alias.keys())[0]
         else:
