@@ -22,7 +22,7 @@ def get_id_by_name(name: str):
         :return: id字符串
     """
     alias_file = load_json(path=Path(__file__).parent / 'json_data' / 'alias.json')
-    name_list = alias_file['roles']
+    name_list = alias_file['角色']
     for role_id, alias in name_list.items():
         if name in alias:
             return role_id
@@ -35,11 +35,8 @@ def get_name_by_id(role_id: str):
         :return: 角色名字符串
     """
     alias_file = load_json(path=Path(__file__).parent / 'json_data' / 'alias.json')
-    name_list = alias_file['roles']
-    if role_id in name_list:
-        return name_list[role_id][0]
-    else:
-        return None
+    name_list = alias_file['角色']
+    return name_list[role_id][0] if role_id in name_list else None
 
 
 def get_alias_by_name(name: str):
@@ -49,11 +46,8 @@ def get_alias_by_name(name: str):
         :return: 别名列表
     """
     alias_file = load_json(path=Path(__file__).parent / 'json_data' / 'alias.json')
-    name_list = alias_file['roles']
-    for r in name_list.values():
-        if name in r:
-            return r
-    return None
+    name_list = alias_file['角色']
+    return next((r for r in name_list.values() if name in r), None)
 
 
 def get_match_alias(msg: str, type: str = '角色', single_to_dict: bool = False) -> Union[str, list, dict]:
@@ -78,8 +72,9 @@ def get_match_alias(msg: str, type: str = '角色', single_to_dict: bool = False
                 possible[alias[0]] = role_id
         if len(possible) == 1:
             return {list(possible.keys())[0]: possible[list(possible.keys())[0]]} if single_to_dict else list(possible.keys())[0]
+
         return possible
-    elif type in ['武器', '圣遗物']:
+    elif type in {'武器', '圣遗物'}:
         possible = []
         for name, alias in alias_list.items():
             match_list = difflib.get_close_matches(msg, alias, cutoff=0.4, n=3)
