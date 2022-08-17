@@ -5,7 +5,6 @@ from nonebot import on_endswith, on_command, on_regex
 from nonebot.adapters.onebot.v11 import MessageEvent, Message, MessageSegment
 from nonebot.adapters.onebot.v11.helpers import is_cancellation
 from nonebot.adapters.onebot.v11.exception import ActionFailed
-from nonebot.adapters import MessageTemplate
 from nonebot.params import RegexDict, ArgPlainText
 from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
@@ -55,9 +54,9 @@ abyss_rate.__paimon_help__ = {
     }
 abyss_team = on_regex(r'^(深渊|深境螺旋)(?P<floor>上半|下半)阵容(排行|出场率)?$', priority=5, block=True)
 abyss_team.__paimon_help__ = {
-    'name':        '深渊阵容出场率排行',
-    'description': '查看本期深渊的阵容出场率排行',
-    'usage':       '深渊<上半|下半>阵容排行'
+    'introduce': '查看本期深渊的阵容出场率排行',
+    'usage':       '深渊<上半|下半>阵容排行',
+    'priority': 6
 }
 
 
