@@ -69,7 +69,7 @@ class MihoyoBBSCoin:
             'x-rpc-client_type':  '2',
             'x-rpc-app_version':  '2.28.1',
             'x-rpc-sys_version':  '6.0.1',
-            "x-rpc-channel":      'miyousheluodi',
+            'x-rpc-channel':      'miyousheluodi',
             'x-rpc-device_id':    random_hex(32),
             'x-rpc-device_name':  random_text(random.randint(1, 10)),
             'x-rpc-device_model': 'Mi 10',
