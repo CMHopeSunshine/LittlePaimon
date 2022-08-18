@@ -125,17 +125,23 @@ def random_text(length: int) -> str:
     return ''.join(random.sample(string.ascii_lowercase + string.digits, length))
 
 
-# 米游社headers的ds_token，对应版本2.11.1
-def get_ds(q="", b=None) -> str:
-    if b:
-        br = json.dumps(b)
+def get_ds(q: str = '', b: dict = None, mhy_bbs_sign: bool = False) -> str:
+    """
+    生成米游社headers的ds_token
+    :param q: 查询
+    :param b: 请求体
+    :param mhy_bbs_sign: 是否为米游社讨论区签到
+    :return: ds_token
+    """
+    br = json.dumps(b) if b else ''
+    if mhy_bbs_sign:
+        s = 't0qEgfub6cvueAPgR5m9aQWWVciEer7v'
     else:
-        br = ""
-    s = "xV8v4Qu54lUKrEYFZkJhB8cuOh9Asafs"
+        s = 'xV8v4Qu54lUKrEYFZkJhB8cuOh9Asafs'
     t = str(int(time()))
     r = str(random.randint(100000, 200000))
-    c = md5("salt=" + s + "&t=" + t + "&r=" + r + "&b=" + br + "&q=" + q)
-    return f"{t},{r},{c}"
+    c = md5(f'salt={s}&t={t}&r={r}&b={br}&q={q}')
+    return f'{t},{r},{c}'
 
 
 # 米游社爬虫headers
@@ -158,9 +164,9 @@ def get_old_version_ds(mhy_bbs: bool = False) -> str:
     生成米游社旧版本headers的ds_token
     """
     if mhy_bbs:
-        s = 'dWCcD2FsOUXEstC5f9xubswZxEeoBOTc'
+        s = '9nQiU3AV0rJSIBWgdynfoGMGKaklfbM7'
     else:
-        s = 'h8w582wxwgqvahcdkpvdhbh2w9casgfl'
+        s = 'z8DRIUjNDT7IT5IZXvrUAxyupA1peND9'
     t = str(int(time()))
     r = ''.join(random.sample(string.ascii_lowercase + string.digits, 6))
     c = md5(f"salt={s}&t={t}&r={r}")
@@ -171,15 +177,15 @@ def get_sign_headers(cookie):
     headers = {
         'User_Agent':        'Mozilla/5.0 (Linux; Android 10; MIX 2 Build/QKQ1.190825.002; wv) AppleWebKit/537.36 ('
                              'KHTML, like Gecko) Version/4.0 Chrome/83.0.4103.101 Mobile Safari/537.36 '
-                             'miHoYoBBS/2.3.0',
+                             'miHoYoBBS/2.34.1',
         'Cookie':            cookie,
         'x-rpc-device_id':   random_hex(32),
         'Origin':            'https://webstatic.mihoyo.com',
         'X_Requested_With':  'com.mihoyo.hyperion',
         'DS':                get_old_version_ds(mhy_bbs=True),
-        'x-rpc-client_type': '2',
+        'x-rpc-client_type': '5',
         'Referer':           'https://webstatic.mihoyo.com/bbs/event/signin-ys/index.html?bbs_auth_required=true&act_id=e202009291139501&utm_source=bbs&utm_medium=mys&utm_campaign=icon',
-        'x-rpc-app_version': '2.28.1'
+        'x-rpc-app_version': '2.34.1'
     }
     return headers
 

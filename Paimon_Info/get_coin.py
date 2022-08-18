@@ -3,13 +3,13 @@ import random
 from nonebot import logger
 
 from littlepaimon_utils import aiorequests
-from ..utils.auth_util import random_text, random_hex, get_old_version_ds
+from ..utils.auth_util import random_text, random_hex, get_old_version_ds, get_ds
 
 # 米游社的API列表
 bbs_Cookieurl = 'https://webapi.account.mihoyo.com/Api/cookie_accountinfo_by_loginticket?login_ticket={}'
 bbs_Cookieurl2 = 'https://api-takumi.mihoyo.com/auth/api/getMultiTokenByLoginTicket?login_ticket={}&token_types=3&uid={}'
 bbs_Taskslist = 'https://bbs-api.mihoyo.com/apihub/sapi/getUserMissionsState'  # 获取任务列表
-bbs_Signurl = 'https://bbs-api.mihoyo.com/apihub/sapi/signIn?gids={}'  # post
+bbs_Signurl = 'https://bbs-api.mihoyo.com/apihub/app/api/signIn'  # post
 bbs_Listurl = 'https://bbs-api.mihoyo.com/post/api/getForumPostList?forum_id={}&is_good=false&is_hot=false&page_size=20&sort_type=1'
 bbs_Detailurl = 'https://bbs-api.mihoyo.com/post/api/getPostFull?post_id={}'
 bbs_Shareurl = 'https://bbs-api.mihoyo.com/apihub/api/getShareConf?entity_id={}&entity_type=1'
@@ -62,12 +62,12 @@ class MihoyoBBSCoin:
 
     def __init__(self, cookies: str, user_id: str, uid: str):
         self.headers: dict = {
-            'DS':                 get_old_version_ds(mhy_bbs=True),
+            'DS':                 get_old_version_ds(),
             'cookie':             cookies,
             'x-rpc-client_type':  '2',
-            'x-rpc-app_version':  '2.28.1',
+            'x-rpc-app_version':  '2.34.1',
             'x-rpc-sys_version':  '6.0.1',
-            'x-rpc-channel':      'mihoyo',
+            'x-rpc-channel':      'miyousheluodi',
             'x-rpc-device_id':    random_hex(32),
             'x-rpc-device_name':  random_text(random.randint(1, 10)),
             'x-rpc-device_model': 'Mi 10',
@@ -182,8 +182,10 @@ class MihoyoBBSCoin:
         """
         if self.Task_do['bbs_Sign']:
             return '讨论区签到任务已经完成过了~'
+        header = self.headers.copy()
         for i in self.mihoyo_bbs_List:
-            req = await aiorequests.post(url=bbs_Signurl.format(i['id']), data={}, headers=self.headers)
+            header['DS'] = get_ds('', {'gids': i['id']}, True)
+            req = await aiorequests.post(url=bbs_Signurl, json={'gids': i['id']}, headers=header)
             data = req.json()
             if 'err' in data['message']:
                 self.state = False
