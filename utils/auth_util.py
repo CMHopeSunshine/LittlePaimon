@@ -138,6 +138,15 @@ def get_ds(q="", b=None) -> str:
     return f"{t},{r},{c}"
 
 
+def get_ds2(q: str="", b: str="") -> str:
+    n = 't0qEgfub6cvueAPgR5m9aQWWVciEer7v'
+    i = str(int(time()))
+    r = str(random.randint(100001, 200000))
+    add = f'&b={b}&q={q}'
+    c = md5("salt=" + n + "&t=" + i + "&r=" + r + add)
+    return f"{i},{r},{c}"
+
+
 # 米游社爬虫headers
 def get_headers(cookie, q='', b=None):
     headers = {
