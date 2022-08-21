@@ -71,8 +71,8 @@ def get_role_dmg(data: dict):
             dmg_data['开大普攻第一段'] = (str(int(ab[0]) + int(aq[0])), str(int(ab[1]) + int(aq[1])))
         dmg_data['开大战技伤害'] = udc(dm['水母伤害'] * attack + dm['E伤害提升'] * health, (cr + ve['暴击率'], cd), db[3] + ve['增伤'], level_role)
         dmg_data['大招释放伤害'] = udc(dm['大招伤害'] * health, (cr + vq['暴击率'], cd), db[3] + vq['增伤'], level_role)
-        dmg_data['开大普攻治疗量'] = (str(int((float(dm['大招治疗量'][0].replace('%生命值上限', '')) / 100.0 * health + float(dm['大招治疗量'][1]) * (1 + data['属性']['治疗加成'])))),)
-        dmg_data['战技治疗量'] = (str(int((float(dm['水母治疗量'][0].replace('%生命值上限', '')) / 100.0 * health + float(dm['水母治疗量'][1]) * (1 + data['属性']['治疗加成'])))),)
+        dmg_data['开大普攻治疗量'] = (str(int((float(dm['大招治疗量'][0].replace('%生命值上限', '')) / 100.0 * health + float(dm['大招治疗量'][1])) * (1 + data['属性']['治疗加成']))),)
+        dmg_data['战技治疗量'] = (str(int((float(dm['水母治疗量'][0].replace('%生命值上限', '')) / 100.0 * health + float(dm['水母治疗量'][1])) * (1 + data['属性']['治疗加成']))),)
     else:
         dmg_data = get_dmg_data(data, dm, va, ve, vq)
     if data['伤害描述']:

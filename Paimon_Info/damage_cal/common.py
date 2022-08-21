@@ -322,7 +322,7 @@ def weapon_common_fix(data: dict):
         extra_e['增伤'] += 3 * (0.09 + 0.03 * weapon['精炼等级'])
         data['伤害描述'].append('神乐满层')
     elif weapon['名称'] == '不灭月华':
-        attr['治疗加成'] += 0.075 + 0.025 * weapon['精炼等级']
+        # attr['治疗加成'] += 0.075 + 0.025 * weapon['精炼等级']
         extra_a['普攻额外倍率'] += (0.005 + 0.005 * weapon['精炼等级']) * (attr['基础生命'] + attr['额外生命'])
     elif weapon['名称'] == '白辰之环':
         for i, k in enumerate(attr['伤害加成']):
