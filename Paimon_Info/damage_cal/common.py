@@ -164,7 +164,7 @@ def weapon_common_fix(data: dict):
     elif weapon['名称'] == '苍古自由之誓':
         for i, k in enumerate(attr['伤害加成']):
             attr['伤害加成'][i] = k + (0.075 + 0.025 * weapon['精炼等级'])
-        data['额外攻击'] += data['基础攻击'] * (0.15 + 0.05 * weapon['精炼等级'])
+        attr['额外攻击'] += attr['基础攻击'] * (0.15 + 0.05 * weapon['精炼等级'])
         extra_a['普攻增伤'] += 0.12 + 0.04 * weapon['精炼等级']
         extra_a['重击增伤'] += 0.12 + 0.04 * weapon['精炼等级']
         extra_a['下落攻击增伤'] += 0.12 + 0.04 * weapon['精炼等级']
