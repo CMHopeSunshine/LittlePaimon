@@ -1,0 +1,39 @@
+name: 原神信息查询
+module_name: Paimon_Info
+description: 原神信息查询
+usage: '...'
+status:
+show: true
+priority: 1
+configs:
+matchers:
+- pm_name: ys
+  pm_description: 查看原神个人信息卡片
+  pm_usage: ys(uid)
+  pm_priority: 1
+  pm_show: true
+- pm_name: udi
+  pm_description: 更新你的原神玩家和角色数据，绑定cookie后数据更详细
+  pm_usage: 更新角色信息
+  pm_priority: 4
+  pm_show: true
+- pm_name: ysa
+  pm_description: 查看角色背包及练度排行
+  pm_usage: ysa(uid)
+  pm_priority: 2
+  pm_show: true
+- pm_name: ysd
+  pm_description: 查看指定角色的详细面板数据及伤害计算
+  pm_usage: ysd(uid)<角色名>
+  pm_priority: 3
+  pm_show: true
+- pm_name: ysc
+  pm_description: 随机角色同人图+角色信息卡片
+  pm_usage: ysc(uid)<角色名>
+  pm_priority: 4
+  pm_show: true
+- pm_name: sy
+  pm_description: 查看本期|上期的深渊战报
+  pm_usage: sy(uid)(本期|上期)
+  pm_priority: 3
+  pm_show: true

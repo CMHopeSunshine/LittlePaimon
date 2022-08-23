@@ -1,0 +1,14 @@
+name: 60秒读世界
+module_name: news60s
+description: 查看60秒读世界日历
+usage: "60秒读世界 : 查看本群订阅服务器日历\n60秒读世界 on 时间/off : 订阅/取消订阅日历推送\n"
+status:
+show: true
+priority: 99
+configs:
+matchers:
+- pm_name: 早报
+  pm_description:
+  pm_usage:
+  pm_priority: 99
+  pm_show: true

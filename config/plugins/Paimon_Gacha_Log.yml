@@ -1,0 +1,25 @@
+name: 原神抽卡记录分析
+module_name: Paimon_Gacha_Log
+description: 小派蒙的原神抽卡记录模块
+usage: 1.[获取抽卡记录 (uid) (url)]提供url，获取原神抽卡记录，需要一定时间2.[查看抽卡记录 (uid)]查看抽卡记录分析3.[导出抽卡记录
+  (uid) (xlsx/json)]导出抽卡记录文件，上传到群文件中
+status:
+show: true
+priority: 10
+configs:
+matchers:
+- pm_name: 抽卡记录导出
+  pm_description: 将抽卡记录导出到群文件中
+  pm_usage: 抽卡记录导出(uid)[xlsx/json]
+  pm_priority: 3
+  pm_show: true
+- pm_name: 获取抽卡记录
+  pm_description: 从抽卡链接获取抽卡记录，链接可以通过祈愿页面断网取得
+  pm_usage: 获取抽卡记录(uid)<链接>
+  pm_priority: 1
+  pm_show: true
+- pm_name: 查看抽卡记录
+  pm_description: 查看你的抽卡记录分析
+  pm_usage: 查看抽卡记录
+  pm_priority: 2
+  pm_show: true

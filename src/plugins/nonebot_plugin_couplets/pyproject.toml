@@ -1,0 +1,33 @@
+[tool.poetry]
+name = "nonebot-plugin-couplets"
+version = "1.0.0"
+description = "Nonebot2对对联插件"
+authors = ["惜月 <277073121@qq.com>"]
+readme = "README.md"
+license = "AGPL"
+keywords = ["nonebot", "nonebot2", "couplets"]
+homepage = "https://github.com/CMHopeSunshine/LittlePaimon/tree/Bot/src/plugins/nonebot_plugin_couplets"
+repository = "https://github.com/CMHopeSunshine/LittlePaimon/tree/Bot/src/plugins/nonebot_plugin_couplets"
+documentation = "https://github.com/CMHopeSunshine/LittlePaimon/tree/Bot/src/plugins/nonebot_plugin_couplets#readme"
+packages = [
+    { include = "nonebot_plugin_couplets/*.py", from = ".."}
+]
+
+[[tool.poetry.source]]
+name = "ali"
+default = true
+url = "https://mirrors.aliyun.com/pypi/simple/"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+nonebot2 = "^2.0.0-beta.1"
+nonebot-adapter-onebot = "^2.0.0-beta.1"
+nonebot-plugin-apscheduler = "^0.1.2"
+httpx = "^0.23.0"
+
+[tool.poetry.dev-dependencies]
+
+
+[build-system]
+requires = ["poetry_core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

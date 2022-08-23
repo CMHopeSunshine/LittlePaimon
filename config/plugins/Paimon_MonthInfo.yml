@@ -1,0 +1,14 @@
+name: 原神每月札记
+module_name: Paimon_MonthInfo
+description: 原神每月札记信息
+usage: myzj(uid)[月份]
+status:
+show: true
+priority: 5
+configs:
+matchers:
+- pm_name: myzj
+  pm_description: '*查看指定月份的原神、摩拉获取情况'
+  pm_usage: myzj(uid)[月份]
+  pm_priority: 1
+  pm_show: true

@@ -1,0 +1,62 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>原神日历</title>
+	<link rel="stylesheet" href="{{ css_path }}/iview.css" />
+	<link rel="stylesheet" href="{{ css_path }}/index.css" />
+	<link rel="stylesheet" href="{{ css_path }}/normalize.css">
+</head>
+
+<body>
+	<div class="calendar-wapper">
+		<div class="m-events-calendar">
+			<div class="m-events-calendar">
+				<div class="m-events-calenda__m-right">
+					<div class="m-events-calendar__line-container">
+						<div class="m-events-calendar__line-item"></div>
+						<div class="m-events-calendar__line-item"></div>
+						<div class="m-events-calendar__line-item"></div>
+						<div class="m-events-calendar__line-item"></div>
+						<div class="m-events-calendar__line-item"></div>
+						<div class="m-events-calendar__line-item"></div>
+						<div class="m-events-calendar__line-item"></div>
+					</div>
+					<div class="m-events-calendar__table-header">
+						{% for weeks in week %}
+						<div class="m-events-calendar__table-header-item {{ weeks.current }}">
+							<div class="m-events-calendar__table-header-week">{{ weeks.week }}</div>
+							<div class="m-events-calendar__table-header-date">{{ weeks.date }}</div>
+						</div>
+						{% endfor%}
+					</div>
+					{% for item in body %}
+					<div class="m-events-calendar__event-item-container" style="width: 544px; transform: translate(0px);">
+						<div class="m-events-calendar__event-item-bg" style="background-image: url('{{ item.banner }}');">
+						</div>
+
+						<div class="m-events-calendar__event-item-tag" style="background-color: {{ item.color }};">
+
+						</div>
+						<div class="m-events-calendar__event-item">
+							<div class="m-events-calendar__event-item-info">
+								<span  class="m-events-calendar__event-item-act-name" title="{{ item.title }}">{{ item.title }}</span>
+							<!-- 格式一：开始结束日期为不同的日期 -->
+							<div class="m-events-calendar__event-item-text">{{ item.online }}</div>
+							<!-- 格式二：开始结束日期为同一个 --><!--v-if--><!-- 格式三：当天为结束日期 --><!--v-if--><!-- 格式四：当天为结束日期，且已经结束 --><!--v-if-->
+						</div><!-- 结束时间：天数等于1，切有结束时间 -->
+							<div class="m-events-calendar__event-item-end-time">{{ item.time }}</div>
+						</div>
+					</div>
+					{% endfor%}
+				</div>
+			</div>
+			<div class="text">All Rights Reserved.@NepPure<br>Create By @nicklly for LittlePaimon</div>
+		</div>
+	</div>
+
+
+</body>
+
+</html>

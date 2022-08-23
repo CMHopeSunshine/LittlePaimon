@@ -1,0 +1,41 @@
+name: 原神模拟抽卡
+module_name: Paimon_Gacha
+description: 原神模拟抽卡
+usage: 抽[数量]十连[卡池]
+status:
+show: true
+priority: 9
+configs:
+  群冷却: 30
+  群成员冷却: 60
+matchers:
+- pm_name: 查看定轨
+  pm_description: 查看当前定轨的武器
+  pm_usage: 查看定轨
+  pm_priority: 4
+  pm_show: true
+- pm_name: 删除定轨
+  pm_description: 删除当前定轨武器
+  pm_usage: 删除定轨
+  pm_priority: 5
+  pm_show: true
+- pm_name: 选择定轨
+  pm_description: 选择定轨武器
+  pm_usage: 选择定轨<武器名>
+  pm_priority: 6
+  pm_show: true
+- pm_name: 删除模拟抽卡记录
+  pm_description: 删除你的模拟抽卡记录
+  pm_usage: 删除模拟抽卡记录
+  pm_priority: 3
+  pm_show: true
+- pm_name: 模拟抽卡
+  pm_description: 原神模拟抽卡，卡池有常驻|角色1|角色2|武器
+  pm_usage: 抽[数量]十连[卡池]
+  pm_priority: 1
+  pm_show: true
+- pm_name: 模拟抽卡记录
+  pm_description: 查看模拟抽卡记录
+  pm_usage: 模拟抽卡记录[角色|武器]
+  pm_priority: 2
+  pm_show: true

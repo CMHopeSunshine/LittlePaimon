@@ -1,0 +1,14 @@
+name: 原神日历
+module_name: Genshin_Calendar
+description: 查看原神活动日历
+usage: "原神日历 : 查看本群订阅服务器日历\n原神日历 on 时间/off : 订阅/取消订阅指定服务器的日历推送\n"
+status:
+show: true
+priority: 7
+configs:
+matchers:
+- pm_name: 原神日历
+  pm_description:
+  pm_usage:
+  pm_priority: 99
+  pm_show: true

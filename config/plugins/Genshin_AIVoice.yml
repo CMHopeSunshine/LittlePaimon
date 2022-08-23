@@ -1,0 +1,14 @@
+name: 原神语音合成
+module_name: Genshin_AIVoice
+description: 原神语音合成
+usage: '...'
+status:
+show: true
+priority: 8
+configs:
+matchers:
+- pm_name: 原神语音合成
+  pm_description: AI语音合成，让原神角色说任何话！
+  pm_usage: <角色名>说<话>
+  pm_priority: 10
+  pm_show: true
