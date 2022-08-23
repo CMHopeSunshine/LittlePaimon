@@ -24,11 +24,24 @@
 - 3、集成插件权限管理器、自动帮助图生成
 - 4、可用Web UI添加私人Cookie
 
-## 丨使用方法
+## 丨安装方法
 
 - 1、安装poetry`pip install poetry`
-- 2、克隆本分支`git clone https:\\github.com\CMHopeSunshine\LittlePaimon -b Bot`
+- 2、克隆本分支`git clone https:\\github.com\CMHopeSunshine\LittlePaimon -b Bot --depth=1`
 - 3、进入目录并安装依赖`poetry install`
 - 4、安装配置go-cqhttp`略`
 - 5、启动`nb run`
 - 6、添加公共ck`添加公共ck`
+
+从旧版本迁移
+方法一：
+- 1、在新的文件夹，按上述前三步克隆并安装依赖，
+- 2、然后将原来旧版本Nonebot中的除了`LittlePaimon`外的文件夹全部迁移到现在的新文件夹
+- 3、如果你旧版本中使用`gocq插件`的话，要在新版本的文件夹运行`poetry run nb plugin nonebot-plugin-gocqhttp`
+- 4、你还装了其他插件的话，也是用`poetry run nb plugin nonebot-plugin-xxxx`重新装回
+
+方法二：
+- 1、将旧版本Bot中的`LittlePaimon`文件夹删除
+- 2、克隆或下载本分支的文件，将`LittlePaimon`、`matcher_patch.py`放到Bot文件夹中
+- 3、先命令行进入虚拟环境，然后进入到Bot文件夹，运行`pip install -r requirements.txt`
+- 4、在`bot.py`的第6行位置加一句`import matcher_patch`
