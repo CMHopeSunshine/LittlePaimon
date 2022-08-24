@@ -76,8 +76,9 @@ async def _(event: MessageEvent, reGroup: Dict = RegexDict()):
     num = int(num) if num and num.isdigit() else 1
     pool = pool or '角色1'
     result = await draw_gacha_img(event.user_id, pool, num, nickname)
-    freq_limiter.start(f'gacha-group{event.group_id}', pm.get_plugin_config('Paimon_Gacha', '群冷却', 30))
-    freq_limiter.start(f'gacha-group{event.group_id}-{event.user_id}', pm.get_plugin_config('Paimon_Gacha', '群员冷却', 60))
+    if isinstance(event, GroupMessageEvent):
+        freq_limiter.start(f'gacha-group{event.group_id}', pm.get_plugin_config('Paimon_Gacha', '群冷却', 30))
+        freq_limiter.start(f'gacha-group{event.group_id}-{event.user_id}', pm.get_plugin_config('Paimon_Gacha', '群员冷却', 60))
     await sim_gacha.finish(result)
 
 
