@@ -57,7 +57,7 @@
 ## 丨更新日志
 > README只展示最近更新，全部更新日志详见[这里](https://github.com/CMHopeSunshine/LittlePaimon/blob/nonebot2/UPDATE_LOG.md)
  
-### 近期进行全新版本重构，具体详见`Bot`分支，本分支暂缓更新，预计一到两周内重构完成。
+#### 本分支由于旧版UI已无法适配须弥新版本，故后续本分支功能将不再更新，全新版本在`Bot`分支中，全新UI，更多功能，强烈推荐！
 
 + 8.2
   - `点餐`功能恢复，但又引入了2个新依赖库，为不影响使用，默认关闭，有需要者请自行`pip install cssselect aiohttp`后，将`Paimon_plugins/_order.py`的`_`去掉 [#154](https://github.com/CMHopeSunshine/LittlePaimon/pull/154)
