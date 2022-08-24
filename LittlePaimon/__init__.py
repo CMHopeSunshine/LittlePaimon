@@ -2,7 +2,7 @@ from pathlib import Path
 
 from nonebot import load_plugins, get_driver, logger, load_plugin
 from typing import List
-from LittlePaimon.database import connect, disconnect
+from LittlePaimon import database
 from LittlePaimon.utils.migration import migrate_database
 from LittlePaimon.utils.tool import check_resource
 

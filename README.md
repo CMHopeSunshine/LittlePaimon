@@ -31,7 +31,7 @@
 - 2、克隆本分支`git clone https://github.com/CMHopeSunshine/LittlePaimon -b Bot --depth=1`
 - 3、进入目录并安装依赖`poetry install`
 - 4、安装配置go-cqhttp`略`
-- 5、启动`nb run`
+- 5、启动`poetry run nb run`
 - 6、添加公共ck`添加公共ck`
 
 从旧版本迁移
@@ -43,6 +43,7 @@
 
 方法二：
 - 1、将旧版本Bot中的`LittlePaimon`文件夹删除
-- 2、克隆或下载本分支的文件，将`LittlePaimon`、`matcher_patch.py`放到Bot文件夹中
-- 3、先命令行进入虚拟环境，然后进入到Bot文件夹，运行`pip install -r requirements.txt`
+- 2、克隆或下载本分支的文件，将`LittlePaimon`、`matcher_patch.py`、`requirements.txt`放到Bot目录中
+- 3、进入虚拟环境，cd到Bot目录，运行`pip install -r requirements.txt`
 - 4、在`bot.py`的第6行位置加一句`import matcher_patch`
+- 5、将`bot.py`的`load_plugins('LittlePaimon')`的s去掉

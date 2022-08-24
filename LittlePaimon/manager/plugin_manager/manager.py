@@ -113,8 +113,10 @@ class PluginManager:
         logger.success('插件管理器', '<g>初始化完成</g>')
 
     async def get_plugin_list(self, message_type: str, session_id: int) -> List[PluginInfo]:
+        load_plugins = nb_plugin.get_loaded_plugins()
+        load_plugins = [p.name for p in load_plugins]
         plugin_list = sorted(self.data.values(), key=lambda x: x.priority).copy()
-        plugin_list = [p for p in plugin_list if p.show]
+        plugin_list = [p for p in plugin_list if p.show and p.module_name in load_plugins]
         for plugin in plugin_list:
             if message_type == 'guild':
                 plugin_info = await PluginPermission.get_or_none(name=plugin.module_name, session_id=session_id,
