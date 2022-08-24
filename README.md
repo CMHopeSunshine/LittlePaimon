@@ -23,11 +23,12 @@
 - 2、代码结构更优美，更高性能！
 - 3、集成插件权限管理器、自动帮助图生成
 - 4、可用Web UI添加私人Cookie
+- 5、须弥支持！
 
 ## 丨安装方法
 
 - 1、安装poetry`pip install poetry`
-- 2、克隆本分支`git clone https:\\github.com\CMHopeSunshine\LittlePaimon -b Bot --depth=1`
+- 2、克隆本分支`git clone https://github.com/CMHopeSunshine/LittlePaimon -b Bot --depth=1`
 - 3、进入目录并安装依赖`poetry install`
 - 4、安装配置go-cqhttp`略`
 - 5、启动`nb run`
