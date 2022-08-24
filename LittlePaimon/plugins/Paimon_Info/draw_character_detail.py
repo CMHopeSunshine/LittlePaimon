@@ -133,7 +133,10 @@ async def draw_chara_detail(uid: str, info: Character):
                    align='right')
 
     # 天赋
-    base_icon = await load_image(ENKA_RES / f'图标_{info.element}.png', mode='RGBA')
+    if info.element == '草':
+        base_icon = await load_image(ENKA_RES / '图标_风.png', mode='RGBA')
+    else:
+        base_icon = await load_image(ENKA_RES / f'图标_{info.element}.png', mode='RGBA')
     base_icon_grey = await load_image(ENKA_RES / '图标_灰.png', mode='RGBA')
     if info.name in ['神里绫华', '莫娜']:
         info.talents.pop(2)
