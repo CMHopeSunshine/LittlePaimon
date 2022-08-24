@@ -106,7 +106,7 @@ async def _(event: MessageEvent, matcher: Matcher):
     perm = await PluginPermission.get_or_none(name=matcher.plugin_name, session_id=session_id, session_type=session_type)
 
     if not perm:
-        raise IgnoredException('插件使用权限未设置')
+        return
     if not perm.status:
         raise IgnoredException('插件使用权限已禁用')
     if isinstance(event, GroupMessageEvent) and event.user_id in perm.ban:
