@@ -22,7 +22,11 @@ ICON = RESOURCE_BASE_PATH / 'icon'
 
 
 async def draw_chara_detail(uid: str, info: Character):
-    img = PMImage(image=ENKA_RES / f'背景_{info.element}.png')
+    # 暂时用风
+    if info.element == '草':
+        img = PMImage(image=ENKA_RES / f'背景_风.png')
+    else:
+        img = PMImage(image=ENKA_RES / f'背景_{info.element}.png')
     try:
         dmg_img = await get_role_dmg(info)
     except Exception as e:

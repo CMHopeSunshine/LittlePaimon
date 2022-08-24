@@ -116,6 +116,15 @@ async def draw_world_card(img: PMImage, info: PlayerWorldInfo):
             await img.text(get_percent_text(info.percent), (558, 749), 1724, fm.get('hywh', 24), 'white', 'center')
         else:
             await img.text('未解锁', (558, 749), 1724, fm.get('hywh', 24), 'white', 'center')
+    elif info.name == '须弥':
+        if info.unlock:
+            await img.text(get_percent_text(info.percent), (782, 973), 1387, fm.get('hywh', 24), 'white', 'center')
+            await img.text(str(info.level) if info.level != 10 else 'Max', 826, 1447, fm.get('hywh', 24), 'white')
+            await img.text(str(info.tree_level) if info.tree_level != 50 else 'Max', 938, 1447, fm.get('hywh', 24),
+                           'white',
+                           'right')
+        else:
+            await img.text('未解锁', (782, 973), 1387, fm.get('hywh', 24), 'white', 'center')
 
 
 async def draw_player_card(player: Player, info: PlayerInfo, characters: List[Character]):
@@ -138,7 +147,7 @@ async def draw_player_card(player: Player, info: PlayerInfo, characters: List[Ch
                  info.base_info.abyss_floor, info.base_info.luxurious_chest,
                  info.base_info.precious_chest, info.base_info.exquisite_chest, info.base_info.common_chest,
                  info.base_info.magic_chest, info.base_info.anemoculus,
-                 info.base_info.geoculus, info.base_info.electroculus, '-']
+                 info.base_info.geoculus, info.base_info.electroculus, info.base_info.dendroculus]
     await asyncio.gather(*[img.text(str(base_data[i]), (143 + 174 * (i % 5), 239 + 174 * (i % 5)), 312 + 119 * (i // 5),
                                     fm.get('hywh', 48), 'black', 'center') for i in range(len(base_data))])
 

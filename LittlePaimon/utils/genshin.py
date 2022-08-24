@@ -19,7 +19,7 @@ talent_map = load_json(JSON_DATA / 'role_skill.json')
 all_character_list = ['神里绫华', '琴', '丽莎', '芭芭拉', '凯亚', '迪卢克', '雷泽', '安柏', '温迪', '香菱', '北斗', '行秋', '魈', '凝光', '可莉', '钟离',
                       '菲谢尔', '班尼特', '达达利亚', '诺艾尔', '七七', '重云', '甘雨', '阿贝多', '迪奥娜', '莫娜', '刻晴', '砂糖', '辛焱', '罗莎莉亚', '胡桃',
                       '枫原万叶', '烟绯', '宵宫', '托马', '优菈', '雷电将军', '早柚', '珊瑚宫心海', '五郎', '九条裟罗', '荒泷一斗', '八重神子', '夜兰', '埃洛伊',
-                      '申鹤', '云堇', '久岐忍', '神里绫人', '鹿野院平藏']
+                      '申鹤', '云堇', '久岐忍', '神里绫人', '鹿野院平藏', '提纳里', '柯莱', '多莉']
 
 
 class GenshinInfoManager:
@@ -124,6 +124,9 @@ class GenshinInfoManager:
         chara_data = await get_mihoyo_public_data(self.uid, self.user_id, 'role_detail')
         if not isinstance(chara_data, dict):
             return chara_data
+        elif chara_data['retcode'] != 0:
+            logger.info('原神信息', f'更新<m>{self.uid}</m>的玩家角色数据时出错，消息为<r>{chara_data["message"]}</r>')
+            return chara_data['message']
         for character in chara_data['data']['avatars']:
             await Character.update_info(self.user_id, self.uid, character, 'mihoyo')
         logger.info('原神信息', f'➤UID<m>{self.uid}</m><g>更新玩家信息成功</g>')

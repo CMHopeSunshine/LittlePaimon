@@ -1,4 +1,5 @@
 import asyncio
+import hashlib
 import time
 from collections import defaultdict
 from LittlePaimon.utils import aiorequests, logger
@@ -50,17 +51,21 @@ async def check_resource():
     resource_list = resource_list.json()
     flag = False
     for resource in resource_list:
-        file_path = RESOURCE_BASE_PATH.parent / resource
-        if not file_path.exists():
-            flag = True
-            try:
-                await aiorequests.download(url=f'http://img.genshin.cherishmoon.fun/resources/{resource}', save_path=file_path)
-                await asyncio.sleep(0.5)
-            except Exception as e:
-                logger.warning('资源检查', f'下载<m>{resource.split("/")[-1]}</m>时<r>出错: {e}</r>')
+        file_path = RESOURCE_BASE_PATH.parent / resource['path']
+        if file_path.exists():
+            if not resource['lock'] or hashlib.md5(file_path.read_bytes()).hexdigest() == resource['hash']:
+                continue
+            else:
+                file_path.unlink()
+        flag = True
+        try:
+            await aiorequests.download(url=f'http://img.genshin.cherishmoon.fun/resources/{resource}', save_path=file_path)
+            await asyncio.sleep(0.5)
+        except Exception as e:
+            logger.warning('资源检查', f'下载<m>{resource.split("/")[-1]}</m>时<r>出错: {e}</r>')
     if flag:
         logger.info('资源检查', '资源<g>下载完成</g>')
     else:
-        logger.info('资源检查', '资源完好，无需下载完成')
+        logger.info('资源检查', '资源完好，无需下载')
 
 

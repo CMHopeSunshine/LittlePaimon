@@ -38,6 +38,8 @@ class PlayerBaseInfo(BaseModel):
     """岩神瞳收集数"""
     electroculus: Optional[int]
     """雷神瞳收集数"""
+    dendroculus: Optional[int]
+    """草神瞳收集数"""
     character_num: Optional[int]
     """角色收集数数"""
     luxurious_chest: Optional[int]
@@ -85,10 +87,13 @@ class PlayerWorldInfos(BaseModel):
     """层岩巨渊地下"""
     Enkanomiya: Optional[PlayerWorldInfo]
     """渊下宫"""
+    Xumi: Optional[PlayerWorldInfo]
+    """须弥"""
 
     def list(self):
+        print(self.Xumi)
         return [self.MengDe, self.LiYue, self.DaoQi, self.SnowMountain, self.ChasmsMaw, self.ChasmsMawBelow,
-                self.Enkanomiya]
+                self.Enkanomiya, self.Xumi]
 
 
 class PlayerHomeInfo(BaseModel):
@@ -175,6 +180,7 @@ class PlayerInfo(Model):
                 anemoculus=data['stats']['anemoculus_number'],
                 geoculus=data['stats']['geoculus_number'],
                 electroculus=data['stats']['electroculus_number'],
+                dendroculus=data['stats']['dendroculus_number'],
                 way_point=data['stats']['way_point_number'],
                 domain_num=data['stats']['domain_number'],
                 precious_chest=data['stats']['precious_chest_number'],
@@ -243,6 +249,14 @@ class PlayerInfo(Model):
                                                                         percent=cyx_data['exploration_percentage'])
                 else:
                     info.world_explore.ChasmsMawBelow = PlayerWorldInfo(name='层岩巨渊·地下矿区', unlock=False)
+                if xm_data := list(filter(lambda h: h['name'] == '须弥', data['world_explorations'])):
+                    xm_data = xm_data[0]
+                    info.world_explore.Xumi = PlayerWorldInfo(name='须弥', unlock=True,
+                                                              level=xm_data['level'],
+                                                              percent=xm_data['exploration_percentage'],
+                                                              tree_level=xm_data['offerings'][0]['level'])
+                else:
+                    info.world_explore.ChasmsMawBelow = PlayerWorldInfo(name='须弥', unlock=False)
 
         info.update_time = datetime.datetime.now()
         await info.save()

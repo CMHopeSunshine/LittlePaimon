@@ -433,7 +433,7 @@ class Character(Model):
             if character.name in ['荧', '空']:
                 # TODO 草主
                 character.fetter = 10
-                character.element = '岩' if data['element'] == 'Geo' else '风' if data['element'] == 'Anemo' else '雷'
+                character.element = '岩' if data['element'] == 'Geo' else '风' if data['element'] == 'Anemo' else '草' if data['element'] == 'Dendro' else '雷'
                 role_name = character.element + '主'
                 character.region = '其它'
             else:
