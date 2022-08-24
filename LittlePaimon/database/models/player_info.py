@@ -91,7 +91,6 @@ class PlayerWorldInfos(BaseModel):
     """须弥"""
 
     def list(self):
-        print(self.Xumi)
         return [self.MengDe, self.LiYue, self.DaoQi, self.SnowMountain, self.ChasmsMaw, self.ChasmsMawBelow,
                 self.Enkanomiya, self.Xumi]
 
