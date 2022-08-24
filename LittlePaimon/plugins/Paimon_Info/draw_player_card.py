@@ -1,5 +1,5 @@
 import asyncio
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 
 from LittlePaimon.config import RESOURCE_BASE_PATH
 from LittlePaimon.database.models import PlayerInfo, Character, PlayerWorldInfo, Weapon, Player
@@ -40,7 +40,9 @@ async def draw_weapon_icon(weapon: Weapon, size: Tuple[int, int] = (65, 65)) -> 
     return weapon_bg
 
 
-async def draw_character_card(info: Character) -> PMImage:
+async def draw_character_card(info: Character) -> Optional[PMImage]:
+    if info is None:
+        return None
     # 头像
     avatar = PMImage(await load_image(THUMB / f'{info.name}.png'))
     await avatar.to_circle('circle')

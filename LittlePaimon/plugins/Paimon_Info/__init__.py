@@ -221,11 +221,14 @@ async def _(event: MessageEvent, uid=CommandUID(), msg: str = Arg('msg')):
         await update_info.finish(f'UID{uid}正在更新信息中，请勿重复发送指令')
     else:
         running_udi.append(f'{event.user_id}-{uid}')
-        include_talent = any(i in msg for i in ['全部', '技能', '天赋', 'talent', 'all'])
-        await update_info.send('开始更新原神信息，请稍后...')
-        logger.info('原神信息', '➤开始更新', {'用户': event.user_id, 'UID': uid})
-        freq_limiter.start(f'udi{uid}', 180)
-        gim = GenshinInfoManager(str(event.user_id), uid)
-        result = await gim.update_all(include_talent)
+        try:
+            include_talent = any(i in msg for i in ['全部', '技能', '天赋', 'talent', 'all'])
+            await update_info.send('开始更新原神信息，请稍后...')
+            logger.info('原神信息', '➤开始更新', {'用户': event.user_id, 'UID': uid})
+            freq_limiter.start(f'udi{uid}', 180)
+            gim = GenshinInfoManager(str(event.user_id), uid)
+            result = await gim.update_all(include_talent)
+        except Exception as e:
+            result = f'更新失败，错误信息：{e}'
         running_udi.remove(f'{event.user_id}-{uid}')
         await update_info.finish(f'UID{uid}:\n {result}', at_sender=True)

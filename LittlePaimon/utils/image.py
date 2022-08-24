@@ -158,6 +158,8 @@ class PMImage:
         :param pos: 位置
         :param alpha: 是否透明
         """
+        if image is None:
+            return
         if isinstance(image, PMImage):
             image = image.image
         if alpha:
