@@ -9,7 +9,7 @@ from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
 
 from LittlePaimon.utils.alias import get_match_alias
-from .abyss_rate_draw import draw_rate_rank, draw_teams_rate
+# from .abyss_rate_draw import draw_rate_rank, draw_teams_rate
 
 __paimon_help__ = {
     'type':  '原神Wiki',
@@ -21,10 +21,8 @@ help_msg = """"1.[xx角色攻略]查看西风驿站出品的角色一图流攻�
 "3.[xx参考面板]查看blue菌hehe出品的参考面板攻略\n"
 "4.[xx收益曲线]查看blue菌hehe出品的收益曲线攻略\n"
 "5.[今日/明日/周x材料]查看每日角色天赋材料和武器突破材料表\n"
-"6.[深渊登场率]查看2.6深渊角色登场率\n"
-"7.[深渊上半/下半阵容出场率]查看2.6深渊阵容出场率\n"
-"8.[xx武器攻略]查看武器攻略\n"
-"9.[xx原魔图鉴]查看原魔图鉴\n"
+"6.[xx武器攻略]查看武器攻略\n"
+"7.[xx原魔图鉴]查看原魔图鉴\n"
 """
 
 __plugin_meta__ = PluginMetadata(
@@ -44,18 +42,18 @@ daily_material = on_regex(r'(?P<day>现在|(今|明|后)(天|日)|周(一|二|�
     'pm_usage':       '<今天|周几>材料',
     'pm_priority':    8
 })
-abyss_rate = on_command('syrate', aliases={'深渊登场率', '深境螺旋登场率', '深渊登场率排行', '深渊排行'}, priority=11, block=True, state={
-    'pm_name':        '深渊登场率排行',
-    'pm_description': '查看本期深渊的角色登场率排行',
-    'pm_usage':       '深渊登场率',
-    'pm_priority':    9,
-})
-abyss_team = on_regex(r'^(深渊|深境螺旋)(?P<floor>上半|下半)阵容(排行|出场率)?$', priority=11, block=True, state={
-    'pm_name':        '深渊阵容出场率排行',
-    'pm_description': '查看本期深渊的阵容出场率排行',
-    'pm_usage':       '深渊<上半|下半>阵容排行',
-    'pm_priority':    10,
-})
+# abyss_rate = on_command('syrate', aliases={'深渊登场率', '深境螺旋登场率', '深渊登场率排行', '深渊排行'}, priority=11, block=True, state={
+#     'pm_name':        '深渊登场率排行',
+#     'pm_description': '查看本期深渊的角色登场率排行',
+#     'pm_usage':       '深渊登场率',
+#     'pm_priority':    9,
+# })
+# abyss_team = on_regex(r'^(深渊|深境螺旋)(?P<floor>上半|下半)阵容(排行|出场率)?$', priority=11, block=True, state={
+#     'pm_name':        '深渊阵容出场率排行',
+#     'pm_description': '查看本期深渊的阵容出场率排行',
+#     'pm_usage':       '深渊<上半|下半>阵容排行',
+#     'pm_priority':    10,
+# })
 
 
 @daily_material.handle()
@@ -87,16 +85,16 @@ async def _(event: MessageEvent, regex_dict: dict = RegexDict()):
             MessageSegment.image(file='https://static.cherishmoon.fun/LittlePaimon/DailyMaterials/周三周六.jpg'))
 
 
-@abyss_rate.handle()
-async def abyss_rate_handler(event: MessageEvent):
-    abyss_img = await draw_rate_rank()
-    await abyss_rate.finish(abyss_img)
+# @abyss_rate.handle()
+# async def abyss_rate_handler(event: MessageEvent):
+#     abyss_img = await draw_rate_rank()
+#     await abyss_rate.finish(abyss_img)
 
 
-@abyss_team.handle()
-async def abyss_team_handler(event: MessageEvent, reGroup=RegexDict()):
-    abyss_img = await draw_teams_rate(reGroup['floor'])
-    await abyss_team.finish(abyss_img)
+# @abyss_team.handle()
+# async def abyss_team_handler(event: MessageEvent, reGroup=RegexDict()):
+#     abyss_img = await draw_teams_rate(reGroup['floor'])
+#     await abyss_team.finish(abyss_img)
 
 
 def create_wiki_matcher(pattern: str, help_fun: str, help_name: str):
