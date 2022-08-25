@@ -140,7 +140,8 @@ async def draw_chara_detail(uid: str, info: Character):
     # 天赋
     base_icon = await load_image(ENKA_RES / f'图标_{info.element}.png', mode='RGBA')
     base_icon_grey = await load_image(ENKA_RES / '图标_灰.png', mode='RGBA')
-
+    if info.name in ['神里绫华', '莫娜']:
+        info.talents.pop(2)
     for i in range(3):
         await img.paste(base_icon.resize((132, 142)), (551 + i * 176, 633))
         await img.text(str(info.talents[i].level),

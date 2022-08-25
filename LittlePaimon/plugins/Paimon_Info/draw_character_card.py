@@ -108,6 +108,8 @@ async def draw_chara_card(info: Character):
                         'center')
         await card.crop((0, 0, card.width, 435))
     else:
+        if info.name in ['神里绫华', '莫娜']:
+            info.talents.pop(2)
         await card.draw_rounded_rectangle((69, 380, 145, 452), 8, talent_color[info.talents[0].level - 1][1])
         await card.draw_rounded_rectangle((71, 382, 143, 450), 8, talent_color[info.talents[0].level - 1][0])
         await card.text(str(info.talents[0].level), (71, 143), 392, fm.get('bahnschrift_bold', 48),

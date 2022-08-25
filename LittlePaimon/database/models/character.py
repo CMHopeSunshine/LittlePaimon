@@ -328,13 +328,13 @@ class Character(Model):
                     data['skillLevelMap'][
                         list(data['skillLevelMap'].keys())[score_talent_map['Talent'][role_name][1]]] += 3
 
-            if character.name in ['神里绫华', '莫娜']:
-                del data['skillLevelMap'][list(data['skillLevelMap'].keys())[2]]
-
             character.talents = Talents(talent_list=[Talent(name=role_skill_map['Name'][talent],
                                                             level=data['skillLevelMap'][talent],
                                                             icon=role_skill_map['Icon'][talent]) for talent in
                                                      data['skillLevelMap']])
+            if character.name == '神里绫华':
+                character.talents[0], character.talents[-1] = character.talents[-1], character.talents[0]
+                character.talents[2], character.talents[-1] = character.talents[-1], character.talents[2]
             if character.name == '安柏':
                 character.talents[0], character.talents[-1] = character.talents[-1], character.talents[0]
             if character.name in ['空', '荧']:
@@ -447,9 +447,7 @@ class Character(Model):
                     data['skill_list'][score_talent_map['Talent'][role_name][0]]['level_current'] += 3
                 if len(data['talentIdList']) >= 5:
                     data['skill_list'][score_talent_map['Talent'][role_name][1]]['level_current'] += 3
-                if character.name in ['莫娜', '神里绫华']:
-                    del data['skill_list'][2]
-                talents_list = data['skill_list'][:3]
+                talents_list = data['skill_list']
                 if character.name == '达达利亚':
                     talents_list[0]['level_current'] += 1
                 character.talents = Talents(talent_list=[Talent(name=t['name'],
