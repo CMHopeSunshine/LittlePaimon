@@ -1,5 +1,4 @@
-全局入群欢迎: true
-新群默认关闭所有插件: false
-
 启用CookieWeb: false
+# 是否启用绑定Cookie的网页UI
 CookieWeb地址: http://127.0.0.1:13579/LittlePaimon/cookie
+# CookieWeb的地址，如要公网访问，请修改公网ip，如需使用nginx等反代，请参考https://pywebio.readthedocs.io/zh_CN/latest/misc.html?highlight=nginx#nginx-websocket-config-example进行配置

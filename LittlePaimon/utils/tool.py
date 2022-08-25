@@ -64,8 +64,8 @@ async def check_resource():
         except Exception as e:
             logger.warning('资源检查', f'下载<m>{resource.split("/")[-1]}</m>时<r>出错: {e}</r>')
     if flag:
-        logger.info('资源检查', '资源<g>下载完成</g>')
+        logger.info('资源检查', '<g>资源下载完成</g>')
     else:
-        logger.info('资源检查', '资源完好，无需下载')
+        logger.info('资源检查', '<g>资源完好，无需下载</g>')
 
 

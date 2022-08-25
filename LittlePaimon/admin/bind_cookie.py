@@ -53,10 +53,10 @@ async def bind_cookie(data: dict):
             await PrivateCookie.update_or_create(user_id=str(data['qq']), uid=game_uid, mys_id=mys_id,
                                                  defaults={'cookie': data['cookie'],
                                                            'stoken': f'stuid={mys_id};stoken={stoken};'})
-            return f'QQ`{data["qq"]}`成功绑定原神玩家`{game_name}`-UID`{game_uid}`\n但cookie中没有`login_ticket`或`login_ticket`无效，`米游币相关功能`无法使用哦'
+            return f'QQ`{data["qq"]}`成功绑定原神玩家`{game_name}`-UID`{game_uid}`'
         else:
             await PrivateCookie.update_or_create(user_id=str(data['qq']), uid=game_uid, mys_id=mys_id,
                                                  defaults={'cookie': data['cookie']})
-            return f'QQ`{data["qq"]}`成功绑定原神玩家`{game_name}`-UID`{game_uid}`'
+            return f'QQ`{data["qq"]}`成功绑定原神玩家`{game_name}`-UID`{game_uid}`\n但cookie中没有`login_ticket`或`login_ticket`无效，`米游币相关功能`无法使用哦'
     else:
         return '这个cookie**无效**，请确认是否正确\n请重新获取cookie后**刷新**本页面再次绑定'

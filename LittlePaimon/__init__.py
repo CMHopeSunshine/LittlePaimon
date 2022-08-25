@@ -33,6 +33,7 @@ logo = """<g>
 async def startup():
     logger.opt(colors=True).info(logo)
     await database.connect()
+    from LittlePaimon import admin
     await migrate_database()
     await check_resource()
 

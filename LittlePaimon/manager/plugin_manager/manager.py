@@ -40,8 +40,8 @@ class PluginManager:
         """
         if self.config_path.exists():
             self.config = load_yaml(self.config_path)
-        # else:
-        #     logger.warning('插件管理器', '无法读取LittlePaimon配置文件，请检查目录')
+        else:
+            logger.warning('插件管理器', '<r>无法读取配置文件</r>，请检查是否已将<m>config/paimon_config_default.yml</m>复制为<m>config/paimon_config.yml</m>')
         for file in self.plugin_config_path.iterdir():
             if file.is_file() and file.name.endswith('.yml'):
                 data = load_yaml(file)
