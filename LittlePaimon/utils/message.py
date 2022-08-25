@@ -180,7 +180,7 @@ def CommandPlayer(limit: int = 3, only_cn: bool = True) -> List[Player]:
             elif uid := await get_uid(event=event, user_id=user):
                 uids = [uid]
             else:
-                await matcher.finish('请把uid给我哦', at_sender=True)
+                await matcher.finish('第一次查询请把uid给我哦', at_sender=True)
             extra_info = replace_all(extra_info, uids)
             for uid in uids:
                 query_list.append(Player(user_id=user, uid=uid))
@@ -212,7 +212,7 @@ def CommandUID(only_cn: bool = True) -> str:
         elif uid := await get_uid(event=event):
             uid = uid
         else:
-            await matcher.finish('请提供uid')
+            await matcher.finish('第一次查询请把UID给我哦')
         state['msg'] = event.message.extract_plain_text().replace(uid, '')
         return uid
 
@@ -228,7 +228,7 @@ def CommandCharacter(limit: int = 3, replace_uid: bool = True) -> List[str]:
 
     async def _character(matcher: Matcher, state: T_State, msg: str = Arg('msg')):
         if not msg:
-            await matcher.finish('请输入要查询的角色名称')
+            await matcher.finish('请给出要查询的角色名称')
         character_list = []
         characters = msg.split(' ')
         for character_name in characters:
@@ -237,7 +237,7 @@ def CommandCharacter(limit: int = 3, replace_uid: bool = True) -> List[str]:
                 character_list.append(list(character_match.keys())[0])
                 msg.replace(character_name, '')
         if not character_list:
-            await matcher.finish(f'没有名为{msg}的角色')
+            await matcher.finish(f'没有名为{msg}的角色！')
         state['msg'] = msg
         if len(character_list) > limit:
             character_list = character_list[:limit]
@@ -246,7 +246,7 @@ def CommandCharacter(limit: int = 3, replace_uid: bool = True) -> List[str]:
     async def _character2(matcher: Matcher, state: T_State, msg: Message = CommandArg()):
         msg = msg.extract_plain_text().strip()
         if not msg:
-            await matcher.finish('请输入角色名称')
+            await matcher.finish('请给出要查询的角色名称')
         character_list = []
         characters = msg.split(' ')
         for character_name in characters:
@@ -255,7 +255,7 @@ def CommandCharacter(limit: int = 3, replace_uid: bool = True) -> List[str]:
                 character_list.append(list(character_match.keys())[0])
                 msg.replace(character_name, '')
         if not character_list:
-            await matcher.finish(f'没有名为{msg}的角色')
+            await matcher.finish(f'没有名为{msg}的角色！')
         state['msg'] = msg
         if len(character_list) > limit:
             character_list = character_list[:limit]

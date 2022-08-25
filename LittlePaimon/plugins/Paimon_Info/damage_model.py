@@ -863,32 +863,32 @@ async def draw_dmg_pic(dmg: Dict[str, Union[tuple, list]]) -> PMImage:
     :return: 伤害图片
     """
     height = 60 * len(dmg) - 20
-    img = PMImage(size=(948, height + 80), color=(0, 0, 0, 0), mode='RGBA')
-    await img.draw_rounded_rectangle((0, 0, img.width, img.height), 10, (0, 0, 0, 100))
-    await img.draw_line((250, 0), (250, 948), (255, 255, 255, 75), 2)
-    await img.draw_line((599, 0), (599, 60), (255, 255, 255, 75), 2)
-    await img.draw_line((0, 60), (948, 60), (255, 255, 255, 75), 2)
+    img = PMImage(size=(1002, height + 80), color=(0, 0, 0, 0), mode='RGBA')
+    await img.draw_rounded_rectangle((0, 0, img.width, img.height), 10, (14, 41, 68, 115))
+    await img.draw_line((250, 0), (250, 1002), (255, 255, 255, 75), 2)
+    await img.draw_line((626, 0), (626, 60), (255, 255, 255, 75), 2)
+    await img.draw_line((0, 60), (1002, 60), (255, 255, 255, 75), 2)
     await img.text('伤害计算', (0, 250), (0, 60), font_manager.get('hywh.ttf', 30), 'white', 'center')
-    await img.text('期望伤害', (250, 599), (0, 60), font_manager.get('hywh.ttf', 30), 'white', 'center')
-    await img.text('暴击伤害', (599, 948), (0, 60), font_manager.get('hywh.ttf', 30), 'white', 'center')
+    await img.text('期望伤害', (250, 626), (0, 60), font_manager.get('hywh.ttf', 30), 'white', 'center')
+    await img.text('暴击伤害', (626, 1002), (0, 60), font_manager.get('hywh.ttf', 30), 'white', 'center')
     i = 1
     for describe, dmg_list in dmg.items():
-        await img.draw_line((0, 60 * i), (948, 60 * i), (255, 255, 255, 75), 2)
+        await img.draw_line((0, 60 * i), (1002, 60 * i), (255, 255, 255, 75), 2)
         await img.text(describe, (0, 250), (60 * i, 60 * (i + 1)), font_manager.get('hywh.ttf', 30), 'white', 'center')
         if len(dmg_list) == 1:
             if describe == '额外说明':
-                await img.text(dmg_list[0], (250, 948), (60 * i, 60 * (i + 1)), font_manager.get('hywh.ttf', 30),
+                await img.text(dmg_list[0], (250, 1002), (60 * i, 60 * (i + 1)), font_manager.get('hywh.ttf', 30),
                                'white',
                                'center')
             else:
-                await img.text(dmg_list[0], (250, 948), (60 * i, 60 * (i + 1)), font_manager.get('number.ttf', 30),
+                await img.text(dmg_list[0], (250, 1002), (60 * i, 60 * (i + 1)), font_manager.get('number.ttf', 30),
                                'white',
                                'center')
         else:
-            await img.draw_line((599, 60 * i), (599, 60 * (i + 1)), (255, 255, 255, 75), 2)
-            await img.text(dmg_list[0], (250, 599), (60 * i, 60 * (i + 1)), font_manager.get('number.ttf', 30), 'white',
+            await img.draw_line((626, 60 * i), (626, 60 * (i + 1)), (255, 255, 255, 75), 2)
+            await img.text(dmg_list[0], (250, 626), (60 * i, 60 * (i + 1)), font_manager.get('number.ttf', 30), 'white',
                            'center')
-            await img.text(dmg_list[1], (599, 948), (60 * i, 60 * (i + 1)), font_manager.get('number.ttf', 30), 'white',
+            await img.text(dmg_list[1], (626, 1002), (60 * i, 60 * (i + 1)), font_manager.get('number.ttf', 30), 'white',
                            'center')
         i += 1
 

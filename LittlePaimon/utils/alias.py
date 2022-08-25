@@ -1,10 +1,11 @@
 import difflib
-from typing import Union, Literal, List
+from typing import Union, Literal, List, Optional
 
 from .files import load_json
 from LittlePaimon.config import JSON_DATA
 
 alias_file = load_json(JSON_DATA / 'alias.json')
+info_file = load_json(JSON_DATA / 'genshin_info.json')
 
 
 def get_short_name(name: str) -> str:
@@ -85,3 +86,31 @@ def get_match_alias(msg: str, type: Literal['角色', '武器', '原魔', '圣�
     elif type == '原魔':
         match_list = difflib.get_close_matches(msg, alias_list, cutoff=0.4, n=5)
         return match_list[0] if len(match_list) == 1 else match_list
+
+
+def get_icon(name: Optional[str] = None, chara_id: Optional[int] = None,
+             icon_type: Literal['avatar', 'card', 'splash', 'slice', 'side'] = 'avatar') -> Optional[str]:
+    """
+        根据角色名字或id获取角色的图标
+        :param name: 角色名
+        :param chara_id：角色id
+        :param icon_type: 图标类型，有roles、weapons、monsters
+        :return: 图标字符串
+    """
+    if name and not chara_id:
+        chara_id = get_id_by_name(name)
+    info = info_file.get(str(chara_id))
+    if not info:
+        return None
+    side_icon = info['SideIconName']
+    if icon_type == 'side':
+        return side_icon
+    elif icon_type == 'avatar':
+        return side_icon.replace('_Side', '')
+    elif icon_type == 'card':
+        return side_icon.replace('_Side', '') + '_Card'
+    elif icon_type == 'splash':
+        return side_icon.replace('Icon_Side', 'Img').replace('UI_', 'UI_Gacha_')
+    elif icon_type == 'slice':
+        return side_icon.replace('_Side', '').replace('UI_', 'UI_Gacha_')
+

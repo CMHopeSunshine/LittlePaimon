@@ -19,7 +19,7 @@ weapon_map = load_json(JSON_DATA / 'weapon.json')
 prop_list_map = load_json(JSON_DATA / 'prop.json')
 artifact_map = load_json(JSON_DATA / 'artifact.json')
 score_talent_map = load_json(JSON_DATA / 'score.json')
-enka_icon_map = load_json(JSON_DATA / 'enka_icon.json')
+enka_icon_map = load_json(JSON_DATA / 'genshin_info.json')
 reaction_coefficient = {
     '蒸发': 0,
     '融化': 0,
@@ -164,6 +164,9 @@ class Artifacts(BaseModel):
 
     def append(self, artifact: Artifact):
         self.artifact_list.append(artifact)
+
+    def index(self, artifact: Artifact) -> int:
+        return self.artifact_list.index(artifact)
 
 
 class Constellation(BaseModel):
@@ -325,14 +328,13 @@ class Character(Model):
                     data['skillLevelMap'][
                         list(data['skillLevelMap'].keys())[score_talent_map['Talent'][role_name][1]]] += 3
 
+            if character.name in ['神里绫华', '莫娜']:
+                del data['skillLevelMap'][list(data['skillLevelMap'].keys())[2]]
+
             character.talents = Talents(talent_list=[Talent(name=role_skill_map['Name'][talent],
                                                             level=data['skillLevelMap'][talent],
                                                             icon=role_skill_map['Icon'][talent]) for talent in
                                                      data['skillLevelMap']])
-
-            if character.name == '神里绫华':
-                character.talents[0], character.talents[-1] = character.talents[-1], character.talents[0]
-                character.talents[2], character.talents[-1] = character.talents[-1], character.talents[2]
             if character.name == '安柏':
                 character.talents[0], character.talents[-1] = character.talents[-1], character.talents[0]
             if character.name in ['空', '荧']:
@@ -431,7 +433,6 @@ class Character(Model):
                 range(data['actived_constellation_num'])
             ])
             if character.name in ['荧', '空']:
-                # TODO 草主
                 character.fetter = 10
                 character.element = '岩' if data['element'] == 'Geo' else '风' if data['element'] == 'Anemo' else '草' if data['element'] == 'Dendro' else '雷'
                 role_name = character.element + '主'
@@ -446,10 +447,10 @@ class Character(Model):
                     data['skill_list'][score_talent_map['Talent'][role_name][0]]['level_current'] += 3
                 if len(data['talentIdList']) >= 5:
                     data['skill_list'][score_talent_map['Talent'][role_name][1]]['level_current'] += 3
-                talents_list = data['skill_list'][:3]
                 if character.name in ['莫娜', '神里绫华']:
-                    talents_list[-1] = data['skill_list'][3]
-                elif character.name == '达达利亚':
+                    del data['skill_list'][2]
+                talents_list = data['skill_list'][:3]
+                if character.name == '达达利亚':
                     talents_list[0]['level_current'] += 1
                 character.talents = Talents(talent_list=[Talent(name=t['name'],
                                                                 level=t['level_current'],

@@ -330,7 +330,7 @@ async def get_mihoyo_private_data(
     if await check_retcode(data, cookie_info, 'private', user_id, uid):
         return data
     else:
-        return 'cookie疑似失效'
+        return f'你的UID{uid}的cookie疑似失效了'
 
 
 async def get_sign_reward_list() -> dict:
