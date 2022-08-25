@@ -41,7 +41,7 @@ ysbc = on_command('ysbc', aliases={'查询ck', '查询绑定', '绑定信息', '
 ysbca = on_command('校验所有ck', aliases={'校验所有cookie', '校验所有绑定'}, priority=1, block=True, permission=SUPERUSER, state={
     'pm_name':        '校验所有ck',
     'pm_description': '校验所有cookie情况，仅超级管理员可用',
-    'pm_usage':       '检验所有ck',
+    'pm_usage':       '校验所有ck',
     'pm_priority':    3
 })
 pck = on_command('添加公共cookie', aliases={'添加pck', '添加公共ck', 'add_pck'}, permission=SUPERUSER, block=True, priority=1,

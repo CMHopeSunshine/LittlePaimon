@@ -12,6 +12,8 @@ TALENT = RESOURCE_BASE_PATH / 'talent'
 TALENT.mkdir(parents=True, exist_ok=True)
 WEAPON = RESOURCE_BASE_PATH / 'weapon'
 WEAPON.mkdir(parents=True, exist_ok=True)
+SPLASH = RESOURCE_BASE_PATH / 'splash'
+SPLASH.mkdir(parents=True, exist_ok=True)
 
 # 用户数据路径
 USER_DATA_PATH = Path() / 'data' / 'LittlePaimon' / 'user_data'
