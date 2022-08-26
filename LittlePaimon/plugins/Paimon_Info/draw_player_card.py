@@ -69,7 +69,9 @@ async def draw_character_card(info: Character) -> Optional[PMImage]:
 
 
 async def draw_world_card(img: PMImage, info: PlayerWorldInfo):
-    if info.name == '蒙德':
+    if info is None:
+        pass
+    elif info.name == '蒙德':
         if info.unlock:
             await img.text(get_percent_text(info.percent), (110, 301), 1387, fm.get('hywh', 24), 'white', 'center')
             await img.text(str(info.level) if info.level != 8 else 'Max', 150, 1447, fm.get('hywh', 24), 'white')
