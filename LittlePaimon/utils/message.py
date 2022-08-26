@@ -234,7 +234,7 @@ def CommandCharacter(limit: int = 3, replace_uid: bool = True) -> List[str]:
     async def _character(matcher: Matcher, state: T_State, user_id: str = Arg('main_user')):
         msg = state['_prefix']['command_arg'].extract_plain_text().strip() if replace_uid else state['msg']
         if not msg:
-            return random.choice(CHARACTERS)
+            return [random.choice(CHARACTERS)]
         character_list = []
         characters = msg.split(' ')
         for character_name in characters:
