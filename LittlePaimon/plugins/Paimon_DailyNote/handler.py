@@ -18,14 +18,14 @@ from .draw import draw_daily_note_card
 def SubList() -> dict:
     async def _sub(msg: str = Arg('msg')):
         subs = {}
-        if s := re.findall(r'(树脂|体力|尘歌壶|银币)(\d*)', msg):
+        if s := re.findall(r'(树脂|体力|尘歌壶|银币|钱币|壶币)(\d*)', msg):
             for name, num in s:
-                if name in ['尘歌壶', '银币', '壶币']:
+                if name in ['尘歌壶', '银币', '壶币', '钱币']:
                     subs['coin_num'] = int(num or 2400)
                 if name in ['树脂', '体力']:
                     subs['resin_num'] = int(num or 160)
         elif num := re.search(r'(\d+)', msg):
-            subs['resin_num'] = int(num.group(1))
+            subs['resin_num'] = int(num[1])
         else:
             subs['resin_num'] = 160
         return subs
@@ -75,7 +75,11 @@ async def check_note():
     if pm.config.ssbq_begin <= datetime.datetime.now().hour <= pm.config.ssbq_end:
         return
     t = time.time()
-    subs = await DailyNoteSub.all()
+    try:
+        subs = await DailyNoteSub.all()
+    except Exception as e:
+        logger.info('原神实时便签', '获取检查列表时<r>出错</r>，结束任务')
+        return
     if not subs:
         return
     logger.info('原神实时便签', f'开始执行定时检查，共<m>{len(subs)}</m>个任务，预计花费<m>{round(3 * len(subs) / 60, 2)}</m>分钟')
