@@ -1,3 +1,4 @@
+import random
 import re
 import time
 from io import BytesIO
@@ -12,11 +13,12 @@ from nonebot.matcher import Matcher
 from nonebot.params import CommandArg, Depends
 from nonebot.typing import T_State
 
-from LittlePaimon.database.models import LastQuery, PrivateCookie, Player
+from LittlePaimon.database.models import LastQuery, PrivateCookie, Player, PlayerAlias
 from LittlePaimon.utils import aiorequests, load_image
 from LittlePaimon.utils.alias import get_match_alias
 from LittlePaimon.utils.image import PMImage
 from LittlePaimon.utils.filter import filter_msg
+from LittlePaimon.utils.typing import CHARACTERS, MALE_CHARACTERS, FEMALE_CHARACTERS, GIRL_CHARACTERS, BOY_CHARACTERS, LOLI_CHARACTERS
 
 
 class MessageBuild:
@@ -151,8 +153,8 @@ class MessageBuild:
 def CommandPlayer(limit: int = 3, only_cn: bool = True) -> List[Player]:
     """
     获取查询操作中的user_id、uid和图片，并将过滤uid后的msg存放到T_State中
-    :param: 限制个数
-    :param: 是否只接受国服uid
+    :param limit: 限制个数
+    :param only_cn: 是否只接受国服uid
     :return: 查询对象列表
     """
 
@@ -172,6 +174,8 @@ def CommandPlayer(limit: int = 3, only_cn: bool = True) -> List[Player]:
                     info += f'{u}尚未提供uid\n'
             if info:
                 await matcher.finish(info, at_sender=True)
+            else:
+                state['main_user'] = users[0]
         else:
             user = users[0]
             uids: List[str] = []
@@ -184,6 +188,7 @@ def CommandPlayer(limit: int = 3, only_cn: bool = True) -> List[Player]:
             extra_info = replace_all(extra_info, uids)
             for uid in uids:
                 query_list.append(Player(user_id=user, uid=uid))
+            state['main_user'] = str(event.user_id)
 
         if len(query_list) > limit:
             query_list = query_list[:limit]
@@ -198,8 +203,7 @@ def CommandPlayer(limit: int = 3, only_cn: bool = True) -> List[Player]:
 def CommandUID(only_cn: bool = True) -> str:
     """
     从消息中提取uid
-    :param: 限制个数
-    :param: 是否只接受国服uid
+    :param only_cn: 是否只接受国服uid
     :return: uid
     """
 
@@ -222,18 +226,36 @@ def CommandUID(only_cn: bool = True) -> str:
 def CommandCharacter(limit: int = 3, replace_uid: bool = True) -> List[str]:
     """
     从命令中提取出原神的角色，需配合CommandUID使用
-    :param: 限制个数
+    :param limit: 限制个数
+    :param replace_uid: 是否先移除msg中的uid
     :return: 角色名列表
     """
 
-    async def _character(matcher: Matcher, state: T_State, msg: str = Arg('msg')):
+    async def _character(matcher: Matcher, state: T_State, user_id: str = Arg('main_user')):
+        msg = state['_prefix']['command_arg'].extract_plain_text().strip() if replace_uid else state['msg']
         if not msg:
-            await matcher.finish('请给出要查询的角色名称')
+            return random.choice(CHARACTERS)
         character_list = []
         characters = msg.split(' ')
         for character_name in characters:
-            character_match = get_match_alias(character_name, '角色', True)
-            if character_match:
+            if character_match := await PlayerAlias.get_or_none(user_id=user_id, alias=character_name):
+                character_list.append(character_match.character)
+                msg.replace(character_name, '')
+            elif character_name in ['老婆', '老公', '女儿', '儿子', '爸爸', '妈妈']:
+                if character_name == '老公':
+                    character_list.append(random.choice(MALE_CHARACTERS + BOY_CHARACTERS))
+                elif character_name == '老婆':
+                    character_list.append(random.choice(FEMALE_CHARACTERS + GIRL_CHARACTERS))
+                elif character_name == '女儿':
+                    character_list.append(random.choice(GIRL_CHARACTERS + LOLI_CHARACTERS))
+                elif character_name == '儿子':
+                    character_list.append(random.choice(BOY_CHARACTERS))
+                elif character_name == '爸爸':
+                    character_list.append(random.choice(MALE_CHARACTERS))
+                elif character_name == '妈妈':
+                    character_list.append(random.choice(FEMALE_CHARACTERS))
+                msg.replace(character_name, '')
+            elif character_match := get_match_alias(character_name, '角色', True):
                 character_list.append(list(character_match.keys())[0])
                 msg.replace(character_name, '')
         if not character_list:
@@ -243,25 +265,7 @@ def CommandCharacter(limit: int = 3, replace_uid: bool = True) -> List[str]:
             character_list = character_list[:limit]
         return character_list
 
-    async def _character2(matcher: Matcher, state: T_State, msg: Message = CommandArg()):
-        msg = msg.extract_plain_text().strip()
-        if not msg:
-            await matcher.finish('请给出要查询的角色名称')
-        character_list = []
-        characters = msg.split(' ')
-        for character_name in characters:
-            character_match = get_match_alias(character_name, '角色', True)
-            if character_match:
-                character_list.append(list(character_match.keys())[0])
-                msg.replace(character_name, '')
-        if not character_list:
-            await matcher.finish(f'没有名为{msg}的角色！')
-        state['msg'] = msg
-        if len(character_list) > limit:
-            character_list = character_list[:limit]
-        return character_list
-
-    return Depends(_character) if replace_uid else Depends(_character2)
+    return Depends(_character)
 
 
 def CommandObjectID() -> int:
@@ -328,7 +332,7 @@ def CommandTime() -> Optional[Tuple[int, int]]:
     def _datetime(msg: Message = CommandArg()):
         msg = msg.extract_plain_text().strip()
         if match := re.search(r'(\d{1,2}):(\d{2})', msg):
-            return match.group(1), match.group(2)
+            return match[1], match[2]
         return None
 
     return Depends(_datetime)

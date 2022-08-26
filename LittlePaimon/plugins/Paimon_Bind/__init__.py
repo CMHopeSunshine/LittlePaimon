@@ -8,6 +8,7 @@ from nonebot.params import CommandArg
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
 
+from LittlePaimon import NICKNAME
 from LittlePaimon.database.models import LastQuery, PrivateCookie, PublicCookie, Character, PlayerInfo, GeneralSub, \
     DailyNoteSub, MihoyoBBSSub
 from LittlePaimon.utils import logger
@@ -69,7 +70,7 @@ async def _(event: MessageEvent, msg: Message = CommandArg()):
         if not msg:
             await ysb.finish(f'成功绑定uid为{uid.group()}，如果还需绑定cookie可看教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1',
                              at_sender=True)
-    if 'cookie_token' in msg and any(i in msg for i in ['account_id', 'login_uid', 'ltuid', 'stuid']):
+    elif msg:
         if data := await get_bind_game_info(msg):
             game_name = data['nickname']
             game_uid = data['game_role_id']
@@ -81,20 +82,20 @@ async def _(event: MessageEvent, msg: Message = CommandArg()):
                 await PrivateCookie.update_or_create(user_id=str(event.user_id), uid=game_uid, mys_id=mys_id,
                                                      defaults={'cookie': msg,
                                                                'stoken': f'stuid={mys_id};stoken={stoken};'})
-                await ysb.send(f'{game_name}成功绑定cookie{game_uid}', at_sender=True)
+                await ysb.send(f'{game_name}成功绑定cookie{game_uid}，开始愉快地享用{NICKNAME}吧！', at_sender=True)
             else:
                 await PrivateCookie.update_or_create(user_id=str(event.user_id), uid=game_uid, mys_id=mys_id,
                                                      defaults={'cookie': msg})
-                await ysb.send(f'{game_name}成功绑定cookie{game_uid}，但是cookie中没有login_ticket或lt无效，米游币相关功能无法使用哦',
+                await ysb.send(f'{game_name}成功绑定cookie{game_uid}，但是cookie中没有login_ticket，米游币相关功能无法使用哦',
                                at_sender=True)
             if not isinstance(event, PrivateMessageEvent):
                 if await recall_message(event):
-                    await ysb.finish('当前非私聊对话，已将你的cookie撤回！')
+                    await ysb.finish(f'当前非私聊对话，{NICKNAME}帮你把cookie撤回啦！')
                 else:
-                    await ysb.finish('当前非私聊对话，建议绑定完将cookie撤回！')
+                    await ysb.finish(f'当前非私聊对话，{NICKNAME}建议你绑定完将cookie撤回哦！')
         else:
             logger.info('原神Cookie', '', {'用户': str(event.user_id)}, '绑定失败，cookie已失效', False)
-            await ysb.finish('这个cookie无效，请确认是否正确\n获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1\n', at_sender=True)
+            await ysb.finish('这个cookie无效哦，请确认是否正确\n获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1\n', at_sender=True)
     elif pm.config.CookieWeb_enable:
         await ysb.finish(
             f'获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1\n获取后，使用[ysb cookie]指令绑定或前往{pm.config.CookieWeb_url}网页添加绑定',
@@ -159,8 +160,7 @@ async def _(event: MessageEvent):
 
 @pck.handle()
 async def _(event: MessageEvent, msg: Message = CommandArg()):
-    msg = msg.extract_plain_text().strip()
-    if 'cookie_token' in msg and any(i in msg for i in ['account_id', 'login_uid', 'ltuid', 'stuid']):
+    if msg := msg.extract_plain_text().strip():
         if await get_bind_game_info(msg):
             ck = await PublicCookie.create(cookie=msg)
             logger.info('原神Cookie', f'{ck.id}号公共cookie', None, '添加成功', True)

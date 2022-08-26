@@ -1,12 +1,15 @@
-from nonebot import on_command
-from nonebot.adapters.onebot.v11 import Message, MessageEvent
-from nonebot.internal.params import Arg
+from nonebot import on_command, on_regex
+from nonebot.adapters.onebot.v11 import Message, MessageEvent, MessageSegment
+from nonebot.params import Arg, RegexDict
 from nonebot.plugin import PluginMetadata
 
+from LittlePaimon import NICKNAME
+from LittlePaimon.database.models import PlayerAlias
 from LittlePaimon.utils import logger
 from LittlePaimon.utils.message import CommandPlayer, CommandCharacter, CommandUID
 from LittlePaimon.utils.genshin import GenshinInfoManager
 from LittlePaimon.utils.tool import freq_limiter
+from LittlePaimon.utils.typing import CHARA_RE
 
 from .draw_player_card import draw_player_card
 from .draw_character_bag import draw_chara_bag
@@ -60,6 +63,12 @@ update_info = on_command('udi', aliases={'更新角色信息', '更新面板', '
     'pm_description': '更新你的原神玩家和角色数据，绑定cookie后数据更详细',
     'pm_usage':       '更新角色信息(uid)',
     'pm_priority':    6
+})
+add_alias = on_regex(rf'((?P<chara>{CHARA_RE})是[我俺咱]的?(?P<alias>\w+))|([我俺咱]的?(?P<alias2>\w+)[是叫名](?P<chara2>{CHARA_RE}))', priority=10, block=True, state={
+    'pm_name':        '角色别名设置',
+    'pm_description': '设置专属于你的角色别名',
+    'pm_usage':       '<角色名>是我<别名>',
+    'pm_priority':    7
 })
 
 
@@ -154,11 +163,11 @@ async def _(event: MessageEvent, players=CommandPlayer(only_cn=False), character
         for character in characters:
             character_info = await gim.get_character(name=character)
             if not character_info:
-                logger.info('原神角色卡片', '➤➤', {'角色': character}, '没有该角色信息', False)
-                msg += f'\n暂无你{character}信息，请先更新角色信息'
+                logger.info('原神角色卡片', '➤➤', {'角色': character}, '没有该角色信息，发送随机图', True)
+                msg += MessageSegment.image(f'http://img.genshin.cherishmoon.fun/{character}')
             else:
                 img = await draw_chara_card(character_info)
-                logger.info('原神角色卡片', '➤➤', {}, '制图完成', True)
+                logger.info('原神角色卡片', '➤➤', {'角色': character}, '制图完成', True)
                 msg += img
     else:
         # 当查询对象有多个时，只查询第一个角色
@@ -168,10 +177,11 @@ async def _(event: MessageEvent, players=CommandPlayer(only_cn=False), character
             logger.info('原神角色卡片', '➤', {'用户': player.user_id, 'UID': player.uid})
             character_info = await gim.get_character(name=characters[0])
             if not character_info:
-                msg += f'\n暂无{player.uid}的{characters[0]}信息，请先更新角色信息'
+                logger.info('原神角色卡片', '➤➤', {'角色': characters[0]}, '没有该角色信息，发送随机图', True)
+                msg += MessageSegment.image(f'http://img.genshin.cherishmoon.fun/{characters[0]}')
             else:
                 img = await draw_chara_card(character_info)
-                logger.info('原神角色卡片', '➤➤', {}, '制图完成', True)
+                logger.info('原神角色卡片', '➤➤', {'角色': characters[0]}, '制图完成', True)
                 msg += img
     await ysd.finish(msg, at_sender=True)
 
@@ -231,4 +241,12 @@ async def _(event: MessageEvent, uid=CommandUID(), msg: str = Arg('msg')):
         except Exception as e:
             result = f'更新失败，错误信息：{e}'
         running_udi.remove(f'{event.user_id}-{uid}')
-        await update_info.finish(f'UID{uid}:\n {result}', at_sender=True)
+        await update_info.finish(f'UID{uid}:\n{result}', at_sender=True)
+
+
+@add_alias.handle()
+async def _(event: MessageEvent, regex_dict: dict = RegexDict()):
+    chara = regex_dict['chara'] or regex_dict['chara2']
+    alias = regex_dict['alias'] or regex_dict['alias2']
+    await PlayerAlias.update_or_create(user_id=str(event.user_id), alias=alias, character=chara)
+    await add_alias.finish(f'{NICKNAME}知道{chara}是你的{alias}啦..')

@@ -259,3 +259,13 @@ class PlayerInfo(Model):
 
         info.update_time = datetime.datetime.now()
         await info.save()
+
+
+class PlayerAlias(Model):
+    id = fields.IntField(pk=True, generated=True, auto_increment=True)
+    user_id: str = fields.CharField(max_length=255)
+    """玩家qid"""
+    alias: str = fields.CharField(max_length=255)
+    """别名"""
+    character: str = fields.CharField(max_length=255)
+    """实际角色"""

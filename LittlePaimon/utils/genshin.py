@@ -13,13 +13,10 @@ from LittlePaimon.utils.files import load_json
 from LittlePaimon.utils.genshin_api import get_enka_data, get_mihoyo_public_data, get_mihoyo_private_data
 from LittlePaimon.utils.typing import DataSourceType
 from LittlePaimon.utils.alias import get_name_by_id
+from LittlePaimon.utils.typing import CHARACTERS
 
 ra_score = load_json(JSON_DATA / 'score.json')
 talent_map = load_json(JSON_DATA / 'role_skill.json')
-all_character_list = ['神里绫华', '琴', '丽莎', '芭芭拉', '凯亚', '迪卢克', '雷泽', '安柏', '温迪', '香菱', '北斗', '行秋', '魈', '凝光', '可莉', '钟离',
-                      '菲谢尔', '班尼特', '达达利亚', '诺艾尔', '七七', '重云', '甘雨', '阿贝多', '迪奥娜', '莫娜', '刻晴', '砂糖', '辛焱', '罗莎莉亚', '胡桃',
-                      '枫原万叶', '烟绯', '宵宫', '托马', '优菈', '雷电将军', '早柚', '珊瑚宫心海', '五郎', '九条裟罗', '荒泷一斗', '八重神子', '夜兰', '埃洛伊',
-                      '申鹤', '云堇', '久岐忍', '神里绫人', '鹿野院平藏', '提纳里', '柯莱', '多莉']
 
 
 class GenshinInfoManager:
@@ -50,14 +47,14 @@ class GenshinInfoManager:
         await self.set_last_query()
         mihoyo_result = await self.update_from_mihoyo()
         if mihoyo_result != '更新成功':
-            result += f'\n2.{mihoyo_result}'
+            result += f'{mihoyo_result}\n'
         enka_result = await self.update_from_enka()
-        if not enka_result.endswith('更新成功'):
-            result += f'1.{enka_result}'
+        if not enka_result.startswith('更新成功'):
+            result += f'{enka_result}\n'
         if include_talent and await self.is_bind():
             talent_result = await self.update_talent()
             if talent_result not in ['更新成功', mihoyo_result]:
-                result += f'\n3.{talent_result}'
+                result += f'{talent_result}\n'
         return result or enka_result
 
     async def update_from_enka(self) -> str:
@@ -201,7 +198,7 @@ class GenshinInfoManager:
                 return result, []
         player_info = await PlayerInfo.get_or_none(user_id=self.user_id, uid=self.uid)
         character_list = []
-        for character_name in all_character_list:
+        for character_name in CHARACTERS:
             if character := await self.get_character(name=character_name):
                 character_list.append(character)
         return player_info, character_list

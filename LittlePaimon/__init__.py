@@ -16,7 +16,7 @@ except KeyError:
     logger.error('请在.env.prod文件中中配置超级用户SUPERUSERS')
 
 try:
-    NICKNAME: str = list(DRIVER.config.superusers)[0]
+    NICKNAME: str = list(DRIVER.config.nickname)[0]
 except KeyError:
     NICKNAME = '派蒙'
 
