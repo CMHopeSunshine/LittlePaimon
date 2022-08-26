@@ -248,5 +248,5 @@ async def _(event: MessageEvent, uid=CommandUID(), msg: str = Arg('msg')):
 async def _(event: MessageEvent, regex_dict: dict = RegexDict()):
     chara = regex_dict['chara'] or regex_dict['chara2']
     alias = regex_dict['alias'] or regex_dict['alias2']
-    await PlayerAlias.update_or_create(user_id=str(event.user_id), alias=alias, character=chara)
+    await PlayerAlias.update_or_create(user_id=str(event.user_id), alias=alias, default={'character': chara})
     await add_alias.finish(f'{NICKNAME}知道{chara}是你的{alias}啦..')
