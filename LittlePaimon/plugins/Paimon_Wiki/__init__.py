@@ -1,6 +1,6 @@
 import time
 
-from nonebot import on_command, on_regex
+from nonebot import on_regex
 from nonebot.adapters.onebot.v11 import MessageEvent, Message, MessageSegment
 from nonebot.adapters.onebot.v11.helpers import is_cancellation
 from nonebot.adapters.onebot.v11.exception import ActionFailed
@@ -9,6 +9,8 @@ from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
 
 from LittlePaimon.utils.alias import get_match_alias
+from LittlePaimon.utils.message import MessageBuild
+from LittlePaimon.database.models import PlayerAlias
 # from .abyss_rate_draw import draw_rate_rank, draw_teams_rate
 
 __paimon_help__ = {
@@ -141,6 +143,11 @@ def create_wiki_matcher(pattern: str, help_fun: str, help_name: str):
             if is_cancellation(name):
                 await maps.finish()
             name = name.extract_plain_text().strip()
+        if state['type'] == '角色' and (match_alias := await PlayerAlias.get_or_none(user_id=str(event.user_id), alias=name)):
+            try:
+                await maps.finish(MessageSegment.image(state['img_url'].format(match_alias.character)))
+            except ActionFailed:
+                await maps.finish(MessageBuild.Text(f'没有找到{name}的图鉴'))
         match_alias = get_match_alias(name, state['type'])
         true_name = match_alias[0] if (
                 isinstance(match_alias, list) and len(match_alias) == 1) else match_alias if isinstance(match_alias,
@@ -149,7 +156,7 @@ def create_wiki_matcher(pattern: str, help_fun: str, help_name: str):
             try:
                 await maps.finish(MessageSegment.image(state['img_url'].format(match_alias)))
             except ActionFailed:
-                await maps.finish(f'没有找到该{state["type"]}的图鉴')
+                await maps.finish(MessageBuild.Text(f'没有找到{name}的图鉴'))
         elif match_alias:
             if isinstance(match_alias, dict):
                 match_alias = list(match_alias.keys())
@@ -159,7 +166,7 @@ def create_wiki_matcher(pattern: str, help_fun: str, help_name: str):
                 await maps.send(msg + '\n回答\"取消\"来取消查询', at_sender=True)
             state['match_alias'] = match_alias
         else:
-            await maps.finish(f'没有找到该{state["type"]}的图鉴')
+            await maps.finish(MessageBuild.Text(f'没有找到{name}的图鉴'))
 
     @maps.got('choice')
     async def _(event: MessageEvent, state: T_State, choice: str = ArgPlainText('choice')):
@@ -170,7 +177,7 @@ def create_wiki_matcher(pattern: str, help_fun: str, help_name: str):
             try:
                 await maps.finish(MessageSegment.image(state['img_url'].format(match_alias[int(choice) - 1])))
             except ActionFailed:
-                await maps.finish(f'没有找到该{state["type"]}的图鉴')
+                await maps.finish(MessageBuild.Text(f'没有找到{match_alias[int(choice) - 1]}的图鉴'))
         if choice not in match_alias:
             state['times'] = state['times'] + 1 if 'times' in state else 1
             if state['times'] == 1:
@@ -183,7 +190,7 @@ def create_wiki_matcher(pattern: str, help_fun: str, help_name: str):
         try:
             await maps.finish(MessageSegment.image(state['img_url'].format(choice)))
         except ActionFailed:
-            await maps.finish(f'没有找到该{state["type"]}的图鉴')
+            await maps.finish(MessageBuild.Text(f'没有找到{choice}的图鉴'))
 
 
 create_wiki_matcher(r'(?P<name1>\w*)(?P<type>(原魔|怪物)(图鉴|攻略))(?P<name2>\w*)', '原魔图鉴', '原魔')
