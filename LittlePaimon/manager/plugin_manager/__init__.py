@@ -3,9 +3,10 @@ import asyncio
 from nonebot import on_regex, on_command
 from nonebot.matcher import Matcher
 from nonebot.exception import IgnoredException
-from nonebot.params import RegexDict
+from nonebot.params import RegexDict, CommandArg
+from nonebot.permission import SUPERUSER
 from nonebot.message import run_preprocessor
-from nonebot.adapters.onebot.v11 import GroupMessageEvent, PrivateMessageEvent, MessageEvent
+from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent, PrivateMessageEvent, MessageEvent
 from nonebot.typing import T_State
 
 from LittlePaimon import SUPERUSERS, DRIVER
@@ -16,8 +17,9 @@ from .draw_help import draw_help
 
 plugin_manager = PluginManager()
 
-manage_cmd = on_regex(r'^(?P<func>ban|unban) (?P<plugin>([\w ]*)|all) ?(-g (?P<group>[\d ]*) ?)?(-u (?P<user>[\d ]*) ?)?(?P<reserve>-r)?', priority=1)
-help_cmd = on_command('help', aliases={'帮助', '菜单'}, priority=1)
+manage_cmd = on_regex(r'^pm (?P<func>ban|unban) (?P<plugin>([\w ]*)|all) ?(-g (?P<group>[\d ]*) ?)?(-u (?P<user>[\d ]*) ?)?(?P<reserve>-r)?', priority=1)
+help_cmd = on_command('help', aliases={'帮助', '菜单', 'pm help'}, priority=1)
+set_config_cmd = on_command('pm set', priority=1, permission=SUPERUSER)
 
 
 @manage_cmd.handle()
@@ -84,6 +86,16 @@ async def _(event: MessageEvent):
     plugin_list = await plugin_manager.get_plugin_list(event.message_type, event.user_id if isinstance(event, PrivateMessageEvent) else event.group_id if isinstance(event, GroupMessageEvent) else event.guild_id)
     img = await draw_help(plugin_list)
     await help_cmd.finish(img)
+
+
+@set_config_cmd.handle()
+async def _(event: MessageEvent, msg: Message = CommandArg()):
+    msg = msg.extract_plain_text().strip().split(' ')
+    if len(msg) != 2:
+        await set_config_cmd.finish('参数错误，用法：pm set 配置名 配置值')
+    else:
+        result = plugin_manager.set_config(msg[0], msg[1])
+        await set_config_cmd.finish(result)
 
 
 @DRIVER.on_bot_connect

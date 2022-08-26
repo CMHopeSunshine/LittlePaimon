@@ -55,7 +55,7 @@ async def mhy_bbs_sign(user_id: str, uid: str) -> Tuple[SignResult, str]:
     return SignResult.FAIL, f'{uid}签到失败，无法绕过验证码'
 
 
-@scheduler.scheduled_job('cron', hour=pm.get_plugin_config('Paimon_Autobbs', '签到开始小时', 0), minute=pm.get_plugin_config('Paimon_Autobbs', '签到开始分钟', 5), misfire_grace_time=10)
+@scheduler.scheduled_job('cron', hour=pm.config.auto_sign_hour, minute=pm.config.auto_sign_minute, misfire_grace_time=10)
 async def _():
     await bbs_auto_sign()
 
@@ -64,6 +64,8 @@ async def bbs_auto_sign():
     """
     指定时间，执行所有米游社原神签到任务， 并将结果分群绘图发送
     """
+    if not pm.config.auto_sign_enable:
+        return
     t = time.time()  # 计时用
     subs = await MihoyoBBSSub.filter(sub_event='米游社原神签到').all()
     if not subs:

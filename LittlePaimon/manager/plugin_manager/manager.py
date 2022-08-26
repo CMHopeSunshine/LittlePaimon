@@ -7,7 +7,7 @@ from LittlePaimon.utils import logger
 from LittlePaimon.config.path import PLUGIN_CONFIG, PAIMON_CONFIG
 from LittlePaimon.utils.files import load_yaml, save_yaml
 from LittlePaimon.database.models import PluginPermission
-from .model import MatcherInfo, PluginInfo
+from .model import MatcherInfo, PluginInfo, Config
 
 hidden_plugins = [
     'LittlePaimon',
@@ -24,13 +24,14 @@ class PluginManager:
         self.plugin_config_path = PLUGIN_CONFIG
         self.config_path = PAIMON_CONFIG
         self.data: Dict[str, PluginInfo] = {}
-        self.config: Dict[str, any] = {}
+        self.config: Config = Config()
         self.load()
 
     def save(self):
         """
         保存数据
         """
+        save_yaml(self.config.dict(by_alias=True), self.config_path)
         for name, plugin in self.data.items():
             save_yaml(plugin.dict(), self.plugin_config_path / f'{name}.yml')
 
@@ -39,34 +40,34 @@ class PluginManager:
         读取配置项以及插件数据
         """
         if self.config_path.exists():
-            self.config = load_yaml(self.config_path)
-        else:
-            logger.warning('插件管理器', '<r>无法读取配置文件</r>，请检查是否已将<m>config/paimon_config_default.yml</m>复制为<m>config/paimon_config.yml</m>')
+            self.config = Config.parse_obj(load_yaml(self.config_path))
+        # else:
+        #     logger.warning('插件管理器', '<r>无法读取配置文件</r>，请检查是否已将<m>config/paimon_config_default.yml</m>复制为<m>config/paimon_config.yml</m>')
         for file in self.plugin_config_path.iterdir():
             if file.is_file() and file.name.endswith('.yml'):
                 data = load_yaml(file)
                 self.data[file.name.replace('.yml', '')] = PluginInfo.parse_obj(data)
 
-    def get_config(self, config_name: str, default: any = None):
+    def set_config(self, config_name: str, value: any):
         """
-        获取派蒙配置项
+        设置派蒙配置项
         :param config_name: 配置名
-        :param default: 无配置时的默认值
-        :return: 配置项
+        :param value: 新配置值
         """
-        return self.config.get(config_name, default)
+        if config_name not in self.config.dict(by_alias=True).keys():
+            return f'没有配置项为{config_name}'
+        if '启用' in config_name or '开关' in config_name:
+            if value not in ['开', '关', 'true', 'false', 'on', 'off']:
+                return '参数错误'
+            value = value in ['开', 'true', 'on']
+        elif config_name != 'CookieWeb地址' and not value.isdigit():
+            return '配置项不合法，必须为数字'
+        temp = self.config.dict(by_alias=True)
+        temp[config_name] = value
+        self.config = Config.parse_obj(temp)
+        self.save()
+        return f'成功设置{config_name}为{value}'
 
-    def get_plugin_config(self, plugin_name: str, config_name: str, default: any = None):
-        """
-        获取派蒙插件配置项
-        :param plugin_name：插件名
-        :param config_name: 配置名
-        :param default: 无配置时的默认值
-        :return: 配置项
-        """
-        if plugin_name in self.data and self.data[plugin_name].configs:
-            return self.data[plugin_name].configs.get(config_name, default)
-        return default
 
     async def init_plugins(self):
         plugin_list = nb_plugin.get_loaded_plugins()

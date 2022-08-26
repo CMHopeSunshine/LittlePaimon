@@ -289,11 +289,13 @@ async def mhy_bbs_coin(user_id: str, uid: str) -> str:
     return msg if result else f'UID{uid}{msg}'
 
 
-@scheduler.scheduled_job('cron', hour=pm.get_plugin_config('Paimon_Autobbs', '米游币开始小时', 0), minute=pm.get_plugin_config('Paimon_Autobbs', '米游币开始分钟', 0), misfire_grace_time=10)
+@scheduler.scheduled_job('cron', hour=pm.config.auto_myb_hour, minute=pm.config.auto_myb_minute, misfire_grace_time=10)
 async def bbs_auto_coin():
     """
     指定时间，执行所有米游币获取订阅任务， 并将结果分群绘图发送
     """
+    if not pm.config.auto_myb_enable:
+        return
     t = time.time()
     subs = await MihoyoBBSSub.filter(sub_event='米游币自动获取').all()
     if not subs:

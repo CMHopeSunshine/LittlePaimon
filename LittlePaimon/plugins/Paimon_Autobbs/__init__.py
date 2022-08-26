@@ -61,6 +61,7 @@ async def _(event: Union[GroupMessageEvent, PrivateMessageEvent], uid=CommandUID
         if f'{event.user_id}-{uid}' in signing_list:
             await sign.finish('你已经在执行签到任务中，请勿重复发送', at_sender=True)
         else:
+            await sign.send(f'开始为UID{uid}执行米游社签到，请稍等...', at_sender=True)
             logger.info('米游社原神签到', '', {'user_id': event.user_id, 'uid': uid, '执行签到': ''})
             signing_list.append(f'{event.user_id}-{uid}')
             _, result = await mhy_bbs_sign(str(event.user_id), uid)
@@ -104,6 +105,7 @@ async def _(event: Union[GroupMessageEvent, PrivateMessageEvent], uid=CommandUID
         if f'{event.user_id}-{uid}' in coin_getting_list:
             await get_coin.finish('你已经在执行米游币获取任务中，请勿重复发送', at_sender=True)
         else:
+            await get_coin.send(f'开始为UID{uid}执行米游币获取，请稍等...', at_sender=True)
             logger.info('米游币自动获取', '', {'user_id': event.user_id, 'uid': uid, '执行获取': ''})
             coin_getting_list.append(f'{event.user_id}-{uid}')
             result = await mhy_bbs_coin(str(event.user_id), uid)

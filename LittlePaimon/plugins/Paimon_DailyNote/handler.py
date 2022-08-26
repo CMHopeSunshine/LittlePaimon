@@ -67,10 +67,12 @@ async def handle_ssbq(player: Player):
             return f'{player.uid}绘制图片失败，{e}\n'
 
 
-@scheduler.scheduled_job('cron', minute=f'*/{pm.get_plugin_config("Paimon_DailyNote", "检查间隔", 16)}', misfire_grace_time=10)
+@scheduler.scheduled_job('cron', minute=f'*/{pm.config.ssbq_check}', misfire_grace_time=10)
 async def check_note():
+    if not pm.config.ssbq_enable:
+        return
     # 0点到6点间不做检查
-    if 0 <= datetime.datetime.now().hour <= 6:
+    if pm.config.ssbq_begin <= datetime.datetime.now().hour <= pm.config.ssbq_end:
         return
     t = time.time()
     subs = await DailyNoteSub.all()

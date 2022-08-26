@@ -1,6 +1,6 @@
 from typing import Optional, List
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class MatcherInfo(BaseModel):
@@ -35,3 +35,24 @@ class PluginInfo(BaseModel):
     """插件配置项"""
     matchers: Optional[List[MatcherInfo]] = []
     """命令列表"""
+
+
+class Config(BaseModel):
+    CookieWeb_enable: bool = Field(True, alias='启用CookieWeb')
+    CookieWeb_url: str = Field('http://127.0.0.1:13579/LittlePaimon/cookie', alias='CookieWeb地址')
+
+    sim_gacha_cd_group: int = Field(30, alias='模拟抽卡群冷却')
+    sim_gacha_cd_member: int = Field(60, alias='模拟抽卡群冷却')
+
+    auto_myb_enable: bool = Field(True, alias='米游币自动获取开关')
+    auto_myb_hour: int = Field(8, alias='米游币开始执行时间(小时)')
+    auto_myb_minute: int = Field(0, alias='米游币开始执行时间(分钟)')
+
+    auto_sign_enable: bool = Field(True, alias='米游社自动签到开关')
+    auto_sign_hour: int = Field(0, alias='米游社签到开始时间(小时)')
+    auto_sign_minute: int = Field(5, alias='米游社签到开始时间(分钟)')
+
+    ssbq_enable: bool = Field(True, alias='实时便签检查开关')
+    ssbq_begin: int = Field(0, alias='实时便签停止检查开始时间')
+    ssbq_end: int = Field(6, alias='实时便签停止检查结束时间')
+    ssbq_check: int = Field(16, alias='实时便签检查间隔')

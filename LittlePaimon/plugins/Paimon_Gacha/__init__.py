@@ -77,8 +77,8 @@ async def _(event: MessageEvent, reGroup: Dict = RegexDict()):
     pool = pool or '角色1'
     result = await draw_gacha_img(event.user_id, pool, num, nickname)
     if isinstance(event, GroupMessageEvent):
-        freq_limiter.start(f'gacha-group{event.group_id}', pm.get_plugin_config('Paimon_Gacha', '群冷却', 30))
-        freq_limiter.start(f'gacha-group{event.group_id}-{event.user_id}', pm.get_plugin_config('Paimon_Gacha', '群员冷却', 60))
+        freq_limiter.start(f'gacha-group{event.group_id}', pm.config.sim_gacha_cd_group)
+        freq_limiter.start(f'gacha-group{event.group_id}-{event.user_id}', pm.config.sim_gacha_cd_member)
     await sim_gacha.finish(result)
 
 
