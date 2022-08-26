@@ -39,24 +39,30 @@ ysbc = on_command('ysbc', aliases={'查询ck', '查询绑定', '绑定信息', '
     'pm_usage':       'ysbc',
     'pm_priority':    2
 })
+delete_ck = on_command('删除ck', aliases={'删除cookie'}, priority=1, block=True, state={
+    'pm_name':        '删除ck',
+    'pm_description': '删除你qq下绑定的所有cookie和订阅信息',
+    'pm_usage':       '删除ck',
+    'pm_priority':    3
+})
 ysbca = on_command('校验所有ck', aliases={'校验所有cookie', '校验所有绑定'}, priority=1, block=True, permission=SUPERUSER, state={
     'pm_name':        '校验所有ck',
     'pm_description': '校验所有cookie情况，仅超级管理员可用',
     'pm_usage':       '校验所有ck',
-    'pm_priority':    3
+    'pm_priority':    4
 })
 pck = on_command('添加公共cookie', aliases={'添加pck', '添加公共ck', 'add_pck'}, permission=SUPERUSER, block=True, priority=1,
                  state={
                      'pm_name':        '添加公共ck',
                      'pm_description': '添加公共cookie，仅超级管理员可用',
                      'pm_usage':       '添加公共ck[cookie]',
-                     'pm_priority':    4
+                     'pm_priority':    5
                  })
 clear = on_command('清除无效用户', permission=SUPERUSER, block=True, priority=1, state={
     'pm_name':        '清除无效用户',
     'pm_description': '清除所有已退群或已删好友的用户的cookie、订阅等信息，仅超级管理员可用',
     'pm_usage':       '清除无效用户',
-    'pm_priority':    5
+    'pm_priority':    6
 })
 
 
@@ -126,6 +132,14 @@ async def _(event: MessageEvent):
 
     else:
         await ysbc.finish(f'{event.sender.card or event.sender.nickname}当前无绑定信息', at_sender=True)
+
+
+@delete_ck.handle()
+async def _(event: MessageEvent):
+    await PrivateCookie.filter(user_id=str(event.user_id)).delete()
+    await DailyNoteSub.filter(user_id=event.user_id).delete()
+    await MihoyoBBSSub.filter(user_id=event.user_id).delete()
+    await delete_ck.finish('已清除你号下绑定的ck和订阅信息', at_sender=True)
 
 
 @ysbca.handle()
@@ -207,11 +221,11 @@ async def _(bot: Bot, event: MessageEvent):
     for chara in all_character:
         if int(chara.user_id) not in total_user_list:
             await chara.delete()
-    # 删除通用订阅信息
-    all_sub = await GeneralSub.all()
-    for s in all_sub:
-        if int(s.sub_id) not in total_user_list:
-            await s.delete()
+    # # 删除通用订阅信息
+    # all_sub = await GeneralSub.all()
+    # for s in all_sub:
+    #     if int(s.sub_id) not in total_user_list:
+    #         await s.delete()
     # 删除原神树脂提醒信息
     all_note = await DailyNoteSub.all()
     for n in all_note:
