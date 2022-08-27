@@ -119,7 +119,7 @@ class PluginManager:
         plugin_list = sorted(self.data.values(), key=lambda x: x.priority).copy()
         plugin_list = [p for p in plugin_list if p.show and p.module_name in load_plugins]
         for plugin in plugin_list:
-            if message_type == 'guild':
+            if message_type != 'guild':
                 plugin_info = await PluginPermission.get_or_none(name=plugin.module_name, session_id=session_id,
                                                                  session_type=message_type)
                 plugin.status = True if plugin_info is None else plugin_info.status

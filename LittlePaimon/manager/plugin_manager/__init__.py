@@ -11,6 +11,7 @@ from nonebot.typing import T_State
 
 from LittlePaimon import SUPERUSERS, DRIVER
 from LittlePaimon.utils import logger
+from LittlePaimon.utils.message import CommandObjectID
 from LittlePaimon.database.models import PluginPermission
 from .manager import PluginManager, hidden_plugins
 from .draw_help import draw_help
@@ -21,11 +22,14 @@ manage_cmd = on_regex(r'^pm (?P<func>ban|unban) (?P<plugin>([\w ]*)|all) ?(-g (?
 help_cmd = on_command('help', aliases={'帮助', '菜单', 'pm help'}, priority=1)
 set_config_cmd = on_command('pm set', priority=1, permission=SUPERUSER)
 
+cache_help = {}
+
 
 @manage_cmd.handle()
-async def _(event: GroupMessageEvent, state: T_State, match: dict = RegexDict()):
+async def _(event: GroupMessageEvent, state: T_State, match: dict = RegexDict(), session_id: int = CommandObjectID()):
     if event.user_id not in SUPERUSERS and event.sender.role not in ['admin', 'owner']:
         await manage_cmd.finish('你没有权限使用该命令', at_sender=True)
+    state['session_id'] = session_id
     state['bool'] = match['func'] == 'unban'
     state['plugin'] = match['plugin'].strip().split(' ')
     if not match['group'] or event.user_id not in SUPERUSERS:
@@ -36,9 +40,10 @@ async def _(event: GroupMessageEvent, state: T_State, match: dict = RegexDict())
 
 
 @manage_cmd.handle()
-async def _(event: PrivateMessageEvent, state: T_State, match: dict = RegexDict()):
+async def _(event: PrivateMessageEvent, state: T_State, match: dict = RegexDict(), session_id: int = CommandObjectID()):
     if event.user_id not in SUPERUSERS:
         await manage_cmd.finish('你没有权限使用该命令', at_sender=True)
+    state['session_id'] = session_id
     state['bool'] = match['func'] == 'unban'
     state['plugin'] = match['plugin'].strip().split(' ')
     state['group'] = [int(group) for group in match['group'].strip().split(' ')] if match['group'] else []
@@ -49,6 +54,8 @@ async def _(event: PrivateMessageEvent, state: T_State, match: dict = RegexDict(
 async def _(state: T_State):
     if not state['group'] and state['user']:
         await manage_cmd.finish('使用ban|unban -g 群号 -u 用户', at_sender=True)
+    if state['session_id'] in cache_help:
+        del cache_help[state['session_id']]
     if state['group'] and not state['user']:
         for group_id in state['group']:
             if 'all' in state['plugin']:
@@ -82,10 +89,14 @@ async def _(state: T_State):
 
 
 @help_cmd.handle()
-async def _(event: MessageEvent):
-    plugin_list = await plugin_manager.get_plugin_list(event.message_type, event.user_id if isinstance(event, PrivateMessageEvent) else event.group_id if isinstance(event, GroupMessageEvent) else event.guild_id)
-    img = await draw_help(plugin_list)
-    await help_cmd.finish(img)
+async def _(event: MessageEvent, session_id: int = CommandObjectID()):
+    if session_id in cache_help:
+        await help_cmd.finish(cache_help[session_id])
+    else:
+        plugin_list = await plugin_manager.get_plugin_list(event.message_type, event.user_id if isinstance(event, PrivateMessageEvent) else event.group_id if isinstance(event, GroupMessageEvent) else event.guild_id)
+        img = await draw_help(plugin_list)
+        cache_help[session_id] = img
+        await help_cmd.finish(img)
 
 
 @set_config_cmd.handle()
