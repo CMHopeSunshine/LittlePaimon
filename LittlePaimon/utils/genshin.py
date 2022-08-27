@@ -189,14 +189,15 @@ class GenshinInfoManager:
         :return: 原神玩家信息和角色列表
         """
         await self.set_last_query()
-        player_info, state = await PlayerInfo.get_or_create(user_id=self.user_id, uid=self.uid)
-        if state or player_info.update_time is None or player_info.update_time < (
+        player_info = await PlayerInfo.get_or_none(user_id=self.user_id, uid=self.uid)
+        if player_info is None or player_info.update_time is None or player_info.update_time < (
                 datetime.datetime.now() - datetime.timedelta(days=1)).replace(
                 tzinfo=pytz.timezone('Asia/Shanghai')):
             result = await self.update_from_mihoyo()
             if result != '更新成功':
                 return result, []
-        player_info = await PlayerInfo.get_or_none(user_id=self.user_id, uid=self.uid)
+        if (player_info := await PlayerInfo.get_or_none(user_id=self.user_id, uid=self.uid)) is None:
+            return '获取原神信息失败', []
         character_list = []
         for character_name in CHARACTERS:
             if character := await self.get_character(name=character_name):
@@ -205,15 +206,16 @@ class GenshinInfoManager:
 
     async def get_player_info(self) -> Tuple[Union[PlayerInfo, str], Optional[List[Character]]]:
         await self.set_last_query()
-        player_info, state = await PlayerInfo.get_or_create(user_id=self.user_id, uid=self.uid)
-        if state or player_info.update_time is None or player_info.update_time < (
+        player_info = await PlayerInfo.get_or_none(user_id=self.user_id, uid=self.uid)
+        if player_info is None or player_info.update_time is None or player_info.update_time < (
                 datetime.datetime.now() - datetime.timedelta(days=1)).replace(
                 tzinfo=pytz.timezone('Asia/Shanghai')):
             result = await self.update_from_mihoyo()
             if result != '更新成功':
                 return result, None
             await self.update_from_enka()
-        player_info, _ = await PlayerInfo.get_or_create(user_id=self.user_id, uid=self.uid)
+        if (player_info := await PlayerInfo.get_or_none(user_id=self.user_id, uid=self.uid)) is None:
+            return '获取原神信息失败', None
         characters_list = []
         for chara in player_info.avatars:
             if c := await self.get_character(character_id=chara):
