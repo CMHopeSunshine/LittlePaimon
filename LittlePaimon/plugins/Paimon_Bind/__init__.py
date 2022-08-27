@@ -76,7 +76,7 @@ async def _(event: MessageEvent, msg: Message = CommandArg()):
         if not msg:
             await ysb.finish(f'成功绑定uid为{uid.group()}，如果还需绑定cookie可看教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1',
                              at_sender=True)
-    elif msg:
+    if msg:
         if data := await get_bind_game_info(msg):
             game_name = data['nickname']
             game_uid = data['game_role_id']

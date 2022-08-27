@@ -74,6 +74,8 @@ async def _(event: MessageEvent, reGroup: Dict = RegexDict()):
     num = reGroup['num']
     pool = reGroup['pool']
     num = int(num) if num and num.isdigit() else 1
+    if num > pm.config.sim_gacha_max:
+        await sim_gacha.finish(f'单次最多只能{pm.config.sim_gacha_max}十连哦！')
     pool = pool or '角色1'
     result = await draw_gacha_img(event.user_id, pool, num, nickname)
     if isinstance(event, GroupMessageEvent):
