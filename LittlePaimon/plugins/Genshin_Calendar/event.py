@@ -30,17 +30,18 @@ ignored_key_words = [
     "防沉迷",
     "问卷",
     "公平运营",
-    "纪行",
     "有奖活动",
     "反馈功能"
 ]
 
 ignored_ann_ids = [
-    495,  # 有奖问卷调查开启！
-    1263,  # 米游社《原神》专属工具一览
     423,  # 《原神》玩家社区一览
-    422,  # 《原神》防沉迷系统说明
+    495,  # 有奖问卷调查开启！
     762,  # 《原神》公平运营声明
+    1263,  # 米游社《原神》专属工具一览
+    2388,  # 原神问卷调查
+    2522,  # 《原神》防沉迷系统说明
+    2911,  # 功能反馈
 ]
 
 list_api = 'https://hk4e-api.mihoyo.com/common/hk4e_cn/announcement/api/getAnnList?game=hk4e&game_biz=hk4e_cn&lang=zh-cn&bundle_id=hk4e_cn&platform=pc&region=cn_gf01&level=55&uid=100000000'
