@@ -68,14 +68,12 @@ class PluginManager:
         self.save()
         return f'成功设置{config_name}为{value}'
 
-
     async def init_plugins(self):
         plugin_list = nb_plugin.get_loaded_plugins()
         group_list = await get_bot().get_group_list()
         user_list = await get_bot().get_friend_list()
         for plugin in plugin_list:
-            if plugin.name not in hidden_plugins and not await PluginPermission.filter(name=plugin.name).exists():
-                logger.info('插件管理器', f'新纳入插件<m>{plugin.name}</m>进行权限管理')
+            if plugin.name not in hidden_plugins:
                 await asyncio.gather(*[PluginPermission.update_or_create(name=plugin.name, session_id=group['group_id'],
                                                                          session_type='group') for group in group_list])
                 await asyncio.gather(*[PluginPermission.update_or_create(name=plugin.name, session_id=user['user_id'],

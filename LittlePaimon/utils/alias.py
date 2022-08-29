@@ -6,6 +6,7 @@ from LittlePaimon.config import JSON_DATA
 
 alias_file = load_json(JSON_DATA / 'alias.json')
 info_file = load_json(JSON_DATA / 'genshin_info.json')
+weapon_file = load_json(JSON_DATA / 'weapon.json')
 
 
 def get_short_name(name: str) -> str:
@@ -52,7 +53,8 @@ def get_alias_by_name(name: str) -> List[str]:
     return next((r for r in name_list.values() if name in r), None)
 
 
-def get_match_alias(msg: str, type: Literal['角色', '武器', '原魔', '圣遗物'] = '角色', single_to_dict: bool = False) -> Union[str, list, dict]:
+def get_match_alias(msg: str, type: Literal['角色', '武器', '原魔', '圣遗物'] = '角色', single_to_dict: bool = False) -> Union[
+    str, list, dict]:
     """
         根据字符串消息，获取与之相似或匹配的角色、武器、原魔名
         :param msg: 消息
@@ -72,7 +74,8 @@ def get_match_alias(msg: str, type: Literal['角色', '武器', '原魔', '圣�
             elif match_list:
                 possible[alias[0]] = role_id
         if len(possible) == 1:
-            return {list(possible.keys())[0]: possible[list(possible.keys())[0]]} if single_to_dict else list(possible.keys())[0]
+            return {list(possible.keys())[0]: possible[list(possible.keys())[0]]} if single_to_dict else \
+            list(possible.keys())[0]
         return possible
     elif type in {'武器', '圣遗物'}:
         possible = []
@@ -88,8 +91,8 @@ def get_match_alias(msg: str, type: Literal['角色', '武器', '原魔', '圣�
         return match_list[0] if len(match_list) == 1 else match_list
 
 
-def get_icon(name: Optional[str] = None, chara_id: Optional[int] = None,
-             icon_type: Literal['avatar', 'card', 'splash', 'slice', 'side'] = 'avatar') -> Optional[str]:
+def get_chara_icon(name: Optional[str] = None, chara_id: Optional[int] = None,
+                   icon_type: Literal['avatar', 'card', 'splash', 'slice', 'side'] = 'avatar') -> Optional[str]:
     """
         根据角色名字或id获取角色的图标
         :param name: 角色名
@@ -114,3 +117,7 @@ def get_icon(name: Optional[str] = None, chara_id: Optional[int] = None,
     elif icon_type == 'slice':
         return side_icon.replace('_Side', '').replace('UI_', 'UI_Gacha_')
 
+
+def get_weapon_icon(name: str) -> Optional[str]:
+    icon_list = weapon_file['Icon']
+    return icon_list.get(name)

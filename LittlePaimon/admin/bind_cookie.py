@@ -7,7 +7,7 @@ from pywebio.session import run_asyncio_coroutine
 
 from LittlePaimon.utils import logger
 from LittlePaimon.database.models import LastQuery, PrivateCookie
-from LittlePaimon.utils.genshin_api import get_bind_game_info, get_stoken_by_cookie
+from LittlePaimon.utils.api import get_bind_game_info, get_stoken_by_cookie
 
 css_style = 'body {background: #000000 url(https://static.cherishmoon.fun/blog/h-wallpaper/zhounianqing.png);} #input-container {background: rgba(0,0,0,0);} summary {background-color: rgba(255,255,255,1);} .markdown-body {background-color: rgba(255,255,255,1);}'
 

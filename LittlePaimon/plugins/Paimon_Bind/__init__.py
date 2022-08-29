@@ -12,7 +12,7 @@ from LittlePaimon import NICKNAME
 from LittlePaimon.database.models import LastQuery, PrivateCookie, PublicCookie, Character, PlayerInfo, GeneralSub, \
     DailyNoteSub, MihoyoBBSSub
 from LittlePaimon.utils import logger
-from LittlePaimon.utils.genshin_api import get_bind_game_info, get_stoken_by_cookie
+from LittlePaimon.utils.api import get_bind_game_info, get_stoken_by_cookie
 from LittlePaimon.utils.message import recall_message
 from LittlePaimon.manager.plugin_manager import plugin_manager as pm
 

@@ -6,7 +6,7 @@ from collections import defaultdict
 from LittlePaimon.database.models import PrivateCookie, MihoyoBBSSub
 from LittlePaimon.utils import logger, aiorequests
 from LittlePaimon.utils import scheduler
-from LittlePaimon.utils.genshin_api import random_text, random_hex, get_old_version_ds, get_ds
+from LittlePaimon.utils.api import random_text, random_hex, get_old_version_ds, get_ds
 from LittlePaimon.manager.plugin_manager import plugin_manager as pm
 
 # 米游社的API列表

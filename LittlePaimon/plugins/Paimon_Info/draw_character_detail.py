@@ -5,7 +5,7 @@ from LittlePaimon.utils import load_image
 from LittlePaimon.utils.genshin import GenshinTools
 from LittlePaimon.utils.image import PMImage, font_manager as fm
 from LittlePaimon.utils.message import MessageBuild
-from LittlePaimon.utils.alias import get_icon
+from LittlePaimon.utils.alias import get_chara_icon
 from LittlePaimon.database.models import Character
 from .damage_cal import get_role_dmg
 
@@ -34,10 +34,12 @@ async def draw_chara_detail(uid: str, info: Character):
         await img.paste(dmg_img, (42, 1820))
 
     # 立绘
-    chara_img = await load_image(RESOURCE_BASE_PATH / 'splash' / f'{get_icon(chara_id=info.character_id, icon_type="splash")}.png')
+    chara_img = await load_image(RESOURCE_BASE_PATH / 'splash' / f'{get_chara_icon(chara_id=info.character_id, icon_type="splash")}.png')
     if chara_img.height >= 630:
         chara_img = chara_img.resize((chara_img.width * 630 // chara_img.height, 630))
-        await img.paste(chara_img, (770 - chara_img.width // 2, 20))
+    else:
+        chara_img = chara_img.resize((chara_img.width, chara_img.height * 630 // chara_img.height))
+    await img.paste(chara_img, (770 - chara_img.width // 2, 20))
     await img.paste(await load_image(ENKA_RES / '底遮罩.png'), (0, 0))
     # 地区
     if info.name not in ['荧', '空', '埃洛伊']:

@@ -10,7 +10,7 @@ from nonebot.params import Arg, Depends
 
 from LittlePaimon.database.models import DailyNoteSub, Player
 from LittlePaimon.utils import logger, scheduler
-from LittlePaimon.utils.genshin_api import get_mihoyo_private_data
+from LittlePaimon.utils.api import get_mihoyo_private_data
 from LittlePaimon.manager.plugin_manager import plugin_manager as pm
 from .draw import draw_daily_note_card
 

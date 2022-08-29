@@ -2,7 +2,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 from LittlePaimon.utils.files import load_image
 from LittlePaimon.utils.image import PMImage, font_manager as fm
-from LittlePaimon.utils.alias import get_icon
+from LittlePaimon.utils.alias import get_chara_icon
 from LittlePaimon.utils.message import MessageBuild
 from LittlePaimon.config import RESOURCE_BASE_PATH
 from .abyss_rate_data import get_rate, get_formation_rate
@@ -29,7 +29,7 @@ async def draw_rate_rank(type: str = 'role'):
                       font=fm.get('msyh.ttc', 35))
     for n, role in enumerate(data['result']['rateList']):
         role_card = PMImage(size=(160, 200), color=(200, 200, 200, 255), mode='RGBA')
-        role_img = await load_image(RESOURCE_BASE_PATH / 'avatar_card' / f'{get_icon(name=role["name"], icon_type="card")}.png', size=(160, 160))
+        role_img = await load_image(RESOURCE_BASE_PATH / 'avatar_card' / f'{get_chara_icon(name=role["name"], icon_type="card")}.png', size=(160, 160))
         await role_card.paste(role_img, (0, 0))
         await role_card.text((28 if len(role['rate']) == 6 else 38, 158), role['rate'], font=fm.get('msyh.ttc', 30),
                              color='black')

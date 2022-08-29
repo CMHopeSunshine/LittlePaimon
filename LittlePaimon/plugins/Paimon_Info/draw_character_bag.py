@@ -6,6 +6,7 @@ from typing import List
 from LittlePaimon.config import RESOURCE_BASE_PATH
 from LittlePaimon.database.models import Character, PlayerInfo, Player
 from LittlePaimon.utils.files import load_image
+from LittlePaimon.utils.alias import get_chara_icon
 from LittlePaimon.utils.genshin import GenshinTools
 from LittlePaimon.utils.image import PMImage, font_manager as fm
 from LittlePaimon.utils.message import MessageBuild
@@ -13,7 +14,6 @@ from .draw_player_card import get_avatar, draw_weapon_icon
 
 RESOURCES = RESOURCE_BASE_PATH / 'chara_bag'
 ICON = RESOURCE_BASE_PATH / 'icon'
-THUMB = RESOURCE_BASE_PATH / 'thumb'
 ARTIFACT_ICON = RESOURCE_BASE_PATH / 'artifact'
 
 talent_color = [('#d5f2b6', '#6d993d'), ('#d5f2b6', '#6d993d'), ('#d5f2b6', '#6d993d'),
@@ -68,7 +68,7 @@ async def draw_chara_card(info: Character) -> PMImage:
     :return: 角色卡片图
     """
     # 头像
-    avatar = PMImage(await load_image(THUMB / f'{info.name}.png'))
+    avatar = PMImage(await load_image(RESOURCE_BASE_PATH / 'avatar' / f'{get_chara_icon(name=info.name)}.png'))
     await avatar.to_circle('circle')
     await avatar.resize((122, 122))
     # 背景

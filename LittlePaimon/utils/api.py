@@ -4,7 +4,7 @@ import re
 import string
 import time
 import json
-from typing import Optional, Literal
+from typing import Optional, Literal, Union, Tuple
 
 from LittlePaimon.utils import logger
 from nonebot import logger as nb_logger
@@ -25,6 +25,7 @@ GAME_RECORD_API = 'https://api-takumi-record.mihoyo.com/game_record/card/wapi/ge
 SIGN_INFO_API = 'https://api-takumi.mihoyo.com/event/bbs_sign_reward/info'
 SIGN_REWARD_API = 'https://api-takumi.mihoyo.com/event/bbs_sign_reward/home'
 SIGN_ACTION_API = 'https://api-takumi.mihoyo.com/event/bbs_sign_reward/sign'
+AUTHKEY_API = 'https://api-takumi.mihoyo.com/binding/api/genAuthKey'
 
 
 def md5(text: str) -> str:
@@ -173,7 +174,8 @@ async def check_retcode(data: dict, cookie_info, cookie_type: str, user_id: str,
         return True
 
 
-async def get_cookie(user_id: str, uid: str, check: bool = True, own: bool = False):
+async def get_cookie(user_id: str, uid: str, check: bool = True, own: bool = False) -> Tuple[
+    Union[None, PrivateCookie, PublicCookie, CookieCache], str]:
     """
     获取可用的cookie
     :param user_id: 用户id
@@ -222,7 +224,7 @@ async def get_mihoyo_public_data(
         user_id: Optional[str],
         mode: Literal['abyss', 'player_card', 'role_detail'],
         schedule_type: Optional[str] = '1'):
-    server_id = "cn_qd01" if uid[0] == '5' else "cn_gf01"
+    server_id = 'cn_qd01' if uid[0] == '5' else 'cn_gf01'
     check = True
     while True:
         cookie_info, cookie_type = await get_cookie(user_id, uid, check)
@@ -270,7 +272,7 @@ async def get_mihoyo_private_data(
         mode: Literal['role_skill', 'month_info', 'daily_note', 'sign_info', 'sign_action'],
         role_id: Optional[str] = None,
         month: Optional[str] = None):
-    server_id = "cn_qd01" if uid[0] == '5' else "cn_gf01"
+    server_id = 'cn_qd01' if uid[0] == '5' else 'cn_gf01'
     cookie_info, _ = await get_cookie(user_id, uid, True, True)
     if not cookie_info:
         return '未绑定私人cookie，获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1\n获取后，使用[ysb cookie]指令绑定'
@@ -361,9 +363,47 @@ async def get_stoken_by_cookie(cookie: str) -> Optional[str]:
             bbs_cookie_url2 = 'https://api-takumi.mihoyo.com/auth/api/getMultiTokenByLoginTicket?login_ticket={}&token_types=3&uid={}'
             data2 = (await aiorequests.get(url=bbs_cookie_url2.format(login_ticket[0].split('=')[1], stuid))).json()
             return data2['data']['list'][0]['token']
-        else:
-            return None
     return None
+
+
+async def get_authkey_by_stoken(user_id: str, uid: str) -> Tuple[Optional[str], bool, Optional[PrivateCookie]]:
+    """
+    根据stoken获取authkey
+    :param user_id: 用户id
+    :param uid: 原神uid
+    :return: authkey
+    """
+    server_id = 'cn_qd01' if uid[0] == '5' else 'cn_gf01'
+    cookie_info, _ = await get_cookie(user_id, uid, True, True)
+    if not cookie_info:
+        return '未绑定私人cookie，获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1\n获取后，使用[ysb cookie]指令绑定', False, cookie_info
+    if not cookie_info.stoken:
+        return 'cookie中没有stoken字段，请重新绑定', False, cookie_info
+    headers = {
+        'Cookie':             cookie_info.stoken,
+        'DS':                 get_old_version_ds(True),
+        'User-Agent':         'okhttp/4.8.0',
+        'x-rpc-app_version':  '2.35.2',
+        'x-rpc-sys_version':  '12',
+        'x-rpc-client_type':  '5',
+        'x-rpc-channel':      'mihoyo',
+        'x-rpc-device_id':    random_hex(32),
+        'x-rpc-device_name':  random_text(random.randint(1, 10)),
+        'x-rpc-device_model': 'Mi 10',
+        'Referer':            'https://app.mihoyo.com',
+        'Host':               'api-takumi.mihoyo.com'}
+    data = await aiorequests.post(url=AUTHKEY_API,
+                                  headers=headers,
+                                  json={
+                                      'auth_appid': 'webview_gacha',
+                                      'game_biz':   'hk4e_cn',
+                                      'game_uid':   uid,
+                                      'region':     server_id})
+    data = data.json()
+    if 'data' in data and 'authkey' in data['data']:
+        return data['data']['authkey'], True, cookie_info
+    else:
+        return None, False, cookie_info
 
 
 async def get_enka_data(uid):

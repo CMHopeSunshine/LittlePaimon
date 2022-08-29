@@ -4,12 +4,12 @@ from typing import List, Tuple, Optional
 from LittlePaimon.config import RESOURCE_BASE_PATH
 from LittlePaimon.database.models import PlayerInfo, Character, PlayerWorldInfo, Weapon, Player
 from LittlePaimon.utils.files import load_image
+from LittlePaimon.utils.alias import get_chara_icon
 from LittlePaimon.utils.image import PMImage, get_qq_avatar, font_manager as fm
 from LittlePaimon.utils.message import MessageBuild
 
 RESOURCES = RESOURCE_BASE_PATH / 'player_card'
 ICON = RESOURCE_BASE_PATH / 'icon'
-THUMB = RESOURCE_BASE_PATH / 'thumb'
 WEAPON = RESOURCE_BASE_PATH / 'weapon'
 
 
@@ -44,7 +44,7 @@ async def draw_character_card(info: Character) -> Optional[PMImage]:
     if info is None:
         return None
     # 头像
-    avatar = PMImage(await load_image(THUMB / f'{info.name}.png'))
+    avatar = PMImage(await load_image(RESOURCE_BASE_PATH / 'avatar' / f'{get_chara_icon(name=info.name)}.png'))
     await avatar.to_circle('circle')
     await avatar.resize((122, 122))
     # 背景

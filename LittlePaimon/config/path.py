@@ -35,6 +35,7 @@ GACHA_RES = RESOURCE_BASE_PATH / 'gacha_res'
 GACHA_SIM = USER_DATA_PATH / 'gacha_sim_data'
 # 原神抽卡记录数据路径
 GACHA_LOG = USER_DATA_PATH / 'gacha_log_data'
+GACHA_LOG.mkdir(parents=True, exist_ok=True)
 # 字体路径
 FONTS_PATH = Path() / 'resources' / 'fonts'
 FONTS_PATH.mkdir(parents=True, exist_ok=True)

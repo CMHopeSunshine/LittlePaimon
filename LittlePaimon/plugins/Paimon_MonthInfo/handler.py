@@ -1,5 +1,5 @@
 from LittlePaimon.database.models import Player
-from LittlePaimon.utils.genshin_api import get_mihoyo_private_data
+from LittlePaimon.utils.api import get_mihoyo_private_data
 from LittlePaimon.utils import logger
 from .draw import draw_monthinfo_card
 

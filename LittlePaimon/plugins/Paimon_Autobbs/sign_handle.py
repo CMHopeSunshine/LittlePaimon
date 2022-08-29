@@ -7,7 +7,7 @@ from typing import Tuple
 from LittlePaimon import DRIVER
 from LittlePaimon.database.models import MihoyoBBSSub
 from LittlePaimon.utils import logger, scheduler
-from LittlePaimon.utils.genshin_api import get_mihoyo_private_data, get_sign_reward_list
+from LittlePaimon.utils.api import get_mihoyo_private_data, get_sign_reward_list
 from LittlePaimon.manager.plugin_manager import plugin_manager as pm
 from .draw import SignResult, draw_result
 

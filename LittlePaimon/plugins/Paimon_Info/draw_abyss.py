@@ -58,35 +58,35 @@ async def draw_abyss_card(info: AbyssInfo):
     # 最多击破
     await img.text(str(info.max_defeat.value), (370, 473), 357, fm.get('bahnschrift_regular.ttf', 56), '#40342d',
                    'center')
-    chara_img = PMImage(await load_image(RESOURCE_BASE_PATH / 'thumb' / f'{info.max_defeat.name}.png', size=(96, 96)))
+    chara_img = PMImage(await load_image(RESOURCE_BASE_PATH / 'avatar' / f'{info.max_defeat.icon}.png', size=(96, 96)))
     await chara_img.to_circle('circle')
     await img.paste(chara_img, (373, 248))
     # 战技次数
     await img.text(str(info.max_normal_skill.value), (532, 635), 357, fm.get('bahnschrift_regular.ttf', 56), '#40342d',
                    'center')
     chara_img = PMImage(
-        await load_image(RESOURCE_BASE_PATH / 'thumb' / f'{info.max_normal_skill.name}.png', size=(96, 96)))
+        await load_image(RESOURCE_BASE_PATH / 'avatar' / f'{info.max_normal_skill.icon}.png', size=(96, 96)))
     await chara_img.to_circle('circle')
     await img.paste(chara_img, (536, 248))
     # 爆发次数
     await img.text(str(info.max_energy_skill.value), (693, 796), 357, fm.get('bahnschrift_regular.ttf', 56), '#40342d',
                    'center')
     chara_img = PMImage(
-        await load_image(RESOURCE_BASE_PATH / 'thumb' / f'{info.max_energy_skill.name}.png', size=(96, 96)))
+        await load_image(RESOURCE_BASE_PATH / 'avatar' / f'{info.max_energy_skill.icon}.png', size=(96, 96)))
     await chara_img.to_circle('circle')
     await img.paste(chara_img, (696, 248))
     # 最深抵达
     await img.text(str(info.max_floor), (838, 1038), 298, fm.get('bahnschrift_regular.ttf', 60), '#40342d', 'center')
     # 最强一击
     circle = await load_image(RESOURCE_BASE_PATH / 'general' / 'orange_circle.png')
-    chara_img = PMImage(await load_image(RESOURCE_BASE_PATH / 'thumb' / f'{info.max_damage.name}.png', size=(205, 205)))
+    chara_img = PMImage(await load_image(RESOURCE_BASE_PATH / 'avatar' / f'{info.max_damage.icon}.png', size=(205, 205)))
     await chara_img.to_circle('circle')
     await img.text('最强一击', 270, 520, fm.get('SourceHanSansCN-Bold.otf', 48), '#40342d')
     await img.text(str(info.max_damage.value), 270, 590, fm.get('bahnschrift_bold.ttf', 72, 'Bold'), '#40342d')
     await img.paste(circle, (46, 485))
     await img.paste(chara_img, (49, 488))
     # 最多承伤
-    chara_img = PMImage(await load_image(RESOURCE_BASE_PATH / 'thumb' / f'{info.max_take_damage.name}.png', size=(205, 205)))
+    chara_img = PMImage(await load_image(RESOURCE_BASE_PATH / 'avatar' / f'{info.max_take_damage.icon}.png', size=(205, 205)))
     await chara_img.to_circle('circle')
     await img.text('最多承伤', 791, 520, fm.get('SourceHanSansCN-Bold.otf', 48), '#40342d')
     await img.text(str(info.max_take_damage.value), 791, 590, fm.get('bahnschrift_bold.ttf', 72, 'Bold'), '#40342d')
@@ -113,7 +113,7 @@ async def draw_abyss_card(info: AbyssInfo):
                         await load_image(RESOURCE_BASE_PATH / 'icon' / f'star{character.rarity}.png', size=(95, 95)),
                         (192 + (j % 4) * 103, 832 + (i - 9) * 194))
                     await img.paste(
-                        await load_image(RESOURCE_BASE_PATH / 'thumb' / f'{character.name}.png', size=(95, 95)),
+                        await load_image(RESOURCE_BASE_PATH / 'avatar' / f'{character.icon}.png', size=(95, 95)),
                         (192 + (j % 4) * 103, 832 + (i - 9) * 194))
                     await img.draw_rounded_rectangle2((192 + (j % 4) * 103, 903 + (i - 9) * 194), (30, 23), 10,
                                                       '#333333',
@@ -128,7 +128,7 @@ async def draw_abyss_card(info: AbyssInfo):
                         await load_image(RESOURCE_BASE_PATH / 'icon' / f'star{character.rarity}.png', size=(95, 95)),
                         (637 + (j % 4) * 103, 832 + (i - 9) * 194))
                     await img.paste(
-                        await load_image(RESOURCE_BASE_PATH / 'thumb' / f'{character.name}.png', size=(95, 95)),
+                        await load_image(RESOURCE_BASE_PATH / 'avatar' / f'{character.icon}.png', size=(95, 95)),
                         (637 + (j % 4) * 103, 832 + (i - 9) * 194))
                     await img.draw_rounded_rectangle2((637 + (j % 4) * 103, 903 + (i - 9) * 194), (30, 23), 10,
                                                       '#333333',

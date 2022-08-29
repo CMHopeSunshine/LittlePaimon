@@ -10,7 +10,7 @@ from LittlePaimon.database.models import PlayerInfo, Character, LastQuery, Priva
 from LittlePaimon.database.models import Artifact, CharacterProperty, Artifacts, Talents, Talent
 from LittlePaimon.utils import logger, scheduler
 from LittlePaimon.utils.files import load_json
-from LittlePaimon.utils.genshin_api import get_enka_data, get_mihoyo_public_data, get_mihoyo_private_data
+from LittlePaimon.utils.api import get_enka_data, get_mihoyo_public_data, get_mihoyo_private_data
 from LittlePaimon.utils.typing import DataSourceType
 from LittlePaimon.utils.alias import get_name_by_id
 from LittlePaimon.utils.typing import CHARACTERS
