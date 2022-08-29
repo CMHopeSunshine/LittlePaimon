@@ -115,7 +115,7 @@ async def get_gacha_log_data(user_id: str, uid: str):
             await asyncio.sleep(1)
         logger.info('原神抽卡记录', f'➤➤<m>{pool_name}</m>', {}, '获取完成', True)
     for i in gacha_log.item_list.values():
-        i.sort(key=lambda x: x.time)
+        i.sort(key=lambda x: (x.time, x.id))
     gacha_log.update_time = datetime.datetime.now()
     save_gacha_log_info(user_id, uid, gacha_log)
     if new_num == 0:
