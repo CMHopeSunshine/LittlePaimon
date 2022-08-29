@@ -32,6 +32,7 @@ show_log = on_command('查看抽卡记录', aliases={'抽卡记录'}, priority=1
 })
 
 running_update = []
+running_show = []
 
 
 @update_log.handle()
@@ -52,10 +53,16 @@ async def _(event: MessageEvent, player=CommandPlayer(1)):
 
 @show_log.handle()
 async def _(event: MessageEvent, player=CommandPlayer(1)):
-    logger.info('原神抽卡记录', '➤', {'用户': player[0].user_id, 'UID': player[0].uid}, '开始绘制抽卡记录图片', True)
-    try:
-        result = await get_gacha_log_img(player[0].user_id, player[0].uid, event.sender.nickname)
-        await show_log.finish(result, at_sender=True)
-    except Exception as e:
-        logger.info('原神抽卡记录', f'➤➤绘制抽卡记录图片时出现错误：<r>{e}</r>')
-        await update_log.finish(f'绘制抽卡记录分析时出现错误：{e}')
+    if f'{player[0].user_id}-{player[0].uid}' in running_show:
+        await update_log.finish(f'UID{player[0].uid}已经在绘制抽卡记录分析中，请勿重复发送')
+    else:
+        logger.info('原神抽卡记录', '➤', {'用户': player[0].user_id, 'UID': player[0].uid}, '开始绘制抽卡记录图片', True)
+        running_show.append(f'{player[0].user_id}-{player[0].uid}')
+        await update_log.send(f'开始为UID{player[0].uid}绘制抽卡记录分析，请稍候...')
+        try:
+            result = await get_gacha_log_img(player[0].user_id, player[0].uid, event.sender.nickname)
+            await show_log.send(result, at_sender=True)
+        except Exception as e:
+            logger.info('原神抽卡记录', f'➤➤绘制抽卡记录图片时出现错误：<r>{e}</r>')
+            await update_log.send(f'绘制抽卡记录分析时出现错误：{e}')
+        running_show.remove(f'{player[0].user_id}-{player[0].uid}')
