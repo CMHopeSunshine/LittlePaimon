@@ -1,5 +1,8 @@
+from typing import Union
+
 from nonebot import get_bot, on_command
-from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
+from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment, GROUP_ADMIN
+from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
 
 from .generate import *
@@ -16,14 +19,14 @@ __plugin_meta__ = PluginMetadata(
         "原神日历 on 时间/off : 订阅/取消订阅指定服务器的日历推送\n"
     ),
     extra={
-        'type':    '原神Wiki',
-        "author":  "nicklly <1134741727@qq.com>",
+        'type': '原神Wiki',
+        "author": "nicklly <1134741727@qq.com>",
         "version": "1.0.1",
         'priority': 7,
     },
 )
 
-calendar = on_command('原神日历', aliases={'原神日程', '活动日历'}, priority=10, block=True)
+calendar = on_command('原神日历', aliases={'原神日程', '活动日历'}, permission=SUPERUSER | GROUP_ADMIN, priority=10, block=True)
 
 
 @calendar.handle()
@@ -38,13 +41,18 @@ async def _(event: MessageEvent, sub_id=CommandObjectID(), switch=CommandSwitch(
             sub_data['extra_id'] = event.guild_id
         if switch:
             if sub_time:
-                await GeneralSub.update_or_create(**sub_data, defaults={'sub_hour': sub_time[0], 'sub_minute': sub_time[1]})
+                await GeneralSub.update_or_create(**sub_data,
+                                                  defaults={'sub_hour': sub_time[0], 'sub_minute': sub_time[1]})
 
                 if scheduler.get_job(f'genshin_calendar_{sub_id}'):
                     scheduler.remove_job(f'genshin_calendar_{sub_id}')
-                scheduler.add_job(func=send_calendar, trigger='cron', hour=sub_time[0], minute=sub_time[1], id=f'genshin_calendar_{sub_id}', args=(sub_data['sub_id'], sub_data['sub_type'], sub_data.get('extra_id', None)), misfire_grace_time=10)
+                scheduler.add_job(func=send_calendar, trigger='cron', hour=sub_time[0], minute=sub_time[1],
+                                  id=f'genshin_calendar_{sub_id}',
+                                  args=(sub_data['sub_id'], sub_data['sub_type'], sub_data.get('extra_id', None)),
+                                  misfire_grace_time=10)
 
-                logger.info('原神日历', '', {sub_data['sub_type']: sub_id, 'time': f'{sub_time[0]}:{sub_time[1]}'}, '订阅成功', True)
+                logger.info('原神日历', '', {sub_data['sub_type']: sub_id, 'time': f'{sub_time[0]}:{sub_time[1]}'}, '订阅成功',
+                            True)
 
                 await calendar.finish(f'原神日历订阅成功， 将在每日{sub_time[0]}:{sub_time[1]}推送')
             else:
