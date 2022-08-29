@@ -1,11 +1,12 @@
 import asyncio
+import datetime
 import random
 import time
 from nonebot import get_bot
 from collections import defaultdict
 from typing import Tuple
 from LittlePaimon import DRIVER
-from LittlePaimon.database.models import MihoyoBBSSub
+from LittlePaimon.database.models import MihoyoBBSSub, LastQuery
 from LittlePaimon.utils import logger, scheduler
 from LittlePaimon.utils.api import get_mihoyo_private_data, get_sign_reward_list
 from LittlePaimon.manager.plugin_manager import plugin_manager as pm
@@ -21,6 +22,8 @@ async def mhy_bbs_sign(user_id: str, uid: str) -> Tuple[SignResult, str]:
     :param uid: 原神uid
     :return: 签到成功天数或失败原因
     """
+    await LastQuery.update_or_create(user_id=user_id,
+                                     defaults={'uid': uid, 'last_time': datetime.datetime.now()})
     sign_info = await get_mihoyo_private_data(uid, user_id, 'sign_info')
     if isinstance(sign_info, str):
         logger.info('米游社原神签到', '➤', {'用户': user_id, 'UID': uid}, '未绑定私人cookie', False)

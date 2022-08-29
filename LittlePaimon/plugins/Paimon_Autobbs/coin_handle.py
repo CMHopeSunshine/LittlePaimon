@@ -1,9 +1,10 @@
 import asyncio
+import datetime
 import random
 import time
 from collections import defaultdict
 
-from LittlePaimon.database.models import PrivateCookie, MihoyoBBSSub
+from LittlePaimon.database.models import PrivateCookie, MihoyoBBSSub, LastQuery
 from LittlePaimon.utils import logger, aiorequests
 from LittlePaimon.utils import scheduler
 from LittlePaimon.utils.api import random_text, random_hex, get_old_version_ds, get_ds
@@ -283,6 +284,8 @@ async def mhy_bbs_coin(user_id: str, uid: str) -> str:
         return '你尚未绑定Cookie和Stoken，请先用ysb指令绑定！'
     elif cookie.stoken is None:
         return '你绑定Cookie中没有login_ticket，请重新用ysb指令绑定！'
+    await LastQuery.update_or_create(user_id=user_id,
+                                     defaults={'uid': uid, 'last_time': datetime.datetime.now()})
     logger.info('米游币自动获取', '➤执行', {'用户': user_id, 'UID': uid, '的米游币获取': '......'})
     get_coin_task = MihoyoBBSCoin(cookie.stoken)
     result, msg = await get_coin_task.run()
