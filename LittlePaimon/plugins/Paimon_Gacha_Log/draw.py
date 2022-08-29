@@ -82,25 +82,29 @@ async def draw_pool_detail(pool_name: str, data: List[FiveStarItem], total_count
     if len(data) > 3:
         last_point = None
         await img.paste(await load_image(RESOURCE_BASE_PATH / 'gacha_log' / 'broken_line_bg.png'), (1, 181))
-        for chara in data[:10]:
+        i = 0
+        for chara in data[-10:]:
             height = int(583 - (chara.count / 90) * 340)
             if last_point:
-                await img.draw_line(last_point, (line_point[data.index(chara)], height), '#ff6f30', 4)
-            last_point = (line_point[data.index(chara)], height)
-        for chara in data[:10]:
+                await img.draw_line(last_point, (line_point[i], height), '#ff6f30', 4)
+            last_point = (line_point[i], height)
+            i += 1
+        i = 0
+        for chara in data[-10:]:
             height = int(583 - (chara.count / 90) * 340)
-            point = avatar_point[data.index(chara)]
+            point = avatar_point[i]
             await img.paste(await small_avatar(chara), (point, height - 23))
             await img.text(str(chara.count), (point, point + 44), height - 48, fm.get('bahnschrift_regular', 30,
                                                                                       'Regular'), '#040404', 'center')
+            i += 1
     # 详细数据统计
     chara_bg = PMImage(await load_image(RESOURCE_BASE_PATH / 'gacha_log' / 'detail_bg.png'))
     await chara_bg.stretch((47, chara_bg.height - 20), 204 + 204 * (len(data) // 6), 'height')
     await img.paste(chara_bg, (1, 655 if len(data) > 3 else 181))
     await asyncio.gather(
-        *[img.paste(await detail_avatar(chara),
-                    (18 + data.index(chara) % 6 * 163, (708 if len(data) > 3 else 234) + data.index(chara) // 6 * 204))
-          for chara in data])
+        *[img.paste(await detail_avatar(data[i]),
+                    (18 + i % 6 * 163, (708 if len(data) > 3 else 234) + i // 6 * 204))
+          for i in range(len(data))])
     return img
 
 
@@ -127,7 +131,7 @@ async def draw_four_star_detail(data: List[FourStarItem]):
     total_height = 105 + 260 * math.ceil(len(data) / 5)
     bg = PMImage(size=(1008, total_height), mode='RGBA', color=(255, 255, 255, 0))
     await bg.paste(bar, (0, 0))
-    await asyncio.gather(*[bg.paste(await draw_four_star(chara), (data.index(chara) % 5 * 204, 105 + data.index(chara) // 5 * 260)) for chara in data])
+    await asyncio.gather(*[bg.paste(await draw_four_star(data[i]), (i % 5 * 204, 105 + i // 5 * 260)) for i in range(len(data))])
     return bg
 
 
