@@ -14,7 +14,6 @@ line_point = [88, 182, 282, 378, 477, 574, 673, 769, 864, 967]
 bar_color = [('#b6d6f2', '#3d6e99'), ('#c8b6f2', '#593d99'), ('#abede0', '#3a9382')]
 name_level_color = ['#ff3600', '#ff7800', '#ffb400', 'black']
 small_avatar_cache = {}
-avatar_cache = {}
 
 
 async def get_avatar(qid: str, size: Tuple[int, int] = (146, 146)) -> PMImage:
@@ -39,18 +38,14 @@ async def small_avatar(info: FiveStarItem):
 
 
 async def detail_avatar(info: FiveStarItem):
-    if info.name in avatar_cache:
-        bg = avatar_cache[info.name]
-    else:
-        bg = PMImage(await load_image(RESOURCE_BASE_PATH / 'gacha_log' / 'item_avatar_5.png'))
-        img = PMImage(
-            await load_image(RESOURCE_BASE_PATH / ('avatar' if info.type == '角色' else 'weapon') / f'{info.icon}.png',
-                             size=(123, 123)))
-        await img.to_circle('circle')
-        await bg.paste(img.image, (14, 26))
-        await bg.text(info.name, (0, bg.width), 162, fm.get('hywh', 24),
-                      '#ff3600' if info.name not in {'迪卢克', '刻晴', '莫娜', '七七', '琴'} else '#33231a', 'center')
-        avatar_cache[info.name] = bg.copy()
+    bg = PMImage(await load_image(RESOURCE_BASE_PATH / 'gacha_log' / 'item_avatar_5.png'))
+    img = PMImage(
+        await load_image(RESOURCE_BASE_PATH / ('avatar' if info.type == '角色' else 'weapon') / f'{info.icon}.png',
+                         size=(123, 123)))
+    await img.to_circle('circle')
+    await bg.paste(img.image, (14, 26))
+    await bg.text(info.name, (0, bg.width), 162, fm.get('hywh', 24),
+                  '#ff3600' if info.name not in {'迪卢克', '刻晴', '莫娜', '七七', '琴'} and info.type == '角色' else '#33231a', 'center')
     if info.count < (20 if info.type == '角色' else 15):
         color = name_level_color[0]
     elif (20 if info.type == '角色' else 15) <= info.count < (40 if info.type == '角色' else 30):
@@ -87,12 +82,12 @@ async def draw_pool_detail(pool_name: str, data: List[FiveStarItem], total_count
     if len(data) > 3:
         last_point = None
         await img.paste(await load_image(RESOURCE_BASE_PATH / 'gacha_log' / 'broken_line_bg.png'), (1, 181))
-        for chara in data:
+        for chara in data[:10]:
             height = int(583 - (chara.count / 90) * 340)
             if last_point:
                 await img.draw_line(last_point, (line_point[data.index(chara)], height), '#ff6f30', 4)
             last_point = (line_point[data.index(chara)], height)
-        for chara in data:
+        for chara in data[:10]:
             height = int(583 - (chara.count / 90) * 340)
             point = avatar_point[data.index(chara)]
             await img.paste(await small_avatar(chara), (point, height - 23))
@@ -178,14 +173,16 @@ async def draw_gacha_log(user_id: str, uid: str, nickname: Optional[str], signat
         new_pool_per = round((len(data5['常驻祈愿']) + len(data5['新手祈愿'])) / total_five_star_count, 3)
         now_used_width = 56
         pers = [chara_pool_per, weapon_pool_per, new_pool_per]
+        i = 0
         for per in pers:
             if per >= 0.03:
                 await img.draw_rectangle((now_used_width, 399, now_used_width + int(per * 967), 446),
-                                         bar_color[pers.index(per)][0])
+                                         bar_color[i][0])
                 if per >= 0.1:
                     await img.text(f'{per * 100}%', now_used_width + 18, 410, fm.get('bahnschrift_regular', 30, 'Bold'),
-                                   bar_color[pers.index(per)][1])
+                                   bar_color[i][1])
                 now_used_width += int(per * 967)
+            i += 1
         await img.paste(await load_image(RESOURCE_BASE_PATH / 'gacha_log' / 'text.png'), (484, 464))
         now_height = 525
         for pool_name, data in data5.items():
