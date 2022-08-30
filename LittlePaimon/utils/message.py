@@ -231,8 +231,9 @@ def CommandCharacter(limit: int = 3, replace_uid: bool = True) -> List[str]:
     :return: 角色名列表
     """
 
-    async def _character(matcher: Matcher, state: T_State, user_id: str = Arg('main_user')):
-        msg = state['_prefix']['command_arg'].extract_plain_text().strip() if replace_uid else state['msg']
+    async def _character(matcher: Matcher, state: T_State, event: MessageEvent):
+        msg = state['_prefix']['command_arg'].extract_plain_text().strip() if not replace_uid else state['msg']
+        user_id = state.get('main_user', str(event.user_id))
         if not msg:
             return [random.choice(CHARACTERS)]
         character_list = []
