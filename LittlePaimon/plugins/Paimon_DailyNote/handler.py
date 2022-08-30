@@ -115,6 +115,8 @@ async def check_note():
                     result_log += '银币'
                 if result_log:
                     logger.info('原神实时便签', '➤', {'用户': sub.user_id, 'UID': sub.uid}, f'{result_log}达到了阈值，发送提醒', True)
+                else:
+                    logger.info('原神实时便签', '➤➤', {'用户': sub.user_id, 'UID': sub.uid}, '检查完成，未达到阈值', True)
                 if result:
                     sub.last_remind_time = datetime.datetime.now()
                     sub.today_remind_num += 1
@@ -128,8 +130,8 @@ async def check_note():
                                                              message=f'⚠️你的UID{sub.uid}{result}记得清理哦⚠️')
                     except Exception as e:
                         logger.info('原神实时便签', '➤➤', {'用户': sub.user_id, 'UID': sub.uid}, f'发送提醒失败，{e}', False)
-                # 等待2至4秒再检查下一个，防止检查过快
-                await asyncio.sleep(random.randint(2, 4))
+                # 等待一会再检查下一个，防止检查过快
+                await asyncio.sleep(random.randint(4, 8))
     logger.info('原神实时便签', f'树脂检查完成，共花费<m>{round((time.time() - t) / 60, 2)}</m>分钟')
 
 

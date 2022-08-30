@@ -3,7 +3,9 @@ import datetime
 import random
 import time
 from collections import defaultdict
+from typing import Tuple
 
+from nonebot import get_bot
 from LittlePaimon.database.models import PrivateCookie, MihoyoBBSSub, LastQuery
 from LittlePaimon.utils import logger, aiorequests
 from LittlePaimon.utils import scheduler
@@ -57,6 +59,12 @@ mihoyo_bbs_List = [
         'name':    '崩坏：星穹铁道',
         'url':     'https://bbs.mihoyo.com/sr/',
     },
+    {
+        'id': '8',
+        'forumId': '57',
+        'name': '绝区零',
+        'url': 'https://bbs.mihoyo.com/zzz/'
+    }
 ]
 
 
@@ -96,7 +104,7 @@ class MihoyoBBSCoin:
         self.is_valid: bool = True
         self.state: str = ''
 
-    async def run(self) -> (bool, str):
+    async def run(self) -> Tuple[bool, str]:
         """
         执行米游币获取任务
         :return: 获取消息
@@ -304,14 +312,40 @@ async def bbs_auto_coin():
     if not subs:
         return
     logger.info('米游币自动获取', f'开始执行米游币自动获取，共<m>{len(subs)}</m>个任务，预计花费<m>{round(75 * len(subs) / 60, 2)}</m>分钟')
-    coin_result = defaultdict(list)
+    coin_result_group = defaultdict(list)
+    coin_result_private = defaultdict(list)
     for sub in subs:
         result = await mhy_bbs_coin(str(sub.user_id), sub.uid)
-        coin_result[sub.group_id].append({
-            'user_id': sub.user_id,
-            'uid':     sub.uid,
-            'result':  '出错' not in result and 'Cookie' not in result
-        })
+        if sub.user_id != sub.group_id:
+            coin_result_group[sub.group_id].append({
+                'user_id': sub.user_id,
+                'uid': sub.uid,
+                'result': '出错' not in result and 'Cookie' not in result
+            })
+        else:
+            coin_result_private[sub.user_id].append({
+                'uid': sub.uid,
+                'result': '出错' not in result and 'Cookie' not in result,
+                'msg': result
+            })
         await asyncio.sleep(random.randint(3, 6))
 
-    logger.info('米游币自动获取', f'签到完成，共花费<m>{round((time.time() - t) / 60, 2)}</m>分钟')
+    for group_id, result_list in coin_result_group.items():
+        result_num = len(result_list)
+        result_fail = len([result for result in result_list if not result['result']])
+        msg = f'本群米游币自动获取共{result_num}个任务，其中成功{result_num-result_fail}个，失败{result_fail}个，失败的UID列表：\n{"\n".join(result["uid"] for result in result_list if not result["result"])}'
+        try:
+            await get_bot().send_group_msg(group_id=int(group_id), message=msg)
+        except Exception as e:
+            logger.info('米游币自动获取', '➤➤', {'群': group_id}, f'发送米游币自动结果失败: {e}', False)
+        await asyncio.sleep(random.randint(3, 6))
+
+    for user_id, result_list in coin_result_private.items():
+        for result in result_list:
+            try:
+                await get_bot().send_private_msg(user_id=int(user_id), message=result['msg'])
+            except Exception as e:
+                logger.info('米游币自动获取', '➤➤', {'用户': user_id}, f'发送米游币自动结果失败: {e}', False)
+            await asyncio.sleep(random.randint(3, 6))
+
+    logger.info('米游币自动获取', f'获取完成，共花费<m>{round((time.time() - t) / 60, 2)}</m>分钟')

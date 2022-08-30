@@ -172,20 +172,20 @@ async def draw_gacha_log(user_id: str, uid: str, nickname: Optional[str], signat
     await img.text(str(total_five_star_count), (789, 884), 286, fm.get('bahnschrift_regular', 48), '#040404', 'center')
     four_star_detail = await draw_four_star_detail(list(data4.values()))
     if total_five_star_count:
-        chara_pool_per = round(len(data5['角色祈愿']) / total_five_star_count, 3)
-        weapon_pool_per = round(len(data5['武器祈愿']) / total_five_star_count, 3)
-        new_pool_per = round((len(data5['常驻祈愿']) + len(data5['新手祈愿'])) / total_five_star_count, 3)
+        chara_pool_per = round(len(data5['角色祈愿']) / total_five_star_count * 100, 3)
+        weapon_pool_per = round(len(data5['武器祈愿']) / total_five_star_count * 100, 3)
+        new_pool_per = round((len(data5['常驻祈愿']) + len(data5['新手祈愿'])) / total_five_star_count * 100, 3)
         now_used_width = 56
         pers = [chara_pool_per, weapon_pool_per, new_pool_per]
         i = 0
         for per in pers:
-            if per >= 0.03:
-                await img.draw_rectangle((now_used_width, 399, now_used_width + int(per * 967), 446),
+            if per >= 3:
+                await img.draw_rectangle((now_used_width, 399, now_used_width + int(per / 100 * 967), 446),
                                          bar_color[i][0])
-                if per >= 0.1:
-                    await img.text(f'{per * 100}%', now_used_width + 18, 410, fm.get('bahnschrift_regular', 30, 'Bold'),
+                if per >= 10:
+                    await img.text(f'{per}%', now_used_width + 18, 410, fm.get('bahnschrift_regular', 30, 'Bold'),
                                    bar_color[i][1])
-                now_used_width += int(per * 967)
+                now_used_width += int(per / 100 * 967)
             i += 1
         await img.paste(await load_image(RESOURCE_BASE_PATH / 'gacha_log' / 'text.png'), (484, 464))
         now_height = 525

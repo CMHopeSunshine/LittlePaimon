@@ -105,6 +105,7 @@ async def bbs_auto_sign():
             await get_bot().send_group_msg(group_id=int(group_id), message=img)
         except Exception as e:
             logger.info('米游社原神签到', '➤➤', {'群': group_id}, f'发送签到结果失败: {e}', False)
+        await asyncio.sleep(random.randint(3, 6))
 
     for user_id, sign_result in sign_result_private.items():
         for result in sign_result:
@@ -115,6 +116,7 @@ async def bbs_auto_sign():
                                                          f'{"" if result["result"] == SignResult.FAIL else "，获得奖励：" + result["reward"]}')
             except Exception as e:
                 logger.info('米游社原神签到', '➤➤', {'用户': user_id}, f'发送签到结果失败: {e}', False)
+        await asyncio.sleep(random.randint(3, 6))
 
     logger.info('米游社原神签到', f'签到完成，共花费<m>{round((time.time() - t) / 60, 2)}</m>分钟')
 
