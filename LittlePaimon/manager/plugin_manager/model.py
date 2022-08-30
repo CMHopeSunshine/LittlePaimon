@@ -42,7 +42,7 @@ class Config(BaseModel):
     CookieWeb_url: str = Field('http://127.0.0.1:13579/LittlePaimon/cookie', alias='CookieWeb地址')
 
     sim_gacha_cd_group: int = Field(30, alias='模拟抽卡群冷却')
-    sim_gacha_cd_member: int = Field(60, alias='模拟抽卡群冷却')
+    sim_gacha_cd_member: int = Field(60, alias='模拟抽卡群员冷却')
     sim_gacha_max: int = Field(5, alias='模拟抽卡单次最多十连数')
 
     auto_myb_enable: bool = Field(True, alias='米游币自动获取开关')
