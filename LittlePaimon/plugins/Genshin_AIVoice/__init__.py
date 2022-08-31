@@ -16,16 +16,17 @@ __plugin_meta__ = PluginMetadata(
     }
 )
 
-voice_cmd = on_regex(r'(?P<chara>\w*)说(?P<text>\w+)', priority=20, block=True, state={
-        'pm_name':        '原神语音合成',
-        'pm_description': 'AI语音合成，让原神角色说任何话！',
-        'pm_usage':       '<角色名>说<话>',
-        'pm_priority':    10
-    })
+voice_cmd = on_regex(r'(?P<chara>\w*)说(?P<text>[\w，。！？、：；“”‘’〔（）〕——!\?,\.`\'"\(\)\[\]{}~\s]+)', priority=20, block=True, state={
+    'pm_name': '原神语音合成',
+    'pm_description': 'AI语音合成，让原神角色说任何话！',
+    'pm_usage': '<角色名>说<话>',
+    'pm_priority': 10
+})
 
 
 @voice_cmd.handle(parameterless=[Cooldown(cooldown=6, isolate_level=CooldownIsolateLevel.GROUP, prompt='冷却中...')])
 async def _(event: Union[GroupMessageEvent, PrivateMessageEvent], regex_dict: dict = RegexDict()):
+    regex_dict['text'] = regex_dict['text'].replace('\r', '').replace('\n', '')
     if not regex_dict['chara']:
         regex_dict['chara'] = '派蒙'
     elif regex_dict['chara'] not in ['派蒙', '凯亚', '安柏', '丽莎', '琴', '香菱', '枫原万叶', '迪卢克', '温迪', '可莉', '早柚', '托马', '芭芭拉',
