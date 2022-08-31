@@ -166,7 +166,7 @@ async def check_retcode(data: dict, cookie_info, cookie_type: str, user_id: str,
         if cookie_info == 'private':
             logger.info('原神Cookie', f'用户<m>{user_id}</m>的私人cookie<m>{uid}</m>已达到每日30次查询上限')
         else:
-            logger.info('原神Cookie', f'<m>{cookie_info["cid"]}</m>号公共cookie已达到每日30次查询上限')
+            logger.info('原神Cookie', f'<m>{cookie_info.id}</m>号公共cookie已达到每日30次查询上限')
         return False
     else:
         if cookie_type == 'public':
