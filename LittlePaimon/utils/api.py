@@ -155,18 +155,27 @@ async def check_retcode(data: dict, cookie_info, cookie_type: str, user_id: str,
             elif cookie_info.status == 0:
                 await cookie_info.delete()
                 logger.info('原神Cookie', f'用户<m>{user_id}</m>的私人cookie<m>{uid}</m>连续失效，<r>已删除</r>')
-        else:
+        elif cookie_type == 'public':
             await CookieCache.filter(cookie=cookie_info.cookie).delete()
             await cookie_info.delete()
             logger.info('原神Cookie', f'<m>{cookie_info.id}</m>号公共cookie已失效，<r>已删除</r>')
+        else:
+            await PublicCookie.filter(cookie=cookie_info.cookie).delete()
+            await cookie_info.delete()
+            logger.info('原神Cookie', f'UID<m>{cookie_info.uid}</m>使用的缓存cookie已失效，<r>已删除</r>')
         return False
     elif data['retcode'] == 10101:
         cookie_info.status = 2
-        await cookie_info.save()
-        if cookie_info == 'private':
+        if cookie_type == 'private':
+            cookie_info.status = 2
             logger.info('原神Cookie', f'用户<m>{user_id}</m>的私人cookie<m>{uid}</m>已达到每日30次查询上限')
-        else:
+        elif cookie_type == 'public':
+            cookie_info.status = 2
             logger.info('原神Cookie', f'<m>{cookie_info.id}</m>号公共cookie已达到每日30次查询上限')
+        else:
+            await PublicCookie.filter(cookie=cookie_info.cookie).update(status=2)
+            logger.info('原神Cookie', f'UID<m>{cookie_info.uid}</m>使用的缓存cookie已达到每日30次查询上限')
+        await cookie_info.save()
         return False
     else:
         if cookie_type == 'public':
