@@ -1,6 +1,6 @@
 from typing import Union, Tuple, Set
 
-from nonebot import on_command, on_regex, on_endswith, on_keyword
+from nonebot import on_command, on_regex, on_endswith, on_keyword, on_startswith
 import nonebot
 
 """
@@ -24,6 +24,14 @@ def on_endswith_(msg: Union[str, Tuple[str, ...]], state: dict = None, *args, **
     return on_endswith(msg=msg, state=state, _depth=1, *args, **kwargs)
 
 
+def on_startswith_(msg: Union[str, Tuple[str, ...]], state: dict = None, *args, **kwargs):
+    if state is None:
+        state = {}
+    if 'pm_name' not in state:
+        state['pm_name'] = msg if isinstance(msg, str) else msg[0]
+    return on_startswith(msg=msg, state=state, _depth=1, *args, **kwargs)
+
+
 def on_regex_(pattern: str, state: dict = None, *args, **kwargs):
     if state is None:
         state = {}
@@ -40,7 +48,9 @@ def on_keyword_(keywords: Set[str], state: dict = None, *args, **kwargs):
     return on_keyword(keywords=keywords, state=state, _depth=1, *args, **kwargs)
 
 
+
 nonebot.on_command = on_command_
 nonebot.on_regex = on_regex_
+nonebot.on_startswith = on_startswith_
 nonebot.on_endswith = on_endswith_
 nonebot.on_keyword = on_keyword_

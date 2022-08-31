@@ -57,3 +57,5 @@ class Config(BaseModel):
     ssbq_begin: int = Field(0, alias='实时便签停止检查开始时间')
     ssbq_end: int = Field(6, alias='实时便签停止检查结束时间')
     ssbq_check: int = Field(16, alias='实时便签检查间隔')
+
+    AI_voice_cooldown: int = Field(10, alias='原神AI语音合成冷却时间(秒)')

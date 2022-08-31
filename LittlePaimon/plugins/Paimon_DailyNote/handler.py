@@ -133,9 +133,3 @@ async def check_note():
                 # 等待一会再检查下一个，防止检查过快
                 await asyncio.sleep(random.randint(4, 8))
     logger.info('原神实时便签', f'树脂检查完成，共花费<m>{round((time.time() - t) / 60, 2)}</m>分钟')
-
-
-@scheduler.scheduled_job('cron', hour=0, minute=0, misfire_grace_time=10)
-async def _():
-    logger.info('原神实时便签', '清空每日提醒次数限制')
-    await DailyNoteSub.all().update(today_remind_num=0)

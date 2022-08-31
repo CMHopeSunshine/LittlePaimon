@@ -8,7 +8,6 @@ from typing import Union, Optional, Tuple, List
 from PIL import Image
 from nonebot import get_bot
 from nonebot.adapters.onebot.v11 import MessageEvent, Message, MessageSegment, GroupMessageEvent
-from nonebot.internal.params import Arg
 from nonebot.matcher import Matcher
 from nonebot.params import CommandArg, Depends
 from nonebot.typing import T_State
@@ -18,7 +17,8 @@ from LittlePaimon.utils import aiorequests, load_image
 from LittlePaimon.utils.alias import get_match_alias
 from LittlePaimon.utils.image import PMImage
 from LittlePaimon.utils.filter import filter_msg
-from LittlePaimon.utils.typing import CHARACTERS, MALE_CHARACTERS, FEMALE_CHARACTERS, GIRL_CHARACTERS, BOY_CHARACTERS, LOLI_CHARACTERS
+from LittlePaimon.utils.typing import CHARACTERS, MALE_CHARACTERS, FEMALE_CHARACTERS, GIRL_CHARACTERS, BOY_CHARACTERS, \
+    LOLI_CHARACTERS
 
 
 class MessageBuild:
@@ -61,48 +61,6 @@ class MessageBuild:
         return MessageSegment.image(bio)
 
     @classmethod
-    async def StaticImage(cls,
-                          url: str,
-                          size: Optional[Tuple[int, int]] = None,
-                          crop: Optional[Tuple[int, int, int, int]] = None,
-                          quality: Optional[int] = 100,
-                          mode: Optional[str] = None,
-                          tips: Optional[str] = None,
-                          is_check_time: Optional[bool] = True,
-                          check_time_day: Optional[int] = 3
-                          ):
-        """
-            从url下载图片，并预处理并构造成MessageSegment，如果url的图片已存在本地，则直接读取本地图片
-            :param url: 图片url
-            :param size: 预处理尺寸
-            :param crop: 预处理裁剪大小
-            :param quality: 预处理图片质量
-            :param mode: 预处理图像模式
-            :param tips: url中不存在该图片时的提示语
-            :param is_check_time: 是否检查本地图片最后修改时间
-            :param check_time_day: 检查本地图片最后修改时间的天数，超过该天数则重新下载图片
-            :return: MessageSegment.image
-        """
-        path = Path() / 'resources' / url
-        if path.exists() and (
-                not is_check_time or (is_check_time and not check_time(path.stat().st_mtime, check_time_day))):
-            img = Image.open(path)
-        else:
-            path.parent.mkdir(parents=True, exist_ok=True)
-            img = await aiorequests.get_img(url='https://static.cherishmoon.fun/' + url, save_path=path)
-            if img == 'No Such File':
-                return MessageBuild.Text(tips or '缺少该静态资源')
-        if size:
-            img = img.resize(size)
-        if crop:
-            img = img.crop(crop)
-        if mode:
-            img = img.convert(mode)
-        bio = BytesIO()
-        img.save(bio, format='JPEG' if img.mode == 'RGB' else 'PNG', quality=quality)
-        return MessageSegment.image(bio)
-
-    @classmethod
     def Text(cls, text: str) -> MessageSegment:
         """
             过滤文本中的敏感违禁词，并构造成MessageSegment
@@ -133,21 +91,6 @@ class MessageBuild:
     @classmethod
     def Video(cls, path: str) -> MessageSegment:
         return MessageSegment.video(path)
-
-    @classmethod
-    async def StaticVideo(cls, url: str) -> MessageSegment:
-        """
-            从url中下载视频文件，并构造成MessageSegment，如果本地已有该视频文件，则直接读取本地文件
-            :param url: 视频url
-            :return: MessageSegment.video
-        """
-        path = Path() / 'data' / url
-        if not path.exists():
-            path.parent.mkdir(parents=True, exist_ok=True)
-            resp = await aiorequests.get(url=f'https://static.cherishmoon.fun/{url}')
-            content = resp.content
-            path.write_bytes(content)
-        return MessageSegment.video(file=path)
 
 
 def CommandPlayer(limit: int = 3, only_cn: bool = True) -> List[Player]:
@@ -383,18 +326,6 @@ def replace_all(raw_text: str, text_list: Union[str, list]) -> str:
         for text in text_list:
             raw_text = raw_text.replace(text, '')
     return raw_text
-
-
-# def transform_uid(msg: Union[Message, str]) -> Union[List[str], str, None]:
-#     if isinstance(msg, Message):
-#         msg = msg.extract_plain_text().strip()
-#     check_uid = msg.split(' ')
-#     uid_list = []
-#     for check in check_uid:
-#         uid = re.search(r'(?P<uid>(1|2|5)\d{8})', check)
-#         if uid:
-#             uid_list.append(uid['uid'])
-#     return uid_list if len(uid_list) > 1 else uid_list[0] if uid_list else None
 
 
 def check_time(time_stamp: float, days: int = 1):

@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 
 from nonebot import on_regex, on_command
 from nonebot.matcher import Matcher
@@ -12,8 +13,9 @@ from nonebot.typing import T_State
 from LittlePaimon import SUPERUSERS, DRIVER
 from LittlePaimon.utils import logger
 from LittlePaimon.utils.message import CommandObjectID
-from LittlePaimon.database.models import PluginPermission
+from LittlePaimon.database.models import PluginPermission, PluginStatistics
 from .manager import PluginManager, hidden_plugins
+from .model import MatcherInfo
 from .draw_help import draw_help
 
 plugin_manager = PluginManager()
@@ -126,11 +128,26 @@ async def _(event: MessageEvent, matcher: Matcher):
         session_type = 'group'
     else:
         return
-    perm = await PluginPermission.get_or_none(name=matcher.plugin_name, session_id=session_id, session_type=session_type)
 
+    # 权限检查
+    perm = await PluginPermission.get_or_none(name=matcher.plugin_name, session_id=session_id, session_type=session_type)
     if not perm:
         return
     if not perm.status:
         raise IgnoredException('插件使用权限已禁用')
     if isinstance(event, GroupMessageEvent) and event.user_id in perm.ban:
         raise IgnoredException('用户被禁止使用该插件')
+
+    # 命令调用统计
+    if matcher.plugin_name in plugin_manager.data and 'pm_name' in matcher.state:
+        if matcher_info := filter(lambda x: x.pm_name == matcher.state['pm_name'], plugin_manager.data[matcher.plugin_name].matchers):
+            matcher_info = list(matcher_info)[0]
+            await PluginStatistics.create(plugin_name=matcher.plugin_name,
+                                          matcher_name=matcher_info.pm_name,
+                                          matcher_usage=matcher_info.pm_usage,
+                                          group_id=event.group_id if isinstance(event, GroupMessageEvent) else None,
+                                          user_id=event.user_id,
+                                          message_type=session_type,
+                                          time=datetime.datetime.now())
+
+

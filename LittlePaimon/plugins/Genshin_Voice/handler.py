@@ -63,14 +63,14 @@ async def get_rank(group_id: int):
     records = await GuessVoiceRank.filter(group_id=group_id,
                                           guess_time__gte=datetime.datetime.now() - datetime.timedelta(days=7))
     if not records:
-        return '暂无排行榜数据'
+        return '本群本周暂无排行榜数据哦！'
     rank = {}
     for record in records:
         if record.user_id in rank:
             rank[record.user_id] += 1
         else:
             rank[record.user_id] = 1
-    msg = '猜语音排行榜\n'
+    msg = '本周猜语音排行榜\n'
     for i, (user_id, count) in enumerate(sorted(rank.items(), key=lambda x: x[1], reverse=True), start=1):
         msg += f'{i}.{user_id}: {count}次\n'
     return msg
@@ -116,7 +116,4 @@ async def get_character_voice(character: str, language: str = '中'):
 
 async def get_voice_list(character: str, language: str = '中'):
     voice_list = await GenshinVoice.filter(character=character, language=language).all()
-    if not voice_list:
-        return MessageSegment.text(f'暂无{character}的{language}语音资源，让超级用户[更新原神语音资源]吧！')
-    else:
-        return await draw_voice_list(voice_list)
+    return await draw_voice_list(voice_list) if voice_list else MessageSegment.text(f'暂无{character}的{language}语音资源，让超级用户[更新原神语音资源]吧！')

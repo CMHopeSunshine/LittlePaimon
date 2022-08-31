@@ -5,10 +5,9 @@ from typing import Optional, List, Union, Tuple
 import pytz
 
 from LittlePaimon.config import JSON_DATA
-from LittlePaimon.database.models import PlayerInfo, Character, LastQuery, PrivateCookie, PublicCookie, CookieCache, \
-    AbyssInfo
+from LittlePaimon.database.models import PlayerInfo, Character, LastQuery, PrivateCookie, AbyssInfo
 from LittlePaimon.database.models import Artifact, CharacterProperty, Artifacts, Talents, Talent
-from LittlePaimon.utils import logger, scheduler
+from LittlePaimon.utils import logger
 from LittlePaimon.utils.files import load_json
 from LittlePaimon.utils.api import get_enka_data, get_mihoyo_public_data, get_mihoyo_private_data
 from LittlePaimon.utils.typing import DataSourceType
@@ -394,10 +393,3 @@ class GenshinTools:
         if '防御力' in effective and '防御力' in prop_name:
             return True
         return prop_name in effective
-
-
-@scheduler.scheduled_job('cron', hour=0, minute=0, misfire_grace_time=10)
-async def _():
-    logger.info('原神Cookie', '清空每日Cookie缓存和限制')
-    await CookieCache.all().delete()
-    await PublicCookie.filter(status=2).update(status=1)

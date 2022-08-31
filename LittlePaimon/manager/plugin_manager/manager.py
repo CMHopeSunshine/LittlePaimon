@@ -11,10 +11,13 @@ from .model import MatcherInfo, PluginInfo, Config
 
 hidden_plugins = [
     'LittlePaimon',
+    'config',
     'nonebot_plugin_apscheduler',
     'nonebot_plugin_gocqhttp',
     'nonebot_plugin_htmlrender',
+    'nonebot_plugin_imageutils',
     'plugin_manager',
+    'database_manager',
     'admin'
 ]
 
