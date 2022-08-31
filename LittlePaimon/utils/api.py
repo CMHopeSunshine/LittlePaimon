@@ -168,15 +168,16 @@ async def check_retcode(data: dict, cookie_info, cookie_type: str, user_id: str,
         cookie_info.status = 2
         if cookie_type == 'private':
             cookie_info.status = 2
+            await cookie_info.save()
             logger.info('原神Cookie', f'用户<m>{user_id}</m>的私人cookie<m>{uid}</m>已达到每日30次查询上限')
         elif cookie_type == 'public':
             cookie_info.status = 2
+            await cookie_info.save()
             logger.info('原神Cookie', f'<m>{cookie_info.id}</m>号公共cookie已达到每日30次查询上限')
         else:
             await PublicCookie.filter(cookie=cookie_info.cookie).update(status=2)
             await cookie_info.delete()
             logger.info('原神Cookie', f'UID<m>{cookie_info.uid}</m>使用的缓存cookie已达到每日30次查询上限')
-        await cookie_info.save()
         return False
     else:
         if cookie_type == 'public':
