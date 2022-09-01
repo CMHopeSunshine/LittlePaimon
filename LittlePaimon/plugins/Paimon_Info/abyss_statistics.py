@@ -11,7 +11,7 @@ async def get_statistics(group_id: int):
         return '本群还没有深渊战斗数据哦！'
     member_list = await get_bot().get_group_member_list(group_id=group_id)
     member_id_list = [str(member['user_id']) for member in member_list]
-    info_list = [info for info in info_list if info.user_id in member_id_list and info.total_battle]
+    info_list = [info for info in info_list if info.user_id in member_id_list and info.total_battle and info.total_star and info.max_damage and info.max_take_damage]
     now = datetime.datetime.now()
     if 1 <= now.day < 15:
         left_day = 1
@@ -71,10 +71,10 @@ async def get_statistics(group_id: int):
 
     text = f'本群群友{now.strftime("%m月%d日")}深渊统计情况：\n满星人数/总人数：  {full_star_num}/{info_num}\n平均星数：  {average_star}\n平均战斗次数：  {average_battle_num}\n最高伤害角色：  {max_damage_user}的{max_damage.max_damage.name}({max_damage.max_damage.value})\n' \
            f'最高承伤角色：  {max_take_damage_user}的{max_take_damage.max_take_damage.name}({max_take_damage.max_take_damage.value})\n' \
-           f'11层出场率最高角色：\n   上半：{" ".join(up_sort11)}\n   下半：{" ".join(down_sort11)}\n' \
-           f'12层出场率最高角色：\n   上半：{" ".join(up_sort12)}\n   下半：{" ".join(down_sort12)}\n' \
+           f'11层出场率最高角色：\n  上半：{" ".join(up_sort11)}\n  下半：{" ".join(down_sort11)}\n' \
+           f'12层出场率最高角色：\n  上半：{" ".join(up_sort12)}\n  下半：{" ".join(down_sort12)}\n' \
            f'Created by LittlePaimon'
 
     img = PMImage(size=(500, 33 * 15), color=(255, 255, 255, 255))
-    await img.text_box(text.replace('\n', '^'), (5, 495), (5, 33 * 15 - 5), fm.get('hywh', 25), 'black')
+    await img.text_box(text.replace('\n', '^'), (10, 490), (10, 33 * 15 - 10), fm.get('hywh', 25), 'black')
     return MessageBuild.Image(img, mode='RGB')
