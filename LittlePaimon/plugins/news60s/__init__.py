@@ -24,7 +24,7 @@ __plugin_meta__ = PluginMetadata(
     },
 )
 
-news = on_command('早报', aliases={'今日早报', '今日新闻', '60s读世界'}, priority=14, block=True)
+news = on_command('早报', aliases={'今日早报', '今日新闻', '60s读世界', '60秒读世界'}, priority=14, block=True)
 
 
 @news.handle()
