@@ -140,8 +140,8 @@ async def _(event: MessageEvent, matcher: Matcher):
 
     # 命令调用统计
     if matcher.plugin_name in plugin_manager.data and 'pm_name' in matcher.state:
-        if matcher_info := filter(lambda x: x.pm_name == matcher.state['pm_name'], plugin_manager.data[matcher.plugin_name].matchers):
-            matcher_info = list(matcher_info)[0]
+        if matcher_info := list(filter(lambda x: x.pm_name == matcher.state['pm_name'], plugin_manager.data[matcher.plugin_name].matchers)):
+            matcher_info = matcher_info[0]
             await PluginStatistics.create(plugin_name=matcher.plugin_name,
                                           matcher_name=matcher_info.pm_name,
                                           matcher_usage=matcher_info.pm_usage,
