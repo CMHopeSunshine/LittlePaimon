@@ -75,6 +75,6 @@ async def get_statistics(group_id: int):
            f'12层出场率最高角色：\n   上半：{" ".join(up_sort12)}\n   下半：{" ".join(down_sort12)}\n' \
            f'Created by LittlePaimon'
 
-    img = PMImage(size=(500, 33 * 13), color=(255, 255, 255, 255))
-    await img.text_box(text.replace('\n', '^'), (5, 495), (5, 33 * 13 - 5), fm.get('hywh', 25), 'black')
+    img = PMImage(size=(500, 33 * 15), color=(255, 255, 255, 255))
+    await img.text_box(text.replace('\n', '^'), (5, 495), (5, 33 * 15 - 5), fm.get('hywh', 25), 'black')
     return MessageBuild.Image(img, mode='RGB')
