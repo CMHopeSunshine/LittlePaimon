@@ -73,18 +73,21 @@ async def draw_world_card(img: PMImage, info: PlayerWorldInfo):
         pass
     elif info.name == '蒙德':
         if info.unlock:
+            await img.draw_ring((225, 225), (89, 1157), 0.08, info.percent / 1000, ['white', (0, 0, 0, 0)])
             await img.text(get_percent_text(info.percent), (110, 301), 1387, fm.get('hywh', 24), 'white', 'center')
             await img.text(str(info.level) if info.level != 8 else 'Max', 150, 1447, fm.get('hywh', 24), 'white')
         else:
             await img.text('未解锁', (110, 301), 1387, fm.get('hywh', 24), 'white', 'center')
     elif info.name == '璃月':
         if info.unlock:
+            await img.draw_ring((225, 225), (313, 1157), 0.08, info.percent / 1000, ['white', (0, 0, 0, 0)])
             await img.text(get_percent_text(info.percent), (334, 525), 1387, fm.get('hywh', 24), 'white', 'center')
             await img.text(str(info.level) if info.level != 8 else 'Max', 374, 1447, fm.get('hywh', 24), 'white')
         else:
             await img.text('未解锁', (334, 525), 1387, fm.get('hywh', 24), 'white', 'center')
     elif info.name == '稻妻':
         if info.unlock:
+            await img.draw_ring((225, 225), (537, 1157), 0.08, info.percent / 1000, ['white', (0, 0, 0, 0)])
             await img.text(get_percent_text(info.percent), (558, 749), 1387, fm.get('hywh', 24), 'white', 'center')
             await img.text(str(info.level) if info.level != 10 else 'Max', 598, 1447, fm.get('hywh', 24), 'white')
             await img.text(str(info.tree_level) if info.tree_level != 50 else 'Max', 710, 1447, fm.get('hywh', 24),
@@ -94,6 +97,7 @@ async def draw_world_card(img: PMImage, info: PlayerWorldInfo):
             await img.text('未解锁', (558, 749), 1387, fm.get('hywh', 24), 'white', 'center')
     elif info.name == '龙脊雪山':
         if info.unlock:
+            await img.draw_ring((225, 225), (89, 1494), 0.08, info.percent / 1000, ['white', (0, 0, 0, 0)])
             await img.text(get_percent_text(info.percent), (110, 301), 1724, fm.get('hywh', 24), 'white', 'center')
             await img.text(str(info.tree_level) if info.tree_level != 12 else 'Max', 150, 1784, fm.get('hywh', 24),
                            'white')
@@ -110,6 +114,7 @@ async def draw_world_card(img: PMImage, info: PlayerWorldInfo):
                            'center')
     elif info.name == '层岩巨渊·地下矿区':
         if info.unlock:
+            await img.draw_ring((225, 225), (313, 1494), 0.08, info.percent / 1000, ['white', (0, 0, 0, 0)])
             await img.text(f'地下{get_percent_text(info.percent)}', (334, 525), 1751, fm.get('hywh', 24), 'white',
                            'center')
         else:
@@ -117,11 +122,13 @@ async def draw_world_card(img: PMImage, info: PlayerWorldInfo):
                            'center')
     elif info.name == '渊下宫':
         if info.unlock:
+            await img.draw_ring((225, 225), (537, 1494), 0.08, info.percent / 1000, ['white', (0, 0, 0, 0)])
             await img.text(get_percent_text(info.percent), (558, 749), 1724, fm.get('hywh', 24), 'white', 'center')
         else:
             await img.text('未解锁', (558, 749), 1724, fm.get('hywh', 24), 'white', 'center')
     elif info.name == '须弥':
         if info.unlock:
+            await img.draw_ring((225, 225), (761, 1157), 0.08, info.percent / 1000, ['white', (0, 0, 0, 0)])
             await img.text(get_percent_text(info.percent), (782, 973), 1387, fm.get('hywh', 24), 'white', 'center')
             await img.text(str(info.level) if info.level != 10 else 'Max', 826, 1447, fm.get('hywh', 24), 'white')
             await img.text(str(info.tree_level) if info.tree_level != 50 else 'Max', 938, 1447, fm.get('hywh', 24),
@@ -166,7 +173,9 @@ async def draw_player_card(player: Player, info: PlayerInfo, characters: List[Ch
                  (0, 0, 0, 153), 'center') for name in home_name])
 
     # 世界探索
-    await asyncio.gather(*[draw_world_card(img, w) for w in info.world_explore.list()])
+    # await asyncio.gather(*[draw_world_card(img, w) for w in info.world_explore.list()])
+    for w in info.world_explore.list():
+        await draw_world_card(img, w)
 
     # 角色
     await asyncio.gather(

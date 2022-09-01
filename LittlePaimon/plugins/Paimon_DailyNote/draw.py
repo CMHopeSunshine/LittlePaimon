@@ -28,7 +28,7 @@ async def draw_daily_note_card(data, uid):
     # 宝钱文字
     await bg_img.text(f"{data['current_home_coin']}/{data['max_home_coin']}", 337, 701, fm.get('number.ttf', 48),
                       'white')
-    await bg_img.draw_ring((266, 266), (98, 369), percent=data['current_home_coin'] / data['max_home_coin'] if data['max_home_coin'] != 0 else 1, width=0.18, colors=['#507bd0', '#FFFFFF'])
+    await bg_img.draw_ring((266, 266), (98, 593), percent=(data['current_home_coin'] / data['max_home_coin']) if data['max_home_coin'] != 0 else 1, width=0.18, colors=['#507bd0', '#FFFFFF'])
     if data['current_home_coin'] == data['max_home_coin']:
         await bg_img.text("洞天宝钱满了哦~", 820, 701, fm.get('优设标题黑.ttf', 40), 'white')
     else:

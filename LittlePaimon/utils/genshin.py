@@ -13,6 +13,7 @@ from LittlePaimon.utils.api import get_enka_data, get_mihoyo_public_data, get_mi
 from LittlePaimon.utils.typing import DataSourceType
 from LittlePaimon.utils.alias import get_name_by_id
 from LittlePaimon.utils.typing import CHARACTERS
+from LittlePaimon.manager.plugin_manager import plugin_manager as pm
 
 ra_score = load_json(JSON_DATA / 'score.json')
 talent_map = load_json(JSON_DATA / 'role_skill.json')
@@ -95,6 +96,8 @@ class GenshinInfoManager:
             if len(character.constellation) >= 5:
                 data[ra_score['Talent'][cname][1]]['level_current'] += 3
             length = 4 if character.name in ['莫娜', '神里绫华'] else 3
+            if character.name == '安柏':
+                data[0], data[2] = data[2], data[0]
             character.talents = Talents(talent_list=[Talent(
                 name=t['name'],
                 level=t['level_current'],
@@ -166,7 +169,7 @@ class GenshinInfoManager:
         if data_source == 'enka':
             """如果角色不存在或者角色的更新时间在6小时前，则更新角色信息"""
             character = await Character.get_or_none(**query, data_source='enka')
-            if not character or character.update_time < (datetime.datetime.now() - datetime.timedelta(hours=6)).replace(
+            if not character or character.update_time < (datetime.datetime.now() - datetime.timedelta(hours=pm.config.ysd_auto_update)).replace(
                     tzinfo=pytz.timezone('Asia/Shanghai')):
                 await self.update_from_enka()
                 if character := await Character.get_or_none(**query, data_source='enka'):
@@ -179,8 +182,8 @@ class GenshinInfoManager:
         elif data_source == 'mihoyo':
             return await Character.get_or_none(**query, data_source='mihoyo')
         else:
-            characters = await Character.filter(**query).order_by('update_time')
-            return characters[-1] if characters else None
+            characters = await Character.filter(**query).order_by('data_source')
+            return characters[0] if characters else None
 
     async def get_chara_bag(self) -> Tuple[Union[PlayerInfo, str], List[Character]]:
         """
@@ -190,7 +193,7 @@ class GenshinInfoManager:
         await self.set_last_query()
         player_info = await PlayerInfo.get_or_none(user_id=self.user_id, uid=self.uid)
         if player_info is None or player_info.update_time is None or player_info.update_time < (
-                datetime.datetime.now() - datetime.timedelta(days=1)).replace(
+                datetime.datetime.now() - datetime.timedelta(hours=pm.config.ysa_auto_update)).replace(
                 tzinfo=pytz.timezone('Asia/Shanghai')):
             result = await self.update_from_mihoyo()
             if result != '更新成功':
@@ -207,7 +210,7 @@ class GenshinInfoManager:
         await self.set_last_query()
         player_info = await PlayerInfo.get_or_none(user_id=self.user_id, uid=self.uid)
         if player_info is None or player_info.update_time is None or player_info.update_time < (
-                datetime.datetime.now() - datetime.timedelta(days=1)).replace(
+                datetime.datetime.now() - datetime.timedelta(hours=pm.config.ys_auto_update)).replace(
                 tzinfo=pytz.timezone('Asia/Shanghai')):
             result = await self.update_from_mihoyo()
             if result != '更新成功':
@@ -223,6 +226,7 @@ class GenshinInfoManager:
 
     async def get_abyss_info(self, abyss_index: int = 1) -> Union[AbyssInfo, str]:
         await self.set_last_query()
+        await AbyssInfo.filter(user_id=self.user_id, uid=self.uid).delete()
         result = await self.update_abyss_info(abyss_index)
         if result != '更新成功':
             return result

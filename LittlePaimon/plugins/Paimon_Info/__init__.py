@@ -1,6 +1,6 @@
 from nonebot import on_command, on_regex
 from nonebot.adapters.onebot.v11 import Message, MessageEvent, MessageSegment
-from nonebot.params import Arg, RegexDict
+from nonebot.params import Arg, RegexDict, CommandArg
 from nonebot.plugin import PluginMetadata
 
 from LittlePaimon import NICKNAME
@@ -60,15 +60,23 @@ ysd = on_command('ysd', aliases={'角色详情', '角色信息', '角色面板'}
 })
 update_info = on_command('udi', aliases={'更新角色信息', '更新面板', '更新玩家信息'}, priority=10, block=True, state={
     'pm_name':        'udi',
-    'pm_description': '更新你的原神玩家和角色数据，绑定cookie后数据更详细',
-    'pm_usage':       '更新角色信息(uid)',
+    'pm_description': '更新你的原神玩家和角色数据，绑定cookie后数据更详细，加上"天赋"可以更新天赋等级',
+    'pm_usage':       '更新角色信息[天赋](uid)',
     'pm_priority':    6
 })
-add_alias = on_regex(rf'((?P<chara>{CHARA_RE})是[我俺咱]的?(?P<alias>\w+))|([我俺咱]的?(?P<alias2>\w+)[是叫名](?P<chara2>{CHARA_RE}))', priority=10, block=True, state={
-    'pm_name':        '角色别名设置',
-    'pm_description': '设置专属于你的角色别名',
-    'pm_usage':       '<角色名>是我<别名>',
-    'pm_priority':    7
+add_alias = on_regex(
+    rf'((?P<chara>{CHARA_RE})是[我俺咱]的?(?P<alias>\w+))|([我俺咱]的?(?P<alias2>\w+)[是叫名](?P<chara2>{CHARA_RE}))', priority=10,
+    block=True, state={
+        'pm_name':        '角色别名设置',
+        'pm_description': '设置专属于你的角色别名',
+        'pm_usage':       '<角色名>是我<别名>',
+        'pm_priority':    7
+    })
+delete_alias = on_command('删除别名', priority=10, block=True, state={
+    'pm_name':        '角色别名删除',
+    'pm_description': '删除你已设置的角色别名',
+    'pm_usage':       '删除别名<别名>',
+    'pm_priority':    8
 })
 
 
@@ -96,6 +104,7 @@ async def _(event: MessageEvent, players=CommandPlayer()):
 
 
 running_ysa = []
+
 
 @ysa.handle()
 async def _(event: MessageEvent, players=CommandPlayer(2)):
@@ -250,3 +259,13 @@ async def _(event: MessageEvent, regex_dict: dict = RegexDict()):
     alias = regex_dict['alias'] or regex_dict['alias2']
     await PlayerAlias.update_or_create(user_id=str(event.user_id), alias=alias, defaults={'character': chara})
     await add_alias.finish(f'{NICKNAME}知道{chara}是你的{alias}啦..')
+
+
+@delete_alias.handle()
+async def _(event: MessageEvent, msg: Message = CommandArg()):
+    msg = msg.extract_plain_text().strip()
+    if alias := await PlayerAlias.get_or_none(user_id=str(event.user_id), alias=msg):
+        await alias.delete()
+        await delete_alias.finish(f'别名{msg}删除成功!')
+    else:
+        await delete_alias.finish(f'你并没有将{msg}设置为某个角色的别名')
