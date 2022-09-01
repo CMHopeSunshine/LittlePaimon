@@ -78,6 +78,12 @@ delete_alias = on_command('删除别名', priority=10, block=True, state={
     'pm_usage':       '删除别名<别名>',
     'pm_priority':    8
 })
+show_alias = on_command('查看别名', priority=10, block=True, state={
+    'pm_name':        '角色别名查看',
+    'pm_description': '查看你已设置的角色别名',
+    'pm_usage':       '查看别名',
+    'pm_priority':    9
+})
 
 
 @ys.handle()
@@ -266,6 +272,14 @@ async def _(event: MessageEvent, msg: Message = CommandArg()):
     msg = msg.extract_plain_text().strip()
     if alias := await PlayerAlias.get_or_none(user_id=str(event.user_id), alias=msg):
         await alias.delete()
-        await delete_alias.finish(f'别名{msg}删除成功!')
+        await delete_alias.finish(f'别名{msg}删除成功!', at_sender=True)
     else:
-        await delete_alias.finish(f'你并没有将{msg}设置为某个角色的别名')
+        await delete_alias.finish(f'你并没有将{msg}设置为某个角色的别名', at_sender=True)
+
+
+@show_alias.handle()
+async def _(event: MessageEvent):
+    if aliases := await PlayerAlias.filter(user_id=str(event.user_id)).all():
+        await show_alias.finish('你已设以下别名:' + '\n'.join(f'{alias.alias}->{alias.character}' for alias in aliases), at_sender=True)
+    else:
+        await show_alias.finish('你还没有设置过角色别名哦', at_sender=True)
