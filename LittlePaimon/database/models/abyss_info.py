@@ -154,6 +154,7 @@ class AbyssInfo(Model):
 
     @classmethod
     async def update_info(cls, user_id: str, uid: str, data: dict):
+        await cls.filter(user_id=user_id, uid=uid).delete()
         info, _ = await cls.get_or_create(user_id=user_id, uid=uid)
         if player_info := await PlayerInfo.get_or_none(user_id=user_id, uid=uid):
             info.nickname = player_info.nickname

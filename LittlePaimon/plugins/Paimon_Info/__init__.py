@@ -1,5 +1,5 @@
 from nonebot import on_command, on_regex
-from nonebot.adapters.onebot.v11 import Message, MessageEvent, MessageSegment
+from nonebot.adapters.onebot.v11 import Message, MessageEvent, MessageSegment, GroupMessageEvent
 from nonebot.params import Arg, RegexDict, CommandArg
 from nonebot.plugin import PluginMetadata
 
@@ -16,6 +16,7 @@ from .draw_character_bag import draw_chara_bag
 from .draw_character_detail import draw_chara_detail
 from .draw_character_card import draw_chara_card
 from .draw_abyss import draw_abyss_card
+from .abyss_statistics import get_statistics
 
 __plugin_meta__ = PluginMetadata(
     name='原神信息查询',
@@ -84,7 +85,12 @@ show_alias = on_command('查看别名', priority=10, block=True, state={
     'pm_usage':       '查看别名',
     'pm_priority':    9
 })
-
+show_abyss = on_command('深渊统计', priority=10, block=True, state={
+    'pm_name':        '深渊统计',
+    'pm_description': '查看本群深渊统计，仅群可用',
+    'pm_usage':       '深渊统计',
+    'pm_priority':    10
+})
 
 @ys.handle()
 async def _(event: MessageEvent, players=CommandPlayer()):
@@ -283,3 +289,9 @@ async def _(event: MessageEvent):
         await show_alias.finish('你已设以下别名:' + '\n'.join(f'{alias.alias}->{alias.character}' for alias in aliases), at_sender=True)
     else:
         await show_alias.finish('你还没有设置过角色别名哦', at_sender=True)
+
+
+@show_abyss.handle()
+async def _(event: GroupMessageEvent):
+    result = await get_statistics(event.group_id)
+    await show_abyss.finish(result)
