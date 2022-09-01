@@ -30,8 +30,9 @@ CHARA_RE = '|'.join(SUPPORTS_CHARA)
 
 
 def is_paimon(event: Union[GroupMessageEvent, PrivateMessageEvent], state: T_State) -> bool:
-    if '_matched_dict' in state and not state['_matched_dict']['chara'] and event.to_me:
-        state['_matched_dict']['chara'] = '派蒙'
+    if '_matched_dict' in state:
+        if not state['_matched_dict']['chara'] and event.to_me:
+            state['_matched_dict']['chara'] = '派蒙'
         return True
     return False
 

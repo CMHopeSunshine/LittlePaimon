@@ -125,17 +125,23 @@ class AbyssInfo(Model):
     """总星数"""
     max_floor: str = fields.CharField(max_length=255, null=True)
     """到达层数"""
-    max_battle: AbyssCharacters = fields.JSONField(encoder=AbyssCharacters.json, decoder=AbyssCharacters.parse_raw, null=True)
+    max_battle: AbyssCharacters = fields.JSONField(encoder=AbyssCharacters.json, decoder=AbyssCharacters.parse_raw,
+                                                   null=True)
     """出战次数最多"""
-    max_defeat: AbyssCharacter = fields.JSONField(encoder=AbyssCharacter.json, decoder=AbyssCharacter.parse_raw, null=True)
+    max_defeat: AbyssCharacter = fields.JSONField(encoder=AbyssCharacter.json, decoder=AbyssCharacter.parse_raw,
+                                                  null=True)
     """击败最多"""
-    max_damage: AbyssCharacter = fields.JSONField(encoder=AbyssCharacter.json, decoder=AbyssCharacter.parse_raw, null=True)
+    max_damage: AbyssCharacter = fields.JSONField(encoder=AbyssCharacter.json, decoder=AbyssCharacter.parse_raw,
+                                                  null=True)
     """伤害最高"""
-    max_take_damage: AbyssCharacter = fields.JSONField(encoder=AbyssCharacter.json, decoder=AbyssCharacter.parse_raw, null=True)
+    max_take_damage: AbyssCharacter = fields.JSONField(encoder=AbyssCharacter.json, decoder=AbyssCharacter.parse_raw,
+                                                       null=True)
     """承受伤害最高"""
-    max_normal_skill: AbyssCharacter = fields.JSONField(encoder=AbyssCharacter.json, decoder=AbyssCharacter.parse_raw, null=True)
+    max_normal_skill: AbyssCharacter = fields.JSONField(encoder=AbyssCharacter.json, decoder=AbyssCharacter.parse_raw,
+                                                        null=True)
     """元素战技释放最多"""
-    max_energy_skill: AbyssCharacter = fields.JSONField(encoder=AbyssCharacter.json, decoder=AbyssCharacter.parse_raw, null=True)
+    max_energy_skill: AbyssCharacter = fields.JSONField(encoder=AbyssCharacter.json, decoder=AbyssCharacter.parse_raw,
+                                                        null=True)
     """元素爆发释放最多"""
     floors: Floors = fields.JSONField(encoder=Floors.json, decoder=Floors.parse_raw, default=Floors())
     """楼层具体信息"""
@@ -161,14 +167,14 @@ class AbyssInfo(Model):
         if 'reveal_rank' in data and data['reveal_rank']:
             info.max_battle = AbyssCharacters(characters=[
                 AbyssCharacter(name=get_name_by_id(c['avatar_id']),
-                    character_id=c['avatar_id'],
+                               character_id=c['avatar_id'],
                                icon=c['avatar_icon'].split('/')[-1].replace('.png', ''),
                                rarity=c['rarity'],
                                value=c['value']) for c in data['reveal_rank']
             ])
         if 'defeat_rank' in data and data['defeat_rank']:
             info.max_defeat = AbyssCharacter(name=get_name_by_id(data['defeat_rank'][0]['avatar_id']),
-                character_id=data['defeat_rank'][0]['avatar_id'],
+                                             character_id=data['defeat_rank'][0]['avatar_id'],
                                              icon=data['defeat_rank'][0]['avatar_icon'].split('/')[-1].replace('.png',
                                                                                                                '').replace(
                                                  'Side_', ''),
@@ -183,7 +189,8 @@ class AbyssInfo(Model):
                                              rarity=data['damage_rank'][0]['rarity'],
                                              value=data['damage_rank'][0]['value'])
         if 'take_damage_rank' in data and data['take_damage_rank']:
-            info.max_take_damage = AbyssCharacter(name=get_name_by_id(data['take_damage_rank'][0]['avatar_id']), character_id=data['take_damage_rank'][0]['avatar_id'],
+            info.max_take_damage = AbyssCharacter(name=get_name_by_id(data['take_damage_rank'][0]['avatar_id']),
+                                                  character_id=data['take_damage_rank'][0]['avatar_id'],
                                                   icon=data['take_damage_rank'][0]['avatar_icon'].split('/')[
                                                       -1].replace(
                                                       '.png', '').replace('Side_', ''),
@@ -205,8 +212,8 @@ class AbyssInfo(Model):
                                                        '.png', '').replace('Side_', ''),
                                                    rarity=data['energy_skill_rank'][0]['rarity'],
                                                    value=data['energy_skill_rank'][0]['value'])
-
         if 'floors' in data and data['floors']:
+            info.total_star = 0
             for floor in data['floors']:
                 floor_info = FloorInfo(index=floor['index'],
                                        is_unlock=floor['is_unlock'],
@@ -237,6 +244,8 @@ class AbyssInfo(Model):
                 floor_info.end_times_up = end_times_up
                 floor_info.end_times_down = end_times_down
                 info.floors[floor['index']] = floor_info
+                if floor['index'] in ['9', '10', '11', '12']:
+                    info.total_star += sum(l['star'] for l in floor['levels'])
 
         info.update_time = datetime.datetime.now()
         await info.save()
