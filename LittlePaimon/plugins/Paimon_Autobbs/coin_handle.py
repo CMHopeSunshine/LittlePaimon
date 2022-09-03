@@ -333,7 +333,11 @@ async def bbs_auto_coin():
     for group_id, result_list in coin_result_group.items():
         result_num = len(result_list)
         result_fail = len([result for result in result_list if not result['result']])
-        msg = f'本群米游币自动获取共{result_num}个任务，其中成功{result_num-result_fail}个，失败{result_fail}个，失败的UID列表：/n{"/n".join(result["uid"] for result in result_list if not result["result"])}'
+        if result_fail:
+            msg = f'本群米游币自动获取共{result_num}个任务，已全部完成'
+        else:
+            fails = '\n'.join(result['uid'] for result in result_list if not result['result'])
+            msg = f'本群米游币自动获取共{result_num}个任务，其中成功{result_num - result_fail}个，失败{result_fail}个，失败的UID列表：\n{fails}'
         try:
             await get_bot().send_group_msg(group_id=int(group_id), message=msg)
         except Exception as e:

@@ -92,19 +92,10 @@ class PluginManager:
                             'usage':       metadata.usage,
                             'show':        metadata.extra.get('show', True),
                             'priority':    metadata.extra.get('priority', 99),
-                            'configs':     metadata.extra.get('configs'),
                             'cooldown':    metadata.extra.get('cooldown')
                         })
                     else:
                         self.data[plugin.name] = PluginInfo(name=plugin.name, module_name=plugin.name)
-                else:
-                    if metadata and metadata.extra.get('configs'):
-                        if self.data[plugin.name].configs:
-                            for config in metadata.extra['configs']:
-                                if config not in self.data[plugin.name].configs:
-                                    self.data[plugin.name].configs[config] = metadata.extra['configs'][config]
-                        else:
-                            self.data[plugin.name].configs = metadata.extra['configs']
                 matchers = plugin.matcher
                 for matcher in matchers:
                     if matcher._default_state:

@@ -49,6 +49,27 @@ class MihoyoBBSSub(Model):
         table_description = '米游社订阅'
 
 
+class CloudGenshinSub(Model):
+    """
+    云原神
+    """
+    id = fields.IntField(pk=True, generated=True, auto_increment=True)
+    user_id: str = fields.CharField(max_length=255)
+    """用户id"""
+    uid: str = fields.CharField(max_length=255)
+    """原神uid"""
+    group_id: int = fields.IntField(null=True)
+    """订阅所在的群号(如果和user_id一致则为私聊)"""
+    uuid: str = fields.CharField(max_length=255)
+    """uuid"""
+    token: str = fields.CharField(max_length=255)
+    """token"""
+
+    class Meta:
+        table = 'cloud_genshin_sub'
+        table_description = '云原神订阅'
+
+
 class GeneralSub(Model):
     """
     群通用类订阅

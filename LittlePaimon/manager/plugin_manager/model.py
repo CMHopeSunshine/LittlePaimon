@@ -31,8 +31,6 @@ class PluginInfo(BaseModel):
     """是否展示"""
     priority: int = 99
     """展示优先级"""
-    configs: Optional[dict]
-    """插件配置项"""
     matchers: Optional[List[MatcherInfo]] = []
     """命令列表"""
 
@@ -63,3 +61,6 @@ class Config(BaseModel):
     ys_auto_update: int = Field(24, alia='ys自动更新小时')
     ysa_auto_update: int = Field(24, alia='ysa自动更新小时')
     ysd_auto_update: int = Field(6, alia='ysd自动更新小时')
+
+    cloud_genshin_enable: bool = Field(True, alias='云原神自动签到开关')
+    cloud_genshin_hour: int = Field(7, alias='云原神签到时间(小时)')

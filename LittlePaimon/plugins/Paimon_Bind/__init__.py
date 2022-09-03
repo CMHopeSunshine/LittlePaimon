@@ -4,13 +4,13 @@ from asyncio import sleep
 
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import Bot, Message, MessageEvent, PrivateMessageEvent
-from nonebot.params import CommandArg
+from nonebot.params import CommandArg, ArgPlainText
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
+from nonebot.typing import T_State
 
 from LittlePaimon import NICKNAME
-from LittlePaimon.database.models import LastQuery, PrivateCookie, PublicCookie, Character, PlayerInfo, GeneralSub, \
-    DailyNoteSub, MihoyoBBSSub
+from LittlePaimon.database.models import LastQuery, PrivateCookie, PublicCookie, Character, PlayerInfo, DailyNoteSub, MihoyoBBSSub
 from LittlePaimon.utils import logger
 from LittlePaimon.utils.api import get_bind_game_info, get_stoken_by_cookie
 from LittlePaimon.utils.message import recall_message
@@ -41,8 +41,8 @@ ysbc = on_command('ysbc', aliases={'查询ck', '查询绑定', '绑定信息', '
 })
 delete_ck = on_command('删除ck', aliases={'删除cookie'}, priority=1, block=True, state={
     'pm_name':        '删除ck',
-    'pm_description': '删除你qq下绑定的所有cookie和订阅信息',
-    'pm_usage':       '删除ck',
+    'pm_description': '删除你qq下绑定的cookie和订阅信息',
+    'pm_usage':       '删除ck[uid|全部]',
     'pm_priority':    3
 })
 ysbca = on_command('校验所有ck', aliases={'校验所有cookie', '校验所有绑定'}, priority=1, block=True, permission=SUPERUSER, state={
@@ -135,11 +135,32 @@ async def _(event: MessageEvent):
 
 
 @delete_ck.handle()
-async def _(event: MessageEvent):
-    await PrivateCookie.filter(user_id=str(event.user_id)).delete()
-    await DailyNoteSub.filter(user_id=event.user_id).delete()
-    await MihoyoBBSSub.filter(user_id=event.user_id).delete()
-    await delete_ck.finish('已清除你号下绑定的ck和订阅信息', at_sender=True)
+async def _(event: MessageEvent, state: T_State, msg: Message = CommandArg()):
+    if uids := await PrivateCookie.filter(user_id=str(event.user_id)):
+        state['msg'] = '你已绑定cookie的uid有：\n' + '\n'.join([uid.uid for uid in uids]) + '\n请选择要删除的uid'
+        state['uids'] = [uid.uid for uid in uids]
+    else:
+        await delete_ck.finish('你没有绑定过任何cookie哦', at_sender=True)
+    if '全部' in msg.extract_plain_text():
+        state['uid'] = Message('全部')
+    elif uid := re.search(r'[125]\d{8}', msg.extract_plain_text().strip()):
+        state['uid'] = Message(uid.group())
+
+
+@delete_ck.got('uid', prompt=Message.template('{msg}，或者发送[全部]解绑cookie'))
+async def _(event: MessageEvent, state: T_State, uid: str = ArgPlainText('uid')):
+    if uid == '全部':
+        await PrivateCookie.filter(user_id=str(event.user_id)).delete()
+        await DailyNoteSub.filter(user_id=event.user_id).delete()
+        await MihoyoBBSSub.filter(user_id=event.user_id).delete()
+        await delete_ck.finish('已删除你号下绑定的ck和订阅信息', at_sender=True)
+    elif uid in state['uids']:
+        await PrivateCookie.filter(user_id=str(event.user_id), uid=uid).delete()
+        await DailyNoteSub.filter(user_id=event.user_id, uid=uid).delete()
+        await MihoyoBBSSub.filter(user_id=event.user_id, uid=uid).delete()
+        await delete_ck.finish(f'已删除UID{uid}绑定的ck和订阅信息', at_sender=True)
+    else:
+        await delete_ck.finish(state['msg'], at_sender=True)
 
 
 @ysbca.handle()

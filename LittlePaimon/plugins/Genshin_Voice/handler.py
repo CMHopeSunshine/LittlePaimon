@@ -86,7 +86,8 @@ def create_guess_matcher(group_id, role_name, game_time):
 
     def check_group(event: GroupMessageEvent):
         return event.group_id == group_id
-
+    if '旅行者' in role_name:
+        role_name = role_name.replace('旅行者（', '').replace('）', '')
     alias_list = get_alias_by_name(role_name)
     re_str = '|'.join(alias_list)
     guess_matcher = on_regex(re_str, temp=True, rule=Rule(check_group),
