@@ -39,19 +39,21 @@ async def get_voice(character_name: str, content_id: int):
             return None
         data = data['data']['content']['contents'][2]
         html = etree.HTML(data['text'])
-        lang = ['中', '英', '日', '韩']
         for i in range(1, 5):
+            voice_type = html.xpath(f'//*[@class="obc-tmpl__part obc-tmpl-character obc-tmpl__part--voiceTab obc-tmpl__part--align-banner"]/ul[1]/li[{i}]/text()')[0]
+            voice_type = voice_type[0] if voice_type[0] != '汉' else '中'
             voice_list = html.xpath(f'//*[@class="obc-tmpl__part obc-tmpl-character obc-tmpl__part--voiceTab obc-tmpl__part--align-banner"]/ul[2]/li[{i}]/table[2]/tbody/tr')
             for voice in voice_list:
                 with contextlib.suppress(IndexError):
                     voice_name = voice.xpath('./td/text()')[0]
                     voice_url = voice.xpath('./td/div/div/audio/source/@src')[0]
                     voice_content = voice.xpath('./td/div/span/text()')[0].strip()
-                    await GenshinVoice.update_or_create(character=character_name, voice_name=voice_name, language=lang[i - 1], defaults={'voice_content': voice_content, 'voice_url': voice_url})
+                    character_name = character_name.replace('旅行者（', '').replace('）', '')
+                    await GenshinVoice.update_or_create(character=character_name, voice_name=voice_name, language=voice_type, defaults={'voice_content': voice_content, 'voice_url': voice_url})
             if voice_list:
-                logger.info('原神猜语音', f'➤➤角色<m>{character_name}</m>的<m>{lang[i - 1]}文语音</m><g>获取成功</g>')
+                logger.info('原神猜语音', f'➤➤角色<m>{character_name}</m>的<m>{voice_type}文语音</m><g>获取成功</g>')
             else:
-                logger.info('原神猜语音', f'➤➤角色<m>{character_name}</m>的<m>{lang[i - 1]}文语音</m><r>获取失败</r>')
+                logger.info('原神猜语音', f'➤➤角色<m>{character_name}</m>的<m>{voice_type}文语音</m><r>获取失败</r>')
     except Exception as e:
         logger.warning('原神猜语音', f'➤➤获取<m>{character_name}</m>的语音资源时出错：', str(e))
 
