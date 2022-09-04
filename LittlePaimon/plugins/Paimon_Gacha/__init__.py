@@ -43,24 +43,24 @@ delete_log = on_command('删除模拟抽卡记录', priority=13, block=True, sta
         'pm_usage':       '删除模拟抽卡记录',
         'pm_priority':    3
     })
-show_dg = on_command('查看定轨', priority=13, block=True, state={
-        'pm_name':        '查看定轨',
-        'pm_description': '查看当前定轨的武器',
-        'pm_usage':       '查看定轨',
-        'pm_priority':    4
-    })
-delete_dg = on_command('删除定轨', priority=13, block=True, state={
-        'pm_name':        '删除定轨',
-        'pm_description': '删除当前定轨武器',
-        'pm_usage':       '删除定轨',
-        'pm_priority':    5
-    })
-choose_dg = on_command('选择定轨', priority=13, block=True, state={
-        'pm_name':        '选择定轨',
-        'pm_description': '选择定轨武器',
-        'pm_usage':       '选择定轨<武器名>',
-        'pm_priority':    6
-    })
+# show_dg = on_command('查看定轨', priority=13, block=True, state={
+#         'pm_name':        '查看定轨',
+#         'pm_description': '查看当前定轨的武器',
+#         'pm_usage':       '查看定轨',
+#         'pm_priority':    4
+#     })
+# delete_dg = on_command('删除定轨', priority=13, block=True, state={
+#         'pm_name':        '删除定轨',
+#         'pm_description': '删除当前定轨武器',
+#         'pm_usage':       '删除定轨',
+#         'pm_priority':    5
+#     })
+# choose_dg = on_command('选择定轨', priority=13, block=True, state={
+#         'pm_name':        '选择定轨',
+#         'pm_description': '选择定轨武器',
+#         'pm_usage':       '选择定轨<武器名>',
+#         'pm_priority':    6
+#     })
 
 
 @sim_gacha.handle()

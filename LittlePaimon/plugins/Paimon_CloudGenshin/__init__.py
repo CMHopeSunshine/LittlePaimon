@@ -47,7 +47,7 @@ async def _(event: MessageEvent, msg: Message = CommandArg()):
     if not msg:
         await yys_bind.finish('请给出要绑定的token', at_sender=True)
     if match := re.search(r'oi=\d+', msg):
-        group_id = str(event.group_id) if isinstance(event, GroupMessageEvent) else str(event.user_id)
+        group_id = event.group_id if isinstance(event, GroupMessageEvent) else event.user_id
         uid = str(match.group()).split('=')[1]
         await CloudGenshinSub.update_or_create(user_id=str(event.user_id), uid=uid, defaults={'group_id': group_id, 'uuid': uuid_, 'token': msg})
         await yys_bind.finish(f'米游社账号{uid}云原神token绑定成功，将会每日为你自动领免费时长', at_sender=True)

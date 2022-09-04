@@ -1,13 +1,14 @@
 import os
 import subprocess
 import sys
+from pathlib import Path
 
-from nonebot import on_command
+from nonebot import on_command, get_bot
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
 from nonebot.rule import to_me
 from nonebot.adapters.onebot.v11 import MessageEvent
-from LittlePaimon import NICKNAME
+from LittlePaimon import NICKNAME, DRIVER, SUPERUSERS, __version__
 
 update_cmd = on_command('更新', permission=SUPERUSER, rule=to_me(), priority=1)
 reboot_cmd = on_command('重启', permission=SUPERUSER, rule=to_me(), priority=1)
@@ -18,7 +19,7 @@ __plugin_meta__ = PluginMetadata(
     usage='...',
     extra={
         'priority': 16,
-        'show': False
+        'show':     False
     }
 )
 
@@ -33,6 +34,14 @@ async def _(event: MessageEvent):
 @reboot_cmd.handle()
 async def _(event: MessageEvent):
     await reboot_cmd.send(f'{NICKNAME}开始执行重启，请等待{NICKNAME}的归来', at_sender=True)
+    (Path() / 'rebooting.json').open('w').close()
     if sys.argv[0].endswith('nb'):
         sys.argv[0] = 'bot.py'
     os.execv(sys.executable, ['python'] + sys.argv)
+
+
+@DRIVER.on_bot_connect
+async def _():
+    if (Path() / 'rebooting.json').exists():
+        await get_bot().send_private_msg(user_id=SUPERUSERS[0], message=f'{NICKNAME}已重启完成，当前版本为{__version__}')
+        (Path() / 'rebooting.json').unlink()

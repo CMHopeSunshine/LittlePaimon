@@ -8,6 +8,7 @@ from nonebot.params import RegexDict, ArgPlainText
 from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
 
+from LittlePaimon import NICKNAME
 from LittlePaimon.utils.alias import get_match_alias
 from LittlePaimon.utils.message import MessageBuild
 from LittlePaimon.database.models import PlayerAlias
@@ -181,12 +182,12 @@ def create_wiki_matcher(pattern: str, help_fun: str, help_name: str):
         if choice not in match_alias:
             state['times'] = state['times'] + 1 if 'times' in state else 1
             if state['times'] == 1:
-                await maps.reject(f'请旅行者从上面的{state["type"]}中选一个问派蒙\n回答\"q\"可以取消查询', at_sender=True)
+                await maps.reject(f'请旅行者从上面的{state["type"]}中选一个问{NICKNAME}\n回答\"取消\"可以取消查询', at_sender=True)
 
             elif state['times'] == 2:
-                await maps.reject(f'别调戏派蒙啦，快选一个吧，不想问了请回答\"q\"！', at_sender=True)
+                await maps.reject(f'别调戏{NICKNAME}啦，快选一个吧，不想问了请回答\"取消\"！', at_sender=True)
             elif state['times'] >= 3:
-                await maps.finish(f'看来旅行者您有点神志不清哦(，下次再问派蒙吧{MessageSegment.face(146)}', at_sender=True)
+                await maps.finish(f'看来旅行者您有点神志不清哦(，下次再问{NICKNAME}吧{MessageSegment.face(146)}', at_sender=True)
         try:
             await maps.finish(MessageSegment.image(state['img_url'].format(choice)))
         except ActionFailed:

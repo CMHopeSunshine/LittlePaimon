@@ -46,14 +46,14 @@ async def _():
             else:
                 sign = await get_Notification(sub.uuid, sub.token)
                 msg = '云原神签到成功' if sign['data']['list'] else '云原神今日已签到'
-            result_list['private' if sub.user_id == sub.group_id else 'group'][sub.group_id].append(
+            result_list['private' if sub.user_id == str(sub.group_id) else 'group'][str(sub.group_id)].append(
                 {
                     'uid':    sub.uid,
                     'msg':    f'UID{sub.uid}{msg}',
                     'result': True
                 })
         else:
-            result_list['private' if sub.user_id == sub.group_id else 'group'][sub.group_id].append(
+            result_list['private' if sub.user_id == str(sub.group_id) else 'group'][str(sub.group_id)].append(
                 {
                     'uid':    sub.uid,
                     'msg':    f'UID{sub.uid}云原神token已失效，请重新绑定',
