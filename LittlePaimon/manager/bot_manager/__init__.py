@@ -28,7 +28,7 @@ __plugin_meta__ = PluginMetadata(
 async def _(event: MessageEvent):
     await update_cmd.send(f'{NICKNAME}开始执行git pull更新', at_sender=True)
     p = subprocess.run(['git', 'pull'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    await update_cmd.finish('更新结果：' + (p.stdout if p.returncode == 0 else p.stderr).decode('utf-8').strip())
+    await update_cmd.finish('更新结果：' + (p.stdout if p.returncode == 0 else p.stderr).decode('utf-8').replace('+', '').replace('-', '').strip(' '))
 
 
 @reboot_cmd.handle()
