@@ -25,11 +25,14 @@ def get_percent_text(percent: int) -> str:
 
 
 async def get_avatar(qid: str, size: Tuple[int, int] = (146, 146)) -> PMImage:
-    avatar = await get_qq_avatar(qid)
-    await avatar.resize(size)
-    await avatar.to_circle('circle')
-    await avatar.add_border(6, '#ddcdba', 'circle')
-    return avatar
+    try:
+        avatar = await get_qq_avatar(qid)
+        await avatar.resize(size)
+        await avatar.to_circle('circle')
+        await avatar.add_border(6, '#ddcdba', 'circle')
+        return avatar
+    except Exception:
+        return PMImage(size=size, color=(255, 255, 255, 255))
 
 
 async def draw_weapon_icon(weapon: Weapon, size: Tuple[int, int] = (65, 65)) -> PMImage:

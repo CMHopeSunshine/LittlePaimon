@@ -117,7 +117,7 @@ def load_yaml(path: Union[Path, str], encoding: str = 'utf-8'):
     if isinstance(path, str):
         path = Path(path)
     return yaml.load(path.open('r', encoding=encoding),
-                     Loader=yaml.RoundTripLoader) if path.exists() else yaml.round_trip_load('{}')
+                     Loader=yaml.Loader) if path.exists() else yaml.round_trip_load('{}')
 
 
 def save_yaml(data: dict, path: Union[Path, str] = None, encoding: str = 'utf-8'):
