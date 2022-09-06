@@ -57,6 +57,8 @@
 <summary>每月札记</summary>
 <img src="https://static.cherishmoon.fun/LittlePaimon/readme/myzj.jpg" alt="myzj">
 </details>
+
+
 ## 丨安装方法
 
 > 详细教程可看[博客链接](https://blog.cherishmoon.fun/posts/nonebot2deploy.html)
@@ -68,11 +70,11 @@
 - 5、启动`poetry run nb run`
 - 6、添加公共ck`添加公共ck`
 
-从旧版本迁移
+从旧版本迁移<br>
 方法一：
 - 1、在新的文件夹，按上述前三步克隆并安装依赖，
 - 2、然后将原来旧版本Nonebot中的除了`LittlePaimon`外的文件夹全部迁移到现在的新文件夹
-- 3、如果你旧版本中使用`gocq插件`的话，要在新版本的文件夹运行`poetry run nb plugin nonebot-plugin-gocqhttp`
+- 3、如果你旧版本中使用`gocq插件`的话，要在新版本的文件夹运行`poetry run nb plugin install nonebot-plugin-gocqhttp`
 - 4、你还装了其他插件的话，也是用`poetry run nb plugin nonebot-plugin-xxxx`重新装回
 
 方法二：
