@@ -148,10 +148,12 @@ async def _(bot: Bot, event: GroupIncreaseNoticeEvent):
 async def _(event: MessageEvent, regex_dict: dict = RegexDict()):
     type = regex_dict['type']
     target = regex_dict['target'].split(' ')
-    if not target:
-        target = [str(event.group_id)]
     if any(i in target for i in {'全部', 'all', '所有'}):
         target = ['全部']
+    else:
+        target = list(map(int, target))
+    if not target:
+        target = [event.group_id]
     for t in target:
         if not t.isdigit() and t != '全部':
             await ban_greet.finish('请输入要禁用｜启用群欢迎的正确的群号')
@@ -159,9 +161,9 @@ async def _(event: MessageEvent, regex_dict: dict = RegexDict()):
             config.group_ban = ['全部'] if type in {'禁用', '关闭'} else []
         elif type in {'禁用', '关闭'}:
             if t not in config.group_ban:
-                config.group_ban.append(int(t))
+                config.group_ban.append(t)
         elif t in config.group_ban:
-            config.group_ban.remove(int(t))
+            config.group_ban.remove(t)
     config.save()
     await ban_greet.finish(f'已{type}群{" ".join(target)}的群欢迎')
 

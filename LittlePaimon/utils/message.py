@@ -369,7 +369,7 @@ def format_message(text: str, **kwargs) -> Message:
     for text in texts:
         if text == '{nickname}':
             msg += MessageSegment.text(NICKNAME)
-        elif text in '{at_user}':
+        elif text == '{at_user}':
             msg += MessageSegment.at(kwargs['user_id']) if 'user_id' in kwargs else MessageSegment.text('{at_user}')
         elif text.startswith(('{img', '{voice', '{video')):
             url = text.split(':', 1)[1].strip('}')

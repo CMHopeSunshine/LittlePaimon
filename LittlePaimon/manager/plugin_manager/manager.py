@@ -18,7 +18,9 @@ hidden_plugins = [
     'nonebot_plugin_imageutils',
     'plugin_manager',
     'database_manager',
-    'admin'
+    'admin',
+    'NoticeAndRequest',
+    'bot_manager'
 ]
 
 
