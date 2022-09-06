@@ -45,4 +45,8 @@ JSON_DATA = Path(__file__).parent / 'data'
 PLUGIN_CONFIG = Path() / 'config' / 'plugins'
 PLUGIN_CONFIG.mkdir(parents=True, exist_ok=True)
 PAIMON_CONFIG = Path() / 'config' / 'paimon_config.yml'
+# 问候语配置文件
+GREET_CONFIG = Path() / 'config' / 'paimon_greet.yml'
+GREET_CONFIG_DEFAULT = Path() / 'config' / 'paimon_greet_default.yml'
+
 

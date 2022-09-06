@@ -59,7 +59,7 @@ class PluginManager:
         """
         if config_name not in self.config.dict(by_alias=True).keys():
             return f'没有配置项为{config_name}'
-        if '启用' in config_name or '开关' in config_name:
+        if '启用' in config_name or '开关' in config_name or config_name in {'自动接受好友请求', '自动接受群邀请'}:
             if value not in ['开', '关', 'true', 'false', 'on', 'off']:
                 return '参数错误'
             value = value in ['开', 'true', 'on']

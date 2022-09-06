@@ -12,6 +12,7 @@ from nonebot.matcher import Matcher
 from nonebot.params import CommandArg, Depends
 from nonebot.typing import T_State
 
+from LittlePaimon import NICKNAME
 from LittlePaimon.database.models import LastQuery, PrivateCookie, Player, PlayerAlias
 from LittlePaimon.utils import aiorequests, load_image
 from LittlePaimon.utils.alias import get_match_alias
@@ -360,3 +361,32 @@ async def recall_message(event: MessageEvent) -> bool:
         return False
     await bot.delete_msg(message_id=event.message_id)
     return True
+
+
+def format_message(text: str, **kwargs) -> Message:
+    msg = Message()
+    texts = re.split(r'({(?:\w+|(?:img|voice|video):[^{}]+|face:\d+)})', text)
+    for text in texts:
+        if text == '{nickname}':
+            msg += MessageSegment.text(NICKNAME)
+        elif text in '{at_user}':
+            msg += MessageSegment.at(kwargs['user_id']) if 'user_id' in kwargs else MessageSegment.text('{at_user}')
+        elif text.startswith(('{img', '{voice', '{video')):
+            url = text.split(':', 1)[1].strip('}')
+            if url.startswith('.'):
+                url = Path().cwd().as_uri() + url[1:].replace('\\', '/')
+            if text.startswith('{img'):
+                msg += MessageSegment.image(url)
+            elif text.startswith('{voice'):
+                msg += MessageSegment.record(url)
+            elif text.startswith('{video'):
+                msg += MessageSegment.video(url)
+        elif text.startswith('{face:'):
+            face_id = text.split(':', 1)[1].strip('}')
+            msg += MessageSegment.face(int(face_id))
+        elif text.startswith('{') and text.endswith('}'):
+            type_ = text.strip('{').strip('}')
+            msg += MessageSegment.text(kwargs.get(type_, text))
+        else:
+            msg += MessageSegment.text(text)
+    return msg

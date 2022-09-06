@@ -92,6 +92,7 @@ show_abyss = on_command('深渊统计', priority=10, block=True, state={
     'pm_priority':    10
 })
 
+
 @ys.handle()
 async def _(event: MessageEvent, players=CommandPlayer()):
     logger.info('原神信息查询', '开始执行')
@@ -286,7 +287,8 @@ async def _(event: MessageEvent, msg: Message = CommandArg()):
 @show_alias.handle()
 async def _(event: MessageEvent):
     if aliases := await PlayerAlias.filter(user_id=str(event.user_id)).all():
-        await show_alias.finish('你已设以下别名:' + '\n'.join(f'{alias.alias}->{alias.character}' for alias in aliases), at_sender=True)
+        await show_alias.finish('你已设以下别名:' + '\n'.join(f'{alias.alias}->{alias.character}' for alias in aliases),
+                                at_sender=True)
     else:
         await show_alias.finish('你还没有设置过角色别名哦', at_sender=True)
 
