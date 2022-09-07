@@ -169,8 +169,6 @@ async def _(event: MessageEvent, regex_dict: dict = RegexDict()):
     if not target:
         target = [event.group_id]
     for t in target:
-        if not t.isdigit() and t != '全部':
-            await ban_greet.finish('请输入要禁用｜启用群欢迎的正确的群号')
         if t == '全部':
             config.group_ban = ['全部'] if type in {'禁用', '关闭'} else []
         elif type in {'禁用', '关闭'}:

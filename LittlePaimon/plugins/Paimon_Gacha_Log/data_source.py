@@ -174,7 +174,7 @@ async def get_gacha_log_img(user_id: str, uid: str, nickname: str):
 def create_import_command(user_id: int):
     def file_rule(event: NoticeEvent):
         if isinstance(event, GroupUploadNoticeEvent) or event.notice_type == 'offline_file':
-            return event.get_user_id() == str(user_id)
+            return event.dict()['user_id'] == user_id
         return False
 
     import_cmd = on_notice(priority=12, rule=Rule(file_rule), expire_time=datetime.timedelta(minutes=5), temp=True)
@@ -193,7 +193,7 @@ def create_import_command(user_id: int):
             new_num = 0
             uid = data['info']['uid']
             logger.info('原神抽卡记录', '➤', {'用户': user_id, 'UID': uid}, '导入抽卡记录', True)
-            gacha_log, _ = load_history_info(event.get_user_id(), uid)
+            gacha_log, _ = load_history_info(str(event_data['user_id']), uid)
             for item in data['list']:
                 pool_name = GACHA_TYPE_LIST[item['gacha_type']]
                 item_info = GachaItem.parse_obj(item)
@@ -203,7 +203,7 @@ def create_import_command(user_id: int):
             for i in gacha_log.item_list.values():
                 i.sort(key=lambda x: (x.time, x.id))
             gacha_log.update_time = datetime.datetime.now()
-            save_gacha_log_info(event.get_user_id(), uid, gacha_log)
+            save_gacha_log_info(str(event_data['user_id']), uid, gacha_log)
             if new_num == 0:
                 await import_cmd.send(f'UID{uid}抽卡记录导入完成，本次没有新增数据', at_sender=True)
             else:
