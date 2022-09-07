@@ -1,14 +1,17 @@
 import asyncio
 import time
+from typing import Dict, Union, Tuple, Optional
+from pathlib import Path
 import datetime
-from typing import Dict, Union, Tuple
 
-from LittlePaimon import DRIVER
+from nonebot import on_notice
+from nonebot.rule import Rule
+from nonebot.adapters.onebot.v11 import GroupUploadNoticeEvent, NoticeEvent
 from LittlePaimon.database.models import PlayerInfo
 from LittlePaimon.config import GACHA_LOG
 from LittlePaimon.utils.api import get_authkey_by_stoken
 from LittlePaimon.utils import aiorequests, logger
-from LittlePaimon.utils.files import load_json
+from LittlePaimon.utils.files import load_json, save_json
 from .models import GachaItem, GachaLogInfo, GACHA_TYPE_LIST
 from .draw import draw_gacha_log
 
@@ -68,6 +71,38 @@ def save_gacha_log_info(user_id: str, uid: str, info: GachaLogInfo):
     # 写入新数据
     with save_path.open('w', encoding='utf-8') as f:
         f.write(info.json(ensure_ascii=False, indent=4))
+
+
+def gacha_log_to_UIGF(user_id: str, uid: str) -> Tuple[bool, str, Optional[Path]]:
+    data, state = load_history_info(user_id, uid)
+    if not state:
+        return False, f'UID{uid}还没有抽卡记录数据，请先更新', None
+    logger.info('原神抽卡记录', '➤', {'用户': user_id, 'UID': uid}, '导出抽卡记录', True)
+    save_path = Path() / 'data' / 'LittlePaimon' / 'user_data' / 'gacha_log_data' / f'gacha_log_UIGF-{user_id}-{uid}.json'
+    uigf_dict = {
+        'info': {
+            'uid':          uid,
+            'lang':         'zh-cn',
+            'export_time':  datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'uigf_version': 'v2.1'
+        },
+        'list': []
+    }
+    for items in data.item_list.values():
+        for item in items:
+            uigf_dict['list'].append({
+                'gacha_type':      item.gacha_type,
+                'item_id':         '',
+                'count':           '1',
+                'time':            item.time.strftime('%Y-%m-%d %H:%M:%S'),
+                'name':            item.name,
+                'item_type':       item.item_type,
+                'rank_type':       item.rank_type,
+                'id':              item.id,
+                'uigf_gacha_type': item.gacha_type
+            })
+    save_json(uigf_dict, save_path)
+    return True, '导出成功', save_path
 
 
 async def get_gacha_log_data(user_id: str, uid: str):
@@ -130,8 +165,49 @@ async def get_gacha_log_img(user_id: str, uid: str, nickname: str):
         return f'UID{uid}还没有抽卡记录数据，请先更新'
     player_info = await PlayerInfo.get_or_none(user_id=user_id, uid=uid)
     if player_info:
-        return await draw_gacha_log(player_info.user_id, player_info.uid, player_info.nickname, player_info.signature, data)
+        return await draw_gacha_log(player_info.user_id, player_info.uid, player_info.nickname, player_info.signature,
+                                    data)
     else:
         return await draw_gacha_log(user_id, uid, nickname, None, data)
 
 
+def create_import_command(user_id: int):
+    def file_rule(event: NoticeEvent):
+        if event.get_user_id() != str(user_id):
+            return False
+        if isinstance(event, GroupUploadNoticeEvent):
+            return True
+        return event.notice_type == 'offline_file'
+
+    import_cmd = on_notice(priority=12, rule=Rule(file_rule), expire_time=datetime.timedelta(minutes=5), temp=True)
+
+    @import_cmd.handle()
+    async def _(event: NoticeEvent):
+        event_data = event.dict()
+        file_name = event_data['file']['name']
+        if not file_name.endswith('.json'):
+            await import_cmd.finish('文件格式错误，请上传json文件', at_sender=True)
+        file_url = event_data['file']['url']
+        try:
+            data = await aiorequests.get(url=file_url)
+            data = data.json()
+            new_num = 0
+            uid = data['info']['uid']
+            logger.info('原神抽卡记录', '➤', {'用户': user_id, 'UID': uid}, '导入抽卡记录', True)
+            gacha_log, _ = load_history_info(event.get_user_id(), uid)
+            for item in data['list']:
+                pool_name = GACHA_TYPE_LIST[item['gacha_type']]
+                item_info = GachaItem.parse_obj(item)
+                if item_info not in gacha_log.item_list[pool_name]:
+                    gacha_log.item_list[pool_name].append(item_info)
+                    new_num += 1
+            for i in gacha_log.item_list.values():
+                i.sort(key=lambda x: (x.time, x.id))
+            gacha_log.update_time = datetime.datetime.now()
+            save_gacha_log_info(event.get_user_id(), uid, gacha_log)
+            if new_num == 0:
+                await import_cmd.send(f'UID{uid}抽卡记录导入完成，本次没有新增数据', at_sender=True)
+            else:
+                await import_cmd.send(f'UID{uid}抽卡记录导入完成，共新增{new_num}条抽卡记录', at_sender=True)
+        except Exception as e:
+            await import_cmd.finish(f'导入抽卡记录时发生错误，错误信息：{e}', at_sender=True)
