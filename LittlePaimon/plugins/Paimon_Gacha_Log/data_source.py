@@ -173,13 +173,12 @@ async def get_gacha_log_img(user_id: str, uid: str, nickname: str):
 
 def create_import_command(user_id: int):
     def file_rule(event: NoticeEvent):
-        if event.get_user_id() != str(user_id):
-            return False
-        if isinstance(event, GroupUploadNoticeEvent):
-            return True
-        return event.notice_type == 'offline_file'
+        if isinstance(event, GroupUploadNoticeEvent) or event.notice_type == 'offline_file':
+            return event.get_user_id() == str(user_id)
+        return False
 
     import_cmd = on_notice(priority=12, rule=Rule(file_rule), expire_time=datetime.timedelta(minutes=5), temp=True)
+    import_cmd.plugin_name = 'Paimon_Gacha_Log'
 
     @import_cmd.handle()
     async def _(event: NoticeEvent):

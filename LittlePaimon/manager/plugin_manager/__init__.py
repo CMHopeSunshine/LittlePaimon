@@ -137,7 +137,7 @@ async def _():
 
 @run_preprocessor
 async def _(event: MessageEvent, matcher: Matcher):
-    if matcher.plugin_name in hidden_plugins:
+    if not matcher.plugin_name or matcher.plugin_name in hidden_plugins:
         return
     if isinstance(event, PrivateMessageEvent):
         session_id = event.user_id
