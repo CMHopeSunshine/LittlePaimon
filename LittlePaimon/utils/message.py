@@ -388,5 +388,5 @@ def format_message(text: str, **kwargs) -> Message:
             type_ = text.strip('{').strip('}')
             msg += MessageSegment.text(kwargs.get(type_, text))
         else:
-            msg += MessageSegment.text(text)
+            msg += MessageSegment.text(text.replace('\\n', '\n'))
     return msg

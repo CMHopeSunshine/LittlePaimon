@@ -64,14 +64,28 @@ async def _(event: PrivateMessageEvent, state: T_State, msg: Message = CommandAr
         msg = msg.replace('群', '').strip()
     if not requests_list[state['type']]:
         await approve_request.finish(f'没有待处理的{state["type"]}请求')
+    elif msg == '全部':
+        state['id'] = Message('全部')
     elif msg in requests_list[state['type']].keys():
         state['id'] = Message(msg)
     else:
         state['id_list'] = '\n'.join([f'{v["name"]}({k})' for k, v in requests_list[state['type']].items()])
 
 
-@approve_request.got('id', prompt=Message.template('你要同意的是以下哪个{type}:\n{id_list}\n请发送{type}号码'))
+@approve_request.got('id', prompt=Message.template('你要同意的是以下哪个{type}:\n{id_list}\n请发送号码，或"全部"来同意全部请求'))
 async def _(event: PrivateMessageEvent, bot: Bot, state: T_State, id_: str = ArgPlainText('id')):
+    if id_ == '全部':
+        for id__, info in requests_list[state['type']].items():
+            if state['type'] == '好友':
+                await bot.set_friend_add_request(flag=info['flag'], approve=True)
+                del requests_list['好友'][id__]
+                logger.info('好友添加请求', '', {'好友': id__}, '已同意', True)
+            elif state['type'] == '群':
+                await bot.set_group_add_request(flag=info['flag'], sub_type='invite', approve=True)
+                del requests_list['群'][id__]
+                logger.info('群邀请请求', '', {'群': id__}, '已同意', True)
+            await asyncio.sleep(0.75)
+        await approve_request.finish(f'已同意全部{state["type"]}请求')
     if id_ not in requests_list[state['type']].keys():
         await approve_request.reject(Message.template('请发送要同意的{type}号码:\n{id_list}'))
     else:
@@ -110,7 +124,7 @@ async def _(bot: Bot, event: GroupRequestEvent):
     user_info = await bot.get_stranger_info(user_id=event.user_id)
     group_info = await bot.get_group_info(group_id=event.group_id)
     base_msg = f'{user_info["nickname"]}({event.user_id})邀请{NICKNAME}加入群{group_info["group_name"]}({event.group_id})'
-    if pm.config.auto_add_group:
+    if pm.config.auto_add_group or event.user_id in SUPERUSERS:
         await asyncio.sleep(random.randint(10, 20))
         await bot.send_private_msg(user_id=SUPERUSERS[0], message=f'{base_msg}，已自动同意')
         await event.approve(bot)
