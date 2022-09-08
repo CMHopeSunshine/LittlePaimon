@@ -46,7 +46,7 @@ async def IncreaseRule(event: NoticeEvent) -> bool:
 
 
 approve_request = on_command('同意', priority=1, block=True, permission=SUPERUSER)
-ban_greet = on_regex(r'(?P<type>开启|启用|关闭|禁用)(?P<target>.*)', priority=1, block=True, permission=SUPERUSER)
+ban_greet = on_regex(r'入群欢迎(?P<type>开启|启用|关闭|禁用)(?P<target>.+)', priority=1, block=True, permission=SUPERUSER)
 requests = on_request(priority=1, rule=Rule(InviteRule), block=True)
 notices = on_notice(priority=1, rule=Rule(IncreaseRule), block=True)
 
@@ -165,7 +165,10 @@ async def _(event: MessageEvent, regex_dict: dict = RegexDict()):
     if any(i in target for i in {'全部', 'all', '所有'}):
         target = ['全部']
     else:
-        target = list(map(int, target))
+        try:
+            target = list(map(int, target))
+        except Exception:
+            await ban_greet.finish('请发送正确的要关闭入群欢迎的群号或者"全部"')
     if not target:
         target = [event.group_id]
     for t in target:
