@@ -1,15 +1,12 @@
-from typing import Union
-
 from nonebot import get_bot, on_command
-from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment, GROUP_ADMIN
-from nonebot.permission import SUPERUSER
+from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
 from nonebot.plugin import PluginMetadata
 
 from .generate import *
 from LittlePaimon.utils.message import CommandObjectID, CommandSwitch, CommandTime
 from LittlePaimon.utils import scheduler, logger
 from LittlePaimon.database.models import GeneralSub
-from LittlePaimon import DRIVER
+from LittlePaimon import DRIVER, SUPERUSERS
 
 __plugin_meta__ = PluginMetadata(
     name="原神日历",
@@ -26,7 +23,7 @@ __plugin_meta__ = PluginMetadata(
     },
 )
 
-calendar = on_command('原神日历', aliases={'原神日程', '活动日历'}, permission=SUPERUSER | GROUP_ADMIN, priority=10, block=True)
+calendar = on_command('原神日历', aliases={'原神日程', '活动日历'}, priority=10, block=True)
 
 
 @calendar.handle()
@@ -35,6 +32,8 @@ async def _(event: MessageEvent, sub_id=CommandObjectID(), switch=CommandSwitch(
         im = await generate_day_schedule('cn')
         await calendar.finish(MessageSegment.image(im))
     else:
+        if event.sender.role not in ['admin', 'owner'] or event.user_id not in SUPERUSERS:
+            await calendar.finish('你没有权限管理原神日历订阅')
         sub_data = {'sub_id': sub_id, 'sub_type': event.message_type, 'sub_event': '原神日历'}
 
         if event.message_type == 'guild':

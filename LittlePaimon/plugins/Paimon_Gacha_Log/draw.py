@@ -175,9 +175,9 @@ async def draw_gacha_log(user_id: str, uid: str, nickname: Optional[str], signat
     await img.text(str(total_five_star_count), (789, 884), 286, fm.get('bahnschrift_regular', 48), '#040404', 'center')
     four_star_detail = await draw_four_star_detail(list(data4.values()))
     if total_five_star_count:
-        chara_pool_per = round(len(data5['角色祈愿']) / total_five_star_count * 100, 3)
-        weapon_pool_per = round(len(data5['武器祈愿']) / total_five_star_count * 100, 3)
-        new_pool_per = round((len(data5['常驻祈愿']) + len(data5['新手祈愿'])) / total_five_star_count * 100, 3)
+        chara_pool_per = round(len(data5['角色祈愿']) / total_five_star_count * 100, 1)
+        weapon_pool_per = round(len(data5['武器祈愿']) / total_five_star_count * 100, 1)
+        new_pool_per = round((len(data5['常驻祈愿']) + len(data5['新手祈愿'])) / total_five_star_count * 100, 1)
         now_used_width = 56
         pers = [chara_pool_per, weapon_pool_per, new_pool_per]
         i = 0

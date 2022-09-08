@@ -40,23 +40,27 @@ def sort_characters(characters: List[Character]) -> List[Character]:
     圣遗物每级0.5/0.8/1分，每个两件套20分，四件套60分，最后按降序排序
     """
     for chara in characters:
-        chara.score = chara.level * (0.8 if chara.rarity == 4 else 1) + chara.fetter * 3
-        if chara.talents:
-            for talent in chara.talents:
-                chara.score += talent.level * (5 if talent.level <= 6 else 8)
-        chara.score += len(chara.constellation) * (15 if chara.rarity == 4 else 50)
-        if chara.weapon:
-            chara.score += chara.weapon.level * (
-                0.6 if chara.weapon.rarity <= 3 else 0.8 if chara.weapon.rarity == 4 else 1)
-            chara.score += chara.weapon.affix_level * (
-                10 if chara.weapon.rarity <= 3 else 20 if chara.weapon.rarity == 4 else 50)
-        if chara.artifacts:
-            suit = GenshinTools.get_artifact_suit(chara.artifacts)
-            chara.suit = suit
-            chara.score += 60 if len(suit) == 2 and suit[0] == suit[1] else 20 * len(suit)
-            for artifact in chara.artifacts:
-                chara.score += artifact.level * (0.5 if artifact.rarity <= 3 else 0.8 if artifact.rarity == 4 else 1)
-        else:
+        try:
+            chara.score = chara.level * (0.8 if chara.rarity == 4 else 1) + chara.fetter * 3
+            if chara.talents:
+                for talent in chara.talents:
+                    chara.score += talent.level * (5 if talent.level <= 6 else 8)
+            chara.score += len(chara.constellation) * (15 if chara.rarity == 4 else 50)
+            if chara.weapon:
+                chara.score += chara.weapon.level * (
+                    0.6 if chara.weapon.rarity <= 3 else 0.8 if chara.weapon.rarity == 4 else 1)
+                chara.score += chara.weapon.affix_level * (
+                    10 if chara.weapon.rarity <= 3 else 20 if chara.weapon.rarity == 4 else 50)
+            if chara.artifacts:
+                suit = GenshinTools.get_artifact_suit(chara.artifacts)
+                chara.suit = suit
+                chara.score += 60 if len(suit) == 2 and suit[0] == suit[1] else 20 * len(suit)
+                for artifact in chara.artifacts:
+                    chara.score += artifact.level * (0.5 if artifact.rarity <= 3 else 0.8 if artifact.rarity == 4 else 1)
+            else:
+                chara.suit = []
+        except Exception:
+            chara.score = 0
             chara.suit = []
     return sorted(characters, key=lambda x: x.score, reverse=True)
 
