@@ -34,7 +34,7 @@ class ChatConfigManager:
             self.config = ChatConfig.parse_obj(load_yaml(self.file_path))
         else:
             self.config = ChatConfig()
-            self.save()
+        self.save()
 
     @property
     def config_list(self) -> List[str]:
