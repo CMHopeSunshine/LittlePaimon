@@ -9,16 +9,6 @@ info_file = load_json(JSON_DATA / 'genshin_info.json')
 weapon_file = load_json(JSON_DATA / 'weapon.json')
 
 
-def get_short_name(name: str) -> str:
-    """
-        获取角色或武器的短名（2个字）
-        :param name: 角色或武器名
-        :return: 短名字符串
-    """
-    short_name = load_json(JSON_DATA / 'short_name.json')
-    return name if name not in short_name.keys() else short_name[name]
-
-
 def get_id_by_name(name: str) -> Optional[str]:
     """
         根据角色名字获取角色的id

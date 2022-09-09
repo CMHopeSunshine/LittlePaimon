@@ -5,3 +5,4 @@ from .subscription import *
 from .genshin_voice import *
 from .manager import *
 from .abyss_info import *
+from .learning_chat import *

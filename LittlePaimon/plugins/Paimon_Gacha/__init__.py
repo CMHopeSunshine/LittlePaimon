@@ -37,12 +37,12 @@ show_log = on_command('模拟抽卡记录', aliases={'查看模拟抽卡记录'}
         'pm_usage':       '模拟抽卡记录[角色|武器]',
         'pm_priority':    2
     })
-delete_log = on_command('删除模拟抽卡记录', priority=13, block=True, state={
-        'pm_name':        '删除模拟抽卡记录',
-        'pm_description': '删除你的模拟抽卡记录',
-        'pm_usage':       '删除模拟抽卡记录',
-        'pm_priority':    3
-    })
+# delete_log = on_command('删除模拟抽卡记录', priority=13, block=True, state={
+#         'pm_name':        '删除模拟抽卡记录',
+#         'pm_description': '删除你的模拟抽卡记录',
+#         'pm_usage':       '删除模拟抽卡记录',
+#         'pm_priority':    3
+#     })
 # show_dg = on_command('查看定轨', priority=13, block=True, state={
 #         'pm_name':        '查看定轨',
 #         'pm_description': '查看当前定轨的武器',

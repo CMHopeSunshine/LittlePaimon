@@ -1,6 +1,6 @@
 from tortoise import Tortoise
 from nonebot.log import logger
-from LittlePaimon.config import GENSHIN_DB_PATH, SUB_DB_PATH, GENSHIN_VOICE_DB_PATH, MANAGER_DB_PATH
+from LittlePaimon.config import GENSHIN_DB_PATH, SUB_DB_PATH, GENSHIN_VOICE_DB_PATH, MANAGER_DB_PATH, LEARNING_CHAT_DB_PATH
 
 
 DATABASE = {
@@ -21,6 +21,10 @@ DATABASE = {
             "engine": "tortoise.backends.sqlite",
             "credentials": {"file_path": MANAGER_DB_PATH},
         },
+        'learning_chat': {
+            "engine": "tortoise.backends.sqlite",
+            "credentials": {"file_path": LEARNING_CHAT_DB_PATH},
+        },
     },
     "apps": {
         "genshin": {
@@ -38,6 +42,10 @@ DATABASE = {
         "manager": {
             "models": ['LittlePaimon.database.models.manager'],
             "default_connection": "manager",
+        },
+        "learning_chat": {
+            "models": ['LittlePaimon.database.models.learning_chat'],
+            "default_connection": "learning_chat",
         }
     },
 }

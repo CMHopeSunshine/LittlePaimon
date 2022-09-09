@@ -49,7 +49,7 @@ voice_cmd = on_regex(rf'^(?P<chara>({CHARA_RE})?)说(?P<text>[\w，。！？、�
 
 @voice_cmd.handle()
 async def _(event: Union[GroupMessageEvent, PrivateMessageEvent], regex_dict: dict = RegexDict()):
-    regex_dict['text'] = filter_msg(regex_dict['text'].replace('\r', '').replace('\n', ''))
+    regex_dict['text'] = filter_msg(regex_dict['text'].replace('\r', '').replace('\n', ''), '星')
     if not freq_limiter.check(
             f'genshin_ai_voice_{event.group_id if isinstance(event, GroupMessageEvent) else event.user_id}'):
         await voice_cmd.finish(

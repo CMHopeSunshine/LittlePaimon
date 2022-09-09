@@ -14,7 +14,7 @@ from nonebot.typing import T_State
 
 from LittlePaimon import NICKNAME, SUPERUSERS
 from LittlePaimon.utils import scheduler, logger
-from LittlePaimon.utils.message import format_message
+from LittlePaimon.utils.message import format_message, replace_all
 from LittlePaimon.manager.plugin_manager import plugin_manager as pm
 from .config import config
 
@@ -46,7 +46,7 @@ async def IncreaseRule(event: NoticeEvent) -> bool:
 
 
 approve_request = on_command('同意', priority=1, block=True, permission=SUPERUSER)
-ban_greet = on_regex(r'入群欢迎(?P<type>开启|启用|关闭|禁用)(?P<target>.+)', priority=1, block=True, permission=SUPERUSER)
+ban_greet = on_command('入群欢迎', priority=1, block=True, permission=SUPERUSER)
 requests = on_request(priority=1, rule=Rule(InviteRule), block=True)
 notices = on_notice(priority=1, rule=Rule(IncreaseRule), block=True)
 
@@ -159,9 +159,17 @@ async def _(bot: Bot, event: GroupIncreaseNoticeEvent):
 
 
 @ban_greet.handle()
-async def _(event: MessageEvent, regex_dict: dict = RegexDict()):
-    type = regex_dict['type']
-    target = regex_dict['target'].split(' ')
+async def _(event: MessageEvent, msg: Message = CommandArg()):
+    msg = msg.extract_plain_text().strip()
+    if any(i in msg for i in {'开启', '启用', '打开', 'on'}):
+        type = True
+        target = replace_all(msg, ['开启', '启用', '打开', 'on'])
+    elif any(i in msg for i in {'禁用', '关闭', 'off'}):
+        type = False
+        target = replace_all(msg, ['禁用', '关闭', 'off'])
+    else:
+        await ban_greet.finish('指令格式错误，应为[入群欢迎启用|禁用 群号]')
+        return
     if any(i in target for i in {'全部', 'all', '所有'}):
         target = ['全部']
     else:
@@ -173,14 +181,14 @@ async def _(event: MessageEvent, regex_dict: dict = RegexDict()):
         target = [event.group_id]
     for t in target:
         if t == '全部':
-            config.group_ban = ['全部'] if type in {'禁用', '关闭'} else []
-        elif type in {'禁用', '关闭'}:
+            config.group_ban = ['全部'] if type else []
+        elif not type:
             if t not in config.group_ban:
                 config.group_ban.append(t)
         elif t in config.group_ban:
             config.group_ban.remove(t)
     config.save()
-    await ban_greet.finish(f'已{type}群{" ".join(target)}的群欢迎')
+    await ban_greet.finish(f'已{"启用" if type else "禁用"}群{" ".join(target)}的群欢迎')
 
 
 @scheduler.scheduled_job('cron', hour='*/1')

@@ -69,10 +69,15 @@ text_filter = DFAFilter()
 text_filter.parse(JSON_DATA / 'ban_word.txt')
 
 
-def filter_msg(message: Union[Message, str]):
+def filter_msg(message: Union[Message, str], repl: str = "*"):
+    """
+    过滤违禁词
+    :param message: 过滤的消息
+    :param repl: 替换词
+    """
     if isinstance(message, str):
         return text_filter.filter(message)
     elif isinstance(message, Message):
         for seg in message['text']:
-            seg.data['text'] = text_filter.filter(seg.data.get('text', ''))
+            seg.data['text'] = text_filter.filter(seg.data.get('text', ''), repl)
         return message
