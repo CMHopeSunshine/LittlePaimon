@@ -7,10 +7,10 @@ from LittlePaimon.utils.files import load_yaml, save_yaml
 
 
 class ChatConfig(BaseModel):
-    total_enable: bool = Field(True, description='群聊学习总开关')
-    ban_words: List[str] = Field([], description='屏蔽词')
-    ban_groups: List[int] = Field([], description='屏蔽群')
-    ban_users: List[int] = Field([], description='屏蔽用户')
+    total_enable: bool = Field(True, alias='群聊学习总开关')
+    ban_words: List[str] = Field([], alias='屏蔽词')
+    ban_groups: List[int] = Field([], alias='屏蔽群')
+    ban_users: List[int] = Field([], alias='屏蔽用户')
     KEYWORDS_SIZE: int = Field(3, alias='单句关键词分词数量')
     answer_threshold: int = Field(4, alias='发言阈值')
     answer_threshold_weights: List[int] = Field([10, 30, 60], alias='发言阈值权重')
