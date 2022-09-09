@@ -407,7 +407,7 @@ class LearningChat:
                 continue
             if not self.message.to_me and sample_msg.startswith(NICKNAME):
                 continue
-            if sample_msg.startswith(('[CQ:xml', '[CQ:json', '[CQ:at')):
+            if any(i in sample_msg for i in{'[CQ:xml', '[CQ:json', '[CQ:at', '[CQ:video', '[CQ:record', '[CQ:share'}):
                 # 不学xml、json和at
                 continue
 
@@ -446,7 +446,7 @@ class LearningChat:
         # 回复别人的，不学
         if '[CQ:reply' in self.message.raw_message:
             return
-        if context := await Context.get_or_none(keywords=pre_msg['keywords']):
+        if context := await Context.filter(keywords=pre_msg['keywords']).first():
             context.count += 1
             context.time = self.message.time
             answer_index = next((idx for idx, answer in enumerate(context.answers)
