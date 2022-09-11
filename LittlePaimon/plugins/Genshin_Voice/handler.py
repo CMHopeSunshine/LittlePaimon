@@ -92,7 +92,7 @@ def create_guess_matcher(group_id, role_name, game_time):
     re_str = '|'.join(alias_list)
     guess_matcher = on_regex(re_str, temp=True, rule=Rule(check_group),
                              expire_time=datetime.timedelta(seconds=game_time))
-    guess_matcher.plugin_name = "Guess_voice"
+    guess_matcher.plugin_name = "Genshin_voice"
 
     @guess_matcher.handle()
     async def _(event: GroupMessageEvent):

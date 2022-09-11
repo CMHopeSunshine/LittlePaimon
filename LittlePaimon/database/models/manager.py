@@ -7,7 +7,7 @@ from tortoise.models import Model
 
 class PluginPermission(Model):
     id = fields.IntField(pk=True, generated=True, auto_increment=True)
-    name: str = fields.CharField(max_length=255)
+    name: str = fields.TextField()
     """插件名称"""
     session_id: int = fields.IntField()
     """会话id"""
@@ -26,11 +26,11 @@ class PluginPermission(Model):
 
 class PluginStatistics(Model):
     id = fields.IntField(pk=True, generated=True, auto_increment=True)
-    plugin_name: str = fields.CharField(max_length=255)
+    plugin_name: str = fields.TextField()
     """插件名称"""
-    matcher_name: str = fields.CharField(max_length=255)
+    matcher_name: str = fields.TextField()
     """命令名称"""
-    matcher_usage: str = fields.CharField(max_length=255, null=True)
+    matcher_usage: str = fields.TextField(null=True)
     """命令用法"""
     group_id: int = fields.IntField(null=True)
     """群id"""

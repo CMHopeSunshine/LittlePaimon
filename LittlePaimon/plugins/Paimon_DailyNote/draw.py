@@ -2,11 +2,10 @@ import datetime
 import random
 
 from LittlePaimon.config import RESOURCE_BASE_PATH
-from LittlePaimon.utils import logger, load_image
+from LittlePaimon.utils import load_image
 from LittlePaimon.utils.image import PMImage
 from LittlePaimon.utils.image import font_manager as fm
 from LittlePaimon.utils.message import MessageBuild
-
 
 
 async def draw_daily_note_card(data, uid):
@@ -17,7 +16,8 @@ async def draw_daily_note_card(data, uid):
     await bg_img.text(f"uid{uid}", 152, 251, fm.get('number.ttf', 60), '#5680d2')
     # 树脂文字
     await bg_img.text(f"{data['current_resin']}/160", 337, 480, fm.get('number.ttf', 48), 'white')
-    await bg_img.draw_ring((266, 266), (98, 369), percent=data['current_resin'] / 160, width=0.18, colors=['#507bd0', '#FFFFFF'])
+    await bg_img.draw_ring((266, 266), (98, 369), percent=data['current_resin'] / 160, width=0.18,
+                           colors=['#507bd0', '#FFFFFF'])
     if data['current_resin'] == 160:
         await bg_img.text("树脂满了哦~", 892, 480, fm.get('优设标题黑.ttf', 40), 'white')
     else:
@@ -28,7 +28,8 @@ async def draw_daily_note_card(data, uid):
     # 宝钱文字
     await bg_img.text(f"{data['current_home_coin']}/{data['max_home_coin']}", 337, 701, fm.get('number.ttf', 48),
                       'white')
-    await bg_img.draw_ring((266, 266), (98, 593), percent=data['current_home_coin'] / (data['max_home_coin'] if data['max_home_coin'] !=0 else 1), width=0.18, colors=['#507bd0', '#FFFFFF'])
+    await bg_img.draw_ring((266, 266), (98, 593), percent=data['current_home_coin'] / (
+        data['max_home_coin'] if data['max_home_coin'] != 0 else 1), width=0.18, colors=['#507bd0', '#FFFFFF'])
     if data['current_home_coin'] == data['max_home_coin']:
         await bg_img.text("洞天宝钱满了哦~", 820, 701, fm.get('优设标题黑.ttf', 40), 'white')
     else:
@@ -44,7 +45,8 @@ async def draw_daily_note_card(data, uid):
         await bg_img.text(recover_time_str, 762, 701, fm.get('优设标题黑.ttf', 40), 'white')
     # 委托文字
     await bg_img.text(f"{data['finished_task_num']}/4", 337, 924, fm.get('number.ttf', 48), 'white')
-    await bg_img.draw_ring((266, 266), (98, 816), percent=data['finished_task_num'] / 4, width=0.18, colors=['#507bd0', '#FFFFFF'])
+    await bg_img.draw_ring((266, 266), (98, 816), percent=data['finished_task_num'] / 4, width=0.18,
+                           colors=['#507bd0', '#FFFFFF'])
     if data['finished_task_num'] == 4:
         await bg_img.text("今日委托已全部完成~", 750, 924, fm.get('优设标题黑.ttf', 40), 'white')
     else:
@@ -53,7 +55,8 @@ async def draw_daily_note_card(data, uid):
     if data['transformer']['obtained']:
         await bg_img.text(f"{7 - data['transformer']['recovery_time']['Day']}/7", 337, 1147, fm.get('number.ttf', 48),
                           'white')
-        await bg_img.draw_ring((266, 266), (98, 1039), percent=(7 - data['transformer']['recovery_time']['Day']) / 7, width=0.18, colors=['#507bd0', '#FFFFFF'])
+        await bg_img.draw_ring((266, 266), (98, 1039), percent=(7 - data['transformer']['recovery_time']['Day']) / 7,
+                               width=0.18, colors=['#507bd0', '#FFFFFF'])
         rt = data['transformer']['recovery_time']
         if rt['Day'] == 0 and rt['reached']:
             await bg_img.text("可使用", 465, 1147, fm.get('优设标题黑.ttf', 40), 'white')
@@ -67,7 +70,8 @@ async def draw_daily_note_card(data, uid):
         await bg_img.text("未获得", 337, 1143, fm.get('优设标题黑.ttf', 48), 'white')
     # 周本文字
     await bg_img.text(f"{3 - data['remain_resin_discount_num']}/3", 843, 1147, fm.get('number.ttf', 48), 'white')
-    await bg_img.draw_ring((266, 266), (604, 1039), percent=(3 - data['remain_resin_discount_num']) / 3, width=0.18, colors=['#507bd0', '#FFFFFF'])
+    await bg_img.draw_ring((266, 266), (604, 1039), percent=(3 - data['remain_resin_discount_num']) / 3, width=0.18,
+                           colors=['#507bd0', '#FFFFFF'])
     if data['remain_resin_discount_num'] == 0:
         await bg_img.text("已完成", 1005, 1147, fm.get('优设标题黑.ttf', 40), 'white')
     else:
@@ -87,7 +91,8 @@ async def draw_daily_note_card(data, uid):
     await bg_img.text(f"{abyss_new.days}/{abyss_new_total.days}", 337, 1358, fm.get('number.ttf', 48), 'white')
     await bg_img.text(f"本期深渊还有{abyss_new.days if abyss_new.days <= abyss_new_total.days else abyss_new_total.days}天结束",
                       745, 1358, fm.get('优设标题黑.ttf', 40), 'white')
-    await bg_img.draw_ring(percent=abyss_new.days / abyss_new_total.days, pos=(100, 1249), size=(266, 266), width=0.18, colors=['#507bd0', '#FFFFFF'])
+    await bg_img.draw_ring(percent=abyss_new.days / abyss_new_total.days, pos=(100, 1249), size=(266, 266), width=0.18,
+                           colors=['#507bd0', '#FFFFFF'])
 
     # 派遣情况
     exp = data['expeditions']
@@ -98,7 +103,8 @@ async def draw_daily_note_card(data, uid):
             role_avatar = await load_image(RESOURCE_BASE_PATH / 'avatar_side' / role['avatar_side_icon'].split('/')[-1],
                                            size=(135, 135), mode='RGBA')
             await bg_img.paste(role_avatar, (i * 200 + 168, 1537))
-            await bg_img.draw_ring(percent=1 - int(role['remained_time']) / 72000, pos=(i * 201 + 101, 1490), size=(266, 266), width=0.18, colors=['#507bd0', '#FFFFFF'])
+            await bg_img.draw_ring(percent=1 - int(role['remained_time']) / 72000, pos=(i * 201 + 101, 1490),
+                                   size=(266, 266), width=0.18, colors=['#507bd0', '#FFFFFF'])
             if role['status'] == 'Ongoing':
                 await bg_img.paste(circle_img, (i * 201 + 172, 1559))
                 hour = int(role['remained_time']) // 3600
@@ -121,7 +127,8 @@ async def draw_daily_note_card(data, uid):
             await bg_img.text(last_finish_str, 1408, 1588, fm.get('优设标题黑.ttf', 60), '#5680d2')
     else:
         await bg_img.text('未安排派遣', 1408, 1588, fm.get('优设标题黑.ttf', 60), '#5680d2')
-    role_img = await load_image(random.choice(list((RESOURCE_BASE_PATH / 'emoticons').iterdir())), size=3.5, mode='RGBA')
+    role_img = await load_image(random.choice(list((RESOURCE_BASE_PATH / 'emoticons').iterdir())), size=3.5,
+                                mode='RGBA')
     await bg_img.paste(role_img, (1220, 200))
     now = datetime.datetime.now().strftime('%m月%d日%H:%M')
     await bg_img.text('Created by LittlePaimon·' + now, 554, 1794, fm.get('优设标题黑.ttf', 40), '#5680d2')

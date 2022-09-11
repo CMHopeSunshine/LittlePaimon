@@ -13,6 +13,7 @@ import tqdm.asyncio
 from ruamel import yaml
 
 cache_image: Dict[str, any] = {}
+headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36'}
 
 
 async def load_image(
@@ -38,11 +39,13 @@ async def load_image(
         if path.exists():
             img = Image.open(path)
         elif path.name.startswith(('UI_', 'Skill_')):
-            headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36'}
             try:
                 img = await aiorequests.get_img(f'https://enka.network/ui/{path.name}', headers=headers, save_path=path, follow_redirects=True)
-            except Exception as e:
-                raise FileNotFoundError(f'{path} not found') from e
+            except Exception:
+                try:
+                    img = await aiorequests.get_img(f'https://file.minigg.icu/genshin/ui/{path.name}', headers=headers, save_path=path, follow_redirects=True)
+                except Exception as e:
+                    raise FileNotFoundError(f'{path} not found') from e
         else:
             raise FileNotFoundError(f'{path} not found')
         cache_image[str(path)] = img

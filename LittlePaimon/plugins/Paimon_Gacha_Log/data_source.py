@@ -192,6 +192,7 @@ def create_import_command(user_id: int):
             data = data.json()
             new_num = 0
             uid = data['info']['uid']
+            await import_cmd.send(f'开始导入UID{uid}的抽卡记录，请稍候...', at_sender=True)
             logger.info('原神抽卡记录', '➤', {'用户': user_id, 'UID': uid}, '导入抽卡记录', True)
             gacha_log, _ = load_history_info(str(event_data['user_id']), uid)
             for item in data['list']:
@@ -208,5 +209,5 @@ def create_import_command(user_id: int):
                 await import_cmd.send(f'UID{uid}抽卡记录导入完成，本次没有新增数据', at_sender=True)
             else:
                 await import_cmd.send(f'UID{uid}抽卡记录导入完成，共新增{new_num}条抽卡记录', at_sender=True)
-        except Exception as e:
-            await import_cmd.finish(f'导入抽卡记录时发生错误，错误信息：{e}', at_sender=True)
+        except Exception:
+            await import_cmd.finish('导入抽卡记录失败，请确认文件是否符合UIGF统一祈愿可交换标准', at_sender=True)
