@@ -39,7 +39,7 @@ async def chat_rule(event: GroupMessageEvent, state: T_State) -> bool:
         return False
     if event.user_id in config_manager.config.ban_users:
         return False
-    if not event.raw_message:
+    if not event.raw_message or event.raw_message.startswith('&#91;'):
         return False
     if any(w in event.raw_message for w in config_manager.config.ban_words):
         return False

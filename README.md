@@ -58,10 +58,12 @@
 <img src="https://static.cherishmoon.fun/LittlePaimon/readme/myzj.jpg" alt="myzj">
 </details>
 
+## 丨文档
+[小派蒙文档](https://docs.paimon.cherishmoon.fun/) (文档编写中)
 
 ## 丨安装方法
 
-> 详细教程可看[博客链接](https://blog.cherishmoon.fun/posts/nonebot2deploy.html)
+> 详细教程请看文档
 
 - 1、安装poetry`pip install poetry`
 - 2、克隆本分支`git clone https://github.com/CMHopeSunshine/LittlePaimon --depth=1`
