@@ -91,7 +91,7 @@ class MessageData:
 class LearningChat:
     reply_cache = defaultdict(lambda: defaultdict(list))
     """回复的消息缓存"""
-    message_cache = defaultdict(list)
+    message_cache = {}
     """群消息缓存"""
 
     _reply_lock = threading.Lock()
@@ -271,7 +271,7 @@ class LearningChat:
                     'reply_keywords':  '[PallasBot: Speak]',
                 })
 
-            speak_list = [Message(speak)]
+            speak_list = [speak]
             while random.random() < config.speak_continuously_probability and len(
                     speak_list) < config.speak_continuously_max_len:
                 pre_msg = str(speak_list[-1])
@@ -287,7 +287,7 @@ class LearningChat:
 
             if random.random() < config.speak_poke_probability:
                 target_id = random.choice(LearningChat.message_cache[group_id])['user_id']
-                speak_list.append(Message(f'[CQ:poke,qq={target_id}]'))
+                speak_list.append(f'[CQ:poke,qq={target_id}]')
 
             return bot_id, group_id, speak_list
 
@@ -483,6 +483,8 @@ class LearningChat:
 
     async def _update_message(self):
         with LearningChat._message_lock:
+            if self.message.group_id not in LearningChat.message_cache:
+                LearningChat.message_cache[self.message.group_id] = []
             LearningChat.message_cache[self.message.group_id].append(
                 {
                     'group_id':      self.message.group_id,
