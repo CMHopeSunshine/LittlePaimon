@@ -42,7 +42,7 @@ async def IncreaseRule(event: NoticeEvent) -> bool:
     if isinstance(event, FriendAddNoticeEvent):
         return f'new_friend_{event.user_id}' not in done.keys()
     elif isinstance(event, GroupIncreaseNoticeEvent):
-        return f'new_group_{event.group_id}' not in done.keys() and f'new_member_{event.group_id}_{event.user_id}' not in done.keys()
+        return f'new_group_{event.group_id}' not in done.keys() and f'new_member_{event.group_id}_{event.user_id}' not in done.keys() and '全部' not in config.group_ban
     return False
 
 
@@ -149,8 +149,8 @@ async def _(bot: Bot, event: GroupIncreaseNoticeEvent):
         done[f'new_group_{event.group_id}'] = datetime.datetime.now()
         await asyncio.sleep(random.randint(10, 20))
         await bot.send_group_msg(group_id=event.group_id, message=format_message(config.new_group))
-    elif str(event.group_id) not in config.group_ban and config.group_ban[0] != '全部':
-        done[f'new_member_{event.user_id}'] = datetime.datetime.now()
+    elif str(event.group_id) not in config.group_ban:
+        done[f'new_member_{event.group_id}_{event.user_id}'] = datetime.datetime.now()
         await asyncio.sleep(random.randint(10, 20))
         if str(event.group_id) in config.group_greet:
             msg = config.group_greet[str(event.group_id)]
