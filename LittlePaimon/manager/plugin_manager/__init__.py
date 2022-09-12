@@ -70,8 +70,8 @@ async def _(event: PrivateMessageEvent, state: T_State, match: dict = RegexDict(
 
 @manage_cmd.got('bool')
 async def _(state: T_State):
-    if not state['group'] and state['user']:
-        await manage_cmd.finish('用法：ban|unban 插件名 -g 群号列表 -u 用户列表', at_sender=True)
+    if not state['group'] and not state['user']:
+        await manage_cmd.finish('用法：pm ban|unban 插件名 -g 群号列表 -u 用户列表', at_sender=True)
     if state['session_id'] in cache_help:
         del cache_help[state['session_id']]
     if not state['plugin'] and state['plugin_no_exist']:

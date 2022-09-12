@@ -63,12 +63,11 @@ async def _():
 
     for group_id, result_list in result_list['group'].items():
         result_num = len(result_list)
-        result_fail = len([result for result in result_list if not result['result']])
-        if result_fail:
-            msg = f'本群云原神自动签到共{result_num}个任务，已全部完成'
-        else:
+        if result_fail := len([result for result in result_list if not result['result']]):
             fails = '\n'.join(result['uid'] for result in result_list if not result['result'])
             msg = f'本群云原神自动签到共{result_num}个任务，其中成功{result_num - result_fail}个，失败{result_fail}个，失败的UID列表：\n{fails}'
+        else:
+            msg = f'本群云原神自动签到共{result_num}个任务，已全部完成'
         try:
             await get_bot().send_group_msg(group_id=int(group_id), message=msg)
         except Exception as e:
