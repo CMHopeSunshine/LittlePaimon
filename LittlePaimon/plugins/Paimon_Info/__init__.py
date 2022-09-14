@@ -47,7 +47,7 @@ sy = on_command('sy', aliases={'深渊战报', '深渊信息'}, priority=10, blo
     'pm_usage':       'sy(uid)(本期|上期)',
     'pm_priority':    3
 })
-ysc = on_command('ysc', aliases={'角色图'}, priority=10, block=True, state={
+ysc = on_command('ysc', aliases={'角色图', '角色卡片'}, priority=10, block=True, state={
     'pm_name':        'ysc',
     'pm_description': '随机角色同人图+角色信息卡片',
     'pm_usage':       'ysc(uid)<角色名>',

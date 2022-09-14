@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Union
 from LittlePaimon.config import GREET_CONFIG, GREET_CONFIG_DEFAULT
 from LittlePaimon.utils.files import load_yaml, save_yaml
 
@@ -13,7 +13,7 @@ class GreetConfig:
             data = {}
         self.new_friend: str = data.get('新好友见面语', '旅行者你好呀，这里是{nickname}，对我说“help”查看帮助吧~')
         self.new_group: str = data.get('新群见面语', '旅行者们大家好呀，这里是{nickname}，对我说“help”查看帮助吧~')
-        self.group_greet: Dict[str, str] = data.get('群新人欢迎语', {'默认': '欢迎新旅行者~{at_user}'})
+        self.group_greet: Dict[Union[str, int], str] = data.get('群新人欢迎语', {'默认': '欢迎新旅行者~{at_user}'})
         self.group_ban = data.get('群欢迎语禁用列表', [])
         self.save()
 

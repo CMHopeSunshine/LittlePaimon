@@ -3,10 +3,10 @@ import random
 import datetime
 from typing import Dict
 
-from nonebot import on_command, on_regex, on_notice, on_request
+from nonebot import on_command, on_notice, on_request
 from nonebot.rule import Rule
 from nonebot.permission import SUPERUSER
-from nonebot.params import CommandArg, ArgPlainText, RegexDict
+from nonebot.params import CommandArg, ArgPlainText
 from nonebot.adapters.onebot.v11 import Bot, Message, MessageEvent, PrivateMessageEvent, FriendRequestEvent, \
     GroupRequestEvent, \
     RequestEvent, NoticeEvent, \
@@ -149,11 +149,11 @@ async def _(bot: Bot, event: GroupIncreaseNoticeEvent):
         done[f'new_group_{event.group_id}'] = datetime.datetime.now()
         await asyncio.sleep(random.randint(10, 20))
         await bot.send_group_msg(group_id=event.group_id, message=format_message(config.new_group))
-    elif str(event.group_id) not in config.group_ban:
+    elif event.group_id not in config.group_ban:
         done[f'new_member_{event.group_id}_{event.user_id}'] = datetime.datetime.now()
         await asyncio.sleep(random.randint(10, 20))
-        if str(event.group_id) in config.group_greet:
-            msg = config.group_greet[str(event.group_id)]
+        if event.group_id in config.group_greet:
+            msg = config.group_greet[event.group_id]
         else:
             msg = config.group_greet['默认']
         await bot.send_group_msg(group_id=event.group_id, message=format_message(msg, user_id=event.user_id))
