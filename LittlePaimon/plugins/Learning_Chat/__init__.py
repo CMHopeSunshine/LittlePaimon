@@ -207,6 +207,6 @@ async def speak_up():
 
 
 @scheduler.scheduled_job('cron', hour='4')
-def update_data():
+async def update_data():
     if config_manager.config.total_enable:
         await LearningChat.clear_up_context()

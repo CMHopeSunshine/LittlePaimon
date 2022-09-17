@@ -611,6 +611,7 @@ def get_damage_multipiler(info: Character) -> Optional[Dict[str, any]]:
             'B:c6-增伤-*':   (0.24, '六命满层'),
             'B:c4-攻击力':    (info.prop.base_attack * 0.25, '四命触发'),
             'AZ-e雷:重击':    (float(az[0].replace('%', '')) / 100.0, float(az[1].replace('%', '')) / 100.0),
+            'AZ-e雷-j超激化:重击超激化': (float(az[0].replace('%', '')) / 100.0, float(az[1].replace('%', '')) / 100.0),
             'E-e雷:战技斩击':   float(skill_data['星斗归位']['数值']['斩击伤害'][level_e].replace('%', '')) / 100.0,
             'E-e雷-j超激化:战技斩击超激化': float(skill_data['星斗归位']['数值']['斩击伤害'][level_e].replace('%', '')) / 100.0,
             'Q-e雷:大招尾刀':   float(skill_data['天街巡游']['数值']['最后一击伤害'][level_q].replace('%', '')) / 100.0,

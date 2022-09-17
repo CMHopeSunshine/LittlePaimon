@@ -19,8 +19,7 @@ hidden_plugins = [
     'plugin_manager',
     'database_manager',
     'admin',
-    'NoticeAndRequest',
-    'bot_manager'
+    'NoticeAndRequest'
 ]
 
 
