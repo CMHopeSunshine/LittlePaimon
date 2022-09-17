@@ -28,8 +28,6 @@ async def check_update():
     for i, commit in enumerate(remote_commit, start=1):
         result += f'{i}.{commit["commit"]["committer"]["date"].replace("T", " ").replace("Z", "")}\n' + commit['commit']['message'].replace(':bug:', '🐛').replace(
             ':sparkles:', '✨').replace(':memo:', '📝') + '\n'
-        if i >= 5:
-            break
     return result
 
 
