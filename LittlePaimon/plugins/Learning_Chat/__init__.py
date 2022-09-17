@@ -202,11 +202,11 @@ async def speak_up():
         return
     for msg in messages:
         logger.info('群聊学习', f'{NICKNAME}即将向群<m>{group_id}</m>发送<m>"{msg}"</m>')
-        await get_bot(str(bot_id)).send_group_msg(group_id=group_id, message=msg)
+        await get_bot(str(bot_id)).send_group_msg(group_id=group_id, message=Message(msg))
         await asyncio.sleep(random.randint(2, 4))
 
 
 @scheduler.scheduled_job('cron', hour='4')
 def update_data():
     if config_manager.config.total_enable:
-        LearningChat.clear_up_context()
+        await LearningChat.clear_up_context()
