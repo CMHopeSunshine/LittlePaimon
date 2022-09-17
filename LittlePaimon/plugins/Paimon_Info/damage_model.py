@@ -1,4 +1,4 @@
-from pathlib import Path
+import random
 from typing import Tuple, Dict, Optional, List, Union
 
 from LittlePaimon.config.path import JSON_DATA
@@ -118,6 +118,20 @@ def upheaval_reaction(level: int, type: str, mastery: int = 0, extra_coefficient
     return base_coefficient * base_ratio * (1 + mastery_increase + extra_coefficient) * resistance
 
 
+def intensify_reaction(level: int, type: str, mastery: int = 0, extra_coefficient: float = 0):
+    """
+    计算激化反应的伤害
+    :param level: 等级
+    :param type: 反应类型
+    :param mastery: 元素精通
+    :param extra_coefficient: 反应系数提高，如如雷4件套效果
+    :return: 激化伤害
+    """
+    r = 2.3 if type == '超激化' else 2.5
+    base_coefficient = upheaval_value[level - 1]
+    return r * base_coefficient * (1 + (mastery * 5) / (mastery + 1200)) * (1 + extra_coefficient)
+
+
 def weapon_common_fix(info: Character):
     """
     对武器的通用面板属性修正
@@ -127,13 +141,15 @@ def weapon_common_fix(info: Character):
     # 针对q的额外属性
     extra_q = {
         '暴击率': 0,
-        '增伤':  0
+        '增伤':  0,
+        '减抗': 0
     }
     # 针对e的额外属性
     extra_e = {
         '暴击率':  0,
         '增伤':   0,
-        '额外倍率': 0
+        '额外倍率': 0,
+        '减抗': 0
     }
     # 针对a的额外属性
     extra_a = {
@@ -145,12 +161,13 @@ def weapon_common_fix(info: Character):
         '重击额外倍率':   0,
         '下落攻击暴击率':  0,
         '下落攻击增伤':   0,
-        '下落攻击额外倍率': 0
+        '下落攻击额外倍率': 0,
+        '减抗': 0
     }
     # 单手剑
     if info.weapon.name == '波乱月白经津':
-        for i in info.prop.dmg_bonus:
-            info.prop.dmg_bonus[i] = info.prop.dmg_bonus[i] + (0.09 + 0.03 * info.weapon.affix_level)
+        # for i in info.prop.dmg_bonus:
+        #     info.prop.dmg_bonus[i] = info.prop.dmg_bonus[i] + (0.09 + 0.03 * info.weapon.affix_level)
         extra_a['普攻增伤'] += 2 * (0.15 + 0.05 * info.weapon.affix_level)
         info.damage_describe.append('波乱满层')
     elif info.weapon.name == '辰砂之纺锤':
@@ -169,7 +186,7 @@ def weapon_common_fix(info: Character):
     elif info.weapon.name == '雾切之回光':
         # TODO 吃不满3层的角色
         for i in info.prop.dmg_bonus:
-            info.prop.dmg_bonus[i] = info.prop.dmg_bonus[i] + (0.3 + 0.1 * info.weapon.affix_level)
+            info.prop.dmg_bonus[i] = info.prop.dmg_bonus[i] + (0.21 + 0.07 * info.weapon.affix_level)
         info.damage_describe.append('雾切满层')
     elif info.weapon.name == '铁蜂刺':
         for i in info.prop.dmg_bonus:
@@ -283,6 +300,12 @@ def weapon_common_fix(info: Character):
     elif info.weapon.name == '弹弓':
         extra_a['普攻增伤'] += 0.3 + 0.06 * info.weapon.affix_level
         extra_a['重击增伤'] += 0.3 + 0.06 * info.weapon.affix_level
+    elif info.weapon.name == '猎人之径':
+        extra_a['重击额外倍率'] += info.prop.elemental_mastery * (1.2 + 0.4 * info.weapon.affix_level)
+        info.damage_describe.append('猎人弓触发')
+    elif info.weapon.name == '王下近侍':
+        info.prop.elemental_mastery += 40 + 20 * info.weapon.affix_level
+        info.damage_describe.append('王下近侍触发')
 
     # 长柄武器
     elif info.weapon.name == '白缨枪':
@@ -300,8 +323,8 @@ def weapon_common_fix(info: Character):
         info.prop.extra_attack += info.prop.base_attack * 0.18 + 0.06 * info.weapon.affix_level
         info.damage_describe.append('决斗单怪')
     elif info.weapon.name == '息灾':
-        for i in info.prop.dmg_bonus:
-            info.prop.dmg_bonus[i] = info.prop.dmg_bonus[i] + (0.09 + 0.03 * info.weapon.affix_level)
+        # for i in info.prop.dmg_bonus:
+        #     info.prop.dmg_bonus[i] = info.prop.dmg_bonus[i] + (0.09 + 0.03 * info.weapon.affix_level)
         info.prop.extra_attack += info.prop.base_attack * 6 * (0.024 + 0.006 * info.weapon.affix_level)
         info.damage_describe.append('息灾前台满层')
     elif info.weapon.name == '薙草之稻光':
@@ -320,7 +343,7 @@ def weapon_common_fix(info: Character):
         extra_e['增伤'] += 3 * (0.09 + 0.03 * info.weapon.affix_level)
         info.damage_describe.append('神乐满层')
     elif info.weapon.name == '不灭月华':
-        info.prop.healing_bonus += 0.075 + 0.025 * info.weapon.affix_level
+        # info.prop.healing_bonus += 0.075 + 0.025 * info.weapon.affix_level
         extra_a['普攻额外倍率'] += (0.005 + 0.005 * info.weapon.affix_level) * info.prop.health
     elif info.weapon.name == '白辰之环':
         for i in info.prop.dmg_bonus:
@@ -334,9 +357,17 @@ def weapon_common_fix(info: Character):
             info.prop.dmg_bonus[i] = info.prop.dmg_bonus[i] + 4 * (0.06 + 0.02 * info.weapon.affix_level)
         info.damage_describe.append('四风满层')
     elif info.weapon.name == '流浪乐章':
-        for i in info.prop.dmg_bonus:
-            info.prop.dmg_bonus[i] = info.prop.dmg_bonus[i] + (0.36 + 0.12 * info.weapon.affix_level)
-        info.damage_describe.append('流浪触发增伤')
+        t = random.randint(1, 3)
+        if t == 1:
+            info.prop.extra_attack += (0.45 + 0.15 * info.weapon.affix_level) * info.prop.base_attack
+            info.damage_describe.append('流浪触发加攻')
+        elif t == 2:
+            for i in info.prop.dmg_bonus:
+                info.prop.dmg_bonus[i] = info.prop.dmg_bonus[i] + (0.36 + 0.12 * info.weapon.affix_level)
+            info.damage_describe.append('流浪触发增伤')
+        else:
+            info.prop.elemental_mastery += 180 + 60 * info.weapon.affix_level
+            info.damage_describe.append('流浪触发加精通')
     elif info.weapon.name == '万国诸海图谱':
         for i in info.prop.dmg_bonus:
             info.prop.dmg_bonus[i] = info.prop.dmg_bonus[i] + 2 * (0.06 + 0.02 * info.weapon.affix_level)
@@ -354,6 +385,10 @@ def weapon_common_fix(info: Character):
         extra_q['增伤'] += 0.15 + 0.05 * info.weapon.affix_level
         extra_e['增伤'] += 0.15 + 0.05 * info.weapon.affix_level
         extra_a['普攻增伤'] += 0.15 + 0.05 * info.weapon.affix_level
+    elif info.weapon.name == '盈满之实':
+        info.prop.elemental_mastery += 5 * (21 + 3 * info.weapon.affix_level)
+        info.prop.extra_attack -= 5 * 0.05 * info.prop.base_attack
+        info.damage_describe.append('盈满之实满层')
 
     # 系列武器
     elif info.weapon.name.startswith('千岩'):
@@ -436,6 +471,13 @@ def common_fix(info: Character) -> Tuple[Character, dict, dict, dict]:
             info.prop.reaction_coefficient['融化'] += 0.15
             info.prop.reaction_coefficient['超载'] += 0.4
             info.prop.reaction_coefficient['燃烧'] += 0.4
+            info.prop.reaction_coefficient['绽放'] += 0.4
+        elif suit[0][0] == '如雷的盛怒':
+            info.prop.reaction_coefficient['超载'] += 0.4
+            info.prop.reaction_coefficient['感电'] += 0.4
+            info.prop.reaction_coefficient['超导'] += 0.4
+            info.prop.reaction_coefficient['绽放'] += 0.4
+            info.prop.reaction_coefficient['激化'] += 0.2
         elif suit[0][0] == '翠绿之影':
             info.prop.reaction_coefficient['扩散'] += 0.6
         elif suit[0][0] == '渡过烈火的贤人':
@@ -482,6 +524,15 @@ def common_fix(info: Character) -> Tuple[Character, dict, dict, dict]:
             info.damage_describe.append('武人触发')
         elif suit[0][0] == '行者之心':
             extra_a['重击暴击率'] += 0.3
+        elif suit[0][0] == '饰金之梦':
+            info.prop.elemental_mastery += 3 * 50
+            info.prop.extra_attack += 0.14 * info.prop.base_attack
+            info.damage_describe.append('饰金之梦触发3不同元素')
+        elif suit[0][0] == '深林的记忆':
+            extra_a['减抗'] += 0.3
+            extra_e['减抗'] += 0.3
+            extra_q['减抗'] += 0.3
+            info.damage_describe.append('草套减抗')
     return info, extra_q, extra_e, extra_a
 
 
@@ -561,7 +612,9 @@ def get_damage_multipiler(info: Character) -> Optional[Dict[str, any]]:
             'B:c4-攻击力':    (info.prop.base_attack * 0.25, '四命触发'),
             'AZ-e雷:重击':    (float(az[0].replace('%', '')) / 100.0, float(az[1].replace('%', '')) / 100.0),
             'E-e雷:战技斩击':   float(skill_data['星斗归位']['数值']['斩击伤害'][level_e].replace('%', '')) / 100.0,
-            'Q-e雷:大招尾刀':   float(skill_data['天街巡游']['数值']['最后一击伤害'][level_q].replace('%', '')) / 100.0
+            'E-e雷-j超激化:战技斩击超激化': float(skill_data['星斗归位']['数值']['斩击伤害'][level_e].replace('%', '')) / 100.0,
+            'Q-e雷:大招尾刀':   float(skill_data['天街巡游']['数值']['最后一击伤害'][level_q].replace('%', '')) / 100.0,
+            'Q-e雷-j超激化:大招尾刀超激化': float(skill_data['天街巡游']['数值']['最后一击伤害'][level_q].replace('%', '')) / 100.0
         }
     if info.name == '可莉':
         return {
@@ -580,7 +633,9 @@ def get_damage_multipiler(info: Character) -> Optional[Dict[str, any]]:
             'B:c6-减防-E':  (0.6,),
             'AZ-e雷:重击':   float(skill_data['普通攻击·狐灵食罪式']['数值']['重击伤害'][level_a].replace('%', '')) / 100.0,
             'E-e雷:杀生樱满阶': float(skill_data['野干役咒·杀生樱']['数值'][e][level_e].replace('%', '')) / 100.0,
+            'E-e雷-j超激化:杀生樱满阶超激化': float(skill_data['野干役咒·杀生樱']['数值'][e][level_e].replace('%', '')) / 100.0,
             'Q-e雷:天狐霆雷':  float(skill_data['大密法·天狐显真']['数值']['天狐霆雷伤害'][level_q].replace('%', '')) / 100.0,
+            'Q-e雷-j超激化:天狐霆雷超激化': float(skill_data['大密法·天狐显真']['数值']['天狐霆雷伤害'][level_q].replace('%', '')) / 100.0,
         }
     if info.name == '阿贝多':
         return {
@@ -668,8 +723,10 @@ def get_damage_multipiler(info: Character) -> Optional[Dict[str, any]]:
             'Q-e岩:大招每段':  float(skill_data['天权崩玉']['数值']['每颗宝石伤害'][level_q].replace('%', '').replace('每个', '')) / 100.0,
         }
     if info.name == '菲谢尔':
-        dm = {'A:普攻第一段': float(skill_data['普通攻击·罪灭之矢']['数值']['一段伤害'][level_a].replace('%', '')) / 100.0}
-        dm['E-e雷:奥兹攻击'] = float(skill_data['夜巡影翼']['数值']['奥兹攻击伤害'][level_e].replace('%', '')) / 100.0
+        dm = {'A:普攻第一段':           float(skill_data['普通攻击·罪灭之矢']['数值']['一段伤害'][level_a].replace('%', '')) / 100.0,
+              'E-e雷:奥兹攻击':         float(skill_data['夜巡影翼']['数值']['奥兹攻击伤害'][level_e].replace('%', '')) / 100.0,
+              'E-e雷-j超激化:奥兹攻击超激化': float(skill_data['夜巡影翼']['数值']['奥兹攻击伤害'][level_e].replace('%', '')) / 100.0,
+              }
         if len(info.constellation) >= 6:
             dm['E-e雷:奥兹协同攻击'] = 0.3
         return dm
@@ -677,6 +734,8 @@ def get_damage_multipiler(info: Character) -> Optional[Dict[str, any]]:
         return {
             'B:c6-减抗-*': (0.15, '六命减抗'),
             'E-e雷:完美弹反': float(skill_data['捉浪']['数值']['基础伤害'][level_e].replace('%', '')) / 100.0 + 2 * float(
+                skill_data['捉浪']['数值']['每层伤害提升'][level_e].replace('%', '')) / 100.0,
+            'E-e雷-j超激化:完美弹反超激化': float(skill_data['捉浪']['数值']['基础伤害'][level_e].replace('%', '')) / 100.0 + 2 * float(
                 skill_data['捉浪']['数值']['每层伤害提升'][level_e].replace('%', '')) / 100.0,
             'Q-e雷:斫雷每段': float(skill_data['斫雷']['数值']['闪电伤害'][level_q].replace('%', '')) / 100.0
         }
@@ -854,6 +913,50 @@ def get_damage_multipiler(info: Character) -> Optional[Dict[str, any]]:
                             1 + info.prop.healing_bonus)),
             'Q-e冰:大招伤害':  float(skill_data['仙法·救苦度厄']['数值']['技能伤害'][level_q].replace('%', '')) / 100.0,
         }
+    if info.name == '提纳里':
+        info.prop.elemental_mastery += 50 if info.level >= 50 else 0
+        info.prop.elemental_mastery += 120 if len(info.constellation) >= 4 else 0
+        return {
+            'B:c1-暴击率-AZ': (0.15,),
+            'B:c2-增伤-*': (0.2, '二命增伤'),
+            'B:c4-增伤-*': (0, '四命精通'),
+            'B:l70-增伤-AZ': (min(info.prop.elemental_mastery, 1000) * 0.0006, ),
+            'B:l70-增伤-Q': (min(info.prop.elemental_mastery, 1000) * 0.0006,),
+            'AZ-e草:重击花筥箭': float(skill_data['普通攻击·藏蕴破障']['数值']['花筥箭伤害'][level_a].replace('%', '')) / 100.0,
+            'AZ-e草-j蔓激化:重击花筥箭蔓激化': float(skill_data['普通攻击·藏蕴破障']['数值']['花筥箭伤害'][level_a].replace('%', '')) / 100.0,
+            'AZ-e草-n4:重击藏蕴花矢': float(skill_data['普通攻击·藏蕴破障']['数值']['藏蕴花矢伤害'][level_a].replace('%', '')) / 100.0,
+            'Q-e草:缠藤箭':   float(skill_data['造生缠藤箭']['数值']['缠藤箭伤害'][level_q].replace('%', '')) / 100.0,
+            'Q-e草-j蔓激化:缠藤箭蔓激化': float(skill_data['造生缠藤箭']['数值']['缠藤箭伤害'][level_q].replace('%', '')) / 100.0,
+            'Q-e草:次级缠藤箭-n6': float(skill_data['造生缠藤箭']['数值']['次级缠藤箭伤害'][level_q].replace('%', '')) / 100.0,
+        }
+    if info.name == '柯莱':
+        info.prop.elemental_mastery += 60 if len(info.constellation) >= 4 else 0
+        return {
+            'E-e草:飞叶轮': float(skill_data['拂花偈叶']['数值']['技能伤害'][level_e].replace('%', '')) / 100.0,
+            'E-e草-j蔓激化:飞叶轮蔓激化': float(skill_data['拂花偈叶']['数值']['技能伤害'][level_e].replace('%', '')) / 100.0,
+            'Q-e草:大招爆发伤害':         float(skill_data['猫猫秘宝']['数值']['爆发伤害'][level_q].replace('%', '')) / 100.0,
+            'Q-e草-j蔓激化:大招爆发蔓激化': float(skill_data['猫猫秘宝']['数值']['爆发伤害'][level_q].replace('%', '')) / 100.0,
+            'Q-e草:大招持续伤害':       float(skill_data['猫猫秘宝']['数值']['跃动伤害'][level_q].replace('%', '')) / 100.0,
+            'Q-e草-j蔓激化:大招持续蔓激化': float(skill_data['猫猫秘宝']['数值']['跃动伤害'][level_q].replace('%', '')) / 100.0
+        }
+    if info.name == '多莉':
+        h = skill_data['卡萨扎莱宫的无微不至']['数值']['持续治疗量'][level_q].split('生命值上限+')
+        return {
+            'E-e雷:断除烦恼炮': float(skill_data['镇灵之灯·烦恼解决炮']['数值']['断除烦恼炮伤害'][level_e].replace('%', '')) / 100.0,
+            'T:大招持续治疗量': int(float(h[0].replace('%', '')) / 100.0 * info.prop.health + float(h[1]) * (1 + info.prop.healing_bonus)),
+        }
+    if info.name == '九条裟罗':
+        atk = float(skill_data['鸦羽天狗霆雷召咒']['数值']['攻击力加成比例'][level_e].replace('%', '')) / 100.0 * info.prop.base_attack
+        return {
+            'T:乌羽攻击加成': int(atk),
+            'B:l0-攻击力-*': (atk, ),
+            'B:c6-暴击伤害-*': (0.6, ),
+            'E-e雷:元素战技': float(skill_data['鸦羽天狗霆雷召咒']['数值']['天狗咒雷•伏伤害'][level_e].replace('%', '')) / 100.0,
+            'Q-e雷:大招首段': float(skill_data['煌煌千道镇式']['数值']['天狗咒雷•金刚坏伤害'][level_q].replace('%', '')) / 100.0,
+            'Q-e雷-j超激化:大招首段超激化': float(skill_data['煌煌千道镇式']['数值']['天狗咒雷•金刚坏伤害'][level_q].replace('%', '')) / 100.0,
+            'Q-e雷:大招雷砾': float(skill_data['煌煌千道镇式']['数值']['天狗咒雷•雷砾伤害'][level_q].replace('%', '')) / 100.0,
+        }
+
 
 
 async def draw_dmg_pic(dmg: Dict[str, Union[tuple, list]]) -> PMImage:
