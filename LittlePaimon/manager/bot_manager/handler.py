@@ -1,5 +1,4 @@
 from pathlib import Path
-import time
 import git
 from nonebot.utils import run_sync
 from git.exc import GitCommandError, InvalidGitRepositoryError
@@ -19,7 +18,7 @@ async def check_update():
     local_commit = repo.head.commit
     remote_commit = []
     for commit in data:
-        if local_commit.binsha == commit['sha']:
+        if str(local_commit) == commit['sha']:
             break
         remote_commit.append(commit)
     if not remote_commit:
@@ -45,4 +44,4 @@ def update():
         return f'更新失败，错误信息：{e}，请手动进行更新'
     finally:
         repo.git.stash('pop')
-    return f'更新完成，版本：{__version__}\n可使用命令[@bot 重启]重启{NICKNAME}'
+    return f'更新完成，版本：{__version__}\n最新更新日志为：\n{repo.head.commit.message.replace(":bug:", "🐛").replace(":sparkles:", "✨").replace(":memo:", "📝")}\n可使用命令[@bot 重启]重启{NICKNAME}'
