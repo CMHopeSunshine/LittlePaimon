@@ -78,7 +78,7 @@ async def draw_map(name: str, map_: str):
                 models.XYPoint(x1_temp, y1_temp),
                 models.XYPoint(x2_temp, y2_temp),
                 points)]
-    map_img = await load_image(RESOURCE_BASE_PATH / 'genshin_map' / 'results' / f'{map_id.name}.png')
+    map_img = (await load_image(RESOURCE_BASE_PATH / 'genshin_map' / 'results' / f'{map_id.name}.png')).copy()
     lt_point = group_point[0][0]
     rb_point = group_point[0][1]
     map_img = map_img.crop((int(lt_point.x), int(lt_point.y), int(rb_point.x), int(rb_point.y)))
@@ -134,7 +134,7 @@ async def get_full_map(names: List[str], map_: str):
             resources_not.append(resource.name)
     if not resources_points:
         return MessageBuild.Text(f'{map_}未查找到材料{"、".join(names)}，请尝试其他地图')
-    map_img = await load_image(RESOURCE_BASE_PATH / 'genshin_map' / 'results' / f'{map_id.name}.png')
+    map_img = (await load_image(RESOURCE_BASE_PATH / 'genshin_map' / 'results' / f'{map_id.name}.png')).copy()
     box_icon = await load_image(RESOURCE_BASE_PATH / 'genshin_map' / 'point_box.png')
     i = 0
     max_point = XYPoint(x=0, y=0)

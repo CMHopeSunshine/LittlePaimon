@@ -159,6 +159,8 @@ async def _(event: MessageEvent, map_: str = Arg('map'), names=Arg('names')):
     if not freq_limiter.check(f'材料地图_{event.group_id if isinstance(event, GroupMessageEvent) else event.user_id}'):
         await material_map_full.finish(f'材料地图查询冷却中，剩余{freq_limiter.left(f"材料地图_{event.group_id if isinstance(event, GroupMessageEvent) else event.user_id}")}秒', at_sender=True)
     freq_limiter.start(f'材料地图_{event.group_id if isinstance(event, GroupMessageEvent) else event.user_id}', 15)
+    if len(names) > 3:
+        names = names[:3]
     await material_map_full.send(MessageBuild.Text(f'开始查找{"、".join(names)}的资源点，请稍候...'))
     result = await get_full_map(names, map_)
     await material_map_full.finish(result, at_sender=True)
