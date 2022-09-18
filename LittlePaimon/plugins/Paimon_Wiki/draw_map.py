@@ -95,14 +95,14 @@ async def draw_map(name: str, map_: str):
     await total_img.paste(map_img, (48, total_img.height - 60 - map_img.height))
     icon = await aiorequests.get_img(resource.icon, size=(300, 300))
     await total_img.paste(icon, (100, 100))
-    await total_img.text(f'「{name}」', 457, 147, fm.get('SourceHanSerifCN-Bold.otf', 72), 'white')
+    await total_img.text(f'「{name}」', 454, 145, fm.get('SourceHanSerifCN-Bold.otf', 72), 'white')
     info = await aiorequests.get(f'https://info.minigg.cn/materials?query={name}')
     info = info.json()
     des = ''
     if 'description' in info:
         des += info['description'].strip('\n')
     if 'source' in info:
-        des += '\n推荐采集地点：' + '，'.join(info['source'])
+        des += '\n推荐采集地点：' + '，'.join(info['source']).replace('推荐：', '')
     if des:
         await total_img.text_box(des.replace('\n', '^'), (482, 1010), (281, 520), fm.get('SourceHanSansCN-Bold.otf', 30), '#3c3c3c')
     await total_img.text('CREATED BY LITTLEPAIMON', (0, total_img.width), total_img.height - 45, fm.get('bahnschrift_bold', 36, 'Bold'), '#3c3c3c', align='center')

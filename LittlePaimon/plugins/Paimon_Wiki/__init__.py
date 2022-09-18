@@ -13,7 +13,7 @@ from LittlePaimon.utils.alias import get_match_alias
 from LittlePaimon.utils.message import MessageBuild
 from LittlePaimon.database.models import PlayerAlias
 from LittlePaimon.config import RESOURCE_BASE_PATH
-from .handler import init_map, draw_map
+from .draw_map import init_map, draw_map
 
 # from .abyss_rate_draw import draw_rate_rank, draw_teams_rate
 
