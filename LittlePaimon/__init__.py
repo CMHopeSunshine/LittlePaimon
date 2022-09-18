@@ -7,7 +7,7 @@ from LittlePaimon.utils.migration import migrate_database
 from LittlePaimon.utils.tool import check_resource
 
 DRIVER = get_driver()
-__version__ = '3.0.0beta6'
+__version__ = '3.0.0beta7'
 
 try:
     SUPERUSERS: List[int] = [int(s) for s in DRIVER.config.superusers]

@@ -1,19 +1,20 @@
 import time
 
 from nonebot import on_regex, on_command
-from nonebot.adapters.onebot.v11 import MessageEvent, Message, MessageSegment
+from nonebot.adapters.onebot.v11 import MessageEvent, Message, MessageSegment, GroupMessageEvent
 from nonebot.adapters.onebot.v11.helpers import HandleCancellation
 from nonebot.adapters.onebot.v11.exception import ActionFailed
-from nonebot.params import RegexDict, ArgPlainText, CommandArg
+from nonebot.params import RegexDict, ArgPlainText, CommandArg, Arg
 from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
 
 from LittlePaimon import NICKNAME, DRIVER
 from LittlePaimon.utils.alias import get_match_alias
+from LittlePaimon.utils.tool import freq_limiter
 from LittlePaimon.utils.message import MessageBuild
 from LittlePaimon.database.models import PlayerAlias
 from LittlePaimon.config import RESOURCE_BASE_PATH
-from .draw_map import init_map, draw_map
+from .draw_map import init_map, draw_map, get_full_map
 
 # from .abyss_rate_draw import draw_rate_rank, draw_teams_rate
 
@@ -53,6 +54,12 @@ material_map = on_command('材料图鉴', priority=11, block=True, state={
     'pm_description': '查看某个材料的介绍和采集点。',
     'pm_usage':       '材料图鉴<材料名>[地图]',
     'pm_priority':    9
+})
+material_map_full = on_command('材料地图', priority=11, block=True, state={
+    'pm_name':        '材料地图',
+    'pm_description': '查看多个材料大地图采集点。\n示例：材料地图 鸣草 鬼兜虫 提瓦特',
+    'pm_usage':       '材料地图<材料名列表>[地图]',
+    'pm_priority':    10
 })
 
 
@@ -101,16 +108,20 @@ async def _(event: MessageEvent, regex_dict: dict = RegexDict()):
 
 @material_map.handle()
 async def _(event: MessageEvent, state: T_State, msg: Message = CommandArg()):
-    if params := msg.extract_plain_text().strip().split(' '):
+    if params := msg.extract_plain_text().strip():
+        params = params.split(' ')
         state['name'] = Message(params[0])
         if len(params) > 1:
             if params[1] in {'提瓦特', '层岩巨渊', '渊下宫'}:
                 state['map'] = params[1]
         else:
             state['map'] = Message('提瓦特')
+    else:
+        state['map'] = Message('提瓦特')
 
 
-@material_map.got('map', prompt='地图名称有误，请在【提瓦特、层岩巨渊、渊下宫】中选择')
+@material_map.got('map', prompt='地图名称有误，请在【提瓦特、层岩巨渊、渊下宫】中选择，或回答【取消】退出',
+                  parameterless=[HandleCancellation(f'好吧，有需要再找{NICKNAME}')])
 async def _(event: MessageEvent, state: T_State, map_: str = ArgPlainText('map')):
     if map_ not in {'提瓦特', '层岩巨渊', '渊下宫'}:
         await material_map.reject('地图名称有误，请在【提瓦特、层岩巨渊、渊下宫】中选择')
@@ -128,19 +139,32 @@ async def _(event: MessageEvent, map_: str = ArgPlainText('map'), name: str = Ar
         await material_map.finish(result, at_sender=True)
 
 
+@material_map_full.handle()
+async def _(event: MessageEvent, state: T_State, msg: Message = CommandArg()):
+    state['map'] = '提瓦特'
+    if params := msg.extract_plain_text().strip():
+        params = params.split(' ')
+        for p in params.copy():
+            if p in {'提瓦特', '层岩巨渊', '渊下宫'}:
+                params.remove(p)
+                state['map'] = p
+        state['names'] = params
+
+
+@material_map_full.got('names', prompt='请输入要查询的材料名称，或回答【取消】退出',
+                       parameterless=[HandleCancellation(f'好吧，有需要再找{NICKNAME}')])
+async def _(event: MessageEvent, map_: str = Arg('map'), names=Arg('names')):
+    if isinstance(names, Message):
+        names = names.extract_plain_text().split(' ')
+    if not freq_limiter.check(f'材料地图_{event.group_id if isinstance(event, GroupMessageEvent) else event.user_id}'):
+        await material_map_full.finish(f'材料地图查询冷却中，剩余{freq_limiter.left(f"材料地图_{event.group_id if isinstance(event, GroupMessageEvent) else event.user_id}")}秒', at_sender=True)
+    freq_limiter.start(f'材料地图_{event.group_id if isinstance(event, GroupMessageEvent) else event.user_id}', 15)
+    await material_map_full.send(MessageBuild.Text(f'开始查找{"、".join(names)}的资源点，请稍候...'))
+    result = await get_full_map(names, map_)
+    await material_map_full.finish(result, at_sender=True)
+
+
 DRIVER.on_bot_connect(init_map)
-
-
-# @abyss_rate.handle()
-# async def abyss_rate_handler(event: MessageEvent):
-#     abyss_img = await draw_rate_rank()
-#     await abyss_rate.finish(abyss_img)
-
-
-# @abyss_team.handle()
-# async def abyss_team_handler(event: MessageEvent, reGroup=RegexDict()):
-#     abyss_img = await draw_teams_rate(reGroup['floor'])
-#     await abyss_team.finish(abyss_img)
 
 
 def create_wiki_matcher(pattern: str, help_fun: str, help_name: str):
@@ -187,7 +211,7 @@ def create_wiki_matcher(pattern: str, help_fun: str, help_name: str):
         if isinstance(name, Message):
             name = name.extract_plain_text().strip()
         if state['type'] == '角色' and (
-        match_alias := await PlayerAlias.get_or_none(user_id=str(event.user_id), alias=name)):
+                match_alias := await PlayerAlias.get_or_none(user_id=str(event.user_id), alias=name)):
             try:
                 await maps.finish(MessageSegment.image(state['img_url'].format(match_alias.character)))
             except ActionFailed:

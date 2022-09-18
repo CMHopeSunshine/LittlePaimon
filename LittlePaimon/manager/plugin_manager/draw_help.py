@@ -63,7 +63,7 @@ async def draw_help(plugin_list: List[PluginInfo]):
                     await img.paste(matcher_card, (40 + 336 * matcher_group.index(matcher), height_now))
                     await img.text(matcher.pm_usage, 40 + 336 * matcher_group.index(matcher) + 15, height_now + 10, fm.get('SourceHanSansCN-Bold.otf', 24), 'black')
                     if matcher.pm_description:
-                        await img.text_box(matcher.pm_description, (40 + 336 * matcher_group.index(matcher) + 10, 40 + 336 * matcher_group.index(matcher) + matcher_card.width - 22),
+                        await img.text_box(matcher.pm_description.replace('\n', '^'), (40 + 336 * matcher_group.index(matcher) + 10, 40 + 336 * matcher_group.index(matcher) + matcher_card.width - 22),
                                            (height_now + 44, height_now + max_height - 10), fm.get('SourceHanSansCN-Bold.otf', 18), '#40342d')
                 height_now += max_height + 10 + 6
         elif plugin.usage:

@@ -1,11 +1,12 @@
 import math
+from typing import List
 from LittlePaimon.config import RESOURCE_BASE_PATH
 from LittlePaimon.utils import logger, aiorequests
 from LittlePaimon.utils.files import load_image
 from LittlePaimon.utils.image import PMImage, font_manager as fm
 from LittlePaimon.utils.message import MessageBuild
 
-from .genshinmap import utils, models, request, img
+from .genshinmap import utils, models, request, img, XYPoint
 
 from PIL import Image, ImageFile, ImageOps
 ImageFile.LOAD_TRUNCATED_IMAGES = True
@@ -64,7 +65,7 @@ async def draw_map(name: str, map_: str):
         return MessageBuild.Text(f'未查找到材料{name}')
     points = await request.get_points(map_id)
     if not (points := utils.convert_pos(utils.get_points_by_id(resource.id, points), maps.detail.origin)):
-        return MessageBuild.Text(f'在{map_}上未查找到材料{name}，请尝试其他地图')
+        return MessageBuild.Text(f'{map_}未查找到材料{name}，请尝试其他地图')
     point_icon = await load_image(RESOURCE_BASE_PATH / 'genshin_map' / 'point_icon.png')
     if len(points) >= 3:
         group_point = img.k_means_points(points, 700)
@@ -108,6 +109,64 @@ async def draw_map(name: str, map_: str):
     await total_img.text('CREATED BY LITTLEPAIMON', (0, total_img.width), total_img.height - 45, fm.get('bahnschrift_bold', 36, 'Bold'), '#3c3c3c', align='center')
     total_img.save(RESOURCE_BASE_PATH / 'genshin_map' / 'results' / f'{map_}_{name}.png')
     return MessageBuild.Image(total_img, mode='RGB', quality=85)
+
+
+async def get_full_map(names: List[str], map_: str):
+    map_id = models.MapID[map_name_reverse[map_]]
+    maps = await request.get_maps(map_id)
+    labels = await request.get_labels(map_id)
+    resources = []
+    resources_not = []
+    resources_points = []
+    childs = [child for label in labels for child in label.children]
+    for name in names:
+        if res_filter := list(filter(lambda x: x.name == name, childs)):
+            resources.append(res_filter[0])
+        else:
+            resources_not.append(name)
+    if not resources:
+        return MessageBuild.Text(f'未查找到材料{"、".join(names)}')
+    points = await request.get_points(map_id)
+    for resource in resources:
+        if points_ := utils.convert_pos(utils.get_points_by_id(resource.id, points), maps.detail.origin):
+            resources_points.append(points_)
+        else:
+            resources_not.append(resource.name)
+    if not resources_points:
+        return MessageBuild.Text(f'{map_}未查找到材料{"、".join(names)}，请尝试其他地图')
+    map_img = await load_image(RESOURCE_BASE_PATH / 'genshin_map' / 'results' / f'{map_id.name}.png')
+    box_icon = await load_image(RESOURCE_BASE_PATH / 'genshin_map' / 'point_box.png')
+    i = 0
+    max_point = XYPoint(x=0, y=0)
+    min_point = XYPoint(x=16384, y=12288)
+    for points in resources_points:
+        resource_icon = box_icon.copy()
+        resource_icon.alpha_composite(await aiorequests.get_img(resources[i].icon, size=(90, 90)), (28, 15))
+        resource_icon = resource_icon.resize((48, 48), Image.ANTIALIAS)
+        if len(points) >= 3:
+            group_point = img.k_means_points(points, 16000)
+        else:
+            x1_temp = int(points[0].x) - 16000
+            x2_temp = int(points[0].x) + 16000
+            y1_temp = int(points[0].y) - 16000
+            y2_temp = int(points[0].y) + 16000
+            group_point = [(
+                models.XYPoint(x1_temp, y1_temp),
+                models.XYPoint(x2_temp, y2_temp),
+                points)]
+        lt_point = group_point[0][0]
+        rb_point = group_point[0][1]
+        min_point = XYPoint(x=min(min_point.x, lt_point.x), y=min(min_point.y, lt_point.y))
+        max_point = XYPoint(x=max(max_point.x, rb_point.x), y=max(max_point.y, rb_point.y))
+        for point in group_point[0][2]:
+            point_trans = (int(point.x), int(point.y))
+            map_img.paste(resource_icon, (point_trans[0] - 24, point_trans[1] - 48), resource_icon)
+        i += 1
+    map_img = map_img.crop((int(min_point.x) - 50, int(min_point.y) - 50, int(max_point.x) + 50, int(max_point.y) + 50))
+    if resources_not:
+        return MessageBuild.Text(f'{map_}未找到材料{"、".join(resources_not)}，请尝试其他地图\n') + MessageBuild.Image(map_img)
+    else:
+        return MessageBuild.Image(map_img)
 
 
 
