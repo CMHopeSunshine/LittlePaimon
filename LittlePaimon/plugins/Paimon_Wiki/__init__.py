@@ -1,17 +1,20 @@
 import time
 
-from nonebot import on_regex
+from nonebot import on_regex, on_command
 from nonebot.adapters.onebot.v11 import MessageEvent, Message, MessageSegment
-from nonebot.adapters.onebot.v11.helpers import is_cancellation
+from nonebot.adapters.onebot.v11.helpers import HandleCancellation
 from nonebot.adapters.onebot.v11.exception import ActionFailed
-from nonebot.params import RegexDict, ArgPlainText
+from nonebot.params import RegexDict, ArgPlainText, CommandArg
 from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
 
-from LittlePaimon import NICKNAME
+from LittlePaimon import NICKNAME, DRIVER
 from LittlePaimon.utils.alias import get_match_alias
 from LittlePaimon.utils.message import MessageBuild
 from LittlePaimon.database.models import PlayerAlias
+from LittlePaimon.config import RESOURCE_BASE_PATH
+from .handler import init_map, draw_map
+
 # from .abyss_rate_draw import draw_rate_rank, draw_teams_rate
 
 __paimon_help__ = {
@@ -45,6 +48,14 @@ daily_material = on_regex(r'(?P<day>现在|(今|明|后)(天|日)|周(一|二|�
     'pm_usage':       '<今天|周几>材料',
     'pm_priority':    8
 })
+material_map = on_command('材料图鉴', priority=11, block=True, state={
+    'pm_name':        '材料图鉴',
+    'pm_description': '查看某个材料的介绍和采集点。',
+    'pm_usage':       '材料图鉴<材料名>[地图]',
+    'pm_priority':    9
+})
+
+
 # abyss_rate = on_command('syrate', aliases={'深渊登场率', '深境螺旋登场率', '深渊登场率排行', '深渊排行'}, priority=11, block=True, state={
 #     'pm_name':        '深渊登场率排行',
 #     'pm_description': '查看本期深渊的角色登场率排行',
@@ -86,6 +97,38 @@ async def _(event: MessageEvent, regex_dict: dict = RegexDict()):
     else:
         await daily_material.finish(
             MessageSegment.image(file='https://static.cherishmoon.fun/LittlePaimon/DailyMaterials/周三周六.jpg'))
+
+
+@material_map.handle()
+async def _(event: MessageEvent, state: T_State, msg: Message = CommandArg()):
+    if params := msg.extract_plain_text().strip().split(' '):
+        state['name'] = Message(params[0])
+        if len(params) > 1:
+            if params[1] in {'提瓦特', '层岩巨渊', '渊下宫'}:
+                state['map'] = params[1]
+        else:
+            state['map'] = Message('提瓦特')
+
+
+@material_map.got('map', prompt='地图名称有误，请在【提瓦特、层岩巨渊、渊下宫】中选择')
+async def _(event: MessageEvent, state: T_State, map_: str = ArgPlainText('map')):
+    if map_ not in {'提瓦特', '层岩巨渊', '渊下宫'}:
+        await material_map.reject('地图名称有误，请在【提瓦特、层岩巨渊、渊下宫】中选择')
+    else:
+        state['map'] = Message(map_)
+
+
+@material_map.got('name', prompt='请输入要查询的材料名称，或回答【取消】退出', parameterless=[HandleCancellation(f'好吧，有需要再找{NICKNAME}')])
+async def _(event: MessageEvent, map_: str = ArgPlainText('map'), name: str = ArgPlainText('name')):
+    if (file_path := RESOURCE_BASE_PATH / 'genshin_map' / 'results' / f'{map_}_{name}.png').exists():
+        await material_map.finish(MessageSegment.image(file_path), at_sender=True)
+    else:
+        await material_map.send(MessageBuild.Text(f'开始查找{name}的资源点，请稍候...'))
+        result = await draw_map(name, map_)
+        await material_map.finish(result, at_sender=True)
+
+
+DRIVER.on_bot_connect(init_map)
 
 
 # @abyss_rate.handle()
@@ -137,14 +180,14 @@ def create_wiki_matcher(pattern: str, help_fun: str, help_name: str):
         if name:
             state['name'] = name
 
-    @maps.got('name', prompt=Message.template('请提供要查询的{type}'))
+    @maps.got('name', prompt=Message.template('请提供要查询的{type}'),
+              parameterless=[HandleCancellation(f'好吧，有需要再找{NICKNAME}')])
     async def _(event: MessageEvent, state: T_State):
         name = state['name']
         if isinstance(name, Message):
-            if is_cancellation(name):
-                await maps.finish()
             name = name.extract_plain_text().strip()
-        if state['type'] == '角色' and (match_alias := await PlayerAlias.get_or_none(user_id=str(event.user_id), alias=name)):
+        if state['type'] == '角色' and (
+        match_alias := await PlayerAlias.get_or_none(user_id=str(event.user_id), alias=name)):
             try:
                 await maps.finish(MessageSegment.image(state['img_url'].format(match_alias.character)))
             except ActionFailed:
@@ -169,11 +212,9 @@ def create_wiki_matcher(pattern: str, help_fun: str, help_name: str):
         else:
             await maps.finish(MessageBuild.Text(f'没有找到{name}的图鉴'))
 
-    @maps.got('choice')
+    @maps.got('choice', parameterless=[HandleCancellation(f'好吧，有需要再找{NICKNAME}')])
     async def _(event: MessageEvent, state: T_State, choice: str = ArgPlainText('choice')):
         match_alias = state['match_alias']
-        if is_cancellation(choice):
-            await maps.finish()
         if choice.isdigit() and (1 <= int(choice) <= len(match_alias)):
             try:
                 await maps.finish(MessageSegment.image(state['img_url'].format(match_alias[int(choice) - 1])))
