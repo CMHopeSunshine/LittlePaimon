@@ -47,6 +47,7 @@ async def init_map(refresh: bool = False):
             map_img.paste(anchor_icon, (int(point.x) - 32, int(point.y) - 64), anchor_icon)
         map_img.save(save_path)
         logger.info('原神地图', f'<m>{map_name[map_id.name]}</m>地图初始化完成')
+    return f'地图资源生成完成，目前有{"、".join(list(map_name_reverse.keys()))}地图。'
 
 
 async def draw_map(name: str, map_: str):
@@ -57,6 +58,8 @@ async def draw_map(name: str, map_: str):
     :return: 地图
     """
     map_id = models.MapID[map_name_reverse[map_]]
+    if not (RESOURCE_BASE_PATH / 'genshin_map' / 'results' / f'{map_id.name}.png').exists():
+        return f'缺少{map_id.name}地图资源，请联系超级用户进行[生成地图]'
     maps = await request.get_maps(map_id)
     labels = await request.get_labels(map_id)
     if resources := list(filter(lambda x: x.name == name, [child for label in labels for child in label.children])):
@@ -113,6 +116,8 @@ async def draw_map(name: str, map_: str):
 
 async def get_full_map(names: List[str], map_: str):
     map_id = models.MapID[map_name_reverse[map_]]
+    if not (RESOURCE_BASE_PATH / 'genshin_map' / 'results' / f'{map_id.name}.png').exists():
+        return f'缺少{map_id.name}地图资源，请联系超级用户进行[生成地图]'
     maps = await request.get_maps(map_id)
     labels = await request.get_labels(map_id)
     resources = []

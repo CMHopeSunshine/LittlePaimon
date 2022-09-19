@@ -6,9 +6,10 @@ from nonebot.adapters.onebot.v11.helpers import HandleCancellation
 from nonebot.adapters.onebot.v11.exception import ActionFailed
 from nonebot.params import RegexDict, ArgPlainText, CommandArg, Arg
 from nonebot.plugin import PluginMetadata
+from nonebot.permission import SUPERUSER
 from nonebot.typing import T_State
 
-from LittlePaimon import NICKNAME, DRIVER
+from LittlePaimon import NICKNAME
 from LittlePaimon.utils.alias import get_match_alias
 from LittlePaimon.utils.tool import freq_limiter
 from LittlePaimon.utils.message import MessageBuild
@@ -60,6 +61,12 @@ material_map_full = on_command('材料地图', priority=11, block=True, state={
     'pm_description': '查看多个材料大地图采集点。\n示例：材料地图 鸣草 鬼兜虫 提瓦特',
     'pm_usage':       '材料地图<材料名列表>[地图]',
     'pm_priority':    10
+})
+generate_map = on_command('生成地图', priority=1, block=True, permission=SUPERUSER, state={
+    'pm_name':        '生成地图',
+    'pm_description': '生成材料图鉴等所需要的地图资源，仅超级用户可用。',
+    'pm_usage':       '生成地图',
+    'pm_priority':    11
 })
 
 
@@ -166,7 +173,11 @@ async def _(event: MessageEvent, map_: str = Arg('map'), names=Arg('names')):
     await material_map_full.finish(result, at_sender=True)
 
 
-DRIVER.on_bot_connect(init_map)
+@generate_map.handle()
+async def _(event: MessageEvent):
+    await generate_map.send('开始生成地图资源，这可能需要较长时间。')
+    result = await init_map()
+    await generate_map.finish(result)
 
 
 def create_wiki_matcher(pattern: str, help_fun: str, help_name: str):
