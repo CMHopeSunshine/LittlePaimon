@@ -75,7 +75,6 @@ async def _(event: MessageEvent):
 async def _(event: MessageEvent):
     if convert_chinese_to_bool(event.message):
         await reboot_cmd.send(f'{NICKNAME}开始执行重启，请等待{NICKNAME}的归来', at_sender=True)
-        (Path() / 'rebooting.json').open('w').close()
         save_json({'session_type': event.message_type, 'session_id': event.group_id if isinstance(event, GroupMessageEvent) else event.user_id}, Path() / 'rebooting.json')
         if sys.argv[0].endswith('nb'):
             sys.argv[0] = 'bot.py'
