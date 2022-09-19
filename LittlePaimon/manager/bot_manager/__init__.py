@@ -9,9 +9,10 @@ from nonebot.plugin import PluginMetadata
 from nonebot.rule import to_me
 from nonebot.params import CommandArg, ArgPlainText
 from nonebot.typing import T_State
-from nonebot.adapters.onebot.v11 import Message, MessageEvent
+from nonebot.adapters.onebot.v11 import Message, MessageEvent, GroupMessageEvent
 from nonebot.adapters.onebot.v11.helpers import convert_chinese_to_bool
 from LittlePaimon import NICKNAME, DRIVER, SUPERUSERS, __version__
+from LittlePaimon.utils.files import save_json, load_json
 from .handler import check_update, update
 
 __plugin_meta__ = PluginMetadata(
@@ -75,6 +76,7 @@ async def _(event: MessageEvent):
     if convert_chinese_to_bool(event.message):
         await reboot_cmd.send(f'{NICKNAME}开始执行重启，请等待{NICKNAME}的归来', at_sender=True)
         (Path() / 'rebooting.json').open('w').close()
+        save_json({'session_type': event.message_type, 'session_id': event.group_id if isinstance(event, GroupMessageEvent) else event.user_id}, Path() / 'rebooting.json')
         if sys.argv[0].endswith('nb'):
             sys.argv[0] = 'bot.py'
         os.execv(sys.executable, ['python'] + sys.argv)
@@ -104,5 +106,9 @@ async def _(event: MessageEvent, cmd: str = ArgPlainText('cmd')):
 @DRIVER.on_bot_connect
 async def _():
     if (Path() / 'rebooting.json').exists():
-        await get_bot().send_private_msg(user_id=SUPERUSERS[0], message=f'{NICKNAME}已重启完成，当前版本为{__version__}')
+        info = load_json(Path() / 'rebooting.json')
+        if info['session_type'] == 'group':
+            await get_bot().send_group_msg(group_id=info['session_id'], message=f'{NICKNAME}已重启完成，当前版本为{__version__}')
+        else:
+            await get_bot().send_private_msg(user_id=info['session_id'], message=f'{NICKNAME}已重启完成，当前版本为{__version__}')
         (Path() / 'rebooting.json').unlink()
