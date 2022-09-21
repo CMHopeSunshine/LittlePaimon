@@ -1,3 +1,4 @@
+import datetime
 from pathlib import Path
 import git
 from nonebot.utils import run_sync
@@ -25,7 +26,8 @@ async def check_update():
         return f'当前已是最新版本：{__version__}'
     result = '检查到更新，日志如下：\n'
     for i, commit in enumerate(remote_commit, start=1):
-        result += f'{i}.{commit["commit"]["committer"]["date"].replace("T", " ").replace("Z", "")}\n' + commit['commit']['message'].replace(':bug:', '🐛').replace(
+        time_str = (datetime.datetime.strptime(commit['commit']['committer']['date'], '%Y-%m-%dT%H:%M:%SZ') + datetime.timedelta(hours=8)).strftime('%Y-%m-%d %H:%M:%S')
+        result += f'{i}.{time_str}\n' + commit['commit']['message'].replace(':bug:', '🐛').replace(
             ':sparkles:', '✨').replace(':memo:', '📝') + '\n'
     return result
 

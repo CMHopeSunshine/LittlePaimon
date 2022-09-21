@@ -1,3 +1,4 @@
+import contextlib
 from io import BytesIO
 from pathlib import Path
 from ssl import SSLCertVerificationError
@@ -145,3 +146,24 @@ class aiorequests:
                                                  colour='green'):
                 f.write(chunk)
             f.close()
+
+    @staticmethod
+    async def download_icon(name: str,
+                            headers: Optional[Dict[str, str]] = None,
+                            save_path: Optional[Union[str, Path]] = None,
+                            **kwargs):
+        """
+        下载icon
+        :param name: url
+        :param headers: 请求头
+        :param save_path: 保存路径
+        """
+        urls = [
+            f'https://file.minigg.icu/genshin/ui/{name}',
+            f'https://api.ambr.top/assets/UI/{name}',
+            f'https://enka.network/ui/{name}'
+        ]
+        for url in urls:
+            with contextlib.suppress(Exception):
+                return await aiorequests.get_img(url=url, headers=headers, save_path=save_path, **kwargs)
+        raise FileNotFoundError(f'{name}下载失败，请检查网络')
