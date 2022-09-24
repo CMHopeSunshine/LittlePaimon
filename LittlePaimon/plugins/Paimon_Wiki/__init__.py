@@ -97,11 +97,11 @@ async def _(event: MessageEvent, regex_dict: dict = RegexDict()):
     elif regex_dict['day'] == '周日':
         await daily_material.finish('周日所有材料都可以刷哦!', at_sender=True)
     elif regex_dict['day'].startswith('周'):
-        await daily_material.finish(await draw_material(regex_dict['day']))
+        await daily_material.finish(await draw_material(str(event.user_id), regex_dict['day']))
     if day == '0':
         await daily_material.finish('周日所有材料都可以刷哦!', at_sender=True)
     else:
-        await daily_material.finish(await draw_material({
+        await daily_material.finish(await draw_material(str(event.user_id), {
             '1': '周一',
             '2': '周二',
             '3': '周三',

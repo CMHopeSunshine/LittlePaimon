@@ -101,7 +101,7 @@ class PluginManager:
                 for matcher in matchers:
                     if matcher._default_state:
                         matcher_info = MatcherInfo.parse_obj(matcher._default_state)
-                        if matcher_info.pm_name not in [m.pm_name for m in self.data[plugin.name].matchers]:
+                        if self.data[plugin.name].matchers is not None and matcher_info.pm_name not in [m.pm_name for m in self.data[plugin.name].matchers]:
                             self.data[plugin.name].matchers.append(matcher_info)
         self.save()
         logger.success('插件管理器', '<g>初始化完成</g>')

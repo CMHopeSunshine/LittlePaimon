@@ -75,7 +75,7 @@ learning_chat = on_message(priority=99, block=False, rule=Rule(chat_rule), permi
     'pm_usage':       '群聊学习',
     'pm_priority':    1
 })
-ban_chat = on_keyword({'不可以', '达咩', '不行', 'no'}, rule=to_me(), priority=1, block=True, state={
+ban_chat = on_keyword({'不可以', '达咩', '不行'}, rule=to_me(), priority=1, block=True, state={
     'pm_name':        '群聊学习禁用',
     'pm_description': '如果bot说了不好的话，回复这句话，告诉TA不能这么说，需管理权限',
     'pm_usage':       '@bot 不可以',
