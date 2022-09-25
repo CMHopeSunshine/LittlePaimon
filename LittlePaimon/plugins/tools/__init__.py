@@ -1,11 +1,11 @@
 from nonebot import on_command
 from nonebot.params import CommandArg
 from nonebot.rule import Rule
-from nonebot.adapters.onebot.v11 import Message, MessageEvent, MessageSegment
+from nonebot.adapters.onebot.v11 import Message, MessageEvent
 from nonebot.plugin import PluginMetadata
 from LittlePaimon import SUPERUSERS
 from LittlePaimon.manager.plugin_manager import plugin_manager as pm
-from LittlePaimon.utils.brower import get_browser
+from LittlePaimon.utils.brower import AsyncPlaywright
 
 
 async def permission_check(event: MessageEvent) -> bool:
@@ -32,39 +32,12 @@ screenshot_cmd = on_command('网页截图', priority=10, block=True, rule=Rule(p
     'pm_priority':    1
 })
 
-baidu_cmd = on_command('百度一下', priority=10, block=True, state={
-    'pm_name':        '百度一下',
-    'pm_description': '百度一下，你就知道',
-    'pm_usage':       '百度一下<关键词>',
-    'pm_priority':    2
-})
-
 
 @screenshot_cmd.handle()
 async def _(event: MessageEvent, msg: Message = CommandArg()):
     await screenshot_cmd.send('正在尝试截图，请稍等...')
-    url = msg.extract_plain_text().split(' ')[0]
-    try:
-        brower = await get_browser()
-        page = await brower.new_page()
-        await page.goto(url, wait_until='networkidle')
-        img = await page.screenshot(full_page=True)
-        await screenshot_cmd.send(MessageSegment.image(img))
-    except Exception:
-        await screenshot_cmd.finish('截图失败，无法访问该网页，请稍后再试')
+    url = msg.extract_plain_text().strip()
+    img = await AsyncPlaywright.screenshot(url)
+    await screenshot_cmd.send(img)
 
-
-@baidu_cmd.handle()
-async def _(event: MessageEvent, msg: Message = CommandArg()):
-    await baidu_cmd.send('正在为你百度，请稍等...')
-    keyword = msg.extract_plain_text()
-    try:
-        brower = await get_browser()
-        page = await brower.new_page()
-        await page.goto(f'https://www.baidu.com/s?wd={keyword}', wait_until='networkidle', timeout=15000)
-        context = await page.query_selector('#content_left')
-        img = await context.screenshot()
-        await baidu_cmd.send(MessageSegment.image(img))
-    except Exception:
-        await baidu_cmd.finish('百度失败，请稍后再试')
 
