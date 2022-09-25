@@ -2,9 +2,7 @@ from typing import Union
 from nonebot import on_regex
 from nonebot.plugin import PluginMetadata
 from nonebot.params import RegexDict
-from nonebot.rule import Rule
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, PrivateMessageEvent, MessageSegment
-from nonebot.typing import T_State
 from LittlePaimon.utils.tool import freq_limiter
 from LittlePaimon.utils.filter import filter_msg
 from LittlePaimon.manager.plugin_manager import plugin_manager as pm
@@ -28,23 +26,14 @@ SUPPORTS_CHARA = ['派蒙', '凯亚', '安柏', '丽莎', '琴', '香菱', '枫�
 
 CHARA_RE = '|'.join(SUPPORTS_CHARA)
 
-
-def is_paimon(event: Union[GroupMessageEvent, PrivateMessageEvent], state: T_State) -> bool:
-    if '_matched_dict' in state:
-        if not state['_matched_dict']['chara'] and event.is_tome():
-            state['_matched_dict']['chara'] = '派蒙'
-        return True
-    return False
-
-
-voice_cmd = on_regex(rf'^(?P<chara>({CHARA_RE})?)说(?P<text>[\w，。！？、：；“”‘’〔（）〕——!\?,\.`\'"\(\)\[\]{{}}~\s]+)',
+voice_cmd = on_regex(rf'^(?P<chara>{CHARA_RE})说(?P<text>[\w，。！？、：；“”‘’〔（）〕——!\?,\.`\'"\(\)\[\]{{}}~\s]+)',
                      priority=90, block=True,
                      state={
                          'pm_name':        '原神语音合成',
                          'pm_description': 'AI语音合成，让原神角色说任何话！',
                          'pm_usage':       '<角色名>说<话>',
                          'pm_priority':    10
-                     }, rule=Rule(is_paimon))
+                     })
 
 
 @voice_cmd.handle()
