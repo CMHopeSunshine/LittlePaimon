@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "LittlePaimon"
-version = "3.0.0beta1"
+version = "3.0.0beta7"
 description = "小派蒙！原神qq群机器人，基于NoneBot2的UID查询、抽卡导出分析、模拟抽卡、实时便签、札记等多功能小助手。"
 authors = ["惜月 <277073121@qq.com>"]
 license = "AGPL"
@@ -21,9 +21,6 @@ httpx = "^0.23.0"
 lxml = "^4.8.0"
 Pillow = "^9.1.0"
 matplotlib = "^3.5.1"
-pypinyin = "^0.46.0"
-xlsxwriter = "^3.0.3"
-aiofiles = "^0.8.0"
 tortoise-orm = "^0.19.2"
 tqdm = "^4.64.0"
 "ruamel.yaml" = "^0.17.21"
