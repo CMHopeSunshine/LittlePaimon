@@ -152,9 +152,9 @@ class AsyncPlaywright:
             else:
                 card = page
             if path:
-                img = await card.screenshot(path=path, timeout=timeout)
+                img = await card.screenshot(path=path, timeout=timeout, full_page=True)
             else:
-                img = await card.screenshot(timeout=timeout)
+                img = await card.screenshot(timeout=timeout, full_page=True)
             return MessageSegment.image(img)
         except Exception as e:
             logger.warning(f"Playwright 截图 url：{url} element：{element} 发生错误 {type(e)}：{e}")
