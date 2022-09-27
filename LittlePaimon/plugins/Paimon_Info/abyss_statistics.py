@@ -45,10 +45,11 @@ async def get_statistics(group_id: int):
     elif len(info_list) < 3:
         return '本群深渊有效战斗数据不足3人，无法生成统计图！'
     for info in info_list:
-        for member in member_list:
-            if info.user_id == str(member['user_id']):
-                info.nickname = member['card'] or member['nickname']
-                break
+        if info.nickname is None:
+            for member in member_list:
+                if info.user_id == str(member['user_id']):
+                    info.nickname = member['card'] or member['nickname']
+                    break
     data = {
         '群号': str(group_id),
         '群名称': (await get_bot().get_group_info(group_id=group_id))['group_name'],
@@ -136,7 +137,7 @@ async def draw_statistics_img(data: Dict[str, Any]):
     await img.text(data['群名称'], 162, 63, fm.get('hywh', 48), '#040404')
     await img.text(data['群号'], 165, 116, fm.get('hywh', 36), '#040404')
     await img.text(f'CREATED BY LITTLEPAIMON AT {datetime.datetime.now().strftime("%m-%d %H:%M")}',
-                   1033, 194, fm.get('bahnschrift_regular.ttf', 30), '#8c4c2e', 'right')
+                   1033, 195, fm.get('bahnschrift_regular.ttf', 30), '#8c4c2e', 'right')
     await img.text(str(data['总人数']), (233, 352), 296, fm.get('bahnschrift_regular.ttf', 48), '#040404', 'center')
     await img.text(str(data['平均星数']), (492, 586), 296, fm.get('bahnschrift_regular.ttf', 48), '#040404', 'center')
     await img.text(str(data['平均战斗次数']), (698, 840), 296, fm.get('bahnschrift_regular.ttf', 48), '#040404', 'center')
@@ -166,9 +167,9 @@ async def draw_statistics_img(data: Dict[str, Any]):
     await img.text('最强一击', 180, 515, fm.get('hywh', 30), '#040404')
     await img.text('第二名', 139, 668, fm.get('hywh', 22), '#040404')
     await img.text('第三名', 397, 668, fm.get('hywh', 22), '#040404')
-    await img.text(str(data['最高伤害'][0]['数值']), 180, 544, fm.get('bahnschrift_regular.ttf', 72), '#040404')
-    await img.text(str(data['最高伤害'][1]['数值']), 137, 690, fm.get('bahnschrift_regular.ttf', 44), '#040404')
-    await img.text(str(data['最高伤害'][1]['数值']), 395, 690, fm.get('bahnschrift_regular.ttf', 44), '#040404')
+    await img.text(str(data['最高伤害'][0]['数值']), 180, 547, fm.get('bahnschrift_regular.ttf', 68), '#040404')
+    await img.text(str(data['最高伤害'][1]['数值']), 137, 693, fm.get('bahnschrift_regular.ttf', 38), '#040404')
+    await img.text(str(data['最高伤害'][2]['数值']), 395, 693, fm.get('bahnschrift_regular.ttf', 38), '#040404')
     await img.text(data['最高伤害'][0]['用户名'][:11], 180, 610, fm.get('hywh', 30), '#040404')
     await img.text(data['最高伤害'][1]['用户名'][:6], 137, 726, fm.get('hywh', 22), '#040404')
     await img.text(data['最高伤害'][2]['用户名'][:6], 395, 726, fm.get('hywh', 22), '#040404')
@@ -189,9 +190,9 @@ async def draw_statistics_img(data: Dict[str, Any]):
     await img.text('最多承伤', 693, 515, fm.get('hywh', 30), '#040404')
     await img.text('第二名', 652, 668, fm.get('hywh', 22), '#040404')
     await img.text('第三名', 910, 668, fm.get('hywh', 22), '#040404')
-    await img.text(str(data['最高承受伤害'][0]['数值']), 693, 544, fm.get('bahnschrift_regular.ttf', 72), '#040404')
-    await img.text(str(data['最高承受伤害'][1]['数值']), 650, 690, fm.get('bahnschrift_regular.ttf', 44), '#040404')
-    await img.text(str(data['最高承受伤害'][2]['数值']), 908, 690, fm.get('bahnschrift_regular.ttf', 44), '#040404')
+    await img.text(str(data['最高承受伤害'][0]['数值']), 693, 547, fm.get('bahnschrift_regular.ttf', 68), '#040404')
+    await img.text(str(data['最高承受伤害'][1]['数值']), 650, 693, fm.get('bahnschrift_regular.ttf', 38), '#040404')
+    await img.text(str(data['最高承受伤害'][2]['数值']), 908, 693, fm.get('bahnschrift_regular.ttf', 38), '#040404')
     await img.text(data['最高承受伤害'][0]['用户名'][:11], 693, 610, fm.get('hywh', 30), '#040404')
     await img.text(data['最高承受伤害'][1]['用户名'][:6], 650, 726, fm.get('hywh', 22), '#040404')
     await img.text(data['最高承受伤害'][2]['用户名'][:6], 908, 726, fm.get('hywh', 22), '#040404')
