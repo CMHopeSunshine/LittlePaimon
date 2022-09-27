@@ -135,6 +135,8 @@ class AsyncPlaywright:
             path = Path(path)
         try:
             page = await cls.goto(url, wait_until=wait_until, **kwargs)
+            if page is None:
+                return MessageSegment.text('截图失败，无法访问网页，请稍候再试')
             await page.set_viewport_size(viewport_size)
             if element:
                 if isinstance(element, str):
