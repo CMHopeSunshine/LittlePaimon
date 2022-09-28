@@ -71,3 +71,5 @@ class Config(BaseModel):
     notice_event: bool = Field(True, alias='启用好友和群欢迎消息')
 
     screenshot_enable: bool = Field(True, alias='启用网页截图权限')
+
+    guess_voice_time: int = Field(30, alias='原神猜语音时间')
