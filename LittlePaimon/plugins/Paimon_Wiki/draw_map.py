@@ -24,16 +24,17 @@ map_name_reverse = {
 }
 
 
-async def init_map(refresh: bool = False):
+async def init_map():
     """
     初始化地图
-    :param refresh: 是否刷新
     """
     for map_id in models.MapID:
         save_path = RESOURCE_BASE_PATH / 'genshin_map' / 'results' / f'{map_id.name}.png'
         save_path.parent.mkdir(parents=True, exist_ok=True)
-        if map_id.name == 'golden_apple_archipelago' or (save_path.exists() and not refresh):
+        if map_id.name == 'golden_apple_archipelago':
             continue
+        if save_path.exists():
+            save_path.unlink()
         status_icon = await load_image(RESOURCE_BASE_PATH / 'genshin_map' / 'status_icon.png')
         anchor_icon = await load_image(RESOURCE_BASE_PATH / 'genshin_map' / 'anchor_icon.png')
         maps = await request.get_maps(map_id)
@@ -46,7 +47,7 @@ async def init_map(refresh: bool = False):
         for point in anchor_points:
             map_img.paste(anchor_icon, (int(point.x) - 32, int(point.y) - 64), anchor_icon)
         map_img.save(save_path)
-        logger.info('原神地图', f'<m>{map_name[map_id.name]}</m>地图初始化完成')
+        logger.info('原神地图', f'<m>{map_name[map_id.name]}</m>地图生成完成')
     return f'地图资源生成完成，目前有{"、".join(list(map_name_reverse.keys()))}地图。'
 
 

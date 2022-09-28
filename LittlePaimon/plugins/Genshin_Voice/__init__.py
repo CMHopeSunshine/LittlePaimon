@@ -62,7 +62,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg(), lang=CommandL
     else:
         game = GuessVoice(event.group_id, pm.config.guess_voice_time, lang)
         result = await game.start()
-        await guess_voice.send('即将发送一段语音，将在30秒后公布答案')
+        await guess_voice.send(f'即将发送一段语音，将在{pm.config.guess_voice_time}秒后公布答案')
         try:
             await guess_voice.finish(result)
         except ActionFailed:
