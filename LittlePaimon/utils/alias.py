@@ -92,10 +92,16 @@ def get_chara_icon(name: Optional[str] = None, chara_id: Optional[int] = None,
     """
     if name and not chara_id:
         chara_id = get_id_by_name(name)
-    info = info_file.get(str(chara_id))
-    if not info:
+    if info := info_file.get(str(chara_id)):
+        side_icon = info['SideIconName']
+    elif chara_id == '10000070':
+        side_icon = 'UI_AvatarIcon_Side_Nilou.png'
+    elif chara_id == '10000071':
+        side_icon = 'UI_AvatarIcon_Side_Cyno.png'
+    elif chara_id == '10000072':
+        side_icon = 'UI_AvatarIcon_Side_Candace.png'
+    else:
         return None
-    side_icon = info['SideIconName']
     if icon_type == 'side':
         return side_icon
     elif icon_type == 'avatar':
