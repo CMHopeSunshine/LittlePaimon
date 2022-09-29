@@ -33,13 +33,7 @@ async def get_statistics(group_id: int):
     info_list = [info for info in info_list if
                  info.user_id in member_id_list and info.total_battle and info.total_star and info.max_damage and info.max_take_damage]
     now = datetime.datetime.now()
-    if now.day <= 15:
-        left_day = 1
-        right_day = 15
-    else:
-        left_day = 16
-        right_day = 31
-    info_list = [info for info in info_list if left_day <= info.update_time.day <= right_day and info.update_time.month == now.month]
+    info_list = [info for info in info_list if info.start_time <= now <= info.end_time]
     if not info_list:
         return '本群还没有深渊战斗数据哦！'
     elif len(info_list) < 3:
