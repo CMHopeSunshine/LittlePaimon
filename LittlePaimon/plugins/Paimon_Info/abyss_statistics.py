@@ -1,6 +1,8 @@
 import datetime
 from typing import Dict, Any, Tuple
 from collections import defaultdict
+
+import pytz
 from nonebot import get_bot
 from LittlePaimon.database.models import AbyssInfo
 from LittlePaimon.utils import aiorequests
@@ -32,7 +34,7 @@ async def get_statistics(group_id: int):
     member_id_list = [str(member['user_id']) for member in member_list]
     info_list = [info for info in info_list if
                  info.user_id in member_id_list and info.total_battle and info.total_star and info.max_damage and info.max_take_damage]
-    now = datetime.datetime.now()
+    now = datetime.datetime.now().replace(tzinfo=pytz.timezone('Asia/Shanghai'))
     info_list = [info for info in info_list if info.start_time <= now <= info.end_time]
     if not info_list:
         return '本群还没有深渊战斗数据哦！'
