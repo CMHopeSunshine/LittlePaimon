@@ -7,6 +7,7 @@ import datetime
 from nonebot import on_notice
 from nonebot.rule import Rule
 from nonebot.adapters.onebot.v11 import GroupUploadNoticeEvent, NoticeEvent
+from LittlePaimon import __version__
 from LittlePaimon.database.models import PlayerInfo
 from LittlePaimon.config import GACHA_LOG
 from LittlePaimon.utils.api import get_authkey_by_stoken
@@ -84,7 +85,10 @@ def gacha_log_to_UIGF(user_id: str, uid: str) -> Tuple[bool, str, Optional[Path]
             'uid':          uid,
             'lang':         'zh-cn',
             'export_time':  datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-            'uigf_version': 'v2.1'
+            'export_timestamp': int(time.time()),
+            'export_app':   'LittlePaimon',
+            'export_app_version': __version__,
+            'uigf_version': 'v2.2'
         },
         'list': []
     }

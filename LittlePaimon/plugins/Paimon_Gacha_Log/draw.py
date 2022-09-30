@@ -1,6 +1,7 @@
 import asyncio
 import datetime
 import math
+import random
 from typing import Tuple, List, Optional
 
 from LittlePaimon.config import RESOURCE_BASE_PATH
@@ -12,8 +13,15 @@ from .models import GachaLogInfo, FiveStarItem, FourStarItem
 avatar_point = [69, 156, 259, 358, 456, 558, 645, 746, 840, 945]
 line_point = [88, 182, 282, 378, 477, 574, 673, 769, 864, 967]
 bar_color = [('#b6d6f2', '#3d6e99'), ('#c8b6f2', '#593d99'), ('#abede0', '#3a9382')]
-name_level_color = ['#ff3600', '#ff7800', '#ffb400', 'black']
+name_level_color = [('#f6b9c9', '#a90d35'), ('#f2cab9', '#ff6f30'), ('#b9d8f2', '#157eaa'), ('#dedede', '#707070')]
 small_avatar_cache = {}
+"""
+    角色  武器
+欧 50以下 45以下
+吉 50-60 45-55
+中 60-70 55-65
+非 70以上 65以上
+"""
 
 
 async def get_avatar(qid: str, size: Tuple[int, int] = (146, 146)) -> PMImage:
@@ -45,19 +53,22 @@ async def detail_avatar(info: FiveStarItem):
     img = PMImage(
         await load_image(RESOURCE_BASE_PATH / ('avatar' if info.type == '角色' else 'weapon') / f'{info.icon}.png',
                          size=(123, 123)))
-    await img.to_circle('circle')
-    await bg.paste(img.image, (14, 26))
-    await bg.text(info.name, (0, bg.width), 162, fm.get('hywh', 24),
-                  '#ff3600' if info.name not in {'迪卢克', '刻晴', '莫娜', '七七', '琴'} and info.type == '角色' else '#33231a', 'center')
-    if info.count < (20 if info.type == '角色' else 15):
+    await bg.paste(img, (14, 14))
+    await bg.text(info.name, (0, bg.width), 140, fm.get('hywh', 24),
+                  '#33231a', 'center')
+    if info.type == '角色' and info.name not in {'迪卢克', '刻晴', '莫娜', '七七', '琴', '提纳里'}:
+        up_icon = await load_image(RESOURCE_BASE_PATH / 'gacha_log' / 'up.png')
+        await bg.paste(up_icon, (98, 119))
+    if info.count < (25 if info.type == '角色' else 20):
         color = name_level_color[0]
-    elif (20 if info.type == '角色' else 15) <= info.count < (40 if info.type == '角色' else 30):
+    elif (25 if info.type == '角色' else 20) <= info.count < (45 if info.type == '角色' else 35):
         color = name_level_color[1]
-    elif (40 if info.type == '角色' else 30) <= info.count < (70 if info.type == '角色' else 60):
+    elif (45 if info.type == '角色' else 35) <= info.count < (70 if info.type == '角色' else 60):
         color = name_level_color[2]
     else:
         color = name_level_color[3]
-    await bg.text(str(info.count), 144, 6, fm.get('bahnschrift_regular', 48, 'Bold'), color, 'right')
+    await bg.draw_rounded_rectangle2((76, 3), (58, 33), 10, color[0], ['ur', 'll'])
+    await bg.text(str(info.count), (76, 134), 3, fm.get('bahnschrift_regular', 40, 'Bold'), color[1], 'center')
     return bg
 
 
@@ -65,22 +76,26 @@ async def draw_pool_detail(pool_name: str, data: List[FiveStarItem], total_count
     PMImage]:
     if not data:
         return None
-    total_height = 181 + (446 if len(data) > 3 else 0) + 47 + 204 * math.ceil(len(data) / 6) + 20 + 60
+    total_height = 181 + (446 if len(data) > 3 else 0) + 47 + 192 * math.ceil(len(data) / 6) + 20 + 60
     img = PMImage(size=(1009, total_height), mode='RGBA', color=(255, 255, 255, 0))
     # 橙线
     await img.paste(await load_image(RESOURCE_BASE_PATH / 'general' / 'line.png'), (0, 0))
-    await img.text(f'{pool_name[:2]}卡池', 25, 11, fm.get('hywh', 30), 'white')
+    pool_type = pool_name[:2]
+    await img.text(f'{pool_type}卡池', 25, 11, fm.get('hywh', 30), 'white')
     # 数据
-    await img.text('平均出货', 174, 142, fm.get('hywh', 24), (24, 24, 24, 102))
-    await img.text(str(round((total_count - not_out) / len(data), 2)), (176, 270), 84,
+    await img.text('平均出货', 174, 137, fm.get('hywh', 24), (24, 24, 24, 102))
+    ave = round((total_count - not_out) / len(data), 2)
+    await img.text(str(ave), (176, 270), 84,
                    fm.get('bahnschrift_regular', 48, 'Regular'),
                    '#252525', 'center')
-    await img.text('总抽卡数', 471, 142, fm.get('hywh', 24), (24, 24, 24, 102))
-    await img.text(str(total_count), (472, 567), 84, fm.get('bahnschrift_regular', 48, 'Regular'),
+    await img.text('总抽卡数', 372, 137, fm.get('hywh', 24), (24, 24, 24, 102))
+    await img.text(str(total_count), (372, 467), 84, fm.get('bahnschrift_regular', 48, 'Regular'),
                    '#252525', 'center')
-    await img.text('未出五星', 753, 142, fm.get('hywh', 24), (24, 24, 24, 102))
-    await img.text(str(not_out), (755, 848), 84, fm.get('bahnschrift_regular', 48, 'Regular'),
+    await img.text('未出五星', 562, 137, fm.get('hywh', 24), (24, 24, 24, 102))
+    await img.text(str(not_out), (562, 655), 84, fm.get('bahnschrift_regular', 48, 'Regular'),
                    '#252525', 'center')
+    lucky = '欧' if ave <= (45 if pool_type == '武器' else 50) else '吉' if ave <= (55 if pool_type == '武器' else 60) else '中' if ave <= (65 if pool_type == '武器' else 70) else '非'
+    await img.paste(await load_image(RESOURCE_BASE_PATH / 'gacha_log' / f'{lucky}{random.randint(1, 3)}.png'), (753, 68))
     # 折线图
     if len(data) > 3:
         last_point = None
@@ -102,11 +117,11 @@ async def draw_pool_detail(pool_name: str, data: List[FiveStarItem], total_count
             i += 1
     # 详细数据统计
     chara_bg = PMImage(await load_image(RESOURCE_BASE_PATH / 'gacha_log' / 'detail_bg.png'))
-    await chara_bg.stretch((47, chara_bg.height - 20), 204 + 204 * (len(data) // 6), 'height')
+    await chara_bg.stretch((47, chara_bg.height - 20), 192 + 192 * (len(data) // 6), 'height')
     await img.paste(chara_bg, (1, 655 if len(data) > 3 else 181))
     await asyncio.gather(
         *[img.paste(await detail_avatar(data[i]),
-                    (18 + i % 6 * 163, (708 if len(data) > 3 else 234) + i // 6 * 204))
+                    (18 + i % 6 * 163, (708 if len(data) > 3 else 234) + i // 6 * 192))
           for i in range(len(data))])
     return img
 
@@ -169,10 +184,12 @@ async def draw_gacha_log(user_id: str, uid: str, nickname: Optional[str], signat
     five_star_average = round(out_gacha_count / total_five_star_count, 2) if total_five_star_count else 0
     await img.text('平均出货', 209, 335, fm.get('hywh', 24), (24, 24, 24, 102))
     await img.text(str(five_star_average), (211, 305), 286, fm.get('bahnschrift_regular', 48), '#040404', 'center')
-    await img.text('总抽卡数', 506, 335, fm.get('hywh', 24), (24, 24, 24, 102))
-    await img.text(str(total_gacha_count), (507, 602), 286, fm.get('bahnschrift_regular', 48), '#040404', 'center')
-    await img.text('总计出金', 788, 335, fm.get('hywh', 24), (24, 24, 24, 102))
-    await img.text(str(total_five_star_count), (789, 884), 286, fm.get('bahnschrift_regular', 48), '#040404', 'center')
+    await img.text('总抽卡数', 407, 335, fm.get('hywh', 24), (24, 24, 24, 102))
+    await img.text(str(total_gacha_count), (408, 503), 286, fm.get('bahnschrift_regular', 48), '#040404', 'center')
+    await img.text('总计出金', 597, 335, fm.get('hywh', 24), (24, 24, 24, 102))
+    await img.text(str(total_five_star_count), (598, 694), 286, fm.get('bahnschrift_regular', 48), '#040404', 'center')
+    lucky = '欧' if five_star_average <= 50 else '吉' if five_star_average <= 60 else '中' if five_star_average <= 70 else '非'
+    await img.paste(await load_image(RESOURCE_BASE_PATH / 'gacha_log' / f'{lucky}{random.randint(1, 3)}.png'), (788, 271))
     four_star_detail = await draw_four_star_detail(list(data4.values()))
     if total_five_star_count:
         chara_pool_per = round(len(data5['角色祈愿']) / total_five_star_count * 100, 1)
