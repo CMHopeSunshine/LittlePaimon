@@ -26,7 +26,7 @@ Spots = Dict[int, List[Spot]]
 
 
 async def _request(
-    endpoint: str, client: AsyncClient = CLIENT
+    endpoint: str, client: AsyncClient = API_CLIENT
 ) -> Dict[str, Any]:
     resp = await client.get(endpoint)
     resp.raise_for_status()
