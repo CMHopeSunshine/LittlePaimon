@@ -13,17 +13,23 @@ from LittlePaimon.utils.message import MessageBuild
 
 
 async def get_user_avatar(user_id: str, size: Tuple[int, int] = (60, 60)):
-    img = await get_qq_avatar(user_id)
-    await img.resize(size)
-    await img.to_circle('circle')
-    return img
+    try:
+        img = await get_qq_avatar(user_id)
+        await img.resize(size)
+        await img.to_circle('circle')
+        return img
+    except Exception:
+        return PMImage(size=size, color=(255, 255, 255, 255))
 
 
 async def get_group_avatar(group_id: str):
-    img = await aiorequests.get_img(f'https://p.qlogo.cn/gh/{group_id}/{group_id}/100', size=(110, 110))
-    img = PMImage(img)
-    await img.to_circle('circle')
-    return img
+    try:
+        img = await aiorequests.get_img(f'https://p.qlogo.cn/gh/{group_id}/{group_id}/100', size=(110, 110))
+        img = PMImage(img)
+        await img.to_circle('circle')
+        return img
+    except Exception:
+        return PMImage(size=(110, 110), color=(255, 255, 255, 255))
 
 
 
