@@ -170,7 +170,7 @@ class GenshinInfoManager:
             """如果角色不存在或者角色的更新时间在6小时前，则更新角色信息"""
             character = await Character.get_or_none(**query, data_source='enka')
             if not character or character.update_time < (datetime.datetime.now() - datetime.timedelta(hours=pm.config.ysd_auto_update)).replace(
-                    tzinfo=pytz.timezone('Asia/Shanghai')):
+                    tzinfo=pytz.timezone('UTC')):
                 await self.update_from_enka()
                 if character := await Character.get_or_none(**query, data_source='enka'):
                     logger.info('原神角色面板', '➤➤', {'角色': name or character_id}, '数据更新成功', True)
@@ -194,7 +194,7 @@ class GenshinInfoManager:
         player_info = await PlayerInfo.get_or_none(user_id=self.user_id, uid=self.uid)
         if player_info is None or player_info.update_time is None or player_info.update_time < (
                 datetime.datetime.now() - datetime.timedelta(hours=pm.config.ysa_auto_update)).replace(
-                tzinfo=pytz.timezone('Asia/Shanghai')):
+                tzinfo=pytz.timezone('UTC')):
             result = await self.update_from_mihoyo()
             if result != '更新成功':
                 return result, []
@@ -211,7 +211,7 @@ class GenshinInfoManager:
         player_info = await PlayerInfo.get_or_none(user_id=self.user_id, uid=self.uid)
         if player_info is None or player_info.update_time is None or player_info.update_time < (
                 datetime.datetime.now() - datetime.timedelta(hours=pm.config.ys_auto_update)).replace(
-                tzinfo=pytz.timezone('Asia/Shanghai')):
+                tzinfo=pytz.timezone('UTC')):
             result = await self.update_from_mihoyo()
             if result != '更新成功':
                 return result, None

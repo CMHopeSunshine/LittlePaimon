@@ -82,13 +82,13 @@ async def check_note():
         return
     if not subs:
         return
-    logger.info('原神实时便签', f'开始执行定时检查，共<m>{len(subs)}</m>个任务，预计花费<m>{round(3 * len(subs) / 60, 2)}</m>分钟')
+    logger.info('原神实时便签', f'开始执行定时检查，共<m>{len(subs)}</m>个任务，预计花费<m>{round(6 * len(subs) / 60, 2)}</m>分钟')
     for sub in subs:
         limit_num = 5 if sub.resin_num and sub.coin_num else 3
         if sub.today_remind_num <= limit_num and (
                 sub.last_remind_time is None or (sub.last_remind_time is not None and (
-                sub.last_remind_time < (datetime.datetime.now() - datetime.timedelta(minutes=30)).replace(
-                tzinfo=pytz.timezone('Asia/Shanghai'))))):
+                sub.last_remind_time + datetime.timedelta(minutes=30) <= datetime.datetime.now().replace(
+                tzinfo=pytz.timezone('UTC'))))):
             data = await get_mihoyo_private_data(sub.uid, str(sub.user_id), 'daily_note')
             if isinstance(data, str):
                 logger.info('原神实时便签', '➤', {'用户': sub.user_id, 'UID': sub.uid}, 'Cookie未绑定或已失效，删除任务', False)
