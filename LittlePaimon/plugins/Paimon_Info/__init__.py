@@ -1,5 +1,6 @@
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import Message, MessageEvent, MessageSegment
+from nonebot.adapters.onebot.v11.helpers import HandleCancellation
 from nonebot.params import Arg, ArgPlainText, CommandArg
 from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
@@ -238,7 +239,7 @@ async def _(event: MessageEvent, state: T_State, msg: Message = CommandArg()):
         state['alias'] = Message(msg[1])
 
 
-@add_alias.got('alias', prompt=Message.template('你想把{chara}设置为你的谁呢？'))
+@add_alias.got('alias', prompt=Message.template('你想把{chara}设置为你的谁呢？'), parameterless=[HandleCancellation(f'好吧，有事再找{NICKNAME}吧')])
 async def _(event: MessageEvent, chara: str = ArgPlainText('chara'), alias: str = ArgPlainText('alias')):
     await PlayerAlias.update_or_create(user_id=str(event.user_id), alias=alias, defaults={'character': chara})
     await add_alias.finish(f'设置成功，{NICKNAME}知道{chara}是你的{alias}啦..')
@@ -254,7 +255,7 @@ async def _(event: MessageEvent, state: T_State, msg: Message = CommandArg()):
         await delete_alias.finish('你还没有设置任何别名哦')
 
 
-@delete_alias.got('alias', prompt=Message.template('{msg}'))
+@delete_alias.got('alias', prompt=Message.template('{msg}'), parameterless=[HandleCancellation(f'好吧，有事再找{NICKNAME}吧')])
 async def _(event: MessageEvent, msg: str = ArgPlainText('alias')):
     if msg == '全部':
         await PlayerAlias.filter(user_id=str(event.user_id)).delete()
@@ -263,7 +264,7 @@ async def _(event: MessageEvent, msg: str = ArgPlainText('alias')):
         await alias.delete()
         await delete_alias.finish(f'别名{msg}删除成功!', at_sender=True)
     else:
-        await delete_alias.reject(f'你并没有将{msg}设置为某个角色的别名', at_sender=True)
+        await delete_alias.reject(f'你并没有将{msg}设置为某个角色的别名，回复"取消"取消删除', at_sender=True)
 
 
 @show_alias.handle()
