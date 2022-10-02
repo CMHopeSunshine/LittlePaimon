@@ -166,6 +166,7 @@ async def _(event: MessageEvent):
             msg = f'{NICKNAME}明明没有在学你们说话！'
     else:
         msg = random.choice([f'你管得着{NICKNAME}吗！', f'你可没有权限要求{NICKNAME}！'])
+    config_manager.save()
     await set_enable.finish(msg)
 
 

@@ -18,7 +18,6 @@ class ChatConfig(BaseModel):
     repeat_threshold: int = Field(3, alias='复读阈值')
     speak_threshold: int = Field(5, alias='主动发言阈值')
     split_probability: float = Field(0.5, alias='按逗号分割回复概率')
-    voice_probability: float = Field(0.1, alias='以语音回复概率')
     speak_continuously_probability: float = Field(0.5, alias='连续主动发言概率')
     speak_poke_probability: float = Field(0.5, alias='主动发言附带戳一戳概率')
     speak_continuously_max_len: int = Field(3, alias='最大连续说话句数')

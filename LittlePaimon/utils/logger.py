@@ -22,3 +22,7 @@ class logger:
     @staticmethod
     def warning(command: str, info: str = '', action: str = ''):
         nb_logger.opt(colors=True).warning(f'<u><y>[{command}]</y></u>{info}<m>{action}</m>')
+
+    @staticmethod
+    def debug(command: str, info: str):
+        nb_logger.opt(colors=True).debug(f'<u><y>[{command}]</y></u>{info}')

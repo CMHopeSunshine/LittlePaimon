@@ -166,10 +166,7 @@ class LearningChat:
                         'reply':           item,
                         'reply_keywords':  answer_keywords,
                     })
-                if '[CQ:' not in item and len(item) > 1 and random.random() < config.voice_probability:
-                    yield MessageSegment.record(f'http://233366.proxy.nscc-gz.cn:8888/?text={item}&speaker=派蒙')
-                else:
-                    yield item
+                yield item
 
             with LearningChat._reply_lock:
                 LearningChat.reply_cache[self.message.group_id][self.message.bot_id] = \

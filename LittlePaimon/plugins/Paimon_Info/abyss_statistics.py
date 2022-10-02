@@ -136,7 +136,7 @@ async def draw_statistics_img(data: Dict[str, Any]):
     }
     avatar = await get_group_avatar(data['群号'])
     await img.paste(avatar, (38, 47))
-    await img.text(data['群名称'], 162, 63, fm.get('hywh', 48), '#040404')
+    await img.text(data['群名称'], 162, 58, fm.get('hywh', 48), '#040404')
     await img.text(data['群号'], 165, 116, fm.get('hywh', 36), '#040404')
     await img.text(f'CREATED BY LITTLEPAIMON AT {datetime.datetime.now().strftime("%m-%d %H:%M")}',
                    1033, 195, fm.get('bahnschrift_regular.ttf', 30), '#8c4c2e', 'right')
@@ -202,30 +202,33 @@ async def draw_statistics_img(data: Dict[str, Any]):
     tag = await load_image(RESOURCE_BASE_PATH / 'general' / 'tag.png')
     # 角色出场率
     for i in range(4):
-        icon, rarity, count = data['11层上半'][i][0].split('-')[0], data['11层上半'][i][0].split('-')[1], data['11层上半'][i][1]
-        await img.paste(box[f'{rarity}bg'], (182 + i * 101, 867))
-        await img.paste(await load_image(RESOURCE_BASE_PATH / 'avatar' / f'{icon}.png', size=(95, 95)), (182 + i * 101, 867))
-        await img.paste(tag, (236 + i * 101, 942))
-        await img.text(str(count), (236 + i * 101, 277 + i * 101), 943, fm.get('bahnschrift_regular.ttf', 19), 'white', 'center')
+        try:
+            icon, rarity, count = data['11层上半'][i][0].split('-')[0], data['11层上半'][i][0].split('-')[1], data['11层上半'][i][1]
+            await img.paste(box[f'{rarity}bg'], (182 + i * 101, 867))
+            await img.paste(await load_image(RESOURCE_BASE_PATH / 'avatar' / f'{icon}.png', size=(95, 95)), (182 + i * 101, 867))
+            await img.paste(tag, (236 + i * 101, 942))
+            await img.text(str(count), (236 + i * 101, 277 + i * 101), 943, fm.get('bahnschrift_regular.ttf', 19), 'white', 'center')
 
-        icon, rarity, count = data['11层下半'][i][0].split('-')[0], data['11层下半'][i][0].split('-')[1], data['11层下半'][i][1]
-        await img.paste(box[f'{rarity}bg'], (642 + i * 101, 867))
-        await img.paste(await load_image(RESOURCE_BASE_PATH / 'avatar' / f'{icon}.png', size=(95, 95)), (642 + i * 101, 867))
-        await img.paste(tag, (696 + i * 101, 942))
-        await img.text(str(count), (696 + i * 101, 737 + i * 101), 943, fm.get('bahnschrift_regular.ttf', 19), 'white', 'center')
+            icon, rarity, count = data['11层下半'][i][0].split('-')[0], data['11层下半'][i][0].split('-')[1], data['11层下半'][i][1]
+            await img.paste(box[f'{rarity}bg'], (642 + i * 101, 867))
+            await img.paste(await load_image(RESOURCE_BASE_PATH / 'avatar' / f'{icon}.png', size=(95, 95)), (642 + i * 101, 867))
+            await img.paste(tag, (696 + i * 101, 942))
+            await img.text(str(count), (696 + i * 101, 737 + i * 101), 943, fm.get('bahnschrift_regular.ttf', 19), 'white', 'center')
 
-        icon, rarity, count = data['12层上半'][i][0].split('-')[0], data['12层上半'][i][0].split('-')[1], data['12层上半'][i][1]
-        await img.paste(box[f'{rarity}bg'], (182 + i * 101, 983))
-        await img.paste(await load_image(RESOURCE_BASE_PATH / 'avatar' / f'{icon}.png', size=(95, 95)), (182 + i * 101, 983))
-        await img.paste(tag, (236 + i * 101, 1058))
-        await img.text(str(count), (236 + i * 101, 278 + i * 101), 1059, fm.get('bahnschrift_regular.ttf', 19), 'white', 'center')
+            icon, rarity, count = data['12层上半'][i][0].split('-')[0], data['12层上半'][i][0].split('-')[1], data['12层上半'][i][1]
+            await img.paste(box[f'{rarity}bg'], (182 + i * 101, 983))
+            await img.paste(await load_image(RESOURCE_BASE_PATH / 'avatar' / f'{icon}.png', size=(95, 95)), (182 + i * 101, 983))
+            await img.paste(tag, (236 + i * 101, 1058))
+            await img.text(str(count), (236 + i * 101, 278 + i * 101), 1059, fm.get('bahnschrift_regular.ttf', 19), 'white', 'center')
 
-        icon, rarity, count = data['12层下半'][i][0].split('-')[0], data['12层下半'][i][0].split('-')[1], data['12层下半'][i][1]
-        await img.paste(box[f'{rarity}bg'], (642 + i * 101, 983))
-        await img.paste(await load_image(RESOURCE_BASE_PATH / 'avatar' / f'{icon}.png', size=(95, 95)), (642 + i * 101, 983))
-        await img.paste(tag, (696 + i * 101, 1058))
-        await img.text(str(count), (696 + i * 101, 737 + i * 101), 1059, fm.get('bahnschrift_regular.ttf', 19), 'white', 'center')
-        i += 1
+            icon, rarity, count = data['12层下半'][i][0].split('-')[0], data['12层下半'][i][0].split('-')[1], data['12层下半'][i][1]
+            await img.paste(box[f'{rarity}bg'], (642 + i * 101, 983))
+            await img.paste(await load_image(RESOURCE_BASE_PATH / 'avatar' / f'{icon}.png', size=(95, 95)), (642 + i * 101, 983))
+            await img.paste(tag, (696 + i * 101, 1058))
+            await img.text(str(count), (696 + i * 101, 737 + i * 101), 1059, fm.get('bahnschrift_regular.ttf', 19), 'white', 'center')
+            i += 1
+        except IndexError:
+            pass
 
     return MessageBuild.Image(img, mode='RGB', quality=80)
 
