@@ -1,7 +1,8 @@
-from nonebot import on_command, on_regex
-from nonebot.adapters.onebot.v11 import Message, MessageEvent, MessageSegment, GroupMessageEvent
-from nonebot.params import Arg, RegexDict, CommandArg
+from nonebot import on_command
+from nonebot.adapters.onebot.v11 import Message, MessageEvent, MessageSegment
+from nonebot.params import Arg, ArgPlainText, CommandArg
 from nonebot.plugin import PluginMetadata
+from nonebot.typing import T_State
 
 from LittlePaimon import NICKNAME
 from LittlePaimon.database.models import PlayerAlias
@@ -9,14 +10,12 @@ from LittlePaimon.utils import logger
 from LittlePaimon.utils.message import CommandPlayer, CommandCharacter, CommandUID
 from LittlePaimon.utils.genshin import GenshinInfoManager
 from LittlePaimon.utils.tool import freq_limiter
-from LittlePaimon.utils.typing import CHARA_RE
+from LittlePaimon.utils.typing import CHARACTERS
 
 from .draw_player_card import draw_player_card
 from .draw_character_bag import draw_chara_bag
 from .draw_character_detail import draw_chara_detail
 from .draw_character_card import draw_chara_card
-from .draw_abyss import draw_abyss_card
-from .abyss_statistics import get_statistics
 
 __plugin_meta__ = PluginMetadata(
     name='原神信息查询',
@@ -41,12 +40,6 @@ ysa = on_command('ysa', aliases={'角色背包', '练度统计'}, priority=10, b
     'pm_usage':       'ysa(uid)',
     'pm_priority':    2
 })
-sy = on_command('sy', aliases={'深渊战报', '深渊信息'}, priority=10, block=True, state={
-    'pm_name':        'sy',
-    'pm_description': '查看本期|上期的深渊战报',
-    'pm_usage':       'sy(uid)(本期|上期)',
-    'pm_priority':    3
-})
 ysc = on_command('ysc', aliases={'角色图', '角色卡片'}, priority=10, block=True, state={
     'pm_name':        'ysc',
     'pm_description': '随机角色同人图+角色信息卡片',
@@ -65,14 +58,12 @@ update_info = on_command('udi', aliases={'更新角色信息', '更新面板', '
     'pm_usage':       '更新角色信息[天赋](uid)',
     'pm_priority':    6
 })
-add_alias = on_regex(
-    rf'((?P<chara>{CHARA_RE})是[我俺咱]的?(?P<alias>\w+))|([我俺咱]的?(?P<alias2>\w+)[是叫名](?P<chara2>{CHARA_RE}))', priority=10,
-    block=True, state={
-        'pm_name':        '角色别名设置',
-        'pm_description': '设置专属于你的角色别名',
-        'pm_usage':       '<角色名>是我<别名>',
-        'pm_priority':    7
-    })
+add_alias = on_command('设置别名', priority=10, block=True, state={
+    'pm_name':        '角色别名设置',
+    'pm_description': '设置专属于你的角色别名，例如【设置别名钟离 老公】',
+    'pm_usage':       '设置别名<角色> <别名>',
+    'pm_priority':    7
+})
 delete_alias = on_command('删除别名', priority=10, block=True, state={
     'pm_name':        '角色别名删除',
     'pm_description': '删除你已设置的角色别名',
@@ -84,12 +75,6 @@ show_alias = on_command('查看别名', priority=10, block=True, state={
     'pm_description': '查看你已设置的角色别名',
     'pm_usage':       '查看别名',
     'pm_priority':    9
-})
-show_abyss = on_command('深渊统计', priority=10, block=True, state={
-    'pm_name':        '深渊统计',
-    'pm_description': '查看本群深渊统计，仅群可用',
-    'pm_usage':       '深渊统计',
-    'pm_priority':    10
 })
 
 
@@ -147,30 +132,6 @@ async def _(event: MessageEvent, players=CommandPlayer(2)):
             running_ysa.remove(f'{player.user_id}-{player.uid}')
     if msg:
         await ysa.finish(msg, at_sender=True)
-
-
-@sy.handle()
-async def _(event: MessageEvent, players=CommandPlayer(), msg: str = Arg('msg')):
-    logger.info('原神深渊战报', '开始执行')
-    abyss_index = 2 if any(i in msg for i in ['上', 'last']) else 1
-    msg = Message()
-    for player in players:
-        logger.info('原神深渊战报', '➤ ', {'用户': players[0].user_id, 'UID': players[0].uid})
-        gim = GenshinInfoManager(player.user_id, player.uid)
-        abyss_info = await gim.get_abyss_info(abyss_index)
-        if isinstance(abyss_info, str):
-            logger.info('原神深渊战报', '➤➤', {}, abyss_info, False)
-            msg += f'UID{player.uid}{abyss_info}\n'
-        else:
-            logger.info('原神深渊战报', '➤➤', {}, '数据获取成功', True)
-            try:
-                img = await draw_abyss_card(abyss_info)
-                logger.info('原神深渊战报', '➤➤➤', {}, '制图完成', True)
-                msg += img
-            except Exception as e:
-                logger.info('原神深渊战报', '➤➤➤', {}, f'制图出错:{e}', False)
-                msg += F'UID{player.uid}制图时出错：{e}\n'
-    await ysa.finish(msg, at_sender=True)
 
 
 @ysc.handle()
@@ -267,21 +228,42 @@ async def _(event: MessageEvent, uid=CommandUID(), msg: str = Arg('msg')):
 
 
 @add_alias.handle()
-async def _(event: MessageEvent, regex_dict: dict = RegexDict()):
-    chara = regex_dict['chara'] or regex_dict['chara2']
-    alias = regex_dict['alias'] or regex_dict['alias2']
+async def _(event: MessageEvent, state: T_State, msg: Message = CommandArg()):
+    msg = msg.extract_plain_text().strip().split(' ')
+    if msg[0] in CHARACTERS:
+        state['chara'] = Message(msg[0])
+    else:
+        await add_alias.finish(f'{NICKNAME}不认识{msg[0]}哦，请使用角色全称', at_sender=True)
+    if len(msg) > 1:
+        state['alias'] = Message(msg[1])
+
+
+@add_alias.got('alias', prompt=Message.template('你想把{chara}设置为你的谁呢？'))
+async def _(event: MessageEvent, chara: str = ArgPlainText('chara'), alias: str = ArgPlainText('alias')):
     await PlayerAlias.update_or_create(user_id=str(event.user_id), alias=alias, defaults={'character': chara})
-    await add_alias.finish(f'{NICKNAME}知道{chara}是你的{alias}啦..')
+    await add_alias.finish(f'设置成功，{NICKNAME}知道{chara}是你的{alias}啦..')
 
 
 @delete_alias.handle()
-async def _(event: MessageEvent, msg: Message = CommandArg()):
-    msg = msg.extract_plain_text().strip()
-    if alias := await PlayerAlias.get_or_none(user_id=str(event.user_id), alias=msg):
+async def _(event: MessageEvent, state: T_State, msg: Message = CommandArg()):
+    if msg:
+        state['alias'] = msg
+    elif aliases := await PlayerAlias.filter(user_id=str(event.user_id)).all():
+        state['msg'] = '你已设置以下别名:\n' + '\n'.join([f'{i.alias} -> {i.character}' for i in aliases]) + '\n请输入你想删除的别名或发送"全部"删除全部别名'
+    else:
+        await delete_alias.finish('你还没有设置任何别名哦')
+
+
+@delete_alias.got('alias', prompt=Message.template('{msg}'))
+async def _(event: MessageEvent, msg: str = ArgPlainText('alias')):
+    if msg == '全部':
+        await PlayerAlias.filter(user_id=str(event.user_id)).delete()
+        await delete_alias.finish('已删除你设置的全部别名')
+    elif alias := await PlayerAlias.get_or_none(user_id=str(event.user_id), alias=msg):
         await alias.delete()
         await delete_alias.finish(f'别名{msg}删除成功!', at_sender=True)
     else:
-        await delete_alias.finish(f'你并没有将{msg}设置为某个角色的别名', at_sender=True)
+        await delete_alias.reject(f'你并没有将{msg}设置为某个角色的别名', at_sender=True)
 
 
 @show_alias.handle()
@@ -291,9 +273,3 @@ async def _(event: MessageEvent):
                                 at_sender=True)
     else:
         await show_alias.finish('你还没有设置过角色别名哦', at_sender=True)
-
-
-@show_abyss.handle()
-async def _(event: GroupMessageEvent):
-    result = await get_statistics(event.group_id)
-    await show_abyss.finish(result)
