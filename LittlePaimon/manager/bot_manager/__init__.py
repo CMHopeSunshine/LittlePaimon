@@ -1,5 +1,6 @@
 import os
 import asyncio
+import random
 import sys
 from pathlib import Path
 
@@ -7,9 +8,9 @@ from nonebot import on_command, get_bot
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
 from nonebot.rule import to_me
-from nonebot.params import CommandArg, ArgPlainText
+from nonebot.params import CommandArg, ArgPlainText, Arg
 from nonebot.typing import T_State
-from nonebot.adapters.onebot.v11 import Message, MessageEvent, GroupMessageEvent
+from nonebot.adapters.onebot.v11 import Bot, Message, MessageEvent, GroupMessageEvent, ActionFailed
 from nonebot.adapters.onebot.v11.helpers import convert_chinese_to_bool
 from LittlePaimon import NICKNAME, DRIVER, SUPERUSERS, __version__
 from LittlePaimon.utils.files import save_json, load_json
@@ -50,6 +51,12 @@ run_cmd = on_command('cmd', permission=SUPERUSER, rule=to_me(), priority=1, bloc
     'pm_usage':       '@bot cmd<命令>',
     'pm_priority':    4
 })
+broadcast = on_command('广播', permission=SUPERUSER, rule=to_me(), priority=1, block=True, state={
+    'pm_name':        'broadcast',
+    'pm_description': '向指定或所有群发送消息，需超级用户权限',
+    'pm_usage':       '@bot 广播<内容>',
+    'pm_priority':    5
+})
 
 
 @update_cmd.handle()
@@ -75,7 +82,9 @@ async def _(event: MessageEvent):
 async def _(event: MessageEvent):
     if convert_chinese_to_bool(event.message):
         await reboot_cmd.send(f'{NICKNAME}开始执行重启，请等待{NICKNAME}的归来', at_sender=True)
-        save_json({'session_type': event.message_type, 'session_id': event.group_id if isinstance(event, GroupMessageEvent) else event.user_id}, Path() / 'rebooting.json')
+        save_json({'session_type': event.message_type,
+                   'session_id':   event.group_id if isinstance(event, GroupMessageEvent) else event.user_id},
+                  Path() / 'rebooting.json')
         if sys.argv[0].endswith('nb'):
             sys.argv[0] = 'bot.py'
         os.execv(sys.executable, ['python'] + sys.argv)
@@ -100,6 +109,36 @@ async def _(event: MessageEvent, cmd: str = ArgPlainText('cmd')):
     except Exception:
         result = str(stdout or stderr)
     await run_cmd.finish(f'{cmd}\n运行结果：\n{result}')
+
+
+@broadcast.handle()
+async def _(event: MessageEvent, state: T_State, msg: Message = CommandArg()):
+    if msg:
+        state['msg'] = msg
+    else:
+        await broadcast.finish('请给出要广播的消息', at_sender=True)
+
+
+@broadcast.got('groups', prompt='要广播到哪些群呢？多个群以空格隔开，或发送"全部"向所有群广播')
+async def _(event: MessageEvent, bot: Bot, msg: str = ArgPlainText('msg'), groups: str = ArgPlainText('groups')):
+    group_list = await bot.get_group_list()
+    group_list = [g['group_id'] for g in group_list]
+    if groups in {'全部', '所有', 'all'}:
+        send_groups = group_list
+    else:
+        groups = groups.split(' ')
+        send_groups = [int(group) for group in groups if group.isdigit() and int(group) in group_list]
+    if not send_groups:
+        await broadcast.finish('要广播的群未加入或参数不对', at_sender=True)
+    else:
+        await broadcast.send(f'开始向{len(send_groups)}个群发送广播，每群间隔5~10秒', at_sender=True)
+        for group in send_groups:
+            try:
+                await bot.send_group_msg(group_id=group, message=msg)
+                await asyncio.sleep(random.randint(5, 10))
+            except ActionFailed:
+                await broadcast.send(f'群{group}发送消息失败')
+        await broadcast.finish('消息广播发送完成', at_sender=True)
 
 
 @DRIVER.on_bot_connect

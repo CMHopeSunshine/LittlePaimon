@@ -39,11 +39,11 @@ def update():
     except InvalidGitRepositoryError:
         return '没有发现git仓库，无法通过git更新'
     origin = repo.remotes.origin
-    repo.git.stash()
+    # repo.git.stash()
     try:
         origin.pull()
     except GitCommandError as e:
         return f'更新失败，错误信息：{e}，请手动进行更新'
-    finally:
-        repo.git.stash('pop')
+    # finally:
+    #     repo.git.stash('pop')
     return f'更新完成，版本：{__version__}\n最新更新日志为：\n{repo.head.commit.message.replace(":bug:", "🐛").replace(":sparkles:", "✨").replace(":memo:", "📝")}\n可使用命令[@bot 重启]重启{NICKNAME}'

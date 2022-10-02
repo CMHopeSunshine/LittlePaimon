@@ -16,7 +16,7 @@ async def draw_team_line(up: TeamRate, down: TeamRate, characters: List[str]) ->
     up.formation.sort(key=lambda x: x.star, reverse=True)
     down.formation.sort(key=lambda x: x.star, reverse=True)
     for i, member in enumerate(up.formation):
-        owned = (member.name in characters or member.name in {'荧', '空'}) if characters else True
+        owned = (member.name in characters or member.name == '旅行者') if characters else True
         await img.paste(await load_image(RESOURCE_BASE_PATH / 'icon' / f'{member.star}starbox.png'), (110 * i, 0))
         await img.paste(
             await load_image(RESOURCE_BASE_PATH / 'avatar' / f'{get_chara_icon(name=member.name)}.png', size=(100, 100)),
@@ -27,7 +27,7 @@ async def draw_team_line(up: TeamRate, down: TeamRate, characters: List[str]) ->
             await img.paste(await load_image(RESOURCE_BASE_PATH / 'icon' / 'grey_box.png'), (110 * i, 0))
     await img.text(f'{round(up.rate * 100, 2)}%', 439, 30, fm.get('bahnschrift_bold', 30), '#33231a')
     for i, member in enumerate(down.formation):
-        owned = (member.name in characters or member.name in {'荧', '空'}) if characters else True
+        owned = (member.name in characters or member.name == '旅行者') if characters else True
         await img.paste(await load_image(RESOURCE_BASE_PATH / 'icon' / f'{member.star}starbox.png'), (583 + 110 * i, 0))
         await img.paste(
             await load_image(RESOURCE_BASE_PATH / 'avatar' / f'{get_chara_icon(name=member.name)}.png', size=(100, 100)),
