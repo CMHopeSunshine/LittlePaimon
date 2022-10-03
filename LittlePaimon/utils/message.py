@@ -304,7 +304,7 @@ async def get_uid(event: Optional[MessageEvent] = None, user_id: Optional[str] =
         return bind_uid.uid
     else:
         if event:
-            if nickname_uid := re.search(r'[1258]\d{8}', event.sender.card):
+            if nickname_uid := re.search(r'[1258]\d{8}', event.sender.card or event.sender.nickname):
                 return nickname_uid.group()
         else:
             if group_id:

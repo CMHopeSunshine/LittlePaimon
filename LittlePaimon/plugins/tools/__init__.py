@@ -1,11 +1,11 @@
 from nonebot import on_command
 from nonebot.params import CommandArg
 from nonebot.rule import Rule
-from nonebot.adapters.onebot.v11 import Message, MessageEvent
+from nonebot.adapters.onebot.v11 import Message, MessageEvent, MessageSegment
 from nonebot.plugin import PluginMetadata
 from LittlePaimon import SUPERUSERS
 from LittlePaimon.manager.plugin_manager import plugin_manager as pm
-from LittlePaimon.utils.brower import AsyncPlaywright
+from LittlePaimon.utils.brower import screenshot
 
 
 async def permission_check(event: MessageEvent) -> bool:
@@ -37,7 +37,10 @@ screenshot_cmd = on_command('网页截图', priority=10, block=True, rule=Rule(p
 async def _(event: MessageEvent, msg: Message = CommandArg()):
     await screenshot_cmd.send('正在尝试截图，请稍等...')
     url = msg.extract_plain_text().strip()
-    img = await AsyncPlaywright.screenshot(url)
-    await screenshot_cmd.send(img)
+    try:
+        img = await screenshot(url)
+        await screenshot_cmd.send(MessageSegment.image(img))
+    except Exception:
+        await screenshot_cmd.send('网页截图失败，无法访问该网页，请稍候再试')
 
 

@@ -80,4 +80,4 @@ async def _(event: MessageEvent):
         result = await draw_team(str(event.user_id))
     except Exception as e:
         result = f'制作深渊配队时出错：{e}'
-    await abyss_team.finish(result)
+    await abyss_team.finish(result, at_sender=True)

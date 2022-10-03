@@ -120,7 +120,7 @@ async def _(event: MessageEvent, state: T_State, msg: Message = CommandArg()):
 
 
 @broadcast.got('groups', prompt='要广播到哪些群呢？多个群以空格隔开，或发送"全部"向所有群广播')
-async def _(event: MessageEvent, bot: Bot, msg: str = ArgPlainText('msg'), groups: str = ArgPlainText('groups')):
+async def _(event: MessageEvent, bot: Bot, msg: Message = Arg('msg'), groups: str = ArgPlainText('groups')):
     group_list = await bot.get_group_list()
     group_list = [g['group_id'] for g in group_list]
     if groups in {'全部', '所有', 'all'}:

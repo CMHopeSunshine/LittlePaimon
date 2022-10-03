@@ -1,174 +1,79 @@
-# https://github.com/HibiKier/zhenxun_bot/blob/main/utils
-import asyncio
-from pathlib import Path
-from typing import Optional, Literal, Union, List, Dict
-from nonebot import logger
-from nonebot.adapters.onebot.v11 import MessageSegment
-from playwright.async_api import Browser, async_playwright, Page, BrowserContext
+from typing import Optional, Literal, Tuple, Union, List, AsyncGenerator
+from playwright.async_api import Page, Browser, Playwright, async_playwright
+from contextlib import asynccontextmanager
+from LittlePaimon import DRIVER
+from LittlePaimon.utils import logger
 
+_playwright: Optional[Playwright] = None
 _browser: Optional[Browser] = None
 
 
-async def init(**kwargs) -> Optional[Browser]:
+def get_brower() -> Browser:
+    assert _browser
+    return _browser
+
+
+@DRIVER.on_startup
+async def start_browser():
+    global _playwright
     global _browser
-    browser = await async_playwright().start()
     try:
-        _browser = await browser.chromium.launch(**kwargs)
-        return _browser
-    except Exception:
-        await asyncio.get_event_loop().run_in_executor(None, install)
-        _browser = await browser.chromium.launch(**kwargs)
-    return None
+        _playwright = await async_playwright().start()
+        _browser = await _playwright.chromium.launch()
+    except NotImplementedError:
+        logger.warning('Playwright', '初始化失败，请关闭FASTAPI_RELOAD')
+    except Exception as e:
+        logger.warning('Playwright', f'初始化失败，错误信息：{e}')
+        if _browser:
+            await _browser.close()
 
 
-async def get_browser(**kwargs) -> Browser:
-    return _browser or await init(**kwargs)
+@DRIVER.on_shutdown
+async def shutdown_browser():
+    if _browser:
+        await _browser.close()
+    if _playwright:
+        await _playwright.stop()
 
 
-def install():
-    """自动安装、更新 Chromium"""
-    logger.info("正在检查 Chromium 更新")
-    import sys
-    from playwright.__main__ import main
-
-    sys.argv = ["", "install", "chromium"]
+@asynccontextmanager
+async def get_new_page(**kwargs) -> AsyncGenerator[Page, None]:
+    assert _browser, "playwright尚未初始化"
+    page = await _browser.new_page(**kwargs)
     try:
-        main()
-    except SystemExit:
-        pass
+        yield page
+    finally:
+        await page.close()
 
 
-class AsyncPlaywright:
-    @classmethod
-    async def _new_page(cls, user_agent: Optional[str] = None, **kwargs) -> Page:
-        """
-        说明:
-            获取一个新页面
-        参数:
-            :param user_agent: 请求头
-        """
-        browser = await get_browser()
-        if browser:
-            return await browser.new_page(user_agent=user_agent, **kwargs)
-        logger.info('获取浏览器失败')
-        raise BrowserIsNone('获取浏览器失败')
+async def screenshot(url: str,
+                     *,
+                     elements: Optional[Union[List[str]]] = None,
+                     timeout: Optional[float] = 60000,
+                     wait_until: Literal["domcontentloaded", "load", "networkidle"] = "networkidle",
+                     viewport_size: Tuple[int, int] = (1920, 1080),
+                     full_page=True,
+                     **kwargs):
+    if not url.startswith(('https://', 'http://')):
+        url = f'https://{url}'
+    viewport_size = {'width': viewport_size[0], 'height': viewport_size[1]}
+    brower = get_brower()
+    page = await brower.new_page(
+        viewport=viewport_size,
+        **kwargs)
+    try:
+        await page.goto(url, wait_until=wait_until, timeout=timeout)
+        assert page
+        if not elements:
+            return await page.screenshot(timeout=timeout, full_page=full_page)
+        for e in elements:
+            card = await page.query_selector(e)
+            assert card
+            clip = await card.bounding_box()
+        return await page.screenshot(clip=clip, timeout=timeout, full_page=full_page, path='test.png')
 
-    @classmethod
-    async def new_context(cls, user_agent: Optional[str] = None, **kwargs) -> BrowserContext:
-        """
-        说明:
-            获取一个新上下文
-        参数:
-            :param user_agent: 请求头
-        """
-        browser = await get_browser()
-        if browser:
-            return await browser.new_context(user_agent=user_agent, **kwargs)
-        logger.info('获取浏览器失败')
-        raise BrowserIsNone('获取浏览器失败')
-
-    @classmethod
-    async def goto(
-            cls,
-            url: str,
-            *,
-            timeout: Optional[float] = 100000,
-            wait_until: Optional[
-                Literal["domcontentloaded", "load", "networkidle"]
-            ] = "networkidle",
-            referer: str = None,
-            **kwargs
-    ) -> Optional[Page]:
-        """
-        说明:
-            goto
-        参数:
-            :param url: 网址
-            :param timeout: 超时限制
-            :param wait_until: 等待类型
-            :param referer:
-        """
-        page = None
-        try:
-            page = await cls._new_page(**kwargs)
-            await page.goto(url, timeout=timeout, wait_until=wait_until, referer=referer)
-            return page
-        except Exception as e:
-            logger.warning(f"Playwright 访问 url：{url} 发生错误 {type(e)}：{e}")
-            if page:
-                await page.close()
-        return None
-
-    @classmethod
-    async def screenshot(
-            cls,
-            url: str,
-            *,
-            element: Optional[Union[str, List[str]]] = None,
-            path: Optional[Union[Path, str]] = None,
-            wait_time: Optional[int] = None,
-            viewport_size: Dict[str, int] = None,
-            wait_until: Optional[
-                Literal["domcontentloaded", "load", "networkidle"]
-            ] = "networkidle",
-            timeout: float = None,
-            **kwargs
-    ) -> Optional[MessageSegment]:
-        """
-        说明:
-            截图，该方法仅用于简单快捷截图，复杂截图请操作 page
-        参数:
-            :param url: 网址
-            :param path: 存储路径
-            :param element: 元素选择
-            :param wait_time: 等待截取超时时间
-            :param viewport_size: 窗口大小
-            :param wait_until: 等待类型
-            :param timeout: 超时限制
-        """
-        if not url.startswith(('https://', 'http://')):
-            url = f'https://{url}'
-        page = None
-        if viewport_size is None:
-            viewport_size = dict(width=1920, height=1080)
-        if path and isinstance(path, str):
-            path = Path(path)
-        try:
-            page = await cls.goto(url, wait_until=wait_until, **kwargs)
-            if page is None:
-                return MessageSegment.text('截图失败，无法访问网页，请稍候再试')
-            await page.set_viewport_size(viewport_size)
-            if element:
-                if isinstance(element, str):
-                    if wait_time:
-                        card = await page.wait_for_selector(element, timeout=wait_time * 1000)
-                    else:
-                        card = await page.query_selector(element)
-                else:
-                    card = page
-                    for e in element:
-                        if wait_time:
-                            card = await card.wait_for_selector(e, timeout=wait_time * 1000)
-                        else:
-                            card = await card.query_selector(e)
-            else:
-                card = page
-            if path:
-                img = await card.screenshot(path=path, timeout=timeout)
-            else:
-                img = await card.screenshot(timeout=timeout)
-            return MessageSegment.image(img)
-        except Exception as e:
-            logger.warning(f"Playwright 截图 url：{url} element：{element} 发生错误 {type(e)}：{e}")
-            return MessageSegment.text(f'截图失败，报错信息：{e}')
-        finally:
-            if page:
-                await page.close()
-
-
-class UrlPathNumberNotEqual(Exception):
-    pass
-
-
-class BrowserIsNone(Exception):
-    pass
+    except Exception as e:
+        raise e
+    finally:
+        if page:
+            await page.close()
