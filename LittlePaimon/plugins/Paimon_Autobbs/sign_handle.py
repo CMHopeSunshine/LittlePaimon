@@ -25,12 +25,13 @@ sign_reward_list: dict = {}
 
 
 async def pass_geetest(data: Dict[str, Any]):
-    url = f'https://api.geetest.com/ajax.php?gt={data["gt"]}&challenge={data["challenge"]}&lang=zh-cn&pt=3&client_type=web_mobile'
-    resp = await aiorequests.get(url, headers=GEETEST_HEADER)
-    if resp.status_code == 200:
-        resp_data = json.loads(resp.text.replace('(', '').replace(')', ''))
-        if 'success' in resp_data['status'] and 'success' in resp_data['data']['result']:
-            return resp_data['data']['validate']
+    if data is not None:
+        url = f'https://api.geetest.com/ajax.php?gt={data["gt"]}&challenge={data["challenge"]}&lang=zh-cn&pt=3&client_type=web_mobile'
+        resp = await aiorequests.get(url, headers=GEETEST_HEADER)
+        if resp.status_code == 200:
+            resp_data = json.loads(resp.text.replace('(', '').replace(')', ''))
+            if 'success' in resp_data['status'] and 'success' in resp_data['data']['result']:
+                return resp_data['data']['validate']
     return None
 
 
@@ -70,7 +71,7 @@ async def mhy_bbs_sign(user_id: str, uid: str) -> Tuple[SignResult, str]:
                                      defaults={'uid': uid, 'last_time': datetime.datetime.now()})
     sign_info = await get_mihoyo_private_data(uid, user_id, 'sign_info')
     if isinstance(sign_info, str):
-        logger.info('米游社原神签到', '➤', {'用户': user_id, 'UID': uid}, '未绑定私人cookie', False)
+        logger.info('米游社原神签到', '➤', {'用户': user_id, 'UID': uid}, '未绑定私人cookie或已失效', False)
         await MihoyoBBSSub.filter(user_id=user_id, uid=uid).delete()
         return SignResult.FAIL, sign_info
     elif sign_info['data']['is_sign']:
@@ -99,8 +100,9 @@ async def mhy_bbs_sign(user_id: str, uid: str) -> Tuple[SignResult, str]:
                 signed_days = sign_info['data']['total_sign_day']
                 return SignResult.SUCCESS, f'签到成功，获得的奖励为\n{sign_reward_list[signed_days]["name"]}*{sign_reward_list[signed_days]["cnt"]}'
             else:
-                logger.info('米游社原神签到', '➤', {'用户': user_id, 'UID': uid}, f'出现验证码，重试第{i}次', False)
-                await asyncio.sleep(random.randint(30, 45))
+                wait_time = random.randint(45, 60)
+                logger.info('米游社原神签到', '➤', {'用户': user_id, 'UID': uid}, f'出现验证码，等待{wait_time}秒后进行第{i + 1}次尝试绕过', False)
+                await asyncio.sleep(wait_time)
     logger.info('米游社原神签到', '➤', {'用户': user_id, 'UID': uid}, '尝试6次签到失败，无法绕过验证码', False)
     return SignResult.FAIL, f'{uid}签到失败，无法绕过验证码'
 
@@ -122,7 +124,7 @@ async def bbs_auto_sign():
     if not subs:
         # 如果没有米游社原神签到订阅，则不执行签到任务
         return
-    logger.info('米游社原神签到', f'开始执行米游社自动签到，共<m>{len(subs)}</m>个任务，预计花费<m>{round(40 * len(subs) / 60, 2)}</m>分钟')
+    logger.info('米游社原神签到', f'开始执行米游社自动签到，共<m>{len(subs)}</m>个任务，预计花费<m>{round(100 * len(subs) / 60, 2)}</m>分钟')
     sign_result_group = defaultdict(list)
     sign_result_private = defaultdict(list)
     for sub in subs:
@@ -144,7 +146,7 @@ async def bbs_auto_sign():
         if result == SignResult.DONE:
             await asyncio.sleep(random.randint(3, 8))
         else:
-            await asyncio.sleep(random.randint(30, 45))
+            await asyncio.sleep(random.randint(45, 60))
 
     for group_id, sign_result in sign_result_group.items():
         # 发送签到结果到群
