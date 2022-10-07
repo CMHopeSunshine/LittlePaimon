@@ -1,6 +1,7 @@
 from typing import Union
 
 from nonebot import on_command
+from nonebot.rule import to_me
 from nonebot.permission import SUPERUSER
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, PrivateMessageEvent
 from nonebot.plugin import PluginMetadata
@@ -8,7 +9,7 @@ from nonebot.plugin import PluginMetadata
 from LittlePaimon.database.models import MihoyoBBSSub, PrivateCookie
 from LittlePaimon.utils import logger
 from LittlePaimon.utils.message import CommandUID, CommandSwitch
-from .coin_handle import mhy_bbs_coin
+from .coin_handle import mhy_bbs_coin, bbs_auto_coin
 from .sign_handle import mhy_bbs_sign, bbs_auto_sign
 from .draw import draw_result
 
@@ -35,7 +36,7 @@ sign = on_command('mys签到', aliases={'米游社签到', 'mys自动签到', '�
         'pm_usage':       '米游社签到(uid)[on|off]',
         'pm_priority':    1
     })
-all_sign = on_command('全部重签', priority=8, block=True, permission=SUPERUSER, state={
+all_sign = on_command('全部重签', priority=8, block=True, permission=SUPERUSER, rule=to_me(), state={
         'pm_name':        '米游社全部重签',
         'pm_description': '重签全部米游社签到任务，需超级用户权限',
         'pm_usage':       '@Bot 全部重签',
@@ -47,6 +48,13 @@ get_coin = on_command('myb获取', aliases={'米游币获取', 'myb自动获取'
         'pm_description': '*执行米游币任务操作，或开启每日自动获取米游币',
         'pm_usage':       '米游币获取(uid)[on|off]',
         'pm_priority':    2
+    })
+
+all_coin = on_command('myb全部重做', priority=8, block=True, permission=SUPERUSER, rule=to_me(), state={
+        'pm_name':        '米游币获取全部重做',
+        'pm_description': '重做全部米游币获取任务，需超级用户权限',
+        'pm_usage':       '@Bot myb全部重做',
+        'pm_priority':    4
     })
 
 
@@ -134,3 +142,9 @@ async def _(event: Union[GroupMessageEvent, PrivateMessageEvent], uid=CommandUID
                 await sign.finish(f'UID{uid}关闭米游币自动获取成功', at_sender=True)
             else:
                 await sign.finish(f'UID{uid}尚未开启米游币自动获取，无需关闭！', at_sender=True)
+
+
+@all_coin.handle()
+async def _(event: Union[GroupMessageEvent, PrivateMessageEvent]):
+    await all_coin.send('开始执行myb全部重做，需要一定时间...')
+    await bbs_auto_coin()

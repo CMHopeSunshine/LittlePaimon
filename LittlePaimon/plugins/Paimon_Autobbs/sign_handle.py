@@ -124,7 +124,7 @@ async def bbs_auto_sign():
     if not subs:
         # 如果没有米游社原神签到订阅，则不执行签到任务
         return
-    logger.info('米游社原神签到', f'开始执行米游社自动签到，共<m>{len(subs)}</m>个任务，预计花费<m>{round(100 * len(subs) / 60, 2)}</m>分钟')
+    logger.info('米游社原神签到', f'开始执行米游社自动签到，共<m>{len(subs)}</m>个任务，预计花费<m>{len(subs) * 2}</m>分钟')
     sign_result_group = defaultdict(list)
     sign_result_private = defaultdict(list)
     for sub in subs:
