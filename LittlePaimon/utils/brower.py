@@ -19,7 +19,7 @@ async def start_browser():
     global _browser
     try:
         _playwright = await async_playwright().start()
-        _browser = await _playwright.chromium.launch()
+        _browser = await _playwright.chromium.launch(headless=True)
     except NotImplementedError:
         logger.warning('Playwright', '初始化失败，请关闭FASTAPI_RELOAD')
     except Exception as e:
@@ -49,8 +49,8 @@ async def get_new_page(**kwargs) -> AsyncGenerator[Page, None]:
 async def screenshot(url: str,
                      *,
                      elements: Optional[Union[List[str]]] = None,
-                     timeout: Optional[float] = 60000,
-                     wait_until: Literal["domcontentloaded", "load", "networkidle"] = "networkidle",
+                     timeout: Optional[float] = 100000,
+                     wait_until: Literal["domcontentloaded", "load", "networkidle", "load", "commit"] = "networkidle",
                      viewport_size: Tuple[int, int] = (1920, 1080),
                      full_page=True,
                      **kwargs):
@@ -67,7 +67,7 @@ async def screenshot(url: str,
         if not elements:
             return await page.screenshot(timeout=timeout, full_page=full_page)
         for e in elements:
-            card = await page.query_selector(e)
+            card = await page.wait_for_selector(e, timeout=timeout, state='visible')
             assert card
             clip = await card.bounding_box()
         return await page.screenshot(clip=clip, timeout=timeout, full_page=full_page, path='test.png')

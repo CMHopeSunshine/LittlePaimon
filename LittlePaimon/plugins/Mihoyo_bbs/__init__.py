@@ -29,8 +29,8 @@ post_screenshot = on_regex(r'(https://)?(m\.)?bbs.mihoyo.com/.+/article/\d+', pr
 async def _(event: MessageEvent, url: str = RegexMatched()):
     logger.info('米游社', f'开始截图帖子<m>{url}</m>')
     try:
-        img = await screenshot(url, elements=['.mhy-article-page__main'])
+        img = await screenshot(url, elements=['.mhy-article-page__main'], timeout=180000)
     except Exception:
         logger.info('米游社', f'帖子<m>{url}</m>截图失败')
-        return
+        await post_screenshot.finish('米游社帖子截图超时失败了~~')
     await post_screenshot.finish(MessageSegment.image(img))
