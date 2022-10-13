@@ -202,13 +202,13 @@ class MihoyoBBSCoin:
             req = await aiorequests.post(url=bbs_Signurl, json={'gids': i['id']}, headers=header)
             data = req.json()
             if data['retcode'] != 0:
-                if data['retcode'] not in [1034]:
+                if data['retcode'] != 1034:
                     self.is_valid = False
                 self.state = 'Cookie已失效' if data['retcode'] in [-100,
                                                                 10001] else f"出错了:{data['retcode']} {data['message']}"
                 logger.info('米游币自动获取', f'➤➤<r>{self.state}</r>')
                 return f'讨论区签到：{self.state}'
-            await asyncio.sleep(random.randint(5, 10))
+            await asyncio.sleep(random.randint(15, 30))
         logger.info('米游币自动获取', '➤➤讨论区签到<g>完成</g>')
         return '讨论区签到：完成！'
 

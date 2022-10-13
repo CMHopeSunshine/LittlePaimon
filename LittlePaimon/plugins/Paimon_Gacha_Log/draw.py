@@ -39,9 +39,12 @@ async def small_avatar(info: FiveStarItem):
     if info.name in small_avatar_cache:
         return small_avatar_cache[info.name]
     bg = PMImage(await load_image(RESOURCE_BASE_PATH / 'gacha_log' / 'small_circle.png'))
-    img = PMImage(
-        await load_image(RESOURCE_BASE_PATH / ('avatar' if info.type == '角色' else 'weapon') / f'{info.icon}.png',
-                         size=(42, 42)))
+    if info.icon:
+        img = PMImage(
+            await load_image(RESOURCE_BASE_PATH / ('avatar' if info.type == '角色' else 'weapon') / f'{info.icon}.png',
+                             size=(42, 42)))
+    else:
+        img = PMImage(size=(42, 42), color=(255, 255, 255, 0))
     await img.to_circle('circle')
     await bg.paste(img.image, (2, 2))
     small_avatar_cache[info.name] = bg
@@ -50,9 +53,12 @@ async def small_avatar(info: FiveStarItem):
 
 async def detail_avatar(info: FiveStarItem):
     bg = PMImage(await load_image(RESOURCE_BASE_PATH / 'gacha_log' / 'item_avatar_5.png'))
-    img = PMImage(
-        await load_image(RESOURCE_BASE_PATH / ('avatar' if info.type == '角色' else 'weapon') / f'{info.icon}.png',
-                         size=(123, 123)))
+    if info.icon:
+        img = PMImage(
+            await load_image(RESOURCE_BASE_PATH / ('avatar' if info.type == '角色' else 'weapon') / f'{info.icon}.png',
+                             size=(123, 123)))
+    else:
+        img = PMImage(size=(123, 123), color=(255, 255, 255, 0))
     await bg.paste(img, (14, 14))
     await bg.text(info.name, (0, bg.width), 140, fm.get('hywh', 24),
                   '#33231a', 'center')

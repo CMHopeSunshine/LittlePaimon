@@ -1,5 +1,5 @@
 import datetime
-from typing import List, Dict, Union, Tuple
+from typing import List, Dict, Tuple, Optional
 from pydantic import BaseModel
 from LittlePaimon.utils.alias import get_chara_icon, get_weapon_icon
 
@@ -8,14 +8,14 @@ GACHA_TYPE_LIST = {'100': '新手祈愿', '200': '常驻祈愿', '302': '武器�
 
 class FiveStarItem(BaseModel):
     name: str
-    icon: str
+    icon: Optional[str]
     count: int
     type: str
 
 
 class FourStarItem(BaseModel):
     name: str
-    icon: str
+    icon: Optional[str]
     type: str
     num: Dict[str, int] = {
         '角色祈愿': 0,

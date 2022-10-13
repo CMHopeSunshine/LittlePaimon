@@ -100,10 +100,10 @@ async def mhy_bbs_sign(user_id: str, uid: str) -> Tuple[SignResult, str]:
                 signed_days = sign_info['data']['total_sign_day']
                 return SignResult.SUCCESS, f'签到成功，获得的奖励为\n{sign_reward_list[signed_days]["name"]}*{sign_reward_list[signed_days]["cnt"]}'
             else:
-                wait_time = random.randint(45, 60)
+                wait_time = random.randint(90, 120)
                 logger.info('米游社原神签到', '➤', {'用户': user_id, 'UID': uid}, f'出现验证码，等待{wait_time}秒后进行第{i + 1}次尝试绕过', False)
                 await asyncio.sleep(wait_time)
-    logger.info('米游社原神签到', '➤', {'用户': user_id, 'UID': uid}, '尝试6次签到失败，无法绕过验证码', False)
+    logger.info('米游社原神签到', '➤', {'用户': user_id, 'UID': uid}, '尝试3次签到失败，无法绕过验证码', False)
     return SignResult.FAIL, f'{uid}签到失败，无法绕过验证码'
 
 
@@ -144,9 +144,9 @@ async def bbs_auto_sign():
                 'reward': msg.split('\n')[-1] if result in [SignResult.SUCCESS, SignResult.DONE] else ''
             })
         if result == SignResult.DONE:
-            await asyncio.sleep(random.randint(3, 8))
+            await asyncio.sleep(random.randint(5, 10))
         else:
-            await asyncio.sleep(random.randint(45, 60))
+            await asyncio.sleep(random.randint(60, 90))
 
     for group_id, sign_result in sign_result_group.items():
         # 发送签到结果到群

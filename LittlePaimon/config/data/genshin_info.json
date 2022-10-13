@@ -1232,6 +1232,69 @@
     "SideIconName": "UI_AvatarIcon_Side_Tighnari",
     "QualityType": "QUALITY_ORANGE"
   },
+  "10000070": {
+    "Element": "Water",
+    "Consts": [
+      "UI_Talent_S_Nilou_01",
+      "UI_Talent_S_Nilou_02",
+      "UI_Talent_U_Nilou_01",
+      "UI_Talent_S_Nilou_03",
+      "UI_Talent_U_Nilou_02",
+      "UI_Talent_S_Nilou_04"
+    ],
+    "SkillOrder": [10701, 10702, 10705],
+    "Skills": {
+      "10701": "Skill_A_01",
+      "10702": "Skill_S_Nilou_01",
+      "10705": "Skill_E_Nilou_01"
+    },
+    "ProudMap": { "10701": 7031, "10702": 7032, "10705": 7039 },
+    "NameTextMapHash": 3850149970,
+    "SideIconName": "UI_AvatarIcon_Side_Nilou",
+    "QualityType": "QUALITY_ORANGE"
+  },
+  "10000071": {
+    "Element": "Electric",
+    "Consts": [
+      "UI_Talent_S_Cyno_01",
+      "UI_Talent_S_Cyno_02",
+      "UI_Talent_U_Cyno_01",
+      "UI_Talent_S_Cyno_03",
+      "UI_Talent_U_Cyno_02",
+      "UI_Talent_S_Cyno_04"
+    ],
+    "SkillOrder": [10711, 10712, 10715],
+    "Skills": {
+      "10711": "Skill_A_03",
+      "10712": "Skill_S_Cyno_01",
+      "10715": "Skill_E_Cyno_01"
+    },
+    "ProudMap": { "10711": 7131, "10712": 7132, "10715": 7139 },
+    "NameTextMapHash": 1049891906,
+    "SideIconName": "UI_AvatarIcon_Side_Cyno",
+    "QualityType": "QUALITY_ORANGE"
+  },
+  "10000072": {
+    "Element": "Water",
+    "Consts": [
+      "UI_Talent_S_Candace_01",
+      "UI_Talent_S_Candace_02",
+      "UI_Talent_U_Candace_01",
+      "UI_Talent_S_Candace_03",
+      "UI_Talent_U_Candace_02",
+      "UI_Talent_S_Candace_04"
+    ],
+    "SkillOrder": [10721, 10722, 10725],
+    "Skills": {
+      "10721": "Skill_A_03",
+      "10722": "Skill_S_Candace_01",
+      "10725": "Skill_E_Candace_01"
+    },
+    "ProudMap": { "10721": 7231, "10722": 7232, "10725": 7239 },
+    "NameTextMapHash": 3092975658,
+    "SideIconName": "UI_AvatarIcon_Side_Candace",
+    "QualityType": "QUALITY_PURPLE"
+  },
   "10000005-501": {
     "Element": "None",
     "Consts": ["None", "None", "None", "None", "None", "None"],

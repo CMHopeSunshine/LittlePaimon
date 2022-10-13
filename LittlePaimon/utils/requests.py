@@ -159,7 +159,7 @@ class aiorequests:
         :param save_path: 保存路径
         """
         urls = [
-            f'https://file.minigg.icu/genshin/ui/{name}',
+            f'https://file.microgg.cn/MiniGG/ui/{name}',
             f'https://api.ambr.top/assets/UI/{name}',
             f'https://enka.network/ui/{name}'
         ]
