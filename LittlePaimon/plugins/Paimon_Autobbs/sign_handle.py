@@ -77,7 +77,10 @@ async def mhy_bbs_sign(user_id: str, uid: str) -> Tuple[SignResult, str]:
     elif sign_info['data']['is_sign']:
         signed_days = sign_info['data']['total_sign_day'] - 1
         logger.info('米游社原神签到', '➤', {'用户': user_id, 'UID': uid}, '今天已经签过了', True)
-        return SignResult.DONE, f'UID{uid}今天已经签过了，获得的奖励为\n{sign_reward_list[signed_days]["name"]}*{sign_reward_list[signed_days]["cnt"]}'
+        if sign_reward_list:
+            return SignResult.DONE, f'UID{uid}今天已经签过了，获得的奖励为\n{sign_reward_list[signed_days]["name"]}*{sign_reward_list[signed_days]["cnt"]}'
+        else:
+            return SignResult.DONE, f'UID{uid}今天已经签过了'
     validate = None
     sign_data = None
     for i in range(3):
@@ -89,7 +92,10 @@ async def mhy_bbs_sign(user_id: str, uid: str) -> Tuple[SignResult, str]:
         elif sign_data['retcode'] == -5003:
             signed_days = sign_info['data']['total_sign_day'] - 1
             logger.info('米游社原神签到', '➤', {'用户': user_id, 'UID': uid}, '今天已经签过了', True)
-            return SignResult.DONE, f'UID{uid}今天已经签过了，获得的奖励为\n{sign_reward_list[signed_days]["name"]}*{sign_reward_list[signed_days]["cnt"]}'
+            if sign_reward_list:
+                return SignResult.DONE, f'UID{uid}今天已经签过了，获得的奖励为\n{sign_reward_list[signed_days]["name"]}*{sign_reward_list[signed_days]["cnt"]}'
+            else:
+                return SignResult.DONE, f'UID{uid}今天已经签过了'
         elif sign_data['retcode'] != 0:
             logger.info('米游社原神签到', '➤', {'用户': user_id, 'UID': uid},
                         f'获取数据失败，code为{sign_data["retcode"]}， msg为{sign_data["message"]}', False)
@@ -98,7 +104,10 @@ async def mhy_bbs_sign(user_id: str, uid: str) -> Tuple[SignResult, str]:
             if sign_data['data']['success'] == 0:
                 logger.info('米游社原神签到', '➤', {'用户': user_id, 'UID': uid}, '签到成功', True)
                 signed_days = sign_info['data']['total_sign_day']
-                return SignResult.SUCCESS, f'签到成功，获得的奖励为\n{sign_reward_list[signed_days]["name"]}*{sign_reward_list[signed_days]["cnt"]}'
+                if sign_reward_list:
+                    return SignResult.SUCCESS, f'签到成功，获得的奖励为\n{sign_reward_list[signed_days]["name"]}*{sign_reward_list[signed_days]["cnt"]}'
+                else:
+                    return SignResult.SUCCESS, '签到成功'
             else:
                 wait_time = random.randint(90, 120)
                 logger.info('米游社原神签到', '➤', {'用户': user_id, 'UID': uid}, f'出现验证码，等待{wait_time}秒后进行第{i + 1}次尝试绕过', False)
@@ -177,5 +186,8 @@ async def init_reward_list():
     初始化签到奖励列表
     """
     global sign_reward_list
-    sign_reward_list = await get_sign_reward_list()
-    sign_reward_list = sign_reward_list['data']['awards']
+    try:
+        sign_reward_list = await get_sign_reward_list()
+        sign_reward_list = sign_reward_list['data']['awards']
+    except Exception:
+        logger.info('米游社原神签到', '初始化签到奖励列表<r>失败</r>')
