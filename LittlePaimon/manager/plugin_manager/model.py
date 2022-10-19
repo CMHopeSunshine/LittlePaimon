@@ -56,8 +56,6 @@ class Config(BaseModel):
     ssbq_end: int = Field(6, alias='实时便签停止检查结束时间')
     ssbq_check: int = Field(16, alias='实时便签检查间隔')
 
-    AI_voice_cooldown: int = Field(10, alias='原神语音合成冷却')
-
     ys_auto_update: int = Field(24, alias='ys自动更新小时')
     ysa_auto_update: int = Field(24, alias='ysa自动更新小时')
     ysd_auto_update: int = Field(6, alias='ysd自动更新小时')

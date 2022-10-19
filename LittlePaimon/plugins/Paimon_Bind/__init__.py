@@ -196,7 +196,7 @@ async def _(event: MessageEvent):
 @pck.handle()
 async def _(event: MessageEvent, msg: Message = CommandArg()):
     if msg := msg.extract_plain_text().strip():
-        if await get_bind_game_info(msg):
+        if await get_bind_game_info(msg, True):
             ck = await PublicCookie.create(cookie=msg)
             logger.info('原神Cookie', f'{ck.id}号公共cookie', None, '添加成功', True)
             await pck.finish(f'成功添加{ck.id}号公共cookie', at_sender=True)
