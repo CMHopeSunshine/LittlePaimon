@@ -7,13 +7,13 @@ from LittlePaimon.utils.migration import migrate_database
 from LittlePaimon.utils.tool import check_resource
 
 DRIVER = get_driver()
-__version__ = '3.0.0beta8'
+__version__ = '3.0.0beta9'
 
 try:
     SUPERUSERS: List[int] = [int(s) for s in DRIVER.config.superusers]
 except KeyError:
     SUPERUSERS = []
-    logger.error('请在.env.prod文件中中配置超级用户SUPERUSERS')
+    logger.warning('请在.env.prod文件中中配置超级用户SUPERUSERS')
 
 try:
     NICKNAME: str = list(DRIVER.config.nickname)[0]
@@ -33,23 +33,14 @@ logo = """<g>
 async def startup():
     logger.opt(colors=True).info(logo)
     await database.connect()
-    from LittlePaimon import web
-    # from LittlePaimon import admin
+    from LittlePaimon import admin
     # await migrate_database()
-    # await check_resource()
+    await check_resource()
 
 
 DRIVER.on_shutdown(database.disconnect)
-# load_plugin('LittlePaimon.plugins.Mihoyo_bbs')
-# load_plugin('LittlePaimon.plugins.tools')
-# load_plugin('LittlePaimon.plugins.Chat')
-load_plugin('LittlePaimon.plugins.Paimon_MonthInfo')
-load_plugin('LittlePaimon.plugins.Paimon_Info')
-# load_plugin('LittlePaimon.plugins.Paimon_Abyss')
-# load_plugin('LittlePaimon.plugins.Paimon_Bind')
-
-# load_plugin('LittlePaimon.manager.bot_manager')
-# load_plugin('LittlePaimon.manager.plugin_manager')
-# load_plugin('LittlePaimon.manager.database_manager')
-# load_plugin('LittlePaimon.manager.alias_manager')
-# load_plugins(str(Path(__file__).parent / 'plugins'))
+load_plugin('LittlePaimon.manager.bot_manager')
+load_plugin('LittlePaimon.manager.plugin_manager')
+load_plugin('LittlePaimon.manager.database_manager')
+load_plugin('LittlePaimon.manager.alias_manager')
+load_plugins(str(Path(__file__).parent / 'plugins'))
