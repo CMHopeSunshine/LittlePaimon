@@ -2,8 +2,8 @@ from typing import Union
 
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import Message, MessageEvent, GroupMessageEvent, PrivateMessageEvent
-from nonebot.params import Arg
 from nonebot.plugin import PluginMetadata
+from nonebot.typing import T_State
 
 from LittlePaimon.database.models import DailyNoteSub
 from LittlePaimon.utils import logger
@@ -39,8 +39,8 @@ ssbq_sub = on_command('ssbq提醒', aliases={'实时便笺提醒', '实时便签
 
 
 @ssbq.handle()
-async def _(event: MessageEvent, players=CommandPlayer(), msg: str = Arg('msg')):
-    if msg:
+async def _(event: MessageEvent, state: T_State, players=CommandPlayer()):
+    if state.get('clear_msg'):
         await ssbq.finish('开启提醒请用[ssbq提醒开启|关闭 提醒内容+数量]指令，比如[ssbq提醒开启树脂150]')
     logger.info('原神实时便签', '开始执行查询')
     result = Message()

@@ -1,7 +1,7 @@
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import Message, MessageEvent, MessageSegment
 from nonebot.adapters.onebot.v11.helpers import HandleCancellation
-from nonebot.params import Arg, ArgPlainText, CommandArg
+from nonebot.params import ArgPlainText, CommandArg
 from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
 
@@ -208,7 +208,8 @@ running_udi = []
 
 
 @update_info.handle()
-async def _(event: MessageEvent, uid=CommandUID(), msg: str = Arg('msg')):
+async def _(event: MessageEvent, state: T_State, uid=CommandUID()):
+    msg = state['clear_msg']
     if not freq_limiter.check(f'udi{uid}'):
         await update_info.finish(f'UID{uid}: 更新信息冷却剩余{freq_limiter.left(f"udi{uid}")}秒\n', at_sender=True)
     elif f'{event.user_id}-{uid}' in running_udi:

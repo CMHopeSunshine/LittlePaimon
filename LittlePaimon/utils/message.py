@@ -118,8 +118,6 @@ def CommandPlayer(limit: int = 3, only_cn: bool = True) -> List[Player]:
                     info += f'{u}尚未提供uid\n'
             if info:
                 await matcher.finish(info, at_sender=True)
-            else:
-                state['main_user'] = users[0]
         else:
             user = users[0]
             uids: List[str] = []
@@ -132,13 +130,12 @@ def CommandPlayer(limit: int = 3, only_cn: bool = True) -> List[Player]:
             extra_info = replace_all(extra_info, uids)
             for uid in uids:
                 query_list.append(Player(user_id=user, uid=uid))
-            state['main_user'] = str(event.user_id)
 
         if len(query_list) > limit:
             query_list = query_list[:limit]
         if only_cn:
             query_list = [q for q in query_list if q.uid.startswith(('1', '2', '5'))]
-        state['msg'] = extra_info.strip()
+        state['clear_msg'] = extra_info.strip()
         return query_list
 
     return Depends(_player)
@@ -161,31 +158,35 @@ def CommandUID(only_cn: bool = True) -> str:
             uid = uid
         else:
             await matcher.finish('第一次查询请把UID给我哦')
-        state['msg'] = event.message.extract_plain_text().replace(uid, '')
+        state['clear_msg'] = event.message.extract_plain_text().replace(uid, '')
         return uid
 
     return Depends(_uid)
 
 
-def CommandCharacter(limit: int = 3, replace_uid: bool = True) -> List[str]:
+def CommandCharacter(limit: int = 3) -> List[str]:
     """
     从命令中提取出原神的角色，需配合CommandUID使用
     :param limit: 限制个数
-    :param replace_uid: 是否先移除msg中的uid
     :return: 角色名列表
     """
 
-    async def _character(matcher: Matcher, state: T_State, event: MessageEvent):
-        msg = state['_prefix']['command_arg'].extract_plain_text().strip() if not replace_uid else state['msg']
-        user_id = state.get('main_user', str(event.user_id))
-        if not msg:
+    async def _character(matcher: Matcher, state: T_State, event: MessageEvent, msg: Message = CommandArg()):
+        # 获取艾特列表的第一个人或是事件触发者的qq
+        user_id = users[0] if (users := [str(seg.data['qq']) for seg in msg['at']]) else str(event.user_id)
+        # 去除消息中的uid
+        msg = re.sub(r'[125]\d{8}', '', msg.extract_plain_text())
+        # 没有消息的话，就随机选择一个角色
+        if not (msg := msg.strip()):
             return [random.choice(CHARACTERS)]
         character_list = []
-        characters = msg.split(' ')
-        for character_name in characters:
+        # 按空格分割消息
+        for character_name in msg.split(' '):
+            # 如果有设置别名
             if character_match := await PlayerAlias.get_or_none(user_id=user_id, alias=character_name):
                 character_list.append(character_match.character)
                 msg.replace(character_name, '')
+            # 如果在预设别名列表
             elif character_name in ['老婆', '老公', '女儿', '儿子', '爸爸', '妈妈']:
                 if character_name == '老公':
                     character_list.append(random.choice(MALE_CHARACTERS + BOY_CHARACTERS))
@@ -200,12 +201,13 @@ def CommandCharacter(limit: int = 3, replace_uid: bool = True) -> List[str]:
                 elif character_name == '妈妈':
                     character_list.append(random.choice(FEMALE_CHARACTERS))
                 msg.replace(character_name, '')
+            # 如果有匹配别名
             elif character_match := get_match_alias(character_name, '角色', True):
                 character_list.append(list(character_match.keys())[0])
                 msg.replace(character_name, '')
+        # 没有匹配到角色时，结束事件
         if not character_list:
             await matcher.finish(f'没有名为{msg}的角色！')
-        state['msg'] = msg
         if len(character_list) > limit:
             character_list = character_list[:limit]
         return character_list

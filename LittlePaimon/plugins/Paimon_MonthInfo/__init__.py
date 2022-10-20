@@ -2,9 +2,9 @@ import datetime
 import re
 
 from nonebot import on_command
-from nonebot.params import Arg
 from nonebot.adapters.onebot.v11 import Message, MessageEvent
 from nonebot.plugin import PluginMetadata
+from nonebot.typing import T_State
 
 from LittlePaimon.utils.message import CommandPlayer
 from .handler import handle_myzj
@@ -29,7 +29,8 @@ myzj = on_command('myzj', aliases={'札记信息', '每月札记'}, priority=10,
 
 
 @myzj.handle()
-async def myzj_handler(event: MessageEvent, players=CommandPlayer(), msg: str = Arg('msg')):
+async def myzj_handler(event: MessageEvent, state: T_State, players=CommandPlayer()):
+    msg = state['clear_msg']
     month_now = datetime.datetime.now().month
     if month_now == 1:
         month_list = ['11', '12', '1']

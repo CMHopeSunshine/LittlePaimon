@@ -1,6 +1,6 @@
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import Message, MessageEvent, GroupMessageEvent
-from nonebot.params import Arg
+from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 
 from LittlePaimon.utils import logger
@@ -42,9 +42,9 @@ abyss_team = on_command('深渊配队', aliases={'配队推荐', '深渊阵容'}
 
 
 @sy.handle()
-async def _(event: MessageEvent, players=CommandPlayer(), msg: str = Arg('msg')):
+async def _(event: MessageEvent, players=CommandPlayer(), msg: Message = CommandArg()):
     logger.info('原神深渊战报', '开始执行')
-    abyss_index = 2 if any(i in msg for i in ['上', 'last']) else 1
+    abyss_index = 2 if any(i in msg.extract_plain_text() for i in ['上', 'last']) else 1
     msg = Message()
     for player in players:
         logger.info('原神深渊战报', '➤ ', {'用户': players[0].user_id, 'UID': players[0].uid})

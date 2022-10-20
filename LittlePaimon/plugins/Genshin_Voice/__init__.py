@@ -89,7 +89,7 @@ async def _(event: Union[GroupMessageEvent, PrivateMessageEvent], lang=CommandLa
 
 
 @voice_list.handle()
-async def _(event: Union[GroupMessageEvent, PrivateMessageEvent], character=CommandCharacter(1, False), lang=CommandLang()):
+async def _(event: Union[GroupMessageEvent, PrivateMessageEvent], character=CommandCharacter(1), lang=CommandLang()):
     result = await get_voice_list(character[0], lang)
     await get_voice.finish(result)
 

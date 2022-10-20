@@ -33,14 +33,23 @@ logo = """<g>
 async def startup():
     logger.opt(colors=True).info(logo)
     await database.connect()
-    from LittlePaimon import admin
-    await migrate_database()
-    await check_resource()
+    from LittlePaimon import web
+    # from LittlePaimon import admin
+    # await migrate_database()
+    # await check_resource()
 
 
 DRIVER.on_shutdown(database.disconnect)
-load_plugin('LittlePaimon.manager.bot_manager')
-load_plugin('LittlePaimon.manager.plugin_manager')
-load_plugin('LittlePaimon.manager.database_manager')
-load_plugin('LittlePaimon.manager.alias_manager')
-load_plugins(str(Path(__file__).parent / 'plugins'))
+# load_plugin('LittlePaimon.plugins.Mihoyo_bbs')
+# load_plugin('LittlePaimon.plugins.tools')
+# load_plugin('LittlePaimon.plugins.Chat')
+load_plugin('LittlePaimon.plugins.Paimon_MonthInfo')
+load_plugin('LittlePaimon.plugins.Paimon_Info')
+# load_plugin('LittlePaimon.plugins.Paimon_Abyss')
+# load_plugin('LittlePaimon.plugins.Paimon_Bind')
+
+# load_plugin('LittlePaimon.manager.bot_manager')
+# load_plugin('LittlePaimon.manager.plugin_manager')
+# load_plugin('LittlePaimon.manager.database_manager')
+# load_plugin('LittlePaimon.manager.alias_manager')
+# load_plugins(str(Path(__file__).parent / 'plugins'))
