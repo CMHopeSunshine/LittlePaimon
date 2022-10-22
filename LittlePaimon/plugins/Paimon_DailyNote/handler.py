@@ -6,7 +6,8 @@ import time
 
 import pytz
 from nonebot import get_bot
-from nonebot.params import Arg, Depends
+from nonebot.params import CommandArg, Depends
+from nonebot.adapters.onebot.v11 import Message
 
 from LittlePaimon.database.models import DailyNoteSub, Player
 from LittlePaimon.utils import logger, scheduler
@@ -16,7 +17,8 @@ from .draw import draw_daily_note_card
 
 
 def SubList() -> dict:
-    async def _sub(msg: str = Arg('msg')):
+    async def _sub(msg: Message = CommandArg()):
+        msg = msg.extract_plain_text().strip()
         subs = {}
         if s := re.findall(r'(树脂|体力|尘歌壶|银币|钱币|壶币)(\d*)', msg):
             for name, num in s:
