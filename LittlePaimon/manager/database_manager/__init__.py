@@ -1,4 +1,5 @@
 import datetime
+from LittlePaimon.config import YSC_TEMP_IMG_PATH
 from LittlePaimon.utils import scheduler, logger
 from LittlePaimon.database.models import GuessVoiceRank, PluginStatistics, DailyNoteSub, CookieCache, PublicCookie
 
@@ -20,3 +21,7 @@ async def _():
     if now.weekday() == 0:
         logger.info('原神猜语音', '清空每周排行榜')
         await GuessVoiceRank.all().delete()
+
+    if YSC_TEMP_IMG_PATH.exists():
+        YSC_TEMP_IMG_PATH.unlink()
+    YSC_TEMP_IMG_PATH.mkdir(parents=True, exist_ok=True)

@@ -1,12 +1,14 @@
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import Message, MessageEvent, MessageSegment
 from nonebot.adapters.onebot.v11.helpers import HandleCancellation
+from nonebot.rule import Rule
 from nonebot.params import ArgPlainText, CommandArg
 from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
 
 from LittlePaimon import NICKNAME
 from LittlePaimon.database.models import PlayerAlias
+from LittlePaimon.config import YSC_TEMP_IMG_PATH
 from LittlePaimon.utils import logger
 from LittlePaimon.utils.message import CommandPlayer, CommandCharacter, CommandUID
 from LittlePaimon.utils.genshin import GenshinInfoManager
@@ -28,6 +30,11 @@ __plugin_meta__ = PluginMetadata(
         'priority': 1,
     }
 )
+
+
+def has_raw_rule(event: MessageEvent) -> bool:
+    return bool(event.reply and (YSC_TEMP_IMG_PATH / f'{event.reply.message_id}.jpg').exists())
+
 
 ys = on_command('ys', aliases={'原神卡片', '个人卡片'}, priority=10, block=True, state={
     'pm_name':        'ys',
@@ -76,6 +83,12 @@ show_alias = on_command('查看别名', priority=10, block=True, state={
     'pm_description': '查看你已设置的角色别名',
     'pm_usage':       '查看别名',
     'pm_priority':    9
+})
+raw_img_cmd = on_command('原图', priority=10, block=True, rule=Rule(has_raw_rule), state={
+    'pm_name':        'ysc原图',
+    'pm_description': '获取ysc指令卡片中的原神同人图',
+    'pm_usage':       '(回复ysc消息) 原图',
+    'pm_priority':    10
 })
 
 
@@ -139,6 +152,7 @@ async def _(event: MessageEvent, players=CommandPlayer(2)):
 async def _(event: MessageEvent, players=CommandPlayer(only_cn=False), characters=CommandCharacter()):
     logger.info('原神角色卡片', '开始执行')
     msg = Message()
+    temp_img = None
     if len(players) == 1:
         # 当查询对象只有一个时，查询所有角色
         gim = GenshinInfoManager(players[0].user_id, players[0].uid)
@@ -150,7 +164,7 @@ async def _(event: MessageEvent, players=CommandPlayer(only_cn=False), character
                 logger.info('原神角色卡片', '➤➤', {'角色': character}, '没有该角色信息，发送随机图', True)
                 msg += MessageSegment.image(f'http://img.genshin.cherishmoon.fun/{character}')
             else:
-                img = await draw_chara_card(character_info)
+                img, temp_img = await draw_chara_card(character_info)
                 logger.info('原神角色卡片', '➤➤', {'角色': character}, '制图完成', True)
                 msg += img
     else:
@@ -164,10 +178,18 @@ async def _(event: MessageEvent, players=CommandPlayer(only_cn=False), character
                 logger.info('原神角色卡片', '➤➤', {'角色': characters[0]}, '没有该角色信息，发送随机图', True)
                 msg += MessageSegment.image(f'http://img.genshin.cherishmoon.fun/{characters[0]}')
             else:
-                img = await draw_chara_card(character_info)
+                img, temp_img = await draw_chara_card(character_info)
                 logger.info('原神角色卡片', '➤➤', {'角色': characters[0]}, '制图完成', True)
                 msg += img
-    await ysd.finish(msg, at_sender=True)
+    send_result = await ysd.send(msg, at_sender=True)
+    if temp_img:
+        temp_img.convert('RGB').save(YSC_TEMP_IMG_PATH / f'{send_result["message_id"]}.jpg', )
+
+
+@raw_img_cmd.handle()
+async def _(event: MessageEvent):
+    with open(YSC_TEMP_IMG_PATH / f'{event.reply.message_id}.jpg', 'rb') as f:
+        await raw_img_cmd.finish(MessageSegment.image(f.read()))
 
 
 @ysd.handle()
@@ -240,7 +262,8 @@ async def _(event: MessageEvent, state: T_State, msg: Message = CommandArg()):
         state['alias'] = Message(msg[1])
 
 
-@add_alias.got('alias', prompt=Message.template('你想把{chara}设置为你的谁呢？'), parameterless=[HandleCancellation(f'好吧，有事再找{NICKNAME}吧')])
+@add_alias.got('alias', prompt=Message.template('你想把{chara}设置为你的谁呢？'),
+               parameterless=[HandleCancellation(f'好吧，有事再找{NICKNAME}吧')])
 async def _(event: MessageEvent, chara: str = ArgPlainText('chara'), alias: str = ArgPlainText('alias')):
     await PlayerAlias.update_or_create(user_id=str(event.user_id), alias=alias, defaults={'character': chara})
     await add_alias.finish(f'设置成功，{NICKNAME}知道{chara}是你的{alias}啦..')
@@ -251,12 +274,14 @@ async def _(event: MessageEvent, state: T_State, msg: Message = CommandArg()):
     if msg:
         state['alias'] = msg
     elif aliases := await PlayerAlias.filter(user_id=str(event.user_id)).all():
-        state['msg'] = '你已设置以下别名:\n' + '\n'.join([f'{i.alias} -> {i.character}' for i in aliases]) + '\n请输入你想删除的别名或发送"全部"删除全部别名'
+        state['msg'] = '你已设置以下别名:\n' + '\n'.join(
+            [f'{i.alias} -> {i.character}' for i in aliases]) + '\n请输入你想删除的别名或发送"全部"删除全部别名'
     else:
         await delete_alias.finish('你还没有设置任何别名哦')
 
 
-@delete_alias.got('alias', prompt=Message.template('{msg}'), parameterless=[HandleCancellation(f'好吧，有事再找{NICKNAME}吧')])
+@delete_alias.got('alias', prompt=Message.template('{msg}'),
+                  parameterless=[HandleCancellation(f'好吧，有事再找{NICKNAME}吧')])
 async def _(event: MessageEvent, msg: str = ArgPlainText('alias')):
     if msg == '全部':
         await PlayerAlias.filter(user_id=str(event.user_id)).delete()

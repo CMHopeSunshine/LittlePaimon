@@ -51,5 +51,10 @@ GREET_CONFIG = Path() / 'config' / 'paimon_greet.yml'
 GREET_CONFIG_DEFAULT = Path() / 'config' / 'paimon_greet_default.yml'
 # 群聊学习配置文件
 LEARNING_CHAT_CONFIG = Path() / 'config' / 'learning_chat.yml'
+# 米游社帖子订阅文件，未用上
+MIHOYO_BBS_POST_PATH = Path() / 'data' / 'LittlePaimon' / '米游社帖子订阅.json'
+# ysc原图临时目录
+YSC_TEMP_IMG_PATH = Path() / 'data' / 'LittlePaimon' / 'temp_img'
+YSC_TEMP_IMG_PATH.mkdir(parents=True, exist_ok=True)
 
 

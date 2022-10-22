@@ -29,7 +29,7 @@ talent_color = [('#d5f2b6', '#6d993d'), ('#d5f2b6', '#6d993d'), ('#d5f2b6', '#6d
 async def draw_chara_card(info: Character):
     img = await aiorequests.get_img(f'http://img.genshin.cherishmoon.fun/{info.name}', mode='RGBA')
     if img == 'No Such File':
-        return '暂时没有这个角色的同人图哦~'
+        return '暂时没有这个角色的同人图哦~', None
     # 新建卡片
     card = PMImage(size=(385, 500), color=(0, 0, 0, 0), mode='RGBA')
     await card.draw_rounded_rectangle2((0, 0), (card.width, card.height), 80, (0, 0, 0, 153), ['ur'])
@@ -133,6 +133,7 @@ async def draw_chara_card(info: Character):
         per = 1 / ((card.width / img.width) / 0.4)
 
     await card.resize(per)
+    raw_img = img.copy()
 
     img.alpha_composite(card.image, (0, img.height - card.height))
-    return MessageBuild.Image(img, mode='RGB')
+    return MessageBuild.Image(img, mode='RGB'), raw_img
