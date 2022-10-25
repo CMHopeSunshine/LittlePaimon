@@ -7,15 +7,15 @@
 <p align="center">
     <a href="https://cdn.jsdelivr.net/gh/CMHopeSunshine/LittlePaimon@master/LICENSE"><img src="https://img.shields.io/github/license/CMHopeSunshine/LittlePaimon" alt="license"></a>
     <img src="https://img.shields.io/badge/Python-3.8+-yellow" alt="python">
-    <img src="https://img.shields.io/badge/Version-3.0.0beta8-green" alt="version">
+    <img src="https://img.shields.io/badge/Version-3.0.0rc1-green" alt="version">
     <a href="https://qun.qq.com/qqweb/qunpro/share?_wv=3&_wwv=128&inviteCode=MmWrI&from=246610&biz=ka"><img src="https://img.shields.io/badge/QQ频道交流-尘世闲游-blue?style=flat-square" alt="QQ guild"></a>
 </p>
 
 ## 丨简介
 
-原神多功能机器人，通过米游社接口查询uid的游戏信息，并提供WIKI查询和各种各样的好玩的功能。
 
-该分支正在积极**开发中**，尚未发布正式版本，欢迎帮助测试和提出宝贵意见！文档正在编写~~摸鱼~~中。
+原神多功能机器人，查询游戏信息、图鉴攻略、树脂提醒等等，以及各种各样的好玩的功能，不仅仅是原神。
+
 
 ## | 功能示例
 <details>
@@ -60,10 +60,18 @@
 
 ## 丨文档
 
-部署教程、使用和配置等请看[文档](https://docs.paimon.cherishmoon.fun/)，文档仍在编写中，部分尚未完善。\
+部署教程、使用和配置等请看[文档](https://docs.paimon.cherishmoon.fun/)，文档仍在编写中，部分尚未完善。
+
 文档地址：https://docs.paimon.cherishmoon.fun/
 
 ## | TODO
-- [ ] Web管理面板 <img src="https://progress-bar.dev/15/" alt="bar">
+- [x] Web管理面板
+  - [ ] 群聊学习配置 <img src="https://progress-bar.dev/75/" alt="bar">
+  - [ ] 实时日志和Shell <img src="https://progress-bar.dev/30/" alt="bar">
+  - [ ] 角色数据管理
+  - [ ] 功能调用统计
 - [ ] 群聊学习优化 <img src="https://progress-bar.dev/75/" alt="bar">
-- [ ] 角色数据优化 <img src="https://progress-bar.dev/1/" alt="bar">
+- [ ] 米游社up主订阅 <img src="https://progress-bar.dev/25/" alt="bar">
+- [ ] 各种文案提示支持自定义  <img src="https://progress-bar.dev/25/" alt="bar">
+- [ ] 角色数据优化
+- [ ] 更新机器人方式优化

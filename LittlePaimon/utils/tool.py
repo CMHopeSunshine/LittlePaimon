@@ -1,5 +1,8 @@
 import asyncio
+import datetime
+import functools
 import hashlib
+import inspect
 import time
 from collections import defaultdict
 from LittlePaimon.utils import aiorequests, logger
@@ -45,6 +48,37 @@ class FreqLimiter:
 freq_limiter = FreqLimiter()
 
 
+def cache(ttl=datetime.timedelta(hours=1)):
+    """
+    缓存装饰器
+    :param ttl: 过期时间
+    """
+    def wrap(func):
+        cache_data = {}
+
+        @functools.wraps(func)
+        async def wrapped(*args, **kw):
+            nonlocal cache_data
+            bound = inspect.signature(func).bind(*args, **kw)
+            bound.apply_defaults()
+            ins_key = '|'.join([f'{k}_{v}' for k, v in bound.arguments.items()])
+            default_data = {"time": None, "value": None}
+            data = cache_data.get(ins_key, default_data)
+            now = datetime.datetime.now()
+            if not data['time'] or now - data['time'] > ttl:
+                try:
+                    data['value'] = await func(*args, **kw)
+                    data['time'] = now
+                    cache_data[ins_key] = data
+                except Exception as e:
+                    raise e
+            return data['value']
+
+        return wrapped
+
+    return wrap
+
+
 async def check_resource():
     logger.info('资源检查', '开始检查资源')
     resource_list = await aiorequests.get('http://img.genshin.cherishmoon.fun/resources/resources_list')
@@ -59,7 +93,8 @@ async def check_resource():
                 file_path.unlink()
         flag = True
         try:
-            await aiorequests.download(url=f'http://img.genshin.cherishmoon.fun/resources/{resource["path"]}', save_path=file_path)
+            await aiorequests.download(url=f'http://img.genshin.cherishmoon.fun/resources/{resource["path"]}',
+                                       save_path=file_path)
             await asyncio.sleep(0.5)
         except Exception as e:
             logger.warning('资源检查', f'下载<m>{resource.split("/")[-1]}</m>时<r>出错: {e}</r>')
@@ -67,5 +102,3 @@ async def check_resource():
         logger.info('资源检查', '<g>资源下载完成</g>')
     else:
         logger.info('资源检查', '<g>资源完好，无需下载</g>')
-
-
