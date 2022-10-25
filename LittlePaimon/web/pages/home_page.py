@@ -1,4 +1,4 @@
-from amis import Page, PageSchema, Html, Property, Service
+from amis import Page, PageSchema, Html, Property, Service, Flex, ActionType, LevelEnum, Divider
 from LittlePaimon import __version__
 
 logo = Html(html=f'''
@@ -16,8 +16,22 @@ logo = Html(html=f'''
      target="_blank">文档</a>
 </div>
 <br>
-<br>
 ''')
+
+operation_button = Flex(justify='center', items=[
+        ActionType.Ajax(
+            label='更新',
+            api='/LittlePaimon/api/bot_update',
+            confirmText='该操作将会对Bot进行检查并尝试更新，请在更新完成后重启Bot使更新生效',
+            level=LevelEnum.info
+        ),
+        ActionType.Ajax(
+            label='重启',
+            api='/LittlePaimon/api/bot_restart',
+            confirmText='该操作将会使Bot重启，在完成重启之前，该页面也将无法访问（也可能会弹出报错，可无视），请耐心等待重启',
+            level=LevelEnum.danger
+        )
+])
 
 status = Service(
     api='/LittlePaimon/api/status',
@@ -86,5 +100,5 @@ status = Service(
 # page_detail = Page(title='主页',
 #                    initApi='/LittlePaimon/api/status',
 #                    body=[text, log_button])
-page_detail = Page(title='', body=[logo, status])
+page_detail = Page(title='', body=[logo, operation_button, Divider(), status])
 page = PageSchema(url='/home', label='首页', icon='fa fa-home', isDefaultPage=True, schema=page_detail)

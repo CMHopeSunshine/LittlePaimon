@@ -18,25 +18,9 @@ from .config_manage import page as config_page
 #     ]
 # )
 
-action_button = DropDownButton(
-    label='操作',
-    trigger='hover',
-    buttons=[
-        ActionType.Ajax(
-            label='更新',
-            api='/LittlePaimon/api/bot_update',
-            confirmText='该操作将会对Bot进行检查并尝试更新，请在更新完成后重启Bot使更新生效',
-        ),
-        ActionType.Ajax(
-            label='重启',
-            api='/LittlePaimon/api/bot_restart',
-            confirmText='该操作将会使Bot重启，在完成重启之前，该页面也将无法访问，请耐心等待重启',
-        )
-    ]
-)
 github_logo = Tpl(className='w-full',
                             tpl='<div class="flex justify-between"><div></div><div><a href="https://github.com/CMHopeSunshine/LittlePaimon" target="_blank" title="Copyright"><i class="fa fa-github fa-2x"></i></a></div></div>')
-header = Flex(className='w-full', justify='flex-end', alignItems='flex-end', items=[action_button, github_logo])
+header = Flex(className='w-full', justify='flex-end', alignItems='flex-end', items=[github_logo])
 
 
 admin_app = App(brandName='LittlePaimon',

@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 from fastapi import APIRouter
 
 from LittlePaimon.database.models import PluginPermission
-from LittlePaimon.manager.plugin_manager import plugin_manager
+from LittlePaimon.manager.plugin_manager import plugin_manager, cache_help
 from LittlePaimon.manager.plugin_manager.model import PluginInfo, Config
 
 from .utils import authentication
@@ -30,6 +30,7 @@ async def get_plugins():
 async def set_plugin_status(data: dict):
     module_name = data.get('plugin')
     status = data.get('status')
+    cache_help.clear()
     await PluginPermission.filter(name=module_name).update(status=status)
     return {'status': 0, 'msg': f'成功设置{module_name}插件状态为{status}'}
 
@@ -73,6 +74,7 @@ async def set_plugin_bans(data: dict):
                     status=False)
         else:
             await PluginPermission.filter(name=name, session_type='user', session_id=int(ban)).update(status=False)
+    cache_help.clear()
     return {
         'status': 0,
         'msg':    '插件权限设置成功'
@@ -83,6 +85,7 @@ async def set_plugin_bans(data: dict):
 async def set_plugin_detail(plugin_info: PluginInfo):
     plugin_manager.data[plugin_info.module_name] = plugin_info
     plugin_manager.save()
+    cache_help.clear()
     return {
         'status': 0,
         'msg':    '插件信息设置成功'
