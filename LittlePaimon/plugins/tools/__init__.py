@@ -11,7 +11,7 @@ from LittlePaimon.utils.brower import screenshot
 async def permission_check(event: MessageEvent) -> bool:
     if pm.config.screenshot_enable:
         return True
-    return event.user_id not in SUPERUSERS and event.sender.role not in ['admin', 'owner']
+    return event.user_id not in SUPERUSERS
 
 
 __plugin_meta__ = PluginMetadata(

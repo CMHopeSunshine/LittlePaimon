@@ -6,15 +6,15 @@ authors = ["惜月 <277073121@qq.com>"]
 license = "AGPL"
 
 [[tool.poetry.source]]
-name = "ali"
+name = "tsinghua"
 default = true
-url = "https://mirrors.aliyun.com/pypi/simple/"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
 
 [tool.poetry.dependencies]
 python = "^3.8"
-nonebot2 = "^2.0.0-beta.5"
+nonebot2 = ">=2.0.0-beta.5"
 nonebot-adapter-onebot = "^2.1"
-nonebot-plugin-apscheduler = "^0.1.2"
+nonebot-plugin-apscheduler = "^0.2.0"
 nonebot-plugin-htmlrender = "^0.1.1"
 beautifulsoup4 = "^4.10.0"
 httpx = "^0.23.0"
@@ -26,13 +26,14 @@ tqdm = "^4.64.0"
 "ruamel.yaml" = "^0.17.21"
 ujson = "^5.4.0"
 expandvars = "^0.9.0"
-pywebio = "^1.6.2"
 jieba = "^0.42.1"
 scipy = "^1.9.1"
 scikit-learn = "^1.1.2"
 shapely = "^1.8.4"
 gitpython = "^3.1.27"
 pypinyin = "^0.47.1"
+python-jose = "^3.3.0"
+amis-python = "^1.0.5"
 
 [tool.poetry.dev-dependencies]
 nb-cli = "^0.6.7"

@@ -7,7 +7,7 @@ from LittlePaimon.utils.migration import migrate_database
 from LittlePaimon.utils.tool import check_resource
 
 DRIVER = get_driver()
-__version__ = '3.0.0beta9'
+__version__ = '3.0.0rc1'
 
 try:
     SUPERUSERS: List[int] = [int(s) for s in DRIVER.config.superusers]
@@ -33,7 +33,7 @@ logo = """<g>
 async def startup():
     logger.opt(colors=True).info(logo)
     await database.connect()
-    from LittlePaimon import admin
+    from LittlePaimon import web
     # await migrate_database()
     await check_resource()
 

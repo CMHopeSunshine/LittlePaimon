@@ -71,3 +71,7 @@ class Config(BaseModel):
     screenshot_enable: bool = Field(True, alias='启用网页截图权限')
 
     guess_voice_time: int = Field(30, alias='原神猜语音时间')
+
+    admin_enable: bool = Field(True, alias='启用Web端')
+    admin_password: str = Field('admin', alias='Web端管理员密码')
+    secret_key: str = Field('49c294d32f69b732ef6447c18379451ce1738922a75cd1d4812ef150318a2ed0', alias='Web端token密钥')
