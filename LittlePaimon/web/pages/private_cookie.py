@@ -6,7 +6,7 @@ add_button = ActionType.Dialog(label='添加私人Cookie',
                                dialog=Dialog(title='添加私人Cookie',
                                              body=Form(api='post:/LittlePaimon/api/save_private_cookie',
                                                        body=[InputNumber(name='user_id', label='QQ号', required=True),
-                                                             Textarea(name='cookie', label='Cookie', required=True)])))
+                                                             Textarea(name='cookie', label='Cookie', required=True,showCounter=False)])))
 delete_button = ActionType.Ajax(label='删除', level=LevelEnum.danger,
                                 confirmText='确认删除该私人Cookie',
                                 api='delete:/LittlePaimon/api/delete_private_cookie?id=${id}')
@@ -21,7 +21,7 @@ detail_button = ActionType.Dialog(label='详情',
                                                           InputNumber(name='user_id', label='QQ号', required=True),
                                                           Static(name='uid', label='UID'),
                                                           Static(name='mys_id', label='米游社ID'),
-                                                          Textarea(name='cookie', label='Cookie', required=True),
+                                                          Textarea(name='cookie', label='Cookie', required=True,showCounter=False),
                                                           Static(name='stoken', label='Stoken')]),
                                                 actions=[cancel_action_button, save_action_button]))
 table = TableCRUD(mode='table',

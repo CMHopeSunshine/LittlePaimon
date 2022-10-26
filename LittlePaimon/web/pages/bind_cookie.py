@@ -7,7 +7,7 @@ api = AmisAPI(method='post', url='/LittlePaimon/api/bind_cookie')
 collapse = Collapse(header='Cookie说明及获取方法', body=Html(html=collapse_text))
 form = Form(title='绑定Cookie', api=api, body=[
     InputNumber(name='user_id', label='QQ号', required=True),
-    Textarea(name='cookie', label='Cookie', required=True, clearable=True),
+    Textarea(name='cookie', label='Cookie', required=True, clearable=True,showCounter=False),
     # Checkboxes(name='function', label='同时开启以下功能', options=[
     #     {'label': '米游社自动签到', 'value': 'sign'},
     #     {'label': '米游币自动获取', 'value': 'coin'}

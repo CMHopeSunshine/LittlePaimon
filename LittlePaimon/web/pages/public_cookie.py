@@ -5,7 +5,7 @@ add_button = ActionType.Dialog(label='添加公共Cookie',
                                level=LevelEnum.primary,
                                dialog=Dialog(title='添加公共Cookie',
                                              body=Form(api='post:/LittlePaimon/api/add_public_cookie',
-                                                       body=[Textarea(name='cookie', label='Cookie', required=True)])))
+                                                       body=[Textarea(name='cookie', label='Cookie', required=True,showCounter=False)])))
 delete_button = ActionType.Ajax(label='删除', level=LevelEnum.danger,
                                 confirmText='确认删除该公共Cookie',
                                 api='delete:/LittlePaimon/api/delete_public_cookie?id=${id}')
