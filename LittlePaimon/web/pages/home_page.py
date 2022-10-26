@@ -27,6 +27,7 @@ operation_button = Flex(justify='center', items=[
         ),
         ActionType.Ajax(
             label='重启',
+            className='m-l',
             api='/LittlePaimon/api/bot_restart',
             confirmText='该操作将会使Bot重启，在完成重启之前，该页面也将无法访问（也可能会弹出报错，可无视），请耐心等待重启',
             level=LevelEnum.danger

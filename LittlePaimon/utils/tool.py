@@ -97,7 +97,7 @@ async def check_resource():
                                        save_path=file_path)
             await asyncio.sleep(0.5)
         except Exception as e:
-            logger.warning('资源检查', f'下载<m>{resource.split("/")[-1]}</m>时<r>出错: {e}</r>')
+            logger.warning('资源检查', f'下载<m>{resource["path"].split("/")[-1]}</m>时<r>出错: {e}</r>')
     if flag:
         logger.info('资源检查', '<g>资源下载完成</g>')
     else:
