@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "LittlePaimon"
-version = "3.0.0beta7"
+version = "3.0.0rc1"
 description = "小派蒙！原神qq群机器人，基于NoneBot2的UID查询、抽卡导出分析、模拟抽卡、实时便签、札记等多功能小助手。"
 authors = ["惜月 <277073121@qq.com>"]
 license = "AGPL"
@@ -12,7 +12,7 @@ url = "https://pypi.tuna.tsinghua.edu.cn/simple"
 
 [tool.poetry.dependencies]
 python = "^3.8"
-nonebot2 = ">=2.0.0-beta.5"
+nonebot2 = "~2.0.0-beta.5"
 nonebot-adapter-onebot = "^2.1"
 nonebot-plugin-apscheduler = "^0.2.0"
 nonebot-plugin-htmlrender = "^0.1.1"
@@ -34,6 +34,7 @@ gitpython = "^3.1.27"
 pypinyin = "^0.47.1"
 python-jose = "^3.3.0"
 amis-python = "^1.0.5"
+psutil = "^5.9.3"
 
 [tool.poetry.dev-dependencies]
 nb-cli = "^0.6.7"

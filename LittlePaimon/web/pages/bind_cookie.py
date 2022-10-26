@@ -1,18 +1,13 @@
-from amis import AmisAPI, Collapse, Form, InputNumber, Textarea, Action, LevelEnum, Divider, Page, Html
+from amis import AmisAPI, Collapse, Form, InputNumber, Textarea, Action, LevelEnum, Divider, Page, Html, Remark
 from LittlePaimon import __version__
 
-
-mk = {
-    "type": "markdown",
-    "value": "**重要提醒**"
-  }
 
 collapse_text = "<h2>重要提醒：</h2>Cookie的作用相当于账号密码，非常重要，如是非可信任的机器人，请勿绑定！！<br><h2>获取方法：</h2>详见<a href='https://docs.qq.com/doc/DQ3JLWk1vQVllZ2Z1'>Cookie获取教程</a>"
 api = AmisAPI(method='post', url='/LittlePaimon/api/bind_cookie')
 collapse = Collapse(header='Cookie说明及获取方法', body=Html(html=collapse_text))
 form = Form(title='绑定Cookie', api=api, body=[
-    InputNumber(name='user_id', label='QQ号', description='在此处输入你要绑定的QQ号', required=True),
-    Textarea(name='cookie', label='Cookie', description='在此处粘贴你的Cookie', required=True, clearable=True),
+    InputNumber(name='user_id', label='QQ号', required=True),
+    Textarea(name='cookie', label='Cookie', required=True, clearable=True),
     # Checkboxes(name='function', label='同时开启以下功能', options=[
     #     {'label': '米游社自动签到', 'value': 'sign'},
     #     {'label': '米游币自动获取', 'value': 'coin'}
