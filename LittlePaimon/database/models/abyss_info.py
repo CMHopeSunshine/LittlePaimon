@@ -6,7 +6,6 @@ from tortoise import fields
 from tortoise.models import Model
 
 from LittlePaimon.utils.alias import get_name_by_id
-from LittlePaimon.utils.files import save_json
 from .player_info import PlayerInfo
 
 
@@ -216,6 +215,8 @@ class AbyssInfo(Model):
         if 'floors' in data and data['floors']:
             info.total_star = 0
             for floor in data['floors']:
+                if floor['index'] not in [9, 10, 11, 12]:
+                    continue
                 floor_info = FloorInfo(index=floor['index'],
                                        is_unlock=floor['is_unlock'],
                                        stars=[l['star'] for l in floor['levels']])
@@ -245,8 +246,7 @@ class AbyssInfo(Model):
                 floor_info.end_times_up = end_times_up
                 floor_info.end_times_down = end_times_down
                 info.floors[floor['index']] = floor_info
-                if floor['index'] in [9, 10, 11, 12]:
-                    info.total_star += sum(int(l['star']) for l in floor['levels'])
+                info.total_star += sum(int(l['star']) for l in floor['levels'])
 
         info.update_time = datetime.datetime.now()
         await info.save()

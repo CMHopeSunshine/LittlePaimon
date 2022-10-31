@@ -1,5 +1,5 @@
 from LittlePaimon import __version__
-from amis import Form, InputText, InputPassword, DisplayModeEnum, Horizontal, Remark, Html, Page, Container, AmisAPI
+from amis import Form, InputText, InputPassword, DisplayModeEnum, Horizontal, Remark, Html, Page, AmisAPI, Wrapper
 
 logo = Html(html=f'''
 <p align="center">
@@ -34,5 +34,5 @@ login_form = Form(api=login_api, title='', body=[
     InputPassword(name='password', label='密码', labelRemark=Remark(content='默认为admin，可以在paimon_config.json中修改')),
     # Switch(name='is_admin', label='身份组', onText='管理员', offText='用户', labelRemark=Remark(content='是否以管理员身份登录'))
 ], mode=DisplayModeEnum.horizontal, horizontal=Horizontal(left=3, right=9, offset=5), redirect='/LittlePaimon/admin')
-body = Container(style={'width': '400px', 'margin': '0 auto'}, body=login_form)
+body = Wrapper(className='w-2/5 mx-auto my-0 m:w-full', body=login_form)
 login_page = Page(title='', body=[logo, body])

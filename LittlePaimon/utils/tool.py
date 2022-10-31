@@ -94,7 +94,7 @@ async def check_resource():
         flag = True
         try:
             await aiorequests.download(url=f'http://img.genshin.cherishmoon.fun/resources/{resource["path"]}',
-                                       save_path=file_path)
+                                       save_path=file_path, exclude_json=resource['path'].split('.')[-1] != 'json')
             await asyncio.sleep(0.5)
         except Exception as e:
             logger.warning('资源检查', f'下载<m>{resource["path"].split("/")[-1]}</m>时<r>出错: {e}</r>')

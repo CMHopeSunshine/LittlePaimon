@@ -18,7 +18,6 @@ from LittlePaimon.config import RESOURCE_BASE_PATH
 from .draw_map import init_map, draw_map, get_full_map
 from .draw_daily_material import draw_material
 
-# from .abyss_rate_draw import draw_rate_rank, draw_teams_rate
 
 __paimon_help__ = {
     'type':  '原神Wiki',
@@ -69,20 +68,6 @@ generate_map = on_command('生成地图', priority=1, block=True, permission=SUP
     'pm_usage':       '生成地图',
     'pm_priority':    11
 })
-
-
-# abyss_rate = on_command('syrate', aliases={'深渊登场率', '深境螺旋登场率', '深渊登场率排行', '深渊排行'}, priority=11, block=True, state={
-#     'pm_name':        '深渊登场率排行',
-#     'pm_description': '查看本期深渊的角色登场率排行',
-#     'pm_usage':       '深渊登场率',
-#     'pm_priority':    9,
-# })
-# abyss_team = on_regex(r'^(深渊|深境螺旋)(?P<floor>上半|下半)阵容(排行|出场率)?$', priority=11, block=True, state={
-#     'pm_name':        '深渊阵容出场率排行',
-#     'pm_description': '查看本期深渊的阵容出场率排行',
-#     'pm_usage':       '深渊<上半|下半>阵容排行',
-#     'pm_priority':    10,
-# })
 
 
 @daily_material.handle()

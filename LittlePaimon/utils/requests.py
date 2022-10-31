@@ -127,14 +127,17 @@ class aiorequests:
         return img
 
     @staticmethod
-    async def download(url: str, save_path: Path):
+    async def download(url: str, save_path: Path, exclude_json: bool = False):
         """
         下载文件(带进度条)
         :param url: url
         :param save_path: 保存路径
+        :param exclude_json: 是否排除json文件
         """
         save_path.parent.mkdir(parents=True, exist_ok=True)
         async with httpx.AsyncClient().stream(method='GET', url=url, follow_redirects=True) as datas:
+            if exclude_json and 'application/json' in str(datas.headers['Content-Type']):
+                raise Exception('file not match type')
             size = int(datas.headers['Content-Length'])
             f = save_path.open('wb')
             async for chunk in tqdm.asyncio.tqdm(iterable=datas.aiter_bytes(1),
