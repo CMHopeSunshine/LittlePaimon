@@ -4,7 +4,7 @@ from collections import defaultdict
 
 import pytz
 from nonebot import get_bot
-from LittlePaimon.database.models import AbyssInfo
+from LittlePaimon.database import AbyssInfo
 from LittlePaimon.utils import aiorequests
 from LittlePaimon.utils.files import load_image
 from LittlePaimon.config import RESOURCE_BASE_PATH

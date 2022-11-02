@@ -13,7 +13,7 @@ from nonebot.params import CommandArg, Depends
 from nonebot.typing import T_State
 
 from LittlePaimon import NICKNAME
-from LittlePaimon.database.models import LastQuery, PrivateCookie, Player, PlayerAlias
+from LittlePaimon.database import LastQuery, PrivateCookie, Player, PlayerAlias
 from LittlePaimon.utils import aiorequests, load_image
 from LittlePaimon.utils.alias import get_match_alias
 from LittlePaimon.utils.image import PMImage

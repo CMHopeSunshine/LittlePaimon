@@ -7,10 +7,10 @@ from nonebot import get_bot
 from collections import defaultdict
 from typing import Tuple, Dict, Any, Optional, Union
 from LittlePaimon import DRIVER
-from LittlePaimon.database.models import MihoyoBBSSub, LastQuery, PrivateCookie
+from LittlePaimon.config import config
+from LittlePaimon.database import MihoyoBBSSub, LastQuery, PrivateCookie
 from LittlePaimon.utils import logger, scheduler, aiorequests
 from LittlePaimon.utils.api import get_mihoyo_private_data, get_sign_reward_list, mihoyo_sign_headers, check_retcode
-from LittlePaimon.manager.plugin_manager import plugin_manager as pm
 from .draw import SignResult, draw_result
 
 SIGN_ACTION_API = 'https://api-takumi.mihoyo.com/event/bbs_sign_reward/sign'
@@ -116,7 +116,7 @@ async def mhy_bbs_sign(user_id: str, uid: str) -> Tuple[SignResult, str]:
     return SignResult.FAIL, f'{uid}签到失败，无法绕过验证码'
 
 
-@scheduler.scheduled_job('cron', hour=pm.config.auto_sign_hour, minute=pm.config.auto_sign_minute,
+@scheduler.scheduled_job('cron', hour=config.auto_sign_hour, minute=config.auto_sign_minute,
                          misfire_grace_time=10)
 async def _():
     await bbs_auto_sign()
@@ -126,7 +126,7 @@ async def bbs_auto_sign():
     """
     指定时间，执行所有米游社原神签到任务， 并将结果分群绘图发送
     """
-    if not pm.config.auto_sign_enable:
+    if not config.auto_sign_enable:
         return
     t = time.time()  # 计时用
     subs = await MihoyoBBSSub.filter(sub_event='米游社原神签到').all()

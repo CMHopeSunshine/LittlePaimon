@@ -12,9 +12,9 @@ from nonebot.params import CommandArg, ArgPlainText, Arg
 from nonebot.typing import T_State
 from nonebot.adapters.onebot.v11 import Bot, Message, MessageEvent, GroupMessageEvent, ActionFailed
 from nonebot.adapters.onebot.v11.helpers import convert_chinese_to_bool
-from LittlePaimon import NICKNAME, DRIVER, SUPERUSERS, __version__
+from LittlePaimon import NICKNAME, DRIVER, __version__
 from LittlePaimon.utils.files import save_json, load_json
-from .handler import check_update, update
+from LittlePaimon.utils.update import check_update, update
 
 __plugin_meta__ = PluginMetadata(
     name='小派蒙管理',

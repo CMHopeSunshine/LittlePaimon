@@ -2,7 +2,7 @@ import asyncio
 from typing import List, Tuple, Optional
 
 from LittlePaimon.config import RESOURCE_BASE_PATH
-from LittlePaimon.database.models import PlayerInfo, Character, PlayerWorldInfo, Weapon, Player
+from LittlePaimon.database import PlayerInfo, Character, PlayerWorldInfo, Weapon, Player
 from LittlePaimon.utils.files import load_image
 from LittlePaimon.utils.alias import get_chara_icon
 from LittlePaimon.utils.image import PMImage, get_qq_avatar, font_manager as fm

@@ -1,10 +1,9 @@
-import jinja2
-from nonebot import require
+from os import getcwd
 
-require("nonebot_plugin_htmlrender")
-from nonebot_plugin_htmlrender import html_to_pic
+import jinja2
 from .event import *
 from datetime import datetime, timedelta
+from LittlePaimon.utils.brower import get_new_page
 
 body = []
 weeks = []
@@ -22,10 +21,10 @@ async def generate_day_schedule(server='cn'):
         d2 = (t + timedelta(days=i)).strftime("%Y-%m-%d")
         """ 分割 [年|月|日]"""
         date_full = str(d2).split("-")
-        current = 'm-events-calendar__table-header-current' if t.strftime("%d") == date_full[2] else ""
+        current = 'm-events-calendar__table-header-current' if t.strftime("%d") == date_full[2] else ''
 
         date = re.search('0\d+', date_full[1]).group(0).replace('0', '') if re.search('0\d+', date_full[1]) else \
-        date_full[1]
+            date_full[1]
 
         week = datetime(int(date_full[0]), int(date_full[1]), int(date_full[2])).isoweekday()
 
@@ -51,4 +50,8 @@ async def generate_day_schedule(server='cn'):
 
     content = await template.render_async(body=body, css_path=template_path, week=weeks)
 
-    return await html_to_pic(content, wait=0, viewport={"width": 600, "height": 10})
+    async with get_new_page(viewport={'width': 600, 'height': 10}) as page:
+        await page.goto(f'file://{getcwd()}')
+        await page.set_content(content, wait_until='networkidle')
+        await page.wait_for_timeout(0.2)
+        return await page.screenshot(full_page=True)

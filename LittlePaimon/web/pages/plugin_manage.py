@@ -1,4 +1,5 @@
-from amis import Form, Transfer, ActionType, Dialog, InputSubForm, DisplayModeEnum, InputText, Textarea, Switch, InputNumber, Alert, Card, Tpl, CardsCRUD, Static, PageSchema, Page
+from amis import Form, Transfer, ActionType, Dialog, InputSubForm, DisplayModeEnum, InputText, Textarea, Switch, \
+    InputNumber, Alert, Card, Tpl, CardsCRUD, Static, PageSchema, Page
 
 # -------------插件使用权限设置------------------
 ban_form = Form(title='',
@@ -45,7 +46,7 @@ command_form = InputSubForm(name='matchers',
                                     InputText(label='命令用法', name='pm_usage', value='${pm_usage}',
                                               description='命令的使用方法，建议不要太长'),
                                     Textarea(label='命令详细描述', name='pm_description', value='${pm_description}',
-                                             description='命令的详细描述，可以用\\n强制换行',showCounter=False),
+                                             description='命令的详细描述，可以用\\n强制换行', showCounter=False),
                                     Switch(label='是否展示', name='pm_show', value='${pm_show}',
                                            description='是否在帮助图中展示该命令'),
                                     InputNumber(label='展示优先级', name='pm_priority', value='${pm_priority}',
@@ -63,9 +64,9 @@ detail_form = Form(title='',
                                  description='插件显示的名称，建议不要过长'),
                        Static(label='插件模块名', name='module_name', value='${module_name}'),
                        Textarea(label='插件描述', name='description', value='${description}', clearable=True,
-                                description='仅用于在本管理页面中显示，不会在帮助图中显示',showCounter=False),
-                       Textarea(label='插件使用说明', name='usage', value='${detail}', clearable=True,
-                                description='会在该插件没有具体命令的使用说明时，显示在帮助图中',showCounter=False),
+                                description='仅用于在本管理页面中显示，不会在帮助图中显示', showCounter=False),
+                       Textarea(label='插件使用说明', name='usage', value='${usage}', clearable=True,
+                                description='会在该插件没有具体命令的使用说明时，显示在帮助图中', showCounter=False),
                        Switch(label='是否展示', name='show', value='${show}',
                               description='是否在帮助图中展示该插件'),
                        InputNumber(label='展示优先级', name='priority', value='${priority}',

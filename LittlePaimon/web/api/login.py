@@ -2,10 +2,10 @@ from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from LittlePaimon import SUPERUSERS
-from LittlePaimon.manager.plugin_manager import plugin_manager
+from LittlePaimon.config import config
 from .utils import create_token
 
-PASSWORD = plugin_manager.config.admin_password
+PASSWORD = config.admin_password
 
 
 class UserModel(BaseModel):

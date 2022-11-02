@@ -7,7 +7,7 @@ from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
 
 from LittlePaimon import NICKNAME
-from LittlePaimon.database.models import PlayerAlias
+from LittlePaimon.database import PlayerAlias
 from LittlePaimon.config import YSC_TEMP_IMG_PATH
 from LittlePaimon.utils import logger
 from LittlePaimon.utils.message import CommandPlayer, CommandCharacter, CommandUID

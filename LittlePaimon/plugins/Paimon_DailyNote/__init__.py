@@ -5,7 +5,7 @@ from nonebot.adapters.onebot.v11 import Message, MessageEvent, GroupMessageEvent
 from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
 
-from LittlePaimon.database.models import DailyNoteSub
+from LittlePaimon.database import DailyNoteSub
 from LittlePaimon.utils import logger
 from LittlePaimon.utils.message import CommandPlayer, CommandUID, CommandSwitch
 from .handler import SubList, get_subs, handle_ssbq

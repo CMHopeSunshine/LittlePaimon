@@ -4,9 +4,9 @@ from typing import Optional
 from fastapi import Header, HTTPException, Depends
 from jose import jwt
 from LittlePaimon import SUPERUSERS
-from LittlePaimon.manager.plugin_manager import plugin_manager
+from LittlePaimon.config import config
 
-SECRET_KEY = plugin_manager.config.secret_key
+SECRET_KEY = config.secret_key
 ALGORITHM = 'HS256'
 TOKEN_EXPIRE_MINUTES = 30
 

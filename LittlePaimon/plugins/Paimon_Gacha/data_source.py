@@ -124,14 +124,9 @@ def get_once_data(uid: int, gacha_data: dict):
         user_data["抽卡数据"][f"{rank}星出货数"] += 1
         if gacha_data['gacha_type'] != 200:
             user_data["抽卡数据"][f"{pool_str}池{rank}星下次是否为up"] = not is_up
-        if role['item_type'] == '角色':
-            item_type = '角色'
-        else:
-            item_type = '武器'
+        item_type = '角色' if role['item_type'] == '角色' else '武器'
         if role['item_name'] not in user_data[f"{item_type}列表"]:
-            user_data[f"{item_type}列表"][role['item_name']] = {}
-            user_data[f"{item_type}列表"][role['item_name']]['数量'] = 1
-            user_data[f"{item_type}列表"][role['item_name']]['出货'] = []
+            user_data[f"{item_type}列表"][role['item_name']] = {'数量': 1, '出货': []}
             if rank == 5:
                 user_data[f"{item_type}列表"][role['item_name']]['星级'] = '★★★★★'
                 user_data[f"{item_type}列表"][role['item_name']]['出货'].append(

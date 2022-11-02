@@ -10,11 +10,11 @@ from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
 
 from LittlePaimon import NICKNAME
-from LittlePaimon.database.models import LastQuery, PrivateCookie, PublicCookie, Character, PlayerInfo, DailyNoteSub, MihoyoBBSSub
+from LittlePaimon.config import config
+from LittlePaimon.database import LastQuery, PrivateCookie, PublicCookie, Character, PlayerInfo, DailyNoteSub, MihoyoBBSSub
 from LittlePaimon.utils import logger
 from LittlePaimon.utils.api import get_bind_game_info, get_stoken_by_cookie
 from LittlePaimon.utils.message import recall_message
-from LittlePaimon.manager.plugin_manager import plugin_manager as pm
 
 __plugin_meta__ = PluginMetadata(
     name='原神绑定',
@@ -102,9 +102,9 @@ async def _(event: MessageEvent, msg: Message = CommandArg()):
         else:
             logger.info('原神Cookie', '', {'用户': str(event.user_id)}, '绑定失败，cookie已失效', False)
             await ysb.finish('这个cookie无效哦，请确认是否正确\n获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1\n', at_sender=True)
-    elif pm.config.CookieWeb_enable:
+    elif config.CookieWeb_enable:
         await ysb.finish(
-            f'获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1\n获取后，使用[ysb cookie]指令绑定或前往{pm.config.CookieWeb_url}网页添加绑定',
+            f'获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1\n获取后，使用[ysb cookie]指令绑定或前往{config.CookieWeb_url}网页添加绑定',
             at_sender=True)
     else:
         await ysb.finish('获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1\n获取后，使用[ysb cookie]指令绑定',

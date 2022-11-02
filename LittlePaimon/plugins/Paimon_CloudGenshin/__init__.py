@@ -6,7 +6,7 @@ from nonebot.adapters.onebot.v11 import MessageEvent, Message, GroupMessageEvent
 from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
 
-from LittlePaimon.database.models import CloudGenshinSub
+from LittlePaimon.database import CloudGenshinSub
 
 from .handler import get_cloud_genshin_info
 

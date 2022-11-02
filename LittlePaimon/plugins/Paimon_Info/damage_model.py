@@ -5,7 +5,7 @@ from LittlePaimon.config.path import JSON_DATA
 from LittlePaimon.utils.files import load_json
 from LittlePaimon.utils.genshin import GenshinTools
 from LittlePaimon.utils.image import PMImage, font_manager
-from LittlePaimon.database.models import Character
+from LittlePaimon.database import Character
 
 
 def udc(dm: float,

@@ -5,7 +5,7 @@ from nonebot import get_bot, on_regex
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, Message, MessageSegment
 from nonebot.rule import Rule
 
-from LittlePaimon.database.models import GenshinVoice, GuessVoiceRank
+from LittlePaimon.database import GenshinVoice, GuessVoiceRank
 from LittlePaimon.utils import scheduler, logger
 from LittlePaimon.utils.alias import get_alias_by_name
 from .draw import draw_voice_list

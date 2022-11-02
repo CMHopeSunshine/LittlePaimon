@@ -10,7 +10,7 @@ from LittlePaimon.utils import logger
 from nonebot import logger as nb_logger
 from tortoise.queryset import Q
 
-from LittlePaimon.database.models import PublicCookie, PrivateCookie, CookieCache
+from LittlePaimon.database import PublicCookie, PrivateCookie, CookieCache
 from .requests import aiorequests
 
 # MIHOYO_API = 'https://api-takumi-record.mihoyo.com/'

@@ -359,7 +359,19 @@
     "723": "织狩的奉祀",
     "724": "守戍的誓命",
     "725": "萦金的苍瞳",
-    "726": "衍溢的汐潮"
+    "726": "衍溢的汐潮",
+    "731": "心识蕴藏之种",
+    "732": "正等善见之根",
+    "733": "熏习成就之芽",
+    "734": "比量现行之茎",
+    "735": "妙谛破愚之叶",
+    "736": "大辨圆成之实",
+    "741": "寐领围垣",
+    "742": "归芒携信",
+    "743": "长宵宣秘",
+    "744": "星示昭明",
+    "745": "悬神系流",
+    "746": "曜光灵炬"
   },
   "Icon": {
     "21": "UI_Talent_S_Ayaka_01",
@@ -721,6 +733,18 @@
     "723": "UI_Talent_U_Candace_01",
     "724": "UI_Talent_S_Candace_03",
     "725": "UI_Talent_U_Candace_02",
-    "726": "UI_Talent_S_Candace_04"
+    "726": "UI_Talent_S_Candace_04",
+    "731": "UI_Talent_S_Nahida_01",
+    "732": "UI_Talent_S_Nahida_02",
+    "733": "UI_Talent_U_Nahida_01",
+    "734": "UI_Talent_S_Nahida_03",
+    "735": "UI_Talent_U_Nahida_02",
+    "736": "UI_Talent_S_Nahida_04",
+    "741": "UI_Talent_S_Layla_01",
+    "742": "UI_Talent_S_Layla_02",
+    "743": "UI_Talent_U_Layla_01",
+    "744": "UI_Talent_S_Layla_03",
+    "745": "UI_Talent_U_Layla_02",
+    "746": "UI_Talent_S_Layla_04"
   }
 }

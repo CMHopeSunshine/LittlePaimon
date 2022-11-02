@@ -6,7 +6,7 @@ from LittlePaimon.utils.genshin import GenshinTools
 from LittlePaimon.utils.image import PMImage, font_manager as fm
 from LittlePaimon.utils.message import MessageBuild
 from LittlePaimon.utils.alias import get_chara_icon
-from LittlePaimon.database.models import Character
+from LittlePaimon.database import Character
 from .damage_cal import get_role_dmg
 
 # weapon_url = 'https://upload-bbs.mihoyo.com/game_record/genshin/equip/{}.png'

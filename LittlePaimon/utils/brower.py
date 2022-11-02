@@ -1,6 +1,8 @@
-from typing import Optional, Literal, Tuple, Union, List, AsyncGenerator
-from playwright.async_api import Page, Browser, Playwright, async_playwright
+from typing import Optional, Literal, Tuple, Union, List, AsyncGenerator, AsyncIterator
+from playwright.async_api import Page, Browser, Playwright, async_playwright, Error
 from contextlib import asynccontextmanager
+from contextlib import suppress
+
 from LittlePaimon import DRIVER
 from LittlePaimon.utils import logger
 
@@ -8,24 +10,47 @@ _playwright: Optional[Playwright] = None
 _browser: Optional[Browser] = None
 
 
-def get_brower() -> Browser:
-    assert _browser
+async def init(**kwargs) -> Browser:
+    global _browser
+    global _playwright
+    try:
+        _playwright = await async_playwright().start()
+        _browser = await launch_browser(**kwargs)
+    except NotImplementedError:
+        logger.warning('Playwright', '初始化失败，请关闭FASTAPI_RELOAD')
+    except Error:
+        await install_browser()
+        _browser = await launch_browser(**kwargs)
     return _browser
 
 
+async def launch_browser(**kwargs) -> Browser:
+    assert _playwright is not None, "Playwright is not initialized"
+    return await _playwright.chromium.launch(**kwargs)
+
+
+async def get_browser(**kwargs) -> Browser:
+    return _browser or await init(**kwargs)
+
+
+async def install_browser():
+    import os
+    import sys
+
+    from playwright.__main__ import main
+
+    logger.info('Playwright', '正在安装 chromium')
+    sys.argv = ["", "install", "chromium"]
+    with suppress(SystemExit):
+        logger.info('Playwright', '正在安装依赖')
+        os.system("playwright install-deps")
+        main()
+
+
 @DRIVER.on_startup
-async def start_browser():
-    global _playwright
-    global _browser
-    try:
-        _playwright = await async_playwright().start()
-        _browser = await _playwright.chromium.launch(headless=True)
-    except NotImplementedError:
-        logger.warning('Playwright', '初始化失败，请关闭FASTAPI_RELOAD')
-    except Exception as e:
-        logger.warning('Playwright', f'初始化失败，错误信息：{e}')
-        if _browser:
-            await _browser.close()
+async def start_browser(**kwargs):
+    await get_browser(**kwargs)
+    logger.info('Playwright', '浏览器初始化成功')
 
 
 @DRIVER.on_shutdown
@@ -33,7 +58,7 @@ async def shutdown_browser():
     if _browser:
         await _browser.close()
     if _playwright:
-        await _playwright.stop()
+        await _playwright.stop()  # type: ignore
 
 
 @asynccontextmanager
@@ -57,7 +82,7 @@ async def screenshot(url: str,
     if not url.startswith(('https://', 'http://')):
         url = f'https://{url}'
     viewport_size = {'width': viewport_size[0], 'height': viewport_size[1]}
-    brower = get_brower()
+    brower = await get_browser()
     page = await brower.new_page(
         viewport=viewport_size,
         **kwargs)
@@ -77,3 +102,13 @@ async def screenshot(url: str,
     finally:
         if page:
             await page.close()
+
+
+@asynccontextmanager
+async def get_new_page(**kwargs) -> AsyncIterator[Page]:
+    browser = await get_browser()
+    page = await browser.new_page(**kwargs)
+    try:
+        yield page
+    finally:
+        await page.close()

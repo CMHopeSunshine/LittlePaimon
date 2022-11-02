@@ -1,7 +1,7 @@
 import asyncio
 from typing import List
 from LittlePaimon.config import RESOURCE_BASE_PATH
-from LittlePaimon.database.models import GenshinVoice
+from LittlePaimon.database import GenshinVoice
 from LittlePaimon.utils.files import load_image
 from LittlePaimon.utils.message import MessageBuild
 from LittlePaimon.utils.image import PMImage, font_manager as fm

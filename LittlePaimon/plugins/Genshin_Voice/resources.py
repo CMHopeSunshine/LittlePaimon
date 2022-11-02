@@ -4,7 +4,7 @@ from typing import Dict, Optional
 
 from lxml import etree
 
-from LittlePaimon.database.models import GenshinVoice
+from LittlePaimon.database import GenshinVoice
 from LittlePaimon.utils import aiorequests
 from LittlePaimon.utils import logger
 

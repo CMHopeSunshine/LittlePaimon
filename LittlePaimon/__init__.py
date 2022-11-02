@@ -7,7 +7,7 @@ from LittlePaimon.utils.migration import migrate_database
 from LittlePaimon.utils.tool import check_resource
 
 DRIVER = get_driver()
-__version__ = '3.0.0rc1'
+__version__ = '3.0.0rc2'
 
 try:
     SUPERUSERS: List[int] = [int(s) for s in DRIVER.config.superusers]
@@ -39,8 +39,4 @@ async def startup():
 
 
 DRIVER.on_shutdown(database.disconnect)
-load_plugin('LittlePaimon.manager.bot_manager')
-load_plugin('LittlePaimon.manager.plugin_manager')
-load_plugin('LittlePaimon.manager.database_manager')
-load_plugin('LittlePaimon.manager.alias_manager')
 load_plugins(str(Path(__file__).parent / 'plugins'))

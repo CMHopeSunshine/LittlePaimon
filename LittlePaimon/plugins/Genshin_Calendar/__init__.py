@@ -3,7 +3,7 @@ from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
 from nonebot.plugin import PluginMetadata
 
 from LittlePaimon import DRIVER, SUPERUSERS
-from LittlePaimon.database.models import GeneralSub
+from LittlePaimon.database import GeneralSub
 from LittlePaimon.utils import scheduler, logger
 from LittlePaimon.utils.message import CommandObjectID, CommandSwitch, CommandTime
 from .generate import *

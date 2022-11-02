@@ -4,16 +4,15 @@ from typing import Optional, List, Union, Tuple
 
 import pytz
 
-from LittlePaimon.config import JSON_DATA
-from LittlePaimon.database.models import PlayerInfo, Character, LastQuery, PrivateCookie, AbyssInfo
-from LittlePaimon.database.models import Artifact, CharacterProperty, Artifacts, Talents, Talent
+from LittlePaimon.config import JSON_DATA, config
+from LittlePaimon.database import PlayerInfo, Character, LastQuery, PrivateCookie, AbyssInfo
+from LittlePaimon.database import Artifact, CharacterProperty, Artifacts, Talents, Talent
 from LittlePaimon.utils import logger
 from LittlePaimon.utils.files import load_json
 from LittlePaimon.utils.api import get_enka_data, get_mihoyo_public_data, get_mihoyo_private_data
 from LittlePaimon.utils.typing import DataSourceType
 from LittlePaimon.utils.alias import get_name_by_id
 from LittlePaimon.utils.typing import CHARACTERS
-from LittlePaimon.manager.plugin_manager import plugin_manager as pm
 
 ra_score = load_json(JSON_DATA / 'score.json')
 talent_map = load_json(JSON_DATA / 'role_skill.json')
@@ -169,7 +168,7 @@ class GenshinInfoManager:
         if data_source == 'enka':
             """如果角色不存在或者角色的更新时间在6小时前，则更新角色信息"""
             character = await Character.get_or_none(**query, data_source='enka')
-            if not character or character.update_time < (datetime.datetime.now() - datetime.timedelta(hours=pm.config.ysd_auto_update)).replace(
+            if not character or character.update_time < (datetime.datetime.now() - datetime.timedelta(hours=config.ysd_auto_update)).replace(
                     tzinfo=pytz.timezone('UTC')):
                 await self.update_from_enka()
                 if character := await Character.get_or_none(**query, data_source='enka'):
@@ -193,7 +192,7 @@ class GenshinInfoManager:
         await self.set_last_query()
         player_info = await PlayerInfo.get_or_none(user_id=self.user_id, uid=self.uid)
         if player_info is None or player_info.update_time is None or player_info.update_time < (
-                datetime.datetime.now() - datetime.timedelta(hours=pm.config.ysa_auto_update)).replace(
+                datetime.datetime.now() - datetime.timedelta(hours=config.ysa_auto_update)).replace(
                 tzinfo=pytz.timezone('UTC')):
             result = await self.update_from_mihoyo()
             if result != '更新成功':
@@ -210,7 +209,7 @@ class GenshinInfoManager:
         await self.set_last_query()
         player_info = await PlayerInfo.get_or_none(user_id=self.user_id, uid=self.uid)
         if player_info is None or player_info.update_time is None or player_info.update_time < (
-                datetime.datetime.now() - datetime.timedelta(hours=pm.config.ys_auto_update)).replace(
+                datetime.datetime.now() - datetime.timedelta(hours=config.ys_auto_update)).replace(
                 tzinfo=pytz.timezone('UTC')):
             result = await self.update_from_mihoyo()
             if result != '更新成功':

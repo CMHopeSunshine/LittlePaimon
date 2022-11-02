@@ -40,6 +40,8 @@ async def load_image(
             img = Image.open(path)
         elif path.name.startswith(('UI_', 'Skill_')):
             img = await aiorequests.download_icon(path.name, headers=headers, save_path=path, follow_redirects=True)
+            if img is None:
+                return Image.new('RGBA', size=size, color=(0, 0, 0, 0))
         else:
             raise FileNotFoundError(f'{path} not found')
         cache_image[str(path)] = img

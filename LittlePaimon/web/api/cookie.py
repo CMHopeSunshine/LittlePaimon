@@ -1,6 +1,6 @@
 import datetime
 from typing import Optional
-from LittlePaimon.database.models import PublicCookie, PrivateCookie, LastQuery
+from LittlePaimon.database import PublicCookie, PrivateCookie, LastQuery
 from fastapi.responses import JSONResponse
 from fastapi import APIRouter
 from pydantic import BaseModel

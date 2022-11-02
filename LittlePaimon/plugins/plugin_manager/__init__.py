@@ -1,24 +1,17 @@
 import asyncio
-import datetime
 
 from nonebot import on_regex, on_command
-from nonebot.matcher import Matcher
-from nonebot.exception import IgnoredException
 from nonebot.params import RegexDict, CommandArg
 from nonebot.permission import SUPERUSER
-from nonebot.message import run_preprocessor
 from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent, PrivateMessageEvent, MessageEvent
 from nonebot.typing import T_State
 
-from LittlePaimon import SUPERUSERS, DRIVER
+from LittlePaimon import SUPERUSERS
+from LittlePaimon.config import ConfigManager, PluginManager
 from LittlePaimon.utils import logger
 from LittlePaimon.utils.message import CommandObjectID
-from LittlePaimon.database.models import PluginPermission, PluginStatistics
-from .manager import PluginManager, hidden_plugins
-from .model import MatcherInfo
+from LittlePaimon.database import PluginPermission
 from .draw_help import draw_help
-
-plugin_manager = PluginManager()
 
 manage_cmd = on_regex(r'^pm (?P<func>ban|unban) (?P<plugin>([\w ]*)|all|全部) ?(-g (?P<group>[\d ]*) ?)?(-u (?P<user>[\d ]*) ?)?(?P<reserve>-r)?', priority=1)
 help_cmd = on_command('help', aliases={'帮助', '菜单', 'pm help'}, priority=1)
@@ -36,9 +29,9 @@ async def _(event: GroupMessageEvent, state: T_State, match: dict = RegexDict(),
     state['plugin'] = []
     state['plugin_no_exist'] = []
     for plugin in match['plugin'].strip().split(' '):
-        if plugin in plugin_manager.data.keys() or plugin in ['all', '全部']:
+        if plugin in PluginManager.plugins.keys() or plugin in ['all', '全部']:
             state['plugin'].append(plugin)
-        elif module_name := list(filter(lambda x: plugin_manager.data[x].name == plugin, plugin_manager.data.keys())):
+        elif module_name := list(filter(lambda x: PluginManager.plugins[x].name == plugin, PluginManager.plugins.keys())):
             state['plugin'].append(module_name[0])
         else:
             state['plugin_no_exist'].append(plugin)
@@ -58,9 +51,9 @@ async def _(event: PrivateMessageEvent, state: T_State, match: dict = RegexDict(
     state['plugin'] = []
     state['plugin_no_exist'] = []
     for plugin in match['plugin'].strip().split(' '):
-        if plugin in plugin_manager.data.keys() or plugin in ['all', '全部']:
+        if plugin in PluginManager.plugins.keys() or plugin in ['all', '全部']:
             state['plugin'].append(plugin)
-        elif module_name := list(filter(lambda x: plugin_manager.data[x].name == plugin, plugin_manager.data.keys())):
+        elif module_name := list(filter(lambda x: PluginManager.plugins[x].name == plugin, PluginManager.plugins.keys())):
             state['plugin'].append(module_name[0])
         else:
             state['plugin_no_exist'].append(plugin)
@@ -114,7 +107,7 @@ async def _(event: MessageEvent, session_id: int = CommandObjectID()):
     if session_id in cache_help:
         await help_cmd.finish(cache_help[session_id])
     else:
-        plugin_list = await plugin_manager.get_plugin_list(event.message_type, event.user_id if isinstance(event, PrivateMessageEvent) else event.group_id if isinstance(event, GroupMessageEvent) else event.guild_id)
+        plugin_list = await PluginManager.get_plugin_list(event.message_type, event.user_id if isinstance(event, PrivateMessageEvent) else event.group_id if isinstance(event, GroupMessageEvent) else event.guild_id)
         img = await draw_help(plugin_list)
         cache_help[session_id] = img
         await help_cmd.finish(img)
@@ -126,49 +119,6 @@ async def _(event: MessageEvent, msg: Message = CommandArg()):
     if len(msg) != 2:
         await set_config_cmd.finish('参数错误，用法：pm set 配置名 配置值')
     else:
-        result = plugin_manager.set_config(msg[0], msg[1])
+        result = ConfigManager.set_config(msg[0], msg[1])
         await set_config_cmd.finish(result)
-
-
-@DRIVER.on_bot_connect
-async def _():
-    await plugin_manager.init_plugins()
-
-
-@run_preprocessor
-async def _(event: MessageEvent, matcher: Matcher):
-    if event.user_id in SUPERUSERS:
-        return
-    if not matcher.plugin_name or matcher.plugin_name in hidden_plugins:
-        return
-    if isinstance(event, PrivateMessageEvent):
-        session_id = event.user_id
-        session_type = 'user'
-    elif isinstance(event, GroupMessageEvent):
-        session_id = event.group_id
-        session_type = 'group'
-    else:
-        return
-
-    # 权限检查
-    perm = await PluginPermission.get_or_none(name=matcher.plugin_name, session_id=session_id, session_type=session_type)
-    if not perm:
-        return
-    if not perm.status:
-        raise IgnoredException('插件使用权限已禁用')
-    if isinstance(event, GroupMessageEvent) and event.user_id in perm.ban:
-        raise IgnoredException('用户被禁止使用该插件')
-
-    # 命令调用统计
-    if matcher.plugin_name in plugin_manager.data and 'pm_name' in matcher.state:
-        if matcher_info := list(filter(lambda x: x.pm_name == matcher.state['pm_name'], plugin_manager.data[matcher.plugin_name].matchers)):
-            matcher_info = matcher_info[0]
-            await PluginStatistics.create(plugin_name=matcher.plugin_name,
-                                          matcher_name=matcher_info.pm_name,
-                                          matcher_usage=matcher_info.pm_usage,
-                                          group_id=event.group_id if isinstance(event, GroupMessageEvent) else None,
-                                          user_id=event.user_id,
-                                          message_type=session_type,
-                                          time=datetime.datetime.now())
-
 

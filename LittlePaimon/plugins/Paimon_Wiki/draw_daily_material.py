@@ -5,7 +5,7 @@ from LittlePaimon.utils import aiorequests, scheduler
 from LittlePaimon.utils.files import save_json, load_json, load_image
 from LittlePaimon.utils.image import PMImage, font_manager as fm
 from LittlePaimon.utils.message import MessageBuild
-from LittlePaimon.database.models import Character, LastQuery
+from LittlePaimon.database import Character, LastQuery
 
 week_cn = {
     'monday':    '周一',

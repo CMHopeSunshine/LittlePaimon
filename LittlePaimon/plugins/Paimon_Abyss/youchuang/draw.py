@@ -1,7 +1,7 @@
 import asyncio
 from typing import List
 
-from LittlePaimon.database.models import Character, LastQuery
+from LittlePaimon.database import Character, LastQuery
 from LittlePaimon.config import RESOURCE_BASE_PATH
 from LittlePaimon.utils.files import load_image
 from LittlePaimon.utils.alias import get_chara_icon

@@ -4,9 +4,12 @@ from pathlib import Path
 from fastapi.responses import JSONResponse
 from fastapi import APIRouter
 
-from LittlePaimon.database.models import PluginPermission
-from LittlePaimon.manager.plugin_manager import plugin_manager, cache_help
-from LittlePaimon.manager.plugin_manager.model import PluginInfo, Config
+from LittlePaimon.config import ConfigManager, ConfigModel, PluginManager, PluginInfo
+from LittlePaimon.database import PluginPermission
+try:
+    from LittlePaimon.plugins.plugin_manager import cache_help
+except Exception:
+    cache_help = None
 
 from .utils import authentication
 
@@ -15,7 +18,7 @@ route = APIRouter()
 
 @route.get('/get_plugins', response_class=JSONResponse, dependencies=[authentication()])
 async def get_plugins():
-    plugins = await plugin_manager.get_plugin_list_for_admin()
+    plugins = await PluginManager.get_plugin_list_for_admin()
     return {
         'status': 0,
         'msg': 'ok',
@@ -30,7 +33,8 @@ async def get_plugins():
 async def set_plugin_status(data: dict):
     module_name = data.get('plugin')
     status = data.get('status')
-    cache_help.clear()
+    if cache_help:
+        cache_help.clear()
     await PluginPermission.filter(name=module_name).update(status=status)
     return {'status': 0, 'msg': f'成功设置{module_name}插件状态为{status}'}
 
@@ -74,7 +78,8 @@ async def set_plugin_bans(data: dict):
                     status=False)
         else:
             await PluginPermission.filter(name=name, session_type='user', session_id=int(ban)).update(status=False)
-    cache_help.clear()
+    if cache_help:
+        cache_help.clear()
     return {
         'status': 0,
         'msg':    '插件权限设置成功'
@@ -83,9 +88,10 @@ async def set_plugin_bans(data: dict):
 
 @route.post('/set_plugin_detail', response_class=JSONResponse, dependencies=[authentication()])
 async def set_plugin_detail(plugin_info: PluginInfo):
-    plugin_manager.data[plugin_info.module_name] = plugin_info
-    plugin_manager.save()
-    cache_help.clear()
+    PluginManager.plugins[plugin_info.module_name] = plugin_info
+    PluginManager.save()
+    if cache_help:
+        cache_help.clear()
     return {
         'status': 0,
         'msg':    '插件信息设置成功'
@@ -94,7 +100,7 @@ async def set_plugin_detail(plugin_info: PluginInfo):
 
 @route.get('/get_config', response_class=JSONResponse, dependencies=[authentication()])
 async def get_config():
-    config = plugin_manager.config.dict(by_alias=True)
+    config = ConfigManager.config.dict(by_alias=True)
     config['米游社签到开始时间'] = datetime.datetime(1970, 1, 1, hour=config['米游社签到开始时间(小时)'], minute=config['米游社签到开始时间(分钟)']).strftime('%H:%M')
     config['米游币开始执行时间'] = datetime.datetime(1970, 1, 1, hour=config['米游币开始执行时间(小时)'], minute=config['米游币开始执行时间(分钟)']).strftime('%H:%M')
     config['实时便签停止检查时间段'] = (f'0{config["实时便签停止检查开始时间"]}' if config['实时便签停止检查开始时间'] < 10 else str(config['实时便签停止检查开始时间'])) + \
@@ -123,10 +129,10 @@ async def set_config(data: dict):
         data['实时便签停止检查结束时间'] = int(temp_time_split[1][:2])
     if '云原神签到开始时间' in data:
         data['云原神签到时间(小时)'] = int(data['云原神签到开始时间'])
-    config = plugin_manager.config.dict(by_alias=True)
+    config = ConfigManager.config.dict(by_alias=True)
     config.update(**data)
-    plugin_manager.config = Config.parse_obj(config)
-    plugin_manager.save()
+    ConfigManager.config = ConfigModel.parse_obj(config)
+    PluginManager.save()
     return {
         'status': 0,
         'msg':    '保存成功'

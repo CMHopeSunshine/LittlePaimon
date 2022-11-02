@@ -5,7 +5,7 @@ from LittlePaimon.config import RESOURCE_BASE_PATH
 from LittlePaimon.utils.image import PMImage, font_manager as fm
 from LittlePaimon.utils.files import load_image
 from LittlePaimon.utils.message import MessageBuild
-from LittlePaimon.database.models import AbyssInfo
+from LittlePaimon.database import AbyssInfo
 
 
 def datetime_to_cn(time: datetime.datetime) -> str:

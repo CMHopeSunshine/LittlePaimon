@@ -9,10 +9,10 @@ from nonebot import get_bot
 from nonebot.params import CommandArg, Depends
 from nonebot.adapters.onebot.v11 import Message
 
-from LittlePaimon.database.models import DailyNoteSub, Player
+from LittlePaimon.config import config
+from LittlePaimon.database import DailyNoteSub, Player
 from LittlePaimon.utils import logger, scheduler
 from LittlePaimon.utils.api import get_mihoyo_private_data
-from LittlePaimon.manager.plugin_manager import plugin_manager as pm
 from .draw import draw_daily_note_card
 
 
@@ -69,12 +69,12 @@ async def handle_ssbq(player: Player):
             return f'{player.uid}绘制图片失败，{e}\n'
 
 
-@scheduler.scheduled_job('cron', minute=f'*/{pm.config.ssbq_check}', misfire_grace_time=10)
+@scheduler.scheduled_job('cron', minute=f'*/{config.ssbq_check}', misfire_grace_time=10)
 async def check_note():
-    if not pm.config.ssbq_enable:
+    if not config.ssbq_enable:
         return
     # 0点到6点间不做检查
-    if pm.config.ssbq_begin <= datetime.datetime.now().hour <= pm.config.ssbq_end:
+    if config.ssbq_begin <= datetime.datetime.now().hour <= config.ssbq_end:
         return
     t = time.time()
     try:

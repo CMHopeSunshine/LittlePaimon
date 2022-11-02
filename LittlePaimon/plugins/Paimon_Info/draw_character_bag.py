@@ -4,7 +4,7 @@ import math
 from typing import List
 
 from LittlePaimon.config import RESOURCE_BASE_PATH
-from LittlePaimon.database.models import Character, PlayerInfo, Player
+from LittlePaimon.database import Character, PlayerInfo, Player
 from LittlePaimon.utils.files import load_image
 from LittlePaimon.utils.alias import get_chara_icon
 from LittlePaimon.utils.genshin import GenshinTools

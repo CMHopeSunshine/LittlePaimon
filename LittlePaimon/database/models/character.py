@@ -1,8 +1,7 @@
 import datetime
 import re
-from typing import Optional, List, Dict, Iterator
+from typing import Optional, Dict, Iterator
 
-from pydantic import BaseModel
 from tortoise import fields
 from tortoise.models import Model
 

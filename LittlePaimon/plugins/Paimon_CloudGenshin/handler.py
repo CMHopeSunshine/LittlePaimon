@@ -4,9 +4,9 @@ from collections import defaultdict
 
 from nonebot import get_bot
 
-from LittlePaimon.database.models import CloudGenshinSub
+from LittlePaimon.config import config
+from LittlePaimon.database import CloudGenshinSub
 from LittlePaimon.utils import scheduler, logger
-from LittlePaimon.manager.plugin_manager import plugin_manager as pm
 from .api import get_Info, check_token, get_Notification
 
 
@@ -25,9 +25,9 @@ async def get_cloud_genshin_info(user_id: str, uid: str):
            f'畅玩卡状态: {card}'
 
 
-@scheduler.scheduled_job('cron', hour=pm.config.cloud_genshin_hour, misfire_grace_time=10)
+@scheduler.scheduled_job('cron', hour=config.cloud_genshin_hour, misfire_grace_time=10)
 async def _():
-    if not pm.config.cloud_genshin_enable:
+    if not config.cloud_genshin_enable:
         return
     subs = await CloudGenshinSub.all()
     if not subs:

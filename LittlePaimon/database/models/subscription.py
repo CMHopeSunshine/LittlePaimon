@@ -32,7 +32,7 @@ class DailyNoteSub(Model):
 
 class MihoyoBBSSub(Model):
     """
-    米游社相关订阅
+    米游社原神签到和米游币获取订阅
     """
     id = fields.IntField(pk=True, generated=True, auto_increment=True)
     user_id: int = fields.IntField()
@@ -47,6 +47,25 @@ class MihoyoBBSSub(Model):
     class Meta:
         table = 'mhy_bbs_sub'
         table_description = '米游社订阅'
+
+
+class MihoyoBBSPostSub(Model):
+    """
+    米游社用户帖子订阅
+    """
+    id = fields.IntField(pk=True, generated=True, auto_increment=True)
+    mys_id: str = fields.CharField(max_length=255)
+    """订阅的米游社用户id"""
+    session_id: str = fields.CharField(max_length=255)
+    """订阅者的qq号或群号"""
+    session_type: str = fields.CharField(max_length=255, default='private')
+    """订阅者的群号"""
+    last_post_id: str = fields.CharField(max_length=255, null=True)
+    """上次推送的帖子id"""
+
+    class Meta:
+        table = 'mhy_bbs_user_sub'
+        table_description = '米游社用户帖子订阅'
 
 
 class CloudGenshinSub(Model):

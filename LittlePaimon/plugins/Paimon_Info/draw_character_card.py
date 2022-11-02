@@ -1,7 +1,7 @@
 import math
 
 from LittlePaimon.config import RESOURCE_BASE_PATH
-from LittlePaimon.database.models import Character
+from LittlePaimon.database import Character
 from LittlePaimon.utils import aiorequests
 from LittlePaimon.utils.files import load_image
 from LittlePaimon.utils.genshin import GenshinTools

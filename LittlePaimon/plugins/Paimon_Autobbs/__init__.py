@@ -6,7 +6,7 @@ from nonebot.permission import SUPERUSER
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, PrivateMessageEvent
 from nonebot.plugin import PluginMetadata
 
-from LittlePaimon.database.models import MihoyoBBSSub, PrivateCookie
+from LittlePaimon.database import MihoyoBBSSub, PrivateCookie
 from LittlePaimon.utils import logger
 from LittlePaimon.utils.message import CommandUID, CommandSwitch
 from .coin_handle import mhy_bbs_coin, bbs_auto_coin

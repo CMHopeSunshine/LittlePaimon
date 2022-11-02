@@ -8,10 +8,10 @@ from nonebot.params import CommandArg
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
 
+from LittlePaimon.config import config
 from LittlePaimon.utils.message import CommandCharacter, CommandLang, MessageBuild
 from LittlePaimon.utils.alias import get_match_alias
-from LittlePaimon.database.models import GenshinVoice
-from LittlePaimon.manager.plugin_manager import plugin_manager as pm
+from LittlePaimon.database import GenshinVoice
 from .handler import GuessVoice, get_character_voice, get_rank, get_voice_list
 from .resources import update_voice_resources
 
@@ -60,9 +60,9 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg(), lang=CommandL
         result = await get_rank(event.group_id)
         await guess_voice.finish(result)
     else:
-        game = GuessVoice(event.group_id, pm.config.guess_voice_time, lang)
+        game = GuessVoice(event.group_id, config.guess_voice_time, lang)
         result = await game.start()
-        await guess_voice.send(f'即将发送一段语音，将在{pm.config.guess_voice_time}秒后公布答案')
+        await guess_voice.send(f'即将发送一段语音，将在{config.guess_voice_time}秒后公布答案')
         try:
             await guess_voice.finish(result)
         except ActionFailed:

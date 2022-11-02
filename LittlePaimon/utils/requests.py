@@ -8,6 +8,7 @@ import httpx
 from PIL import Image
 import tqdm.asyncio
 
+from LittlePaimon.utils import logger
 
 class aiorequests:
     @staticmethod
@@ -169,4 +170,5 @@ class aiorequests:
         for url in urls:
             with contextlib.suppress(Exception):
                 return await aiorequests.get_img(url=url, headers=headers, save_path=save_path, **kwargs)
-        raise FileNotFoundError(f'{name}下载失败，请检查网络')
+        logger.warning('资源检查', f'{name}下载失败，请检查网络')
+        return None

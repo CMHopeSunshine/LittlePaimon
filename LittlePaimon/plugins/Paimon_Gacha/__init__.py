@@ -4,8 +4,8 @@ from nonebot import on_command, on_regex
 from nonebot.adapters.onebot.v11 import MessageEvent, Message, GroupMessageEvent
 from nonebot.params import RegexDict, CommandArg
 from nonebot.plugin import PluginMetadata
+from LittlePaimon.config import config
 from LittlePaimon.utils.tool import freq_limiter
-from LittlePaimon.manager.plugin_manager import plugin_manager as pm
 
 from .data_handle import load_user_data
 from .draw import draw_gacha_img
@@ -74,13 +74,18 @@ async def _(event: MessageEvent, reGroup: Dict = RegexDict()):
     num = reGroup['num']
     pool = reGroup['pool']
     num = int(num) if num and num.isdigit() else 1
-    if num > pm.config.sim_gacha_max:
-        await sim_gacha.finish(f'单次最多只能{pm.config.sim_gacha_max}十连哦！')
+    if num > config.sim_gacha_max:
+        await sim_gacha.finish(f'单次最多只能{config.sim_gacha_max}十连哦！')
     pool = pool or '角色1'
-    result = await draw_gacha_img(event.user_id, pool, num, nickname)
+    try:
+        result = await draw_gacha_img(event.user_id, pool, num, nickname)
+    except IndexError:
+        result = '当前没有可以抽的卡池哦~请等待卡池开放'
+    except Exception as e:
+        result = f'抽卡发生错误:{e}'
     if isinstance(event, GroupMessageEvent):
-        freq_limiter.start(f'gacha-group{event.group_id}', pm.config.sim_gacha_cd_group)
-        freq_limiter.start(f'gacha-group{event.group_id}-{event.user_id}', pm.config.sim_gacha_cd_member)
+        freq_limiter.start(f'gacha-group{event.group_id}', config.sim_gacha_cd_group)
+        freq_limiter.start(f'gacha-group{event.group_id}-{event.user_id}', config.sim_gacha_cd_member)
     await sim_gacha.finish(result)
 
 

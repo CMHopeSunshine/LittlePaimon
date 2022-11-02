@@ -1,5 +1,5 @@
 from copy import deepcopy
-from LittlePaimon.database.models import Character
+from LittlePaimon.database import Character
 
 from .damage_model import common_fix, draw_dmg_pic, udc, get_damage_multipiler, growth_reaction, intensify_reaction
 

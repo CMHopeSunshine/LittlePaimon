@@ -2,7 +2,7 @@ import sqlite3
 from pathlib import Path
 import datetime
 from LittlePaimon.utils import logger
-from LittlePaimon.database.models import PublicCookie, PrivateCookie, LastQuery, DailyNoteSub, MihoyoBBSSub
+from LittlePaimon.database import PublicCookie, PrivateCookie, LastQuery, DailyNoteSub, MihoyoBBSSub
 
 
 async def migrate_database():

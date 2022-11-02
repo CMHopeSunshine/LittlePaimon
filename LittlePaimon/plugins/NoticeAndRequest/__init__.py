@@ -14,9 +14,9 @@ from nonebot.adapters.onebot.v11 import Bot, Message, MessageEvent, PrivateMessa
 from nonebot.typing import T_State
 
 from LittlePaimon import NICKNAME, SUPERUSERS
+from LittlePaimon.config import config as bot_config
 from LittlePaimon.utils import scheduler, logger
 from LittlePaimon.utils.message import format_message, replace_all
-from LittlePaimon.manager.plugin_manager import plugin_manager as pm
 from .config import config
 
 requests_list: Dict[str, Dict[str, Dict[str, any]]] = {
@@ -27,7 +27,7 @@ done: Dict[str, datetime.datetime] = {}  # 防止gocq重复上报事件导致多
 
 
 async def InviteRule(event: RequestEvent) -> bool:
-    if not pm.config.request_event:
+    if not bot_config.request_event:
         return False
     if isinstance(event, FriendRequestEvent):
         return f'add_friend_{event.user_id}' not in done.keys()
@@ -37,7 +37,7 @@ async def InviteRule(event: RequestEvent) -> bool:
 
 
 async def IncreaseRule(event: NoticeEvent) -> bool:
-    if not pm.config.notice_event:
+    if not bot_config.notice_event:
         return False
     if isinstance(event, FriendAddNoticeEvent):
         return f'new_friend_{event.user_id}' not in done.keys()
@@ -108,7 +108,7 @@ async def _(bot: Bot, event: FriendRequestEvent):
     done[f'add_friend_{event.user_id}'] = datetime.datetime.now()
     user_info = await bot.get_stranger_info(user_id=event.user_id)
     base_msg = f'{user_info["nickname"]}({event.user_id})请求添加好友，验证信息为"{event.comment or "无"}"'
-    if pm.config.auto_add_friend:
+    if bot_config.auto_add_friend:
         await asyncio.sleep(random.randint(10, 20))
         await bot.send_private_msg(user_id=SUPERUSERS[0], message=f'{base_msg}，已自动同意')
         await event.approve(bot)
@@ -125,7 +125,7 @@ async def _(bot: Bot, event: GroupRequestEvent):
     user_info = await bot.get_stranger_info(user_id=event.user_id)
     group_info = await bot.get_group_info(group_id=event.group_id)
     base_msg = f'{user_info["nickname"]}({event.user_id})邀请{NICKNAME}加入群{group_info["group_name"]}({event.group_id})'
-    if pm.config.auto_add_group or event.user_id in SUPERUSERS:
+    if bot_config.auto_add_group or event.user_id in SUPERUSERS:
         await asyncio.sleep(random.randint(10, 20))
         await bot.send_private_msg(user_id=SUPERUSERS[0], message=f'{base_msg}，已自动同意')
         await event.approve(bot)

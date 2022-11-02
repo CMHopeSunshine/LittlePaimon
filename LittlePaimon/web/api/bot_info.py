@@ -9,7 +9,7 @@ from fastapi import APIRouter
 from nonebot import get_bot
 from nonebot.adapters.onebot.v11 import Bot
 from LittlePaimon import SUPERUSERS
-from LittlePaimon.manager.bot_manager.handler import update
+from LittlePaimon.utils.update import update
 from LittlePaimon.utils.files import save_json
 from LittlePaimon.utils.tool import cache
 from .utils import authentication
