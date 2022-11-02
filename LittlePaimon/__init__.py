@@ -2,8 +2,7 @@ from pathlib import Path
 
 from nonebot import load_plugins, get_driver, logger, load_plugin
 from typing import List
-from LittlePaimon import database
-from LittlePaimon.utils.migration import migrate_database
+# from LittlePaimon.utils.migration import migrate_database
 from LittlePaimon.utils.tool import check_resource
 
 DRIVER = get_driver()
@@ -31,12 +30,18 @@ logo = """<g>
 
 @DRIVER.on_startup
 async def startup():
+    from LittlePaimon.database import connect
     logger.opt(colors=True).info(logo)
-    await database.connect()
+    await connect()
     from LittlePaimon import web
     # await migrate_database()
     await check_resource()
 
 
-DRIVER.on_shutdown(database.disconnect)
+@DRIVER.on_shutdown
+async def shutdown():
+    from LittlePaimon.database import disconnect
+    await disconnect()
+
+
 load_plugins(str(Path(__file__).parent / 'plugins'))
