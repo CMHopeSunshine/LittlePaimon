@@ -107,7 +107,7 @@ class PlayerHomeInfo(BaseModel):
     """最高洞天仙力"""
     item_num: int
     """获得摆设数"""
-    unlock: List[Literal['罗浮洞', '翠黛峰', '清琼岛', '绘绮庭']]
+    unlock: List[Literal['罗浮洞', '翠黛峰', '清琼岛', '绘绮庭', '妙香林']]
     """已解锁洞天列表"""
 
 

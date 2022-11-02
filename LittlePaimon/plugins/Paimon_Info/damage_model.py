@@ -209,6 +209,11 @@ def weapon_common_fix(info: Character):
         extra_a['重击增伤'] += 0.15 + 0.05 * info.weapon.affix_level
     elif info.weapon.name == '铁影阔剑':
         extra_a['重击增伤'] += 0.25 + 0.05 * info.weapon.affix_level
+    elif info.weapon.name == '西福斯的月光':
+        info.prop.elemental_efficiency += info.prop.elemental_mastery * (0.00027 + 0.00009 * info.weapon.affix_level)
+    elif info.weapon.name == '圣显之钥':
+        info.prop.elemental_mastery += info.prop.health * (0.0009 + 0.0003 * info.weapon.affix_level) * 3
+        info.damage_describe.append('圣显之钥满层')
 
     # 双手剑
     elif info.weapon.name == '赤角石溃杵':
@@ -244,6 +249,9 @@ def weapon_common_fix(info: Character):
         extra_q['增伤'] += 0.09 + 0.03 * info.weapon.affix_level
     elif info.weapon.name == '桂木斩长正':
         extra_e['增伤'] += 0.045 + 0.015 * info.weapon.affix_level
+    elif info.weapon.name == '玛海菈的水色':
+        info.prop.extra_attack += info.prop.elemental_mastery * (0.18 + 0.06 * info.weapon.affix_level)
+
     # 弓
     elif info.weapon.name == '落霞':
         for i in info.prop.dmg_bonus:
@@ -334,6 +342,14 @@ def weapon_common_fix(info: Character):
     elif info.weapon.name == '「渔获」':
         extra_q['增伤'] += 0.12 + 0.04 * info.weapon.affix_level
         extra_q['暴击率'] += 0.045 + 0.015 * info.weapon.affix_level
+    elif info.weapon.name == '风信之锋':
+        info.prop.extra_attack += info.prop.base_attack * (0.09 + 0.03 * info.weapon.affix_level)
+        info.prop.elemental_mastery += 36 + 12 * info.weapon.affix_level
+        info.damage_describe.append('风信之锋触发')
+    elif info.weapon.name == '赤沙之杖':
+        info.prop.extra_attack += info.prop.elemental_mastery * (1.02 + 0.34 * info.weapon.affix_level)
+        info.damage_describe.append('赤沙之杖满层')
+
     # 法器
     elif info.weapon.name == '证誓之明瞳':
         info.prop.elemental_efficiency += 0.18 + 0.06 * info.weapon.affix_level
@@ -389,6 +405,13 @@ def weapon_common_fix(info: Character):
         info.prop.elemental_mastery += 5 * (21 + 3 * info.weapon.affix_level)
         info.prop.extra_attack -= 5 * 0.05 * info.prop.base_attack
         info.damage_describe.append('盈满之实满层')
+    elif info.weapon.name == '千夜浮梦':
+        info.prop.elemental_mastery += 5 * (24 + 8 * info.weapon.affix_level)
+        for i in info.prop.dmg_bonus:
+            info.prop.dmg_bonus[i] = info.prop.dmg_bonus[i] + 2 * (0.06 + 0.04 * info.weapon.affix_level)
+        info.damage_describe.append('千夜浮梦算1同2异')
+    elif info.weapon.name == '流浪的晚星':
+        info.prop.extra_attack += info.prop.elemental_mastery * (0.18 + 0.06 * info.weapon.affix_level)
 
     # 系列武器
     elif info.weapon.name.startswith('千岩'):
@@ -956,6 +979,21 @@ def get_damage_multipiler(info: Character) -> Optional[Dict[str, any]]:
             'Q-e雷:大招首段': float(skill_data['煌煌千道镇式']['数值']['天狗咒雷•金刚坏伤害'][level_q].replace('%', '')) / 100.0,
             'Q-e雷-j超激化:大招首段超激化': float(skill_data['煌煌千道镇式']['数值']['天狗咒雷•金刚坏伤害'][level_q].replace('%', '')) / 100.0,
             'Q-e雷:大招雷砾': float(skill_data['煌煌千道镇式']['数值']['天狗咒雷•雷砾伤害'][level_q].replace('%', '')) / 100.0,
+        }
+    if info.name == '纳西妲':
+        c = 1 if len(info.constellation) == 0 else 2
+        info.prop.elemental_mastery += 160 if len(info.constellation) >= 4 else 0
+        eb = skill_data['所闻遍计']['数值']['灭净三业伤害'][level_e].split('+')
+        return {
+            'B:l0-增伤-E': (float(skill_data['心景幻成']['数值'][f'火：伤害提升{c}'][level_q].replace('%', '')) / 100.0, f'大招计算{c}名火元素'),
+            'B:l70-增伤-E': (0.8 if info.prop.elemental_mastery >= 1000 else (
+                    0.001 * (info.prop.elemental_mastery - 200)) if info.prop.elemental_mastery >= 200 else 0, ),
+            'B:l70-暴击率-E': (0.24 if info.prop.elemental_mastery >= 1000 else (
+                        0.0003 * (info.prop.elemental_mastery - 200)) if info.prop.elemental_mastery >= 200 else 0,),
+            'B:c2-减防-*': (0.3, '二命减防触发'),
+            'B:l0-额外倍率-E': (float(eb[1].replace('%元素精通', '')) / 100.0 * info.prop.elemental_mastery, ),
+            'E-e草:灭净三业': float(eb[0].replace('%攻击力', '')) / 100.0,
+            'E-e草-j超激化:灭净三业超激化': float(eb[0].replace('%攻击力', '')) / 100.0
         }
 
 
