@@ -993,7 +993,7 @@ def get_damage_multipiler(info: Character) -> Optional[Dict[str, any]]:
             'B:c2-减防-*': (0.3, '二命减防触发'),
             'B:l0-额外倍率-E': (float(eb[1].replace('%元素精通', '')) / 100.0 * info.prop.elemental_mastery, ),
             'E-e草:灭净三业': float(eb[0].replace('%攻击力', '')) / 100.0,
-            'E-e草-j超激化:灭净三业超激化': float(eb[0].replace('%攻击力', '')) / 100.0
+            'E-e草-j蔓激化:灭净三业蔓激化': float(eb[0].replace('%攻击力', '')) / 100.0
         }
 
 
