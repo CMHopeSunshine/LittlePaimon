@@ -171,7 +171,7 @@ async def draw_gacha_log(user_id: str, uid: str, nickname: Optional[str], signat
     # 签名和uid
     if signature:
         await img.text(signature, 165, 116, fm.get('hywh', 32), '#252525')
-        nickname_length = img.text_length(nickname, fm.get('hywh', 40))
+        nickname_length = img.text_length(nickname, fm.get('hywh', 48))
         await img.text(f'UID{uid}', 166 + nickname_length + 36, 58,
                        fm.get('bahnschrift_regular', 48, 'Regular'),
                        '#252525')
