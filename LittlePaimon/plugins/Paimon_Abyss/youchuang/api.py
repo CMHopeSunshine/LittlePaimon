@@ -9,6 +9,7 @@ BASE_API = 'https://www.youchuang.fun'
 TEAM_RATE_API = f'{BASE_API}/gamerole/formationRate'
 
 VERSION_API = 'https://api-cloudgame-static.mihoyo.com/hk4e_cg_cn/gamer/api/getFunctionShieldNew?client_type=1'
+VERSION = 3.1  # 尚未更新3.2深渊
 HEADERS = {
     'Host':         'www.youchuang.fun',
     'Referer':      'https://servicewechat.com/wxce4dbe0cb0f764b3/91/page-frame.html',
@@ -18,22 +19,22 @@ HEADERS = {
 }
 
 
-async def get_game_version() -> float:
-    data = await aiorequests.get(VERSION_API)
-    data = data.json()
-    return float(data['data']['config']['cg.key_function_queue_news']['versions'][0].replace('.0', ''))
+# async def get_game_version() -> float:
+#     data = await aiorequests.get(VERSION_API)
+#     data = data.json()
+#     return float(data['data']['config']['cg.key_function_queue_news']['versions'][0].replace('.0', ''))
 
 
 async def get_team_rate() -> Tuple[TeamRateResult, float]:
-    version = await get_game_version()
+    # version = await get_game_version()
     data_up = (await aiorequests.post(TEAM_RATE_API, json={
-        'version': version,
+        'version': VERSION,
         'layer':   1
     }, headers=HEADERS)).json()['result']
     data_down = (await aiorequests.post(TEAM_RATE_API, json={
-        'version': version,
+        'version': VERSION,
         'layer':   2
     }, headers=HEADERS)).json()['result']
     return TeamRateResult(rateListUp=parse_obj_as(List[TeamRate], data_up['rateList']),
                           rateListDown=parse_obj_as(List[TeamRate], data_down['rateList']),
-                          userCount=data_up['userCount']), version
+                          userCount=data_up['userCount']), VERSION

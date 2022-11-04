@@ -188,7 +188,7 @@ async def draw_chara_bag(player: Player, info: PlayerInfo, characters: List[Char
     # 签名和uid
     if info.signature:
         await img.text(info.signature, 165, 116, fm.get('hywh', 32), '#252525')
-        nickname_length = img.text_length(info.nickname, fm.get('hywh', 40))
+        nickname_length = img.text_length(info.nickname, fm.get('hywh', 48))
         await img.text(f'UID{player.uid}', 166 + nickname_length + 36, 58, fm.get('bahnschrift_regular', 48, 'Regular'),
                        '#252525')
     else:
