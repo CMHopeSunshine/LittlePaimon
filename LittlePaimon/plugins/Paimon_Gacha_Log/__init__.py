@@ -1,4 +1,5 @@
 from typing import Union
+
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent, GroupMessageEvent, PrivateMessageEvent
 from nonebot.plugin import PluginMetadata

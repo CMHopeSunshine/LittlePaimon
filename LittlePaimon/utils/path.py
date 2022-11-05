@@ -41,7 +41,7 @@ GACHA_LOG.mkdir(parents=True, exist_ok=True)
 FONTS_PATH = Path() / 'resources' / 'fonts'
 FONTS_PATH.mkdir(parents=True, exist_ok=True)
 # JSON数据路径
-JSON_DATA = Path(__file__).parent / 'data'
+JSON_DATA = Path(__file__).parent.parent / 'config' / 'data'
 # 插件管理器文件存放目录
 PLUGIN_CONFIG = Path() / 'config' / 'plugins'
 PLUGIN_CONFIG.mkdir(parents=True, exist_ok=True)

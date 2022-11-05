@@ -1,8 +1,9 @@
 from nonebot import on_command
-from nonebot.params import CommandArg
-from nonebot.rule import Rule
 from nonebot.adapters.onebot.v11 import Message, MessageEvent, MessageSegment
+from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
+from nonebot.rule import Rule
+
 from LittlePaimon import SUPERUSERS
 from LittlePaimon.config import config
 from LittlePaimon.utils.brower import screenshot

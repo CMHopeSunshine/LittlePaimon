@@ -1,23 +1,22 @@
-import time
+import datetime
 
 from nonebot import on_regex, on_command
 from nonebot.adapters.onebot.v11 import MessageEvent, Message, MessageSegment, GroupMessageEvent
-from nonebot.adapters.onebot.v11.helpers import HandleCancellation
 from nonebot.adapters.onebot.v11.exception import ActionFailed
+from nonebot.adapters.onebot.v11.helpers import HandleCancellation
 from nonebot.params import RegexDict, ArgPlainText, CommandArg, Arg
-from nonebot.plugin import PluginMetadata
 from nonebot.permission import SUPERUSER
+from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
 
 from LittlePaimon import NICKNAME
-from LittlePaimon.utils.alias import get_match_alias
-from LittlePaimon.utils.tool import freq_limiter
-from LittlePaimon.utils.message import MessageBuild
 from LittlePaimon.database import PlayerAlias
-from LittlePaimon.config import RESOURCE_BASE_PATH
-from .draw_map import init_map, draw_map, get_full_map
+from LittlePaimon.utils.alias import get_match_alias
+from LittlePaimon.utils.message import MessageBuild
+from LittlePaimon.utils.path import RESOURCE_BASE_PATH
+from LittlePaimon.utils.tool import freq_limiter
 from .draw_daily_material import draw_material
-
+from .draw_map import init_map, draw_map, get_full_map
 
 __paimon_help__ = {
     'type':  '原神Wiki',
@@ -44,12 +43,13 @@ __plugin_meta__ = PluginMetadata(
     }
 )
 
-daily_material = on_regex(r'(?P<day>现在|(今|明|后)(天|日)|周(一|二|三|四|五|六|日))(天赋|角色|武器)?材料', priority=11, block=True, state={
-    'pm_name':        '每日材料',
-    'pm_description': '查看某日开放材料刷取的角色和武器',
-    'pm_usage':       '<今天|周几>材料',
-    'pm_priority':    8
-})
+daily_material = on_regex(r'^(?P<day>现在|(今|明|后)(天|日)|周(一|二|三|四|五|六|日))(天赋|角色|武器)?材料$',
+                          priority=11, block=True, state={
+        'pm_name':        '每日材料',
+        'pm_description': '查看某日开放材料刷取的角色和武器',
+        'pm_usage':       '<今天|周几>材料',
+        'pm_priority':    8
+    })
 material_map = on_command('材料图鉴', priority=11, block=True, state={
     'pm_name':        '材料图鉴',
     'pm_description': '查看某个材料的介绍和采集点。',
@@ -69,31 +69,27 @@ generate_map = on_command('生成地图', priority=1, block=True, permission=SUP
     'pm_priority':    11
 })
 
+week_str = ['周一', '周二', '周三', '周四', '周五', '周六']
+
 
 @daily_material.handle()
 async def _(event: MessageEvent, regex_dict: dict = RegexDict()):
-    await daily_material.send('开始获取每日材料，请稍候...')
-    if regex_dict['day'] in ['今日', '今天', '现在']:
-        day = time.strftime("%w")
-    elif regex_dict['day'] in ['明日', '明天']:
-        day = str(int(time.strftime("%w")) + 1)
-    elif regex_dict['day'] in ['后日', '后天']:
-        day = str(int(time.strftime("%w")) + 2)
+    if regex_dict['day'] in {'今日', '今天', '现在'}:
+        day = datetime.datetime.now().weekday()
+    elif regex_dict['day'] in {'明日', '明天'}:
+        day = (datetime.datetime.now() + datetime.timedelta(days=1)).weekday()
+    elif regex_dict['day'] in {'后日', '后天'}:
+        day = (datetime.datetime.now() + datetime.timedelta(days=2)).weekday()
     elif regex_dict['day'] == '周日':
         await daily_material.finish('周日所有材料都可以刷哦!', at_sender=True)
     elif regex_dict['day'].startswith('周'):
+        await daily_material.send('开始获取每日材料，请稍候...')
         await daily_material.finish(await draw_material(str(event.user_id), regex_dict['day']))
-    if day == '0':
+    if day == 6:
         await daily_material.finish('周日所有材料都可以刷哦!', at_sender=True)
     else:
-        await daily_material.finish(await draw_material(str(event.user_id), {
-            '1': '周一',
-            '2': '周二',
-            '3': '周三',
-            '4': '周四',
-            '5': '周五',
-            '6': '周六',
-        }[day]), at_sender=True)
+        await daily_material.send('开始获取每日材料，请稍候...')
+        await daily_material.finish(await draw_material(str(event.user_id), week_str[day]), at_sender=True)
 
 
 @material_map.handle()
@@ -119,7 +115,8 @@ async def _(event: MessageEvent, state: T_State, map_: str = ArgPlainText('map')
         state['map'] = Message(map_)
 
 
-@material_map.got('name', prompt='请输入要查询的材料名称，或回答【取消】退出', parameterless=[HandleCancellation(f'好吧，有需要再找{NICKNAME}')])
+@material_map.got('name', prompt='请输入要查询的材料名称，或回答【取消】退出',
+                  parameterless=[HandleCancellation(f'好吧，有需要再找{NICKNAME}')])
 async def _(event: MessageEvent, map_: str = ArgPlainText('map'), name: str = ArgPlainText('name')):
     if (file_path := RESOURCE_BASE_PATH / 'genshin_map' / 'results' / f'{map_}_{name}.png').exists():
         await material_map.finish(MessageSegment.image(file_path), at_sender=True)
@@ -245,12 +242,14 @@ def create_wiki_matcher(pattern: str, help_fun: str, help_name: str):
         if choice not in match_alias:
             state['times'] = state['times'] + 1 if 'times' in state else 1
             if state['times'] == 1:
-                await maps.reject(f'请旅行者从上面的{state["type"]}中选一个问{NICKNAME}\n回答\"取消\"可以取消查询', at_sender=True)
+                await maps.reject(f'请旅行者从上面的{state["type"]}中选一个问{NICKNAME}\n回答\"取消\"可以取消查询',
+                                  at_sender=True)
 
             elif state['times'] == 2:
                 await maps.reject(f'别调戏{NICKNAME}啦，快选一个吧，不想问了请回答\"取消\"！', at_sender=True)
             elif state['times'] >= 3:
-                await maps.finish(f'看来旅行者您有点神志不清哦(，下次再问{NICKNAME}吧{MessageSegment.face(146)}', at_sender=True)
+                await maps.finish(f'看来旅行者您有点神志不清哦(，下次再问{NICKNAME}吧{MessageSegment.face(146)}',
+                                  at_sender=True)
         try:
             await maps.finish(MessageSegment.image(state['img_url'].format(choice)))
         except ActionFailed:

@@ -1,10 +1,11 @@
 import datetime
 from typing import Optional
-from LittlePaimon.database import PublicCookie, PrivateCookie, LastQuery
-from fastapi.responses import JSONResponse
+
 from fastapi import APIRouter
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
+from LittlePaimon.database import PublicCookie, PrivateCookie, LastQuery
 from LittlePaimon.utils.api import get_bind_game_info, get_stoken_by_cookie
 from .utils import authentication
 

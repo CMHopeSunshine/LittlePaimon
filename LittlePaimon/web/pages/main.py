@@ -1,10 +1,10 @@
 from LittlePaimon import __version__
-from amis import App, PageSchema, Tpl, Page, DropDownButton, ActionType, LevelEnum, Flex
-from .public_cookie import page as public_cookie_page
-from .private_cookie import page as private_cookie_page
-from .plugin_manage import page as plugin_manage_page
-from .home_page import page as home_page
+from amis import App, PageSchema, Tpl, Page, Flex
 from .config_manage import page as config_page
+from .home_page import page as home_page
+from .plugin_manage import page as plugin_manage_page
+from .private_cookie import page as private_cookie_page
+from .public_cookie import page as public_cookie_page
 
 # from .learning_chat_manage import page as learning_chat_page
 

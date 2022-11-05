@@ -1,7 +1,8 @@
-from typing import Optional, Literal, Tuple, Union, List, AsyncGenerator, AsyncIterator
-from playwright.async_api import Page, Browser, Playwright, async_playwright, Error
 from contextlib import asynccontextmanager
 from contextlib import suppress
+from typing import Optional, Literal, Tuple, Union, List, AsyncGenerator, AsyncIterator
+
+from playwright.async_api import Page, Browser, Playwright, async_playwright, Error
 
 from LittlePaimon import DRIVER
 from LittlePaimon.utils import logger

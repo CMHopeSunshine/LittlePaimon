@@ -2,11 +2,11 @@ import asyncio
 from typing import List
 
 from LittlePaimon.database import Character, LastQuery
-from LittlePaimon.config import RESOURCE_BASE_PATH
-from LittlePaimon.utils.files import load_image
 from LittlePaimon.utils.alias import get_chara_icon
+from LittlePaimon.utils.files import load_image
 from LittlePaimon.utils.image import PMImage, font_manager as fm
 from LittlePaimon.utils.message import MessageBuild
+from LittlePaimon.utils.path import RESOURCE_BASE_PATH
 from .api import get_team_rate
 from .models import TeamRate
 

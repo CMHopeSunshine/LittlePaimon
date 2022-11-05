@@ -1,11 +1,12 @@
 import datetime
 from pathlib import Path
 
-from fastapi.responses import JSONResponse
 from fastapi import APIRouter
+from fastapi.responses import JSONResponse
 
 from LittlePaimon.config import ConfigManager, ConfigModel, PluginManager, PluginInfo
 from LittlePaimon.database import PluginPermission
+
 try:
     from LittlePaimon.plugins.plugin_manager import cache_help
 except Exception:

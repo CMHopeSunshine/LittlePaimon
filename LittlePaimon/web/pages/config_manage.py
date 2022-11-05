@@ -1,4 +1,5 @@
-from amis import Action,  Divider, Form, InputText, LevelEnum, Page, PageSchema, Switch, Remark, InputNumber, InputTime, InputTimeRange, Alert, Editor, Tabs, TabsModeEnum, Select
+from amis import Action,  Divider, Form, InputText, LevelEnum, Page, PageSchema, Switch, Remark, InputNumber, InputTime, InputTimeRange, Alert, Editor, \
+    Select
 
 action_button = [Action(label='保存', level=LevelEnum.success, type='submit'),
                  Action(label='重置', level=LevelEnum.warning, type='reset')]

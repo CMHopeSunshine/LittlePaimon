@@ -3,9 +3,9 @@ from io import BytesIO
 
 from PIL import Image, ImageDraw
 
-from LittlePaimon.config.path import GACHA_RES
-from LittlePaimon.utils.message import MessageBuild
 from LittlePaimon.utils.image import font_manager
+from LittlePaimon.utils.message import MessageBuild
+from LittlePaimon.utils.path import GACHA_RES
 from .data_handle import load_json
 from .data_source import get_once_data, get_gacha_data
 

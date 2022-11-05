@@ -3,6 +3,7 @@ from typing import Optional
 
 from fastapi import Header, HTTPException, Depends
 from jose import jwt
+
 from LittlePaimon import SUPERUSERS
 from LittlePaimon.config import config
 

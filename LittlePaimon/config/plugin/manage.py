@@ -10,7 +10,7 @@ from nonebot.message import run_preprocessor
 from nonebot.adapters.onebot.v11 import MessageEvent, PrivateMessageEvent, GroupMessageEvent
 from LittlePaimon import DRIVER, SUPERUSERS
 from LittlePaimon.utils import logger
-from LittlePaimon.config.path import PLUGIN_CONFIG
+from LittlePaimon.utils.path import PLUGIN_CONFIG
 from LittlePaimon.utils.files import load_yaml, save_yaml
 from LittlePaimon.database.models import PluginPermission, PluginStatistics
 from .model import MatcherInfo, PluginInfo

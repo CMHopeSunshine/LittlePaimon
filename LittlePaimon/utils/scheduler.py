@@ -1,9 +1,8 @@
 import logging
 
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from nonebot import get_driver
 from nonebot.log import LoguruHandler, logger
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
-
 from pydantic import Field, BaseSettings
 
 

@@ -1,11 +1,12 @@
 import nonebot
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
+
 from LittlePaimon import DRIVER
-from LittlePaimon.utils import logger
 from LittlePaimon.config import config
-from .pages import admin_app, login_page, bind_cookie_page, blank_page
+from LittlePaimon.utils import logger
 from .api import BaseApiRouter
+from .pages import admin_app, login_page, bind_cookie_page, blank_page
 
 app: FastAPI = nonebot.get_app()
 app.include_router(BaseApiRouter)

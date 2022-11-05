@@ -3,7 +3,7 @@ from typing import Union
 
 from nonebot.adapters.onebot.v11 import Message
 
-from LittlePaimon.config import JSON_DATA
+from .path import JSON_DATA
 
 
 class DFAFilter:

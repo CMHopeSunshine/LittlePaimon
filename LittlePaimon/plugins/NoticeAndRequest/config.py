@@ -1,5 +1,5 @@
 from typing import Dict, Union
-from LittlePaimon.config import GREET_CONFIG, GREET_CONFIG_DEFAULT
+from LittlePaimon.utils.path import GREET_CONFIG, GREET_CONFIG_DEFAULT
 from LittlePaimon.utils.files import load_yaml, save_yaml
 
 

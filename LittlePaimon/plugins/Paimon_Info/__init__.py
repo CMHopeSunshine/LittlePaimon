@@ -8,8 +8,8 @@ from nonebot.typing import T_State
 
 from LittlePaimon import NICKNAME
 from LittlePaimon.database import PlayerAlias
-from LittlePaimon.config import YSC_TEMP_IMG_PATH
 from LittlePaimon.utils import logger
+from LittlePaimon.utils.path import YSC_TEMP_IMG_PATH
 from LittlePaimon.utils.message import CommandPlayer, CommandCharacter, CommandUID
 from LittlePaimon.utils.genshin import GenshinInfoManager
 from LittlePaimon.utils.tool import freq_limiter

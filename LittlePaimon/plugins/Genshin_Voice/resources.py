@@ -5,8 +5,8 @@ from typing import Dict, Optional
 from lxml import etree
 
 from LittlePaimon.database import GenshinVoice
-from LittlePaimon.utils import aiorequests
 from LittlePaimon.utils import logger
+from LittlePaimon.utils.requests import aiorequests
 
 
 async def get_character_list() -> Optional[Dict[str, int]]:

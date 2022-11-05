@@ -2,16 +2,16 @@ import random
 from typing import Union
 
 from nonebot import on_command
-from nonebot.adapters.onebot.v11.exception import ActionFailed
 from nonebot.adapters.onebot.v11 import Message, MessageEvent, GroupMessageEvent, PrivateMessageEvent
+from nonebot.adapters.onebot.v11.exception import ActionFailed
 from nonebot.params import CommandArg
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
 
 from LittlePaimon.config import config
-from LittlePaimon.utils.message import CommandCharacter, CommandLang, MessageBuild
-from LittlePaimon.utils.alias import get_match_alias
 from LittlePaimon.database import GenshinVoice
+from LittlePaimon.utils.alias import get_match_alias
+from LittlePaimon.utils.message import CommandCharacter, CommandLang, MessageBuild
 from .handler import GuessVoice, get_character_voice, get_rank, get_voice_list
 from .resources import update_voice_resources
 

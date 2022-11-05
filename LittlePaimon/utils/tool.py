@@ -7,7 +7,8 @@ import time
 from collections import defaultdict
 from pathlib import Path
 
-from LittlePaimon.utils import aiorequests, logger
+from .logger import logger
+from .requests import aiorequests
 
 RESOURCE_BASE_PATH = Path() / 'resources' / 'LittlePaimon'
 

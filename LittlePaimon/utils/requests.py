@@ -5,8 +5,8 @@ from ssl import SSLCertVerificationError
 from typing import Dict, Optional, Any, Union, Tuple
 
 import httpx
-from PIL import Image
 import tqdm.asyncio
+from PIL import Image
 from nonebot import logger
 
 
@@ -97,6 +97,9 @@ class aiorequests:
                                             params=params,
                                             timeout=timeout,
                                             **kwargs)
+                    # 不保存安柏计划的问号图标
+                    if resp.headers.get('etag') == 'W/"6363798a-13c7"':
+                        save_path = False
                     resp = resp.read()
                     if b'NoSuchKey' in resp or b'character not exists' in resp:
                         return 'No Such File'
@@ -108,6 +111,8 @@ class aiorequests:
                                             params=params,
                                             timeout=timeout,
                                             **kwargs)
+                    if resp.headers.get('etag') == 'W/"6363798a-13c7"':
+                        save_path = False
                     resp = resp.read()
                     if b'error' in resp:
                         return 'No Such File'

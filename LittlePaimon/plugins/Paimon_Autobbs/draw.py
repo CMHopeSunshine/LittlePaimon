@@ -1,10 +1,11 @@
 import math
-from enum import IntEnum, auto
 from collections import defaultdict
-from LittlePaimon.config import RESOURCE_BASE_PATH
-from LittlePaimon.utils.message import MessageBuild
+from enum import IntEnum, auto
+
 from LittlePaimon.utils.files import load_image
 from LittlePaimon.utils.image import PMImage, font_manager as fm
+from LittlePaimon.utils.message import MessageBuild
+from LittlePaimon.utils.path import RESOURCE_BASE_PATH
 
 
 class SignResult(IntEnum):

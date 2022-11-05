@@ -1,12 +1,12 @@
 import asyncio
 from typing import List, Tuple, Optional
 
-from LittlePaimon.config import RESOURCE_BASE_PATH
 from LittlePaimon.database import PlayerInfo, Character, PlayerWorldInfo, Weapon, Player
-from LittlePaimon.utils.files import load_image
 from LittlePaimon.utils.alias import get_chara_icon
+from LittlePaimon.utils.files import load_image
 from LittlePaimon.utils.image import PMImage, get_qq_avatar, font_manager as fm
 from LittlePaimon.utils.message import MessageBuild
+from LittlePaimon.utils.path import RESOURCE_BASE_PATH
 
 RESOURCES = RESOURCE_BASE_PATH / 'player_card'
 ICON = RESOURCE_BASE_PATH / 'icon'

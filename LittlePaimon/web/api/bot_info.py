@@ -4,14 +4,15 @@ import os
 import sys
 from pathlib import Path
 
-from fastapi.responses import JSONResponse
 from fastapi import APIRouter
+from fastapi.responses import JSONResponse
 from nonebot import get_bot
 from nonebot.adapters.onebot.v11 import Bot
+
 from LittlePaimon import SUPERUSERS
-from LittlePaimon.utils.update import update
 from LittlePaimon.utils.files import save_json
 from LittlePaimon.utils.tool import cache
+from LittlePaimon.utils.update import update
 from .utils import authentication
 
 route = APIRouter()

@@ -1,15 +1,16 @@
 import datetime
-from typing import Dict, Any, Tuple
 from collections import defaultdict
+from typing import Dict, Any, Tuple
 
 import pytz
 from nonebot import get_bot
+
 from LittlePaimon.database import AbyssInfo
-from LittlePaimon.utils import aiorequests
 from LittlePaimon.utils.files import load_image
-from LittlePaimon.config import RESOURCE_BASE_PATH
 from LittlePaimon.utils.image import PMImage, font_manager as fm, get_qq_avatar
 from LittlePaimon.utils.message import MessageBuild
+from LittlePaimon.utils.path import RESOURCE_BASE_PATH
+from LittlePaimon.utils.requests import aiorequests
 
 
 async def get_user_avatar(user_id: str, size: Tuple[int, int] = (60, 60)):

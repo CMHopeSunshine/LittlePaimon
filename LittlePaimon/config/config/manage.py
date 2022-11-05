@@ -1,5 +1,5 @@
 from LittlePaimon.utils.files import load_yaml, save_yaml
-from LittlePaimon.config.path import PAIMON_CONFIG
+from LittlePaimon.utils.path import PAIMON_CONFIG
 from .model import ConfigModel
 
 

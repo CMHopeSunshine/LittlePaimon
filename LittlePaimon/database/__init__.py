@@ -4,7 +4,7 @@ from pathlib import Path
 from tortoise import Tortoise
 from nonebot.log import logger
 from LittlePaimon.utils import scheduler
-from LittlePaimon.config.path import GENSHIN_DB_PATH, SUB_DB_PATH, GENSHIN_VOICE_DB_PATH, MANAGER_DB_PATH, \
+from LittlePaimon.utils.path import GENSHIN_DB_PATH, SUB_DB_PATH, GENSHIN_VOICE_DB_PATH, MANAGER_DB_PATH, \
     LEARNING_CHAT_DB_PATH, YSC_TEMP_IMG_PATH
 from .models import *
 

@@ -1,12 +1,12 @@
 import math
 
-from LittlePaimon.config import RESOURCE_BASE_PATH
 from LittlePaimon.database import Character
-from LittlePaimon.utils import aiorequests
 from LittlePaimon.utils.files import load_image
 from LittlePaimon.utils.genshin import GenshinTools
 from LittlePaimon.utils.image import PMImage, font_manager as fm
 from LittlePaimon.utils.message import MessageBuild
+from LittlePaimon.utils.path import RESOURCE_BASE_PATH
+from LittlePaimon.utils.requests import aiorequests
 
 ICON = RESOURCE_BASE_PATH / 'icon'
 ARTIFACT_ICON = RESOURCE_BASE_PATH / 'artifact'

@@ -1,4 +1,4 @@
-from LittlePaimon.utils import aiorequests
+from LittlePaimon.utils.requests import aiorequests
 
 host = 'https://api-cloudgame.mihoyo.com/'
 

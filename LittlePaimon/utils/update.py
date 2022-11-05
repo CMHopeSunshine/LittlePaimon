@@ -1,10 +1,12 @@
 import datetime
 from pathlib import Path
+
 import git
-from nonebot.utils import run_sync
 from git.exc import GitCommandError, InvalidGitRepositoryError
+from nonebot.utils import run_sync
+
 from LittlePaimon import __version__, NICKNAME
-from LittlePaimon.utils import aiorequests
+from .requests import aiorequests
 
 
 async def check_update():

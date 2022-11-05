@@ -1,5 +1,7 @@
 from typing import Literal, List
+
 from pydantic import BaseModel, parse_raw_as
+
 try:
     import ujson as json
 except ImportError:

@@ -1,6 +1,7 @@
 from typing import List, Tuple
 
 from pydantic import parse_obj_as
+
 from LittlePaimon.utils.requests import aiorequests
 from .models import TeamRateResult, TeamRate
 

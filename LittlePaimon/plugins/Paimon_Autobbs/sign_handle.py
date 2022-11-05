@@ -3,14 +3,17 @@ import datetime
 import json
 import random
 import time
-from nonebot import get_bot
 from collections import defaultdict
 from typing import Tuple, Dict, Any, Optional, Union
+
+from nonebot import get_bot
+
 from LittlePaimon import DRIVER
 from LittlePaimon.config import config
 from LittlePaimon.database import MihoyoBBSSub, LastQuery, PrivateCookie
-from LittlePaimon.utils import logger, scheduler, aiorequests
+from LittlePaimon.utils import logger, scheduler
 from LittlePaimon.utils.api import get_mihoyo_private_data, get_sign_reward_list, mihoyo_sign_headers, check_retcode
+from LittlePaimon.utils.requests import aiorequests
 from .draw import SignResult, draw_result
 
 SIGN_ACTION_API = 'https://api-takumi.mihoyo.com/event/bbs_sign_reward/sign'

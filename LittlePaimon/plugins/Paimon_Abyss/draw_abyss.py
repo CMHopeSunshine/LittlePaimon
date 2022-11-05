@@ -1,11 +1,11 @@
 import asyncio
 import datetime
 
-from LittlePaimon.config import RESOURCE_BASE_PATH
-from LittlePaimon.utils.image import PMImage, font_manager as fm
-from LittlePaimon.utils.files import load_image
-from LittlePaimon.utils.message import MessageBuild
 from LittlePaimon.database import AbyssInfo
+from LittlePaimon.utils.path import RESOURCE_BASE_PATH
+from LittlePaimon.utils.files import load_image
+from LittlePaimon.utils.image import PMImage, font_manager as fm
+from LittlePaimon.utils.message import MessageBuild
 
 
 def datetime_to_cn(time: datetime.datetime) -> str:

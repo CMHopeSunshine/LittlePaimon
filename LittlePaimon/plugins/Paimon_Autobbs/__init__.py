@@ -1,17 +1,17 @@
 from typing import Union
 
 from nonebot import on_command
-from nonebot.rule import to_me
-from nonebot.permission import SUPERUSER
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, PrivateMessageEvent
+from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
+from nonebot.rule import to_me
 
 from LittlePaimon.database import MihoyoBBSSub, PrivateCookie
 from LittlePaimon.utils import logger
 from LittlePaimon.utils.message import CommandUID, CommandSwitch
 from .coin_handle import mhy_bbs_coin, bbs_auto_coin
-from .sign_handle import mhy_bbs_sign, bbs_auto_sign
 from .draw import draw_result
+from .sign_handle import mhy_bbs_sign, bbs_auto_sign
 
 __plugin_meta__ = PluginMetadata(
     name='米游社签到及获取',

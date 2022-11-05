@@ -1,5 +1,6 @@
-from nonebot import logger as nb_logger
 from typing import Dict
+
+from nonebot import logger as nb_logger
 
 
 class logger:

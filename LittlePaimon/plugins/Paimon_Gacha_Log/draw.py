@@ -4,10 +4,10 @@ import math
 import random
 from typing import Tuple, List, Optional
 
-from LittlePaimon.config import RESOURCE_BASE_PATH
 from LittlePaimon.utils.files import load_image
-from LittlePaimon.utils.message import MessageBuild
 from LittlePaimon.utils.image import PMImage, get_qq_avatar, font_manager as fm
+from LittlePaimon.utils.message import MessageBuild
+from LittlePaimon.utils.path import RESOURCE_BASE_PATH
 from .models import GachaLogInfo, FiveStarItem, FourStarItem
 
 avatar_point = [69, 156, 259, 358, 456, 558, 645, 746, 840, 945]

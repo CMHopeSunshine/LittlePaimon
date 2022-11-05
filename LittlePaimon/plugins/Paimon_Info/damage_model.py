@@ -1,7 +1,7 @@
 import random
 from typing import Tuple, Dict, Optional, List, Union
 
-from LittlePaimon.config.path import JSON_DATA
+from LittlePaimon.utils.path import JSON_DATA
 from LittlePaimon.utils.files import load_json
 from LittlePaimon.utils.genshin import GenshinTools
 from LittlePaimon.utils.image import PMImage, font_manager

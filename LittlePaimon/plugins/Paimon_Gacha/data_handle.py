@@ -1,5 +1,5 @@
-from LittlePaimon.config.path import GACHA_SIM
-from LittlePaimon.utils import load_json, save_json
+from LittlePaimon.utils.files import load_json, save_json
+from LittlePaimon.utils.path import GACHA_SIM
 
 
 def load_user_data(user_id: int) -> dict:

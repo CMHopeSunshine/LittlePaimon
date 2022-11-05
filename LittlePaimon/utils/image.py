@@ -1,15 +1,13 @@
-import contextlib
-import hashlib
 from io import BytesIO
 from pathlib import Path
 from typing import Tuple, Union, Literal, List
 
 import matplotlib.pyplot as plt
 from PIL import Image, ImageDraw, ImageFont, ImageOps
-
-from LittlePaimon.config import FONTS_PATH
-from LittlePaimon.utils.requests import aiorequests
 from nonebot.utils import run_sync
+
+from .path import FONTS_PATH
+from .requests import aiorequests
 
 plt.switch_backend('agg')
 

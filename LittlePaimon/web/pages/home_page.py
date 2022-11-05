@@ -1,5 +1,5 @@
-from amis import Page, PageSchema, Html, Property, Service, Flex, ActionType, LevelEnum, Divider
 from LittlePaimon import __version__
+from amis import Page, PageSchema, Html, Property, Service, Flex, ActionType, LevelEnum, Divider
 
 logo = Html(html=f'''
 <p align="center">

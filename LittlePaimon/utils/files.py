@@ -2,15 +2,24 @@ try:
     import ujson as json
 except ImportError:
     import json
+import hashlib
 from pathlib import Path
-from typing import Union, Optional, Tuple, Dict
 from ssl import SSLCertVerificationError
+from typing import Union, Optional, Tuple, Dict
 
 import httpx
-from PIL import Image
-from .requests import aiorequests
 import tqdm.asyncio
+from PIL import Image
 from ruamel import yaml
+
+from LittlePaimon.utils.path import RESOURCE_BASE_PATH
+from .requests import aiorequests
+
+# 删除从安柏计划下载的问号图标
+if (temp_path := RESOURCE_BASE_PATH / 'avatar' / 'UI_AvatarIcon_Wanderer.png').exists() and hashlib.md5(temp_path.read_bytes()).hexdigest() == 'a8827dfecb36640e59b319d1dd6190f4':
+    temp_path.unlink()
+if (temp_path := RESOURCE_BASE_PATH / 'avatar' / 'UI_AvatarIcon_Faruzan.png').exists() and hashlib.md5(temp_path.read_bytes()).hexdigest() == 'a8827dfecb36640e59b319d1dd6190f4':
+    temp_path.unlink()
 
 cache_image: Dict[str, any] = {}
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36'}

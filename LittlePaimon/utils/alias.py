@@ -2,7 +2,7 @@ import difflib
 from typing import Union, Literal, List, Optional
 
 from .files import load_json
-from LittlePaimon.config import JSON_DATA
+from .path import JSON_DATA
 
 alias_file = load_json(JSON_DATA / 'alias.json')
 info_file = load_json(JSON_DATA / 'genshin_info.json')

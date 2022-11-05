@@ -6,9 +6,11 @@ from collections import defaultdict
 from typing import Tuple
 
 from nonebot import get_bot
+
 from LittlePaimon.config import config
 from LittlePaimon.database import PrivateCookie, MihoyoBBSSub, LastQuery
-from LittlePaimon.utils import logger, aiorequests, scheduler
+from LittlePaimon.utils import logger, scheduler
+from LittlePaimon.utils.requests import aiorequests
 from LittlePaimon.utils.api import random_text, random_hex, get_old_version_ds, get_ds
 
 # 米游社的API列表

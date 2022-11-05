@@ -3,13 +3,13 @@ import datetime
 import math
 from typing import List
 
-from LittlePaimon.config import RESOURCE_BASE_PATH
 from LittlePaimon.database import Character, PlayerInfo, Player
-from LittlePaimon.utils.files import load_image
 from LittlePaimon.utils.alias import get_chara_icon
+from LittlePaimon.utils.files import load_image
 from LittlePaimon.utils.genshin import GenshinTools
 from LittlePaimon.utils.image import PMImage, font_manager as fm
 from LittlePaimon.utils.message import MessageBuild
+from LittlePaimon.utils.path import RESOURCE_BASE_PATH
 from .draw_player_card import get_avatar, draw_weapon_icon
 
 RESOURCES = RESOURCE_BASE_PATH / 'chara_bag'
