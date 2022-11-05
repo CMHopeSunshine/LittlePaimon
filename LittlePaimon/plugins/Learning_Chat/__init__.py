@@ -4,10 +4,9 @@ import re
 import threading
 from collections import defaultdict
 
-from nonebot import on_keyword, on_message, on_command, get_bot
+from nonebot import on_keyword, on_message, get_bot
 from nonebot.adapters.onebot.v11 import MessageEvent, GroupMessageEvent, GROUP, Message, ActionFailed
-from nonebot.params import Arg, CommandArg
-from nonebot.permission import SUPERUSER
+from nonebot.params import Arg
 from nonebot.plugin import PluginMetadata
 from nonebot.rule import to_me, Rule
 from nonebot.typing import T_State

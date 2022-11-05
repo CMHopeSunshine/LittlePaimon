@@ -13,10 +13,10 @@ from dataclasses import dataclass
 from collections import defaultdict
 import threading
 
-from nonebot.adapters.onebot.v11 import Message, MessageSegment, GroupMessageEvent
+from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent
 
 from LittlePaimon import NICKNAME
-from LittlePaimon.database.models import Message, Context, BlackList, Answers, Answer, BanWord
+from LittlePaimon.database import Message, Context, BlackList, Answers, Answer, BanWord
 from .config import config_manager
 
 config = config_manager.config

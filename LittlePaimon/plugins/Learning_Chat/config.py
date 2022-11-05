@@ -2,7 +2,7 @@ from typing import List
 
 from pydantic import BaseModel, Field
 
-from LittlePaimon.config import LEARNING_CHAT_CONFIG
+from LittlePaimon.utils.path import LEARNING_CHAT_CONFIG
 from LittlePaimon.utils.files import load_yaml, save_yaml
 
 
