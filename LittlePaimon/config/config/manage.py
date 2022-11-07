@@ -25,8 +25,13 @@ class ConfigManager:
             value = value in ['开', 'true', 'on']
         elif config_name != 'CookieWeb地址' and not value.isdigit():
             return '配置项不合法，必须为数字'
-        temp = cls.config.dict(by_alias=True)
-        temp[config_name] = value
-        cls.config = ConfigModel.parse_obj(temp)
-        save_yaml(cls.config.dict(by_alias=True), PAIMON_CONFIG)
+        cls.config.update(config_name=value)
+        cls.save()
         return f'成功设置{config_name}为{value}'
+
+    @classmethod
+    def save(cls):
+        save_yaml(cls.config.dict(by_alias=True), PAIMON_CONFIG)
+
+
+config = ConfigManager.config

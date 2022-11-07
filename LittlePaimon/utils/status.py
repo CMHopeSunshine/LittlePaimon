@@ -22,7 +22,6 @@ async def get_status():
         bot_status = await bot.get_status()
         status_result['bot_id'] = bot.self_id
         if bot_status := bot_status.get('stat'):
-            print(bot_status)
             status_result['msg_received'] = bot_status.get('message_received', '未知')
             status_result['msg_sent'] = bot_status.get('message_sent', '未知')
     except Exception:

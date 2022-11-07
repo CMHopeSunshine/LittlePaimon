@@ -58,6 +58,21 @@ class LastQuery(Model):
         table = 'last_query'
         table_description = '用户最后查询的uid'
 
+    @classmethod
+    async def update_last_query(cls, user_id: str, uid: str):
+        """
+        更新用户最后查询的uid
+            :param user_id: 用户id
+            :param uid: 原神uid
+        """
+        if await PrivateCookie.filter(user_id=user_id).exists():
+            if await PrivateCookie.filter(user_id=user_id, uid=uid).exists():
+                await LastQuery.update_or_create(user_id=user_id,
+                                                 defaults={'uid': uid, 'last_time': datetime.datetime.now()})
+        else:
+            await LastQuery.update_or_create(user_id=user_id,
+                                             defaults={'uid': uid, 'last_time': datetime.datetime.now()})
+
 
 class CookieCache(Model):
     """

@@ -7,7 +7,7 @@ from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
 
 from LittlePaimon import NICKNAME
-from LittlePaimon.database import PlayerAlias
+from LittlePaimon.database import PlayerAlias, LastQuery
 from LittlePaimon.utils import logger
 from LittlePaimon.utils.path import YSC_TEMP_IMG_PATH
 from LittlePaimon.utils.message import CommandPlayer, CommandCharacter, CommandUID
@@ -156,7 +156,7 @@ async def _(event: MessageEvent, players=CommandPlayer(only_cn=False), character
     if len(players) == 1:
         # 当查询对象只有一个时，查询所有角色
         gim = GenshinInfoManager(players[0].user_id, players[0].uid)
-        await gim.set_last_query()
+        await LastQuery.update_last_query(players[0].user_id, players[0].uid)
         logger.info('原神角色卡片', '➤', {'用户': players[0].user_id, 'UID': players[0].uid})
         for character in characters:
             character_info = await gim.get_character(name=character)
@@ -171,7 +171,7 @@ async def _(event: MessageEvent, players=CommandPlayer(only_cn=False), character
         # 当查询对象有多个时，只查询第一个角色
         for player in players:
             gim = GenshinInfoManager(player.user_id, player.uid)
-            await gim.set_last_query()
+            await LastQuery.update_last_query(player.user_id, player.uid)
             logger.info('原神角色卡片', '➤', {'用户': player.user_id, 'UID': player.uid})
             character_info = await gim.get_character(name=characters[0])
             if not character_info:
@@ -199,7 +199,7 @@ async def _(event: MessageEvent, players=CommandPlayer(only_cn=False), character
     if len(players) == 1:
         # 当查询对象只有一个时，查询所有角色
         gim = GenshinInfoManager(players[0].user_id, players[0].uid)
-        await gim.set_last_query()
+        await LastQuery.update_last_query(players[0].user_id, players[0].uid)
         logger.info('原神角色面板', '➤', {'用户': players[0].user_id, 'UID': players[0].uid})
         for character in characters:
             character_info = await gim.get_character(name=character, data_source='enka')
@@ -214,7 +214,7 @@ async def _(event: MessageEvent, players=CommandPlayer(only_cn=False), character
         # 当查询对象有多个时，只查询第一个角色
         for player in players:
             gim = GenshinInfoManager(player.user_id, player.uid)
-            await gim.set_last_query()
+            await LastQuery.update_last_query(player.user_id, player.uid)
             logger.info('原神角色面板', '➤', {'用户': player.user_id, 'UID': player.uid})
             character_info = await gim.get_character(name=characters[0], data_source='enka')
             if not character_info:

@@ -41,3 +41,14 @@ class ConfigModel(BaseModel):
     admin_enable: bool = Field(True, alias='启用Web端')
     admin_password: str = Field('admin', alias='Web端管理员密码')
     secret_key: str = Field('49c294d32f69b732ef6447c18379451ce1738922a75cd1d4812ef150318a2ed0', alias='Web端token密钥')
+
+    @property
+    def alias_dict(self):
+        return {v.alias: k for k, v in self.__fields__.items()}
+
+    def update(self, **kwargs):
+        for key, value in kwargs.items():
+            if key in self.__fields__:
+                self.__setattr__(key, value)
+            elif key in self.alias_dict:
+                self.__setattr__(self.alias_dict[key], value)

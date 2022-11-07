@@ -9,7 +9,7 @@ from nonebot.adapters.onebot.v11 import GroupUploadNoticeEvent, NoticeEvent
 from nonebot.rule import Rule
 
 from LittlePaimon import __version__
-from LittlePaimon.database import PlayerInfo
+from LittlePaimon.database import PlayerInfo, LastQuery
 from LittlePaimon.utils import logger
 from LittlePaimon.utils.requests import aiorequests
 from LittlePaimon.utils.api import get_authkey_by_stoken
@@ -118,6 +118,7 @@ async def get_gacha_log_data(user_id: str, uid: str):
     :param uid: 原神uid
     :return: 更新结果
     """
+    await LastQuery.update_last_query(user_id, uid)
     new_num = 0
     server_id = 'cn_qd01' if uid[0] == '5' else 'cn_gf01'
     authkey, state, cookie_info = await get_authkey_by_stoken(user_id, uid)
@@ -166,11 +167,11 @@ async def get_gacha_log_data(user_id: str, uid: str):
 
 
 async def get_gacha_log_img(user_id: str, uid: str, nickname: str):
+    await LastQuery.update_last_query(user_id, uid)
     data, state = load_history_info(user_id, uid)
     if not state:
         return f'UID{uid}还没有抽卡记录数据，请先更新'
-    player_info = await PlayerInfo.get_or_none(user_id=user_id, uid=uid)
-    if player_info:
+    if player_info := await PlayerInfo.get_or_none(user_id=user_id, uid=uid):
         return await draw_gacha_log(player_info.user_id, player_info.uid, player_info.nickname, player_info.signature,
                                     data)
     else:

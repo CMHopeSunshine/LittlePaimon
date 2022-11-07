@@ -28,14 +28,10 @@ class GenshinInfoManager:
         self.user_id = user_id
         self.uid = uid
 
-    async def set_last_query(self):
-        await LastQuery.update_or_create(user_id=self.user_id,
-                                         defaults={'uid': self.uid, 'last_time': datetime.datetime.now()})
-
     async def is_bind(self) -> bool:
         """
         检查是否已绑定私人cookie
-        :return: bool
+            :return: bool
         """
         return bool(await PrivateCookie.get_or_none(user_id=self.user_id, uid=self.uid))
 
@@ -44,23 +40,25 @@ class GenshinInfoManager:
         更新所有原神信息
         """
         result = ''
-        await self.set_last_query()
+        await LastQuery.update_last_query(self.user_id, self.uid)
         mihoyo_result = await self.update_from_mihoyo()
-        if mihoyo_result != '更新成功':
-            result += f'{mihoyo_result}\n'
+        result += f'米游社数据：\n{mihoyo_result}\n'
+
+        if include_talent:
+            if await self.is_bind():
+                talent_result = await self.update_talent()
+                result += f'天赋数据：\n{talent_result}\n'
+            else:
+                result += '天赋数据：\n未绑定私人Cookie\n'
+
         enka_result = await self.update_from_enka()
-        if not enka_result.startswith('更新成功'):
-            result += f'{enka_result}\n'
-        if include_talent and await self.is_bind():
-            talent_result = await self.update_talent()
-            if talent_result not in ['更新成功', mihoyo_result]:
-                result += f'{talent_result}\n'
+        result += f'Enka数据：\n{enka_result}'
         return result or enka_result
 
     async def update_from_enka(self) -> str:
         """
         从enka.network更新原神数据
-        :return: 更新结果
+            :return: 更新结果
         """
         data = await get_enka_data(self.uid)
         if not data:
@@ -72,13 +70,13 @@ class GenshinInfoManager:
         for character in data['avatarInfoList']:
             await Character.update_info(self.user_id, self.uid, character, 'enka')
         logger.info('原神信息', f'➤UID<m>{self.uid}</m><g>更新Enka成功</g>')
-        return '更新成功，本次更新的角色有：\n' + ' '.join(
+        return '更新以下角色成功：\n' + ' '.join(
             [get_name_by_id(str(c['avatarId'])) for c in data['playerInfo']['showAvatarInfoList']])
 
     async def update_talent(self) -> str:
         """
         从mihoyo api中更新每一个角色的天赋信息
-        :return: 更新结果
+            :return: 更新结果
         """
         characters = await Character.filter(user_id=self.user_id, uid=self.uid, data_source='mihoyo').all()
         for character in characters:
@@ -111,14 +109,14 @@ class GenshinInfoManager:
     async def update_from_mihoyo(self) -> str:
         """
         从米游社api更新原神数据
-        :return: 更新结果
+            :return: 更新结果
         """
         data = await get_mihoyo_public_data(self.uid, self.user_id, 'player_card')
         if not isinstance(data, dict):
             return data
         elif data['retcode'] == 1034:
-            logger.info('原神信息', f'更新<m>{self.uid}</m>的玩家数据时出错，状态码为1034，疑似验证码</r>')
-            return '疑似遇米游社验证码阻拦，请稍后再试'
+            logger.info('原神信息', f'更新<m>{self.uid}</m>的玩家数据时出错，状态码为1034，<r>疑似验证码</r>')
+            return '疑似遇验证码阻拦，请稍后再试'
         elif data['retcode'] != 0:
             logger.info('原神信息', f'更新<m>{self.uid}</m>的玩家数据时出错，消息为<r>{data["message"]}</r>')
             return data['message']
@@ -148,19 +146,19 @@ class GenshinInfoManager:
     async def get_info(self) -> Optional[PlayerInfo]:
         """
         获取原神玩家总体信息
-        :return: 玩家信息
+            :return: 玩家信息
         """
-        await self.set_last_query()
+        await LastQuery.update_last_query(self.user_id, self.uid)
         return await PlayerInfo.get_or_none(user_id=self.user_id, uid=self.uid)
 
     async def get_character(self, name: Optional[str] = None, character_id: Optional[int] = None,
                             data_source: Optional[DataSourceType] = None) -> Optional[Character]:
         """
         根据角色名或角色id（二选一）获取角色信息
-        :param name: 角色名
-        :param character_id: 角色id
-        :param data_source: 数据来源(mihoyo/enka)，不指定时返回最近更新的
-        :return: 角色信息
+            :param name: 角色名
+            :param character_id: 角色id
+            :param data_source: 数据来源(mihoyo/enka)，不指定时返回最近更新的
+            :return: 角色信息
         """
         query = {'user_id': self.user_id, 'uid': self.uid}
         if name:
@@ -172,13 +170,15 @@ class GenshinInfoManager:
         if data_source == 'enka':
             """如果角色不存在或者角色的更新时间在6小时前，则更新角色信息"""
             character = await Character.get_or_none(**query, data_source='enka')
-            if not character or character.update_time < (datetime.datetime.now() - datetime.timedelta(hours=config.ysd_auto_update)).replace(
+            if not character or character.update_time < (
+                    datetime.datetime.now() - datetime.timedelta(hours=config.ysd_auto_update)).replace(
                     tzinfo=pytz.timezone('UTC')):
                 await self.update_from_enka()
                 if character := await Character.get_or_none(**query, data_source='enka'):
                     logger.info('原神角色面板', '➤➤', {'角色': name or character_id}, '数据更新成功', True)
                 else:
-                    logger.info('原神角色面板', '➤➤', {'角色': name or character_id}, '不在游戏内展示柜中，更新失败', False)
+                    logger.info('原神角色面板', '➤➤', {'角色': name or character_id}, '不在游戏内展示柜中，更新失败',
+                                False)
             else:
                 logger.info('原神角色面板', '➤➤', {'角色': name or character_id}, '数据获取成功', True)
             return character
@@ -191,13 +191,13 @@ class GenshinInfoManager:
     async def get_chara_bag(self) -> Tuple[Union[PlayerInfo, str], List[Character]]:
         """
         获取原神角色背包信息
-        :return: 原神玩家信息和角色列表
+            :return: 原神玩家信息和角色列表
         """
-        await self.set_last_query()
+        await LastQuery.update_last_query(self.user_id, self.uid)
         player_info = await PlayerInfo.get_or_none(user_id=self.user_id, uid=self.uid)
         if player_info is None or player_info.update_time is None or player_info.update_time < (
                 datetime.datetime.now() - datetime.timedelta(hours=config.ysa_auto_update)).replace(
-                tzinfo=pytz.timezone('UTC')):
+            tzinfo=pytz.timezone('UTC')):
             result = await self.update_from_mihoyo()
             if result != '更新成功':
                 return result, []
@@ -210,11 +210,11 @@ class GenshinInfoManager:
         return player_info, character_list
 
     async def get_player_info(self) -> Tuple[Union[PlayerInfo, str], Optional[List[Character]]]:
-        await self.set_last_query()
+        await LastQuery.update_last_query(self.user_id, self.uid)
         player_info = await PlayerInfo.get_or_none(user_id=self.user_id, uid=self.uid)
         if player_info is None or player_info.update_time is None or player_info.update_time < (
                 datetime.datetime.now() - datetime.timedelta(hours=config.ys_auto_update)).replace(
-                tzinfo=pytz.timezone('UTC')):
+            tzinfo=pytz.timezone('UTC')):
             result = await self.update_from_mihoyo()
             if result != '更新成功':
                 return result, None
@@ -228,7 +228,7 @@ class GenshinInfoManager:
         return player_info, characters_list
 
     async def get_abyss_info(self, abyss_index: int = 1) -> Union[AbyssInfo, str]:
-        await self.set_last_query()
+        await LastQuery.update_last_query(self.user_id, self.uid)
         await AbyssInfo.filter(user_id=self.user_id, uid=self.uid).delete()
         result = await self.update_abyss_info(abyss_index)
         if result != '更新成功':
@@ -238,7 +238,7 @@ class GenshinInfoManager:
     async def export_data(self) -> dict:
         """
         导出原神数据为字典
-        :return: 原神数据字典
+            :return: 原神数据字典
         """
         data = {}
         if player_info := await PlayerInfo.get_or_none(user_id=self.user_id, uid=self.uid).values():
@@ -257,20 +257,22 @@ class GenshinTools:
     def artifact_single_score(role_prop: dict, prop_name: str, prop_value: float, effective: dict):
         """
         计算圣遗物单词条的有效词条数
-        :param role_prop: 角色基础属性
-        :param prop_name: 属性名
-        :param prop_value: 属性值
-        :param effective: 有效词条列表
-        :return: 评分
+            :param role_prop: 角色基础属性
+            :param prop_name: 属性名
+            :param prop_value: 属性值
+            :param effective: 有效词条列表
+            :return: 评分
         """
-        prop_map = {'攻击力': 4.975, '生命值': 4.975, '防御力': 6.2, '暴击率': 3.3, '暴击伤害': 6.6, '元素精通': 19.75, '元素充能效率': 5.5}
+        prop_map = {'攻击力':       4.975, '生命值': 4.975, '防御力': 6.2, '暴击率': 3.3, '暴击伤害': 6.6,
+                    '元素精通':     19.75, '元素充能效率': 5.5}
 
         if prop_name in effective and prop_name in {'攻击力', '生命值', '防御力'}:
             return round(prop_value / role_prop[prop_name] * 100 / prop_map[prop_name] * effective[prop_name], 2)
 
         if prop_name.replace('百分比', '') in effective:
-            return round(prop_value / prop_map[prop_name.replace('百分比', '')] * effective[prop_name.replace('百分比', '')],
-                         2)
+            return round(
+                prop_value / prop_map[prop_name.replace('百分比', '')] * effective[prop_name.replace('百分比', '')],
+                2)
 
         return 0
 
@@ -278,10 +280,10 @@ class GenshinTools:
     def artifact_score(prop: CharacterProperty, artifact: Artifact, effective: dict) -> Tuple[float, float]:
         """
         计算圣遗物总有效词条数以及评分
-        :param prop: 角色基础属性
-        :param artifact: 圣遗物信息
-        :param effective: 有效词条列表
-        :return: 总词条数，评分
+            :param prop: 角色基础属性
+            :param artifact: 圣遗物信息
+            :param effective: 有效词条列表
+            :return: 总词条数，评分
         """
         if not artifact.prop_list:
             return 0, 0
@@ -311,8 +313,8 @@ class GenshinTools:
     def get_expect_score(effective: dict):
         """
         计算单个圣遗物小毕业所需的期望词条数
-        :param effective: 有效词条列表
-        :return: 期望词条数
+            :param effective: 有效词条列表
+            :return: 期望词条数
         """
         if len(effective.keys()) == 2:
             average = 15 / 5
@@ -331,8 +333,8 @@ class GenshinTools:
     def get_artifact_suit(artifacts: Artifacts) -> List[Tuple[str, str]]:
         """
         获取圣遗物套装
-        :param artifacts: 圣遗物列表
-        :return: 套装列表
+            :param artifacts: 圣遗物列表
+            :return: 套装列表
         """
         suit2 = []
         final_suit = []
@@ -354,8 +356,8 @@ class GenshinTools:
     def get_effective(character: Character):
         """
         根据角色的武器、圣遗物来判断获取该角色有效词条列表
-        :param character: 角色信息
-        :return: 有效词条列表
+            :param character: 角色信息
+            :return: 有效词条列表
         """
         role_name = f'{character.element}主' if character.name in {'荧', '空'} else character.name
         if role_name not in ra_score['Role']:
@@ -389,9 +391,9 @@ class GenshinTools:
     def check_effective(prop_name: str, effective: dict):
         """
         检查词条是否有效
-        :param prop_name: 词条属性名
-        :param effective: 有效词条列表
-        :return: 是否有效
+            :param prop_name: 词条属性名
+            :param effective: 有效词条列表
+            :return: 是否有效
         """
         if '攻击力' in effective and '攻击力' in prop_name:
             return True

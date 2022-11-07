@@ -4,7 +4,7 @@ from pathlib import Path
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
-from LittlePaimon.config import ConfigManager, ConfigModel, PluginManager, PluginInfo
+from LittlePaimon.config import ConfigManager, PluginManager, PluginInfo
 from LittlePaimon.database import PluginPermission
 
 try:
@@ -130,10 +130,8 @@ async def set_config(data: dict):
         data['实时便签停止检查结束时间'] = int(temp_time_split[1][:2])
     if '云原神签到开始时间' in data:
         data['云原神签到时间(小时)'] = int(data['云原神签到开始时间'])
-    config = ConfigManager.config.dict(by_alias=True)
-    config.update(**data)
-    ConfigManager.config = ConfigModel.parse_obj(config)
-    PluginManager.save()
+    ConfigManager.config.update(**data)
+    ConfigManager.save()
     return {
         'status': 0,
         'msg':    '保存成功'
