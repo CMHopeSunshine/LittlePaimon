@@ -14,7 +14,10 @@ route = APIRouter()
 
 class BindCookie(BaseModel):
     user_id: int
+    uid: Optional[int]
+    mys_id: Optional[int]
     cookie: str
+    stoken: Optional[str]
 
 
 @route.post('/bind_cookie', response_class=JSONResponse)
@@ -81,20 +84,28 @@ async def delete_private_cookie(id: int):
 
 
 @route.post('/add_public_cookie', response_class=JSONResponse, dependencies=[authentication()])
-async def add_public_cookie(data: dict):
+async def add_public_cookie(force: bool, data: dict):
     cookie = data.get('cookie')
     if not cookie:
         return {'status': 100, 'msg': '参数错误'}
-    if await get_bind_game_info(cookie, True):
+    if not force:
+        if await get_bind_game_info(cookie, True):
+            new_cookie = await PublicCookie.create(cookie=cookie)
+            return {'status': 0, 'msg': f'{new_cookie.id}号公共Cookie添加成功'}
+        else:
+            return {'status': 200, 'msg': '该Cookie无效'}
+    else:
         new_cookie = await PublicCookie.create(cookie=cookie)
         return {'status': 0, 'msg': f'{new_cookie.id}号公共Cookie添加成功'}
-    else:
-        return {'status': 200, 'msg': '该Cookie无效'}
 
 
 @route.post('/save_private_cookie', response_class=JSONResponse, dependencies=[authentication()])
-async def save_private_cookie(data: BindCookie):
-    if game_info := await get_bind_game_info(data.cookie):
+async def save_private_cookie(force: bool, data: BindCookie):
+    if force:
+        await PrivateCookie.update_or_create(user_id=data.user_id, uid=data.uid, mys_id=data.mys_id,
+                                             defaults={'cookie': data.cookie, 'stoken': data.stoken})
+        return {'status': 0, 'msg': f'QQ{data.user_id}的UID{data.uid}的Cookie强制修改成功。'}
+    elif game_info := await get_bind_game_info(data.cookie):
         game_uid = game_info['game_role_id']
         mys_id = game_info['mys_id']
         await LastQuery.update_or_create(user_id=data.user_id,

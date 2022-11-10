@@ -7,7 +7,7 @@
 <p align="center">
     <a href="https://cdn.jsdelivr.net/gh/CMHopeSunshine/LittlePaimon@master/LICENSE"><img src="https://img.shields.io/github/license/CMHopeSunshine/LittlePaimon" alt="license"></a>
     <img src="https://img.shields.io/badge/Python-3.8+-yellow" alt="python">
-    <img src="https://img.shields.io/badge/Version-3.0.0rc1-green" alt="version">
+    <img src="https://img.shields.io/badge/Version-3.0.0rc2-green" alt="version">
     <a href="https://qun.qq.com/qqweb/qunpro/share?_wv=3&_wwv=128&inviteCode=MmWrI&from=246610&biz=ka"><img src="https://img.shields.io/badge/QQ频道交流-尘世闲游-blue?style=flat-square" alt="QQ guild"></a>
 </p>
 
@@ -64,14 +64,12 @@
 
 文档地址：https://docs.paimon.cherishmoon.fun/
 
-## | TODO
-- [x] Web管理面板
-  - [ ] 群聊学习配置 <img src="https://progress-bar.dev/75/" alt="bar">
-  - [ ] 实时日志和Shell <img src="https://progress-bar.dev/30/" alt="bar">
-  - [ ] 角色数据管理
-  - [ ] 功能调用统计
-- [ ] 群聊学习优化 <img src="https://progress-bar.dev/75/" alt="bar">
-- [ ] 米游社up主订阅 <img src="https://progress-bar.dev/25/" alt="bar">
-- [ ] 各种文案提示支持自定义  <img src="https://progress-bar.dev/25/" alt="bar">
-- [ ] 角色数据优化
-- [ ] 更新机器人方式优化
+## | 常见问题&致谢
+
+详见[常见问题](https://docs.paimon.cherishmoon.fun/question.html)和[致谢](https://docs.paimon.cherishmoon.fun/thanks.html)。
+
+
+## | 其他
+- 如果你喜欢这个项目，欢迎给个star或者[爱发电](https://afdian.net/a/cherishmoon)，十分感谢。
+- 本项目完全开源免费，仅供学习使用，禁止用于商业用途和非法行为，如有他人非法使用，与本作者无关。
+- 如果您使用并修改了本项目源码，请遵循[GPL-3.0](https://github.com/CMHopeSunshine/LittlePaimon/blob/Bot/LICENSE)将源码开源。

@@ -135,4 +135,4 @@ cards_curd = CardsCRUD(mode='cards',
                        footerToolbar=['switch-per-page', 'pagination'],
                        columnsCount=3,
                        card=card)
-page = PageSchema(url='/plugins', label='插件管理', schema=Page(title='插件管理', body=cards_curd))
+page = PageSchema(url='/bot_config/plugins', icon='fa fa-cube', label='插件管理', schema=Page(title='插件管理', body=cards_curd))

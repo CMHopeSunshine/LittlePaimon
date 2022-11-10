@@ -98,7 +98,8 @@ class aiorequests:
                                             timeout=timeout,
                                             **kwargs)
                     # 不保存安柏计划的问号图标
-                    if resp.headers.get('etag') == 'W/"6363798a-13c7"':
+                    if resp.headers.get('etag') == 'W/"6363798a-13c7"' or resp.headers.get(
+                            'content-md5') == 'JeG5b/z8SpViMmO/E9eayA==':
                         save_path = False
                     resp = resp.read()
                     if b'NoSuchKey' in resp or b'character not exists' in resp:
@@ -111,7 +112,8 @@ class aiorequests:
                                             params=params,
                                             timeout=timeout,
                                             **kwargs)
-                    if resp.headers.get('etag') == 'W/"6363798a-13c7"':
+                    if resp.headers.get('etag') == 'W/"6363798a-13c7"' or resp.headers.get(
+                            'content-md5') == 'JeG5b/z8SpViMmO/E9eayA==':
                         save_path = False
                     resp = resp.read()
                     if b'error' in resp:
@@ -136,9 +138,9 @@ class aiorequests:
     async def download(url: str, save_path: Path, exclude_json: bool = False):
         """
         下载文件(带进度条)
-        :param url: url
-        :param save_path: 保存路径
-        :param exclude_json: 是否排除json文件
+            :param url: url
+            :param save_path: 保存路径
+            :param exclude_json: 是否排除json文件
         """
         save_path.parent.mkdir(parents=True, exist_ok=True)
         async with httpx.AsyncClient().stream(method='GET', url=url, follow_redirects=True) as datas:
@@ -163,17 +165,31 @@ class aiorequests:
                             **kwargs):
         """
         下载icon
-        :param name: url
-        :param headers: 请求头
-        :param save_path: 保存路径
+            :param name: url
+            :param headers: 请求头
+            :param save_path: 保存路径
         """
+        url = None
+        if name.startswith(('UI_EquipIcon', 'UI_RelicIcon')):
+            url = f'https://upload-bbs.mihoyo.com/game_record/genshin/equip/{name}'
+        elif name.startswith('UI_Talent'):
+            url = f'https://upload-bbs.mihoyo.com/game_record/genshin/constellation_icon/{name}'
+        elif name.startswith('UI_AvatarIcon'):
+            if name.endswith('UI_AvatarIcon_Side'):
+                url = f'https://upload-bbs.mihoyo.com/game_record/genshin/character_side_icon/{name}'
+            elif name.endswith('Card.png'):
+                url = f'https://upload-bbs.mihoyo.com/game_record/genshin/character_card_icon/{name}'
+            else:
+                url = f'https://upload-bbs.mihoyo.com/game_record/genshin/character_icon/{name}'
         urls = [
-            f'https://file.microgg.cn/MiniGG/ui/{name}',
+            url,
+            f'https://file.microgg.cn/KimigaiiWuyi/resource/icon/{name}'
             f'https://api.ambr.top/assets/UI/{name}',
-            f'https://enka.network/ui/{name}'
+            f'https://enka.network/ui/{name}',
         ]
         for url in urls:
             with contextlib.suppress(Exception):
-                return await aiorequests.get_img(url=url, headers=headers, save_path=save_path, **kwargs)
+                if url is not None:
+                    return await aiorequests.get_img(url=url, headers=headers, save_path=save_path, **kwargs)
         logger.opt(colors=True).info(f'<u><y>[资源检查]</y></u>图标资源<m>{name}</m><r>下载失败</r>')
         return None

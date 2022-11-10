@@ -345,5 +345,5 @@ select = Select(label='选择配置类',
                         'value': 8
                     }
                 ])
-page = PageSchema(url='/configs', label='配置项管理',
+page = PageSchema(url='/bot_config/configs', icon='fa fa-wrench', label='配置项管理',
                   schema=Page(title='配置项管理', initApi='/LittlePaimon/api/get_config', body=[select, cookie_web_form, sim_gacha_form, auto_mys_form, ssbq_form, ys_form, notice_form, other_form, nonebot_form]))

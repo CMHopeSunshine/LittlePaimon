@@ -42,17 +42,17 @@ class GenshinInfoManager:
         result = ''
         await LastQuery.update_last_query(self.user_id, self.uid)
         mihoyo_result = await self.update_from_mihoyo()
-        result += f'米游社数据：\n{mihoyo_result}\n'
+        result += f'米游社数据：{mihoyo_result}\n'
 
         if include_talent:
             if await self.is_bind():
                 talent_result = await self.update_talent()
-                result += f'天赋数据：\n{talent_result}\n'
+                result += f'天赋数据：{talent_result}\n'
             else:
-                result += '天赋数据：\n未绑定私人Cookie\n'
+                result += '天赋数据：未绑定私人Cookie\n'
 
         enka_result = await self.update_from_enka()
-        result += f'Enka数据：\n{enka_result}'
+        result += f'Enka数据：{enka_result}'
         return result or enka_result
 
     async def update_from_enka(self) -> str:
