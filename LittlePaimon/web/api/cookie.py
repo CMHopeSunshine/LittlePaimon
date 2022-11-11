@@ -5,7 +5,7 @@ from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
-from LittlePaimon.database import PublicCookie, PrivateCookie, LastQuery
+from LittlePaimon.database import PublicCookie, PrivateCookie, LastQuery, CookieCache
 from LittlePaimon.utils.api import get_bind_game_info, get_stoken_by_cookie
 from .utils import authentication
 
@@ -49,6 +49,26 @@ async def get_public_cookies(status: Optional[int] = None):
         return await PublicCookie.filter(status=status).values()
 
 
+@route.post('/set_public_cookie', response_class=JSONResponse, dependencies=[authentication()])
+async def set_public_cookie(id: int):
+    cookie = await PublicCookie.get_or_none(id=id)
+    if cookie.status != 3:
+        await CookieCache.filter(cookie=cookie.cookie).delete()
+        cookie.status = 3
+        await cookie.save()
+        return {
+            'status': 0,
+            'msg': f'{id}号公共Cookie暂停使用成功'
+        }
+    else:
+        cookie.status = 1
+        await cookie.save()
+        return {
+            'status': 0,
+            'msg': f'{id}号公共Cookie恢复使用成功'
+        }
+
+
 @route.get('/get_private_cookies', response_class=JSONResponse, dependencies=[authentication()])
 async def get_private_cookies(
         page: int = 1,
@@ -83,7 +103,9 @@ async def get_private_cookie(id: int):
 @route.delete('/delete_cookie', response_class=JSONResponse, dependencies=[authentication()])
 async def delete_public_cookie(cookie_type: str, id: int):
     if cookie_type == 'public':
-        await PublicCookie.filter(id=id).delete()
+        cookie = await PublicCookie.get(id=id)
+        await CookieCache.filter(cookie=cookie.cookie).delete()
+        await cookie.delete()
         return {'status': 0, 'msg': f'{id}号公共Cookie删除成功'}
     else:
         await PrivateCookie.filter(id=id).delete()

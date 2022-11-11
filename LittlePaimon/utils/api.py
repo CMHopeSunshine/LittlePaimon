@@ -184,7 +184,7 @@ async def check_retcode(data: dict, cookie_info, cookie_type: str, user_id: str,
             logger.info('原神Cookie', f'UID<m>{cookie_info.uid}</m>使用的缓存cookie已达到每日30次查询上限')
         return False
     else:
-        if cookie_type == 'public':
+        if cookie_type == 'public' and data['retcode'] != 1034:
             await CookieCache.update_or_create(uid=uid, defaults={'cookie': cookie_info.cookie})
         return True
 
