@@ -1,46 +1,45 @@
-# from nonebot import logger
-# from nonebot.log import default_filter, default_format
-# from LittlePaimon import DRIVER
-from fastapi import APIRouter
-from fastapi.responses import JSONResponse
+import asyncio
 
+from fastapi import APIRouter
+from fastapi.responses import JSONResponse, StreamingResponse
+from nonebot.log import logger, default_filter, default_format
 from LittlePaimon.utils.status import get_status
 from .utils import authentication
 
-show_logs = []
+info_logs = []
+debug_logs = []
 
 
-# @DRIVER.on_startup
-# async def start_up():
-#
-#     def record_log(message: str):
-#         show_logs.append(message)
-#
-#     logger.opt(colors=True, ansi=True).add(record_log, colorize=True, filter=default_filter, format=default_format)
+def record_info_log(message: str):
+    info_logs.append(message)
+    if len(info_logs) > 500:
+        info_logs.pop(0)
 
+
+def record_debug_log(message: str):
+    # 过滤一些无用日志
+    if not any(w in message for w in {'Checking for matchers', 'Running PreProcessors', 'OneBot V11 | Calling API'}):
+        debug_logs.append(message)
+        if len(debug_logs) > 300:
+            debug_logs.pop(0)
+
+
+logger.add(record_info_log, level='INFO', colorize=True, filter=default_filter, format=default_format)
+logger.add(record_debug_log, level='DEBUG', colorize=True, filter=default_filter, format=default_format)
 
 route = APIRouter()
 
 
-# @route.get('/log', response_class=StreamingResponse)
-# async def get_log():
-#     async def streaming_logs():
-#         count = 0
-#         while True:
-#             if show_logs:
-#                 yield show_logs.pop(0)
-#                 count = 0
-#             else:
-#                 count += 1
-#                 if count > 600:
-#                     yield '超过一分钟没有新日志，日志已断开，请刷新页面重新连接\n'
-#                     await asyncio.sleep(2)
-#                     break
-#                 else:
-#                     yield '\n'
-#             await asyncio.sleep(0.1)
-#
-#     return StreamingResponse(streaming_logs())
+@route.get('/log', response_class=StreamingResponse)
+async def get_log(level: str = 'info'):
+    show_logs = info_logs if level == 'info' else debug_logs
+
+    async def streaming_logs():
+        for log in show_logs:
+            yield log
+            await asyncio.sleep(0.02)
+
+    return StreamingResponse(streaming_logs())
 
 
 @route.get('/status', response_class=JSONResponse, dependencies=[authentication()])

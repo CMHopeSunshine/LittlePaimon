@@ -12,7 +12,7 @@ import tqdm.asyncio
 from PIL import Image
 from ruamel import yaml
 
-from LittlePaimon.utils.path import RESOURCE_BASE_PATH
+from .path import RESOURCE_BASE_PATH
 from .requests import aiorequests
 
 # 删除从安柏计划下载的问号图标

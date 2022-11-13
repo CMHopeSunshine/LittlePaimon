@@ -4,7 +4,7 @@ from typing import Optional
 from fastapi import Header, HTTPException, Depends
 from jose import jwt
 
-from LittlePaimon import SUPERUSERS
+from LittlePaimon.utils import SUPERUSERS
 from LittlePaimon.config import config
 
 SECRET_KEY = config.secret_key

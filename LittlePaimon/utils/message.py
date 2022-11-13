@@ -12,8 +12,8 @@ from nonebot.matcher import Matcher
 from nonebot.params import CommandArg, Depends
 from nonebot.typing import T_State
 
-from LittlePaimon import NICKNAME
 from LittlePaimon.database import LastQuery, PrivateCookie, Player, PlayerAlias
+from . import NICKNAME
 from .alias import get_match_alias
 from .files import load_image
 from .filter import filter_msg

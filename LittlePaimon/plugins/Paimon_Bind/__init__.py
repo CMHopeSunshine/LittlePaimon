@@ -9,11 +9,10 @@ from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
 
-from LittlePaimon import NICKNAME
 from LittlePaimon.config import config
 from LittlePaimon.database import LastQuery, PrivateCookie, PublicCookie, Character, PlayerInfo, DailyNoteSub, \
     MihoyoBBSSub
-from LittlePaimon.utils import logger
+from LittlePaimon.utils import logger, NICKNAME
 from LittlePaimon.utils.api import get_bind_game_info, get_stoken_by_cookie
 from LittlePaimon.utils.message import recall_message
 

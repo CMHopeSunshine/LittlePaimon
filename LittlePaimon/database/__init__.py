@@ -3,9 +3,8 @@ from pathlib import Path
 
 from tortoise import Tortoise
 from nonebot.log import logger
-from LittlePaimon.utils import scheduler
-from LittlePaimon.utils.path import GENSHIN_DB_PATH, SUB_DB_PATH, GENSHIN_VOICE_DB_PATH, MANAGER_DB_PATH, \
-    LEARNING_CHAT_DB_PATH, YSC_TEMP_IMG_PATH
+from LittlePaimon.utils import scheduler, logger as my_logger
+from LittlePaimon.utils.path import GENSHIN_DB_PATH, SUB_DB_PATH, GENSHIN_VOICE_DB_PATH, MANAGER_DB_PATH, YSC_TEMP_IMG_PATH
 from .models import *
 
 DATABASE = {
@@ -25,11 +24,7 @@ DATABASE = {
         'manager':       {
             "engine":      "tortoise.backends.sqlite",
             "credentials": {"file_path": MANAGER_DB_PATH},
-        },
-        'learning_chat': {
-            "engine": "tortoise.backends.sqlite",
-            "credentials": {"file_path": LEARNING_CHAT_DB_PATH},
-        },
+        }
     },
     "apps":        {
         "genshin":       {
@@ -50,10 +45,6 @@ DATABASE = {
         "manager":       {
             "models":             ['LittlePaimon.database.models.manager'],
             "default_connection": "manager",
-        },
-        "learning_chat": {
-            "models": ['LittlePaimon.database.models.learning_chat'],
-            "default_connection": "learning_chat",
         }
     },
 }
@@ -104,18 +95,18 @@ async def daily_reset():
     """
     now = datetime.datetime.now()
 
-    logger.info('原神实时便签', '重置每日提醒次数限制')
+    my_logger.info('原神实时便签', '重置每日提醒次数限制')
     await DailyNoteSub.all().update(today_remind_num=0)
 
-    logger.info('原神Cookie', '清空每日Cookie缓存和限制')
+    my_logger.info('原神Cookie', '清空每日Cookie缓存和限制')
     await CookieCache.all().delete()
     await PublicCookie.filter(status=2).update(status=1)
 
-    logger.info('功能调用统计', '清除超过一个月的统计数据')
+    my_logger.info('功能调用统计', '清除超过一个月的统计数据')
     await PluginStatistics.filter(time__lt=now - datetime.timedelta(days=30)).delete()
 
     if now.weekday() == 0:
-        logger.info('原神猜语音', '清空每周排行榜')
+        my_logger.info('原神猜语音', '清空每周排行榜')
         await GuessVoiceRank.all().delete()
 
     if YSC_TEMP_IMG_PATH.exists():

@@ -9,8 +9,8 @@ from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
 
-from LittlePaimon import NICKNAME
 from LittlePaimon.database import PlayerAlias
+from LittlePaimon.utils import NICKNAME
 from LittlePaimon.utils.alias import get_match_alias
 from LittlePaimon.utils.message import MessageBuild
 from LittlePaimon.utils.path import RESOURCE_BASE_PATH

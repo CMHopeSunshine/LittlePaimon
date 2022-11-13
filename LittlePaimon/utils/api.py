@@ -9,6 +9,7 @@ from typing import Optional, Literal, Union, Tuple
 from nonebot import logger as nb_logger
 from tortoise.queryset import Q
 
+from LittlePaimon.config import config
 from LittlePaimon.database import PublicCookie, PrivateCookie, CookieCache
 from LittlePaimon.utils import logger
 from .requests import aiorequests
@@ -293,7 +294,8 @@ async def get_mihoyo_private_data(
     server_id = 'cn_qd01' if uid[0] == '5' else 'cn_gf01'
     cookie_info, _ = await get_cookie(user_id, uid, True, True)
     if not cookie_info:
-        return '未绑定私人cookie，获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1\n获取后，使用[ysb cookie]指令绑定'
+        return '未绑定私人cookie，获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1\n获取后，使用[ysb cookie]指令绑定' \
+               + (f'或前往{config.CookieWeb_url}网页添加绑定' if config.CookieWeb_enable else '')
     if mode == 'role_skill':
         data = await aiorequests.get(url=CHARACTER_SKILL_API,
                                      headers=mihoyo_headers(q=f'uid={uid}&region={server_id}&avatar_id={role_id}',
@@ -394,7 +396,8 @@ async def get_authkey_by_stoken(user_id: str, uid: str) -> Tuple[Optional[str], 
     server_id = 'cn_qd01' if uid[0] == '5' else 'cn_gf01'
     cookie_info, _ = await get_cookie(user_id, uid, True, True)
     if not cookie_info:
-        return '未绑定私人cookie，获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1\n获取后，使用[ysb cookie]指令绑定', False, cookie_info
+        return '未绑定私人cookie，获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1\n获取后，使用[ysb cookie]指令绑定' \
+               + (f'或前往{config.CookieWeb_url}网页添加绑定' if config.CookieWeb_enable else ''), False, cookie_info
     if not cookie_info.stoken:
         return 'cookie中没有stoken字段，请重新绑定', False, cookie_info
     headers = {

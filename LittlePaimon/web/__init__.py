@@ -2,16 +2,11 @@ import nonebot
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 
-from LittlePaimon import DRIVER
 from LittlePaimon.config import config
-from LittlePaimon.utils import logger
+from LittlePaimon.utils import logger, DRIVER
 from .api import BaseApiRouter
 from .pages import admin_app, login_page, bind_cookie_page, blank_page
 
-app: FastAPI = nonebot.get_app()
-app.include_router(BaseApiRouter)
-
-logger.info('Web UI', f'<g>启用成功</g>，默认地址为<m>http://127.0.0.1:{DRIVER.config.port}/LittlePaimon/login</m>')
 
 requestAdaptor = '''
 requestAdaptor(api) {
@@ -31,27 +26,43 @@ responseAdaptor(api, payload, query, request, response) {
 },
 '''
 
-
-@app.get('/LittlePaimon/admin', response_class=HTMLResponse)
-async def admin():
-    if config.admin_enable:
-        return admin_app.render(site_title='LittlePaimon 后台管理', theme='antd', requestAdaptor=requestAdaptor,
-                                responseAdaptor=responseAdaptor)
-    else:
-        return blank_page.render(site_title='LittlePaimon')
+icon_path = 'http://static.cherishmoon.fun/LittlePaimon/readme/logo.png'
 
 
-@app.get('/LittlePaimon/login', response_class=HTMLResponse)
-async def login():
-    if config.admin_enable:
-        return login_page.render(site_title='登录 | LittlePaimon 后台管理', theme='antd')
-    else:
-        return blank_page.render(site_title='LittlePaimon')
+@DRIVER.on_startup
+def init_web():
+    app: FastAPI = nonebot.get_app()
+    app.include_router(BaseApiRouter)
+    logger.info('Web UI', f'<g>启用成功</g>，默认地址为<m>http://127.0.0.1:{DRIVER.config.port}/LittlePaimon/login</m>')
 
+    @app.get('/LittlePaimon/admin', response_class=HTMLResponse)
+    async def admin():
+        if config.admin_enable:
+            return admin_app.render(site_title='LittlePaimon 后台管理',
+                                    site_icon=icon_path,
+                                    theme=config.admin_theme,
+                                    requestAdaptor=requestAdaptor,
+                                    responseAdaptor=responseAdaptor)
+        else:
+            return blank_page.render(site_title='LittlePaimon',
+                                     site_icon=icon_path)
 
-@app.get('/LittlePaimon/cookie', response_class=HTMLResponse)
-async def bind_cookie():
-    if config.CookieWeb_enable:
-        return bind_cookie_page.render(site_title='绑定Cookie | LittlePaimon')
-    else:
-        return blank_page.render(site_title='LittlePaimon')
+    @app.get('/LittlePaimon/login', response_class=HTMLResponse)
+    async def login():
+        if config.admin_enable:
+            return login_page.render(site_title='登录 | LittlePaimon 后台管理',
+                                     site_icon=icon_path,
+                                     theme=config.admin_theme)
+        else:
+            return blank_page.render(site_title='LittlePaimon',
+                                     site_icon=icon_path)
+
+    @app.get('/LittlePaimon/cookie', response_class=HTMLResponse)
+    async def bind_cookie():
+        if config.CookieWeb_enable:
+            return bind_cookie_page.render(site_title='绑定Cookie | LittlePaimon',
+                                           site_icon=icon_path,
+                                           theme=config.admin_theme)
+        else:
+            return blank_page.render(site_title='LittlePaimon',
+                                     site_icon=icon_path)

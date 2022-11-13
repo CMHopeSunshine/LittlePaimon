@@ -9,7 +9,7 @@ from fastapi.responses import JSONResponse
 from nonebot import get_bot
 from nonebot.adapters.onebot.v11 import Bot
 
-from LittlePaimon import SUPERUSERS
+from LittlePaimon.utils import SUPERUSERS
 from LittlePaimon.utils.files import save_json
 from LittlePaimon.utils.tool import cache
 from LittlePaimon.utils.update import update
@@ -20,14 +20,25 @@ route = APIRouter()
 
 @route.get('/get_group_list', response_class=JSONResponse, dependencies=[authentication()])
 async def get_group_list():
-    bot: Bot = get_bot()
-    return await bot.get_group_list()
+    try:
+        group_list = await get_bot().get_group_list()
+        return [{'label': f'{group["group_name"]}({group["group_id"]})', 'value': group['group_id']} for group in group_list]
+    except ValueError:
+        return {
+            'status': -100,
+            'msg':    '获取群和好友列表失败，请确认已连接GOCQ'
+        }
 
 
 @route.get('/get_group_members', response_class=JSONResponse, dependencies=[authentication()])
 async def get_group_members(group_id: int):
-    bot: Bot = get_bot()
-    return await bot.get_group_member_list(group_id=group_id)
+    try:
+        return await get_bot().get_group_member_list(group_id=group_id)
+    except ValueError:
+        return {
+            'status': -100,
+            'msg':    '获取群和好友列表失败，请确认已连接GOCQ'
+        }
 
 
 @route.get('/get_groups_and_members', response_class=JSONResponse, dependencies=[authentication()])
@@ -36,7 +47,7 @@ async def get_groups_and_members():
     result = []
     try:
         bot: Bot = get_bot()
-    except Exception:
+    except ValueError:
         return {
             'status': -100,
             'msg':    '获取群和好友列表失败，请确认已连接GOCQ'
@@ -83,8 +94,11 @@ async def get_friend_list():
         friend_list = await bot.get_friend_list()
         return [{'label': f'{friend["nickname"]}({friend["user_id"]})', 'value': friend['user_id']} for friend in
                 friend_list]
-    except Exception:
-        return {'status': 100, 'msg': '获取好友列表失败'}
+    except ValueError:
+        return {
+            'status': -100,
+            'msg':    '获取群和好友列表失败，请确认已连接GOCQ'
+        }
 
 
 @route.post('/bot_update', response_class=JSONResponse, dependencies=[authentication()])

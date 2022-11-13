@@ -5,7 +5,7 @@ import git
 from git.exc import GitCommandError, InvalidGitRepositoryError
 from nonebot.utils import run_sync
 
-from LittlePaimon import __version__, NICKNAME
+from . import __version__, NICKNAME
 from .requests import aiorequests
 
 

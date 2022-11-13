@@ -4,9 +4,8 @@ from nonebot import get_bot, on_command
 from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
 from nonebot.plugin import PluginMetadata
 
-from LittlePaimon import DRIVER
 from LittlePaimon.database import GeneralSub
-from LittlePaimon.utils import scheduler, logger
+from LittlePaimon.utils import scheduler, logger, DRIVER
 from LittlePaimon.utils.message import CommandObjectID, CommandSwitch, CommandTime
 
 __plugin_meta__ = PluginMetadata(

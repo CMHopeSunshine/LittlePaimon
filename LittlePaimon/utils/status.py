@@ -4,7 +4,7 @@ import datetime
 import psutil
 from nonebot import get_bot
 
-from LittlePaimon import DRIVER, NICKNAME
+from . import DRIVER, NICKNAME
 
 start_time: str
 

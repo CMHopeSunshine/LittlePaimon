@@ -25,7 +25,6 @@ GENSHIN_DB_PATH = DATABASE_PATH / 'genshin.db'
 SUB_DB_PATH = DATABASE_PATH / 'subscription.db'
 GENSHIN_VOICE_DB_PATH = DATABASE_PATH / 'genshin_voice.db'
 MANAGER_DB_PATH = DATABASE_PATH / 'manager.db'
-LEARNING_CHAT_DB_PATH = DATABASE_PATH / 'learning_chat.db'
 # enka制图资源路径
 ENKA_RES = RESOURCE_BASE_PATH / 'enka_card'
 # 原神表情路径

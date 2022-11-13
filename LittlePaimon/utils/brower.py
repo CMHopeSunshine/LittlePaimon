@@ -4,8 +4,8 @@ from typing import Optional, Literal, Tuple, Union, List, AsyncGenerator, AsyncI
 
 from playwright.async_api import Page, Browser, Playwright, async_playwright, Error
 
-from LittlePaimon import DRIVER
-from LittlePaimon.utils import logger
+from . import DRIVER
+from .logger import logger
 
 _playwright: Optional[Playwright] = None
 _browser: Optional[Browser] = None

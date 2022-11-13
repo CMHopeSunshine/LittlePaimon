@@ -206,7 +206,7 @@ class MihoyoBBSCoin:
                 if data['retcode'] != 1034:
                     self.is_valid = False
                 self.state = 'Cookie已失效' if data['retcode'] in [-100,
-                                                                10001] else f"出错了:{data['retcode']} {data['message']}" if data['retcode'] != 1034 else '疑似遇到验证码'
+                                                                10001] else f"出错了:{data['retcode']} {data['message']}" if data['retcode'] != 1034 else '遇验证码阻拦'
                 logger.info('米游币自动获取', f'➤➤<r>{self.state}</r>')
                 return f'讨论区签到：{self.state}'
             await asyncio.sleep(random.randint(15, 30))

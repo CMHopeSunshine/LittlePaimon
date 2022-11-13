@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
-from LittlePaimon import SUPERUSERS
+from LittlePaimon.utils import SUPERUSERS
 from LittlePaimon.config import config
 from .utils import create_token
 

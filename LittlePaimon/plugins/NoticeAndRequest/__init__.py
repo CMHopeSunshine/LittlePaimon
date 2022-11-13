@@ -13,9 +13,8 @@ from nonebot.adapters.onebot.v11 import Bot, Message, MessageEvent, PrivateMessa
     GroupIncreaseNoticeEvent, FriendAddNoticeEvent, GroupMessageEvent
 from nonebot.typing import T_State
 
-from LittlePaimon import NICKNAME, SUPERUSERS
 from LittlePaimon.config import config as bot_config
-from LittlePaimon.utils import scheduler, logger
+from LittlePaimon.utils import scheduler, logger, NICKNAME, SUPERUSERS
 from LittlePaimon.utils.message import format_message, replace_all
 from .config import config
 

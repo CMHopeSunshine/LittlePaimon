@@ -7,7 +7,7 @@
 <p align="center">
     <a href="https://cdn.jsdelivr.net/gh/CMHopeSunshine/LittlePaimon@master/LICENSE"><img src="https://img.shields.io/github/license/CMHopeSunshine/LittlePaimon" alt="license"></a>
     <img src="https://img.shields.io/badge/Python-3.8+-yellow" alt="python">
-    <img src="https://img.shields.io/badge/Version-3.0.0rc2-green" alt="version">
+    <img src="https://img.shields.io/badge/Version-3.0.0rc3-green" alt="version">
     <a href="https://qun.qq.com/qqweb/qunpro/share?_wv=3&_wwv=128&inviteCode=MmWrI&from=246610&biz=ka"><img src="https://img.shields.io/badge/QQ频道交流-尘世闲游-blue?style=flat-square" alt="QQ guild"></a>
 </p>
 

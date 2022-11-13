@@ -13,7 +13,7 @@ cookie_web_form = Form(
             label='是否启用CookieWeb',
             name='启用CookieWeb',
             value='${启用CookieWeb}',
-            labelRemark=Remark(content='是否启用为用户提供的绑定Cookie的网页'),
+            labelRemark=Remark(shape='circle', content='是否启用为用户提供的绑定Cookie的网页'),
             onText='启用',
             offText='关闭'
         ),
@@ -21,27 +21,51 @@ cookie_web_form = Form(
             label='CookieWeb地址',
             name='CookieWeb地址',
             value='${CookieWeb地址}',
-            labelRemark=Remark(content='只是设置对用户显示的CookieWeb地址，要填写实际的地址')
+            labelRemark=Remark(shape='circle', content='只是设置对用户显示的CookieWeb地址，要填写实际的地址')
         ),
         Switch(
             label='是否启用Web端',
             name='启用Web端',
             value='${启用Web端}',
-            labelRemark=Remark(content='即本Web管理页面，注意，关闭后刷新本页面会及时不能访问'),
+            labelRemark=Remark(shape='circle', content='即本Web管理页面，注意，关闭后刷新本页面将不再能访问'),
             onText='启用',
             offText='关闭'
+        ),
+        Select(
+            label='Web端主题',
+            name='Web端主题',
+            value='${Web端主题}',
+            labelRemark=Remark(shape='circle', content='Web端及CookieWeb的外观主题，刷新页面生效'),
+            options=[
+                {
+                    'label': '云舍',
+                    'value': 'default'
+                },
+                {
+                    'label': '仿AntD',
+                    'value': 'antd'
+                },
+                {
+                    'label': 'ang',
+                    'value': 'ang'
+                },
+                {
+                    'label': '暗黑',
+                    'value': 'dark'
+                },
+            ]
         ),
         InputText(
             label='Web端管理员密码',
             name='Web端管理员密码',
             value='${Web端管理员密码}',
-            labelRemark=Remark(content='用于超级用户登录该Web端，修改后重启生效')
+            labelRemark=Remark(shape='circle', content='用于超级用户登录该Web端，修改后重启生效')
         ),
         InputText(
             label='Web端token密钥',
             name='Web端token密钥',
             value='${Web端token密钥}',
-            labelRemark=Remark(content='用于对Web端身份认证的token进行加密，为32位字符串，请不要保持为默认密钥，务必进行修改，修改后重启生效')
+            labelRemark=Remark(shape='circle', content='用于对Web端身份认证的token进行加密，为32位字符串，请不要保持为默认密钥，务必进行修改，修改后重启生效')
         ),
     ],
     actions=action_button
@@ -56,7 +80,7 @@ sim_gacha_form = Form(
             label='群冷却',
             name='模拟抽卡群冷却',
             value='${模拟抽卡群冷却}',
-            labelRemark=Remark(content='每个群在多少秒内只能进行一次抽卡'),
+            labelRemark=Remark(shape='circle', content='每个群在多少秒内只能进行一次抽卡'),
             displayMode='enhance',
             suffix='秒',
             min=0,
@@ -65,7 +89,7 @@ sim_gacha_form = Form(
             label='群员冷却',
             name='模拟抽卡群员冷却',
             value='${模拟抽卡群员冷却}',
-            labelRemark=Remark(content='在上一个配置的基础上，每位群员在多少秒内只能进行一次抽卡'),
+            labelRemark=Remark(shape='circle', content='在上一个配置的基础上，每位群员在多少秒内只能进行一次抽卡'),
             displayMode='enhance',
             suffix='秒',
             min=0,
@@ -74,7 +98,7 @@ sim_gacha_form = Form(
             label='单次最多十连数',
             name='模拟抽卡单次最多十连数',
             value='${模拟抽卡单次最多十连数}',
-            labelRemark=Remark(content='单次模拟抽卡同时最多的十连数，推荐不超过6次'),
+            labelRemark=Remark(shape='circle', content='单次模拟抽卡同时最多的十连数，推荐不超过6次'),
             displayMode='enhance',
             suffix='次',
             min=1
@@ -99,7 +123,7 @@ auto_mys_form = Form(
             label='米游社自动签到开始时间',
             name='米游社签到开始时间',
             value='${米游社签到开始时间}',
-            labelRemark=Remark(content='会在每天这个时间点进行米游社自动签到任务，修改后重启生效'),
+            labelRemark=Remark(shape='circle', content='会在每天这个时间点进行米游社自动签到任务，修改后重启生效'),
             inputFormat='HH时mm分',
             format='HH:mm'
         ),
@@ -115,7 +139,7 @@ auto_mys_form = Form(
             label='米游币自动获取开始时间',
             name='米游币开始执行时间',
             value='${米游币开始执行时间}',
-            labelRemark=Remark(content='会在每天这个时间点进行米游币自动获取任务，修改后重启生效'),
+            labelRemark=Remark(shape='circle', content='会在每天这个时间点进行米游币自动获取任务，修改后重启生效'),
             inputFormat='HH时mm分',
             format='HH:mm'
         ),
@@ -131,7 +155,7 @@ auto_mys_form = Form(
             label='云原神签到开始时间',
             name='云原神签到开始时间',
             value='${云原神签到开始时间}',
-            labelRemark=Remark(content='会在每天这个时间点进行云原神自动签到，修改后重启生效'),
+            labelRemark=Remark(shape='circle', content='会在每天这个时间点进行云原神自动签到，修改后重启生效'),
             inputFormat='HH时',
             timeFormat='HH',
             format='HH'
@@ -155,7 +179,7 @@ ssbq_form = Form(
             label='实时便签停止检查时间段',
             name='实时便签停止检查时间段',
             value='${实时便签停止检查时间段}',
-            labelRemark=Remark(
+            labelRemark=Remark(shape='circle',
                 content='在这段时间(例如深夜)不进行实时便签检查，注意开始时间不要晚于结束时间，不然会有问题'),
             timeFormat='HH',
             format='HH',
@@ -165,7 +189,7 @@ ssbq_form = Form(
             label='实时便签检查间隔',
             name='实时便签检查间隔',
             value='${实时便签检查间隔}',
-            labelRemark=Remark(content='每多少分钟检查进行一次实时便签，推荐不快于8分钟，修改后重启生效'),
+            labelRemark=Remark(shape='circle', content='每多少分钟检查进行一次实时便签，推荐不快于8分钟，修改后重启生效'),
             displayMode='enhance',
             suffix='分钟',
             min=1,
@@ -217,7 +241,7 @@ notice_form = Form(
             label='启用好友和群请求通知',
             name='启用好友和群请求通知',
             value='${启用好友和群请求通知}',
-            labelRemark=Remark(content='开启后，会在机器人收到好友或群添加、拉群等请求时向超管发消息'),
+            labelRemark=Remark(shape='circle', content='开启后，会在机器人收到好友或群添加、拉群等请求时向超管发消息'),
             onText='开启',
             offText='关闭'
         ),
@@ -225,7 +249,7 @@ notice_form = Form(
             label='自动接受好友请求',
             name='自动接受好友请求',
             value='${自动接受好友请求}',
-            labelRemark=Remark(content='开启后，机器人会自动接受所有好友请求'),
+            labelRemark=Remark(shape='circle', content='开启后，机器人会自动接受所有好友请求'),
             onText='开启',
             offText='关闭'
         ),
@@ -233,7 +257,7 @@ notice_form = Form(
             label='自动接受群邀请',
             name='自动接受群邀请',
             value='${自动接受群邀请}',
-            labelRemark=Remark(content='开启后，机器人会自动接受所有拉群请求'),
+            labelRemark=Remark(shape='circle', content='开启后，机器人会自动接受所有拉群请求'),
             onText='开启',
             offText='关闭'
         ),
@@ -241,7 +265,7 @@ notice_form = Form(
             label='启用好友和群欢迎消息',
             name='启用好友和群欢迎消息',
             value='${启用好友和群欢迎消息}',
-            labelRemark=Remark(content='开启后，会向新添加的好友以及新进入的群发送欢迎消息'),
+            labelRemark=Remark(shape='circle', content='开启后，会向新添加的好友以及新进入的群发送欢迎消息'),
             onText='开启',
             offText='关闭'
         ),
@@ -257,7 +281,7 @@ other_form = Form(
             label='网页截图权限',
             name='启用网页截图权限',
             value='${启用网页截图权限}',
-            labelRemark=Remark(content='开启后，任何人都能使用网页截图，关闭后则只有超管能使用'),
+            labelRemark=Remark(shape='circle', content='开启后，任何人都能使用网页截图，关闭后则只有超管能使用'),
             onText='所有人',
             offText='仅超级用户'
         ),
@@ -265,7 +289,7 @@ other_form = Form(
             label='原神猜语音时间',
             name='原神猜语音时间',
             value='${原神猜语音时间}',
-            labelRemark=Remark(content='原神猜语音小游戏的持续时间'),
+            labelRemark=Remark(shape='circle', content='原神猜语音小游戏的持续时间'),
             displayMode='enhance',
             suffix='秒',
             min=5,

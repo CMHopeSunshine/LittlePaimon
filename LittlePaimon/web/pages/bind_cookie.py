@@ -1,4 +1,4 @@
-from LittlePaimon import __version__
+from LittlePaimon.utils import __version__
 from amis import AmisAPI, Collapse, Form, InputNumber, Textarea, Action, LevelEnum, Divider, Page, Html
 
 collapse_text = "<h2>重要提醒：</h2>Cookie的作用相当于账号密码，非常重要，如是非可信任的机器人，请勿绑定！！<br><h2>获取方法：</h2>详见<a href='https://docs.qq.com/doc/DQ3JLWk1vQVllZ2Z1'>Cookie获取教程</a>"

@@ -8,9 +8,8 @@ from nonebot import on_notice
 from nonebot.adapters.onebot.v11 import GroupUploadNoticeEvent, NoticeEvent
 from nonebot.rule import Rule
 
-from LittlePaimon import __version__
 from LittlePaimon.database import PlayerInfo, LastQuery
-from LittlePaimon.utils import logger
+from LittlePaimon.utils import logger, __version__
 from LittlePaimon.utils.requests import aiorequests
 from LittlePaimon.utils.api import get_authkey_by_stoken
 from LittlePaimon.utils.files import load_json, save_json

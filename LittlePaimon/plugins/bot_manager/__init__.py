@@ -12,7 +12,7 @@ from nonebot.params import CommandArg, ArgPlainText, Arg
 from nonebot.typing import T_State
 from nonebot.adapters.onebot.v11 import Bot, Message, MessageEvent, GroupMessageEvent, ActionFailed
 from nonebot.adapters.onebot.v11.helpers import convert_chinese_to_bool
-from LittlePaimon import NICKNAME, DRIVER, __version__
+from LittlePaimon.utils import NICKNAME, DRIVER, __version__
 from LittlePaimon.utils.files import save_json, load_json
 from LittlePaimon.utils.update import check_update, update
 

@@ -1,3 +1,5 @@
+from typing import Literal
+
 from pydantic import BaseModel, Field
 
 
@@ -41,6 +43,7 @@ class ConfigModel(BaseModel):
     admin_enable: bool = Field(True, alias='启用Web端')
     admin_password: str = Field('admin', alias='Web端管理员密码')
     secret_key: str = Field('49c294d32f69b732ef6447c18379451ce1738922a75cd1d4812ef150318a2ed0', alias='Web端token密钥')
+    admin_theme: Literal['default', 'antd', 'ang', 'dark'] = Field('default', alias='Web端主题')
 
     @property
     def alias_dict(self):
