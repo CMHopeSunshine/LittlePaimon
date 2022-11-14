@@ -1,4 +1,5 @@
 import asyncio
+from typing import Union
 
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse, StreamingResponse
@@ -31,8 +32,8 @@ route = APIRouter()
 
 
 @route.get('/log', response_class=StreamingResponse)
-async def get_log(level: str = 'info'):
-    show_logs = info_logs if level == 'info' else debug_logs
+async def get_log(level: str = 'info', num: Union[int, str] = 100):
+    show_logs = info_logs[-(num or 1):] if level == 'info' else debug_logs[-(num or 1):]
 
     async def streaming_logs():
         for log in show_logs:

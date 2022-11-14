@@ -129,6 +129,8 @@ async def draw_chara_detail(uid: str, info: Character):
     for e, v in info.prop.dmg_bonus.items():
         if v >= max_element[1]:
             max_element = e, v
+    if max_element[1] == 0:
+        max_element = info.element, 0
     await img.text(f'{max_element[0]}伤害加成' if max_element[0] == '物理' else f'{max_element[0]}元素伤害加成',
                    59,
                    674,

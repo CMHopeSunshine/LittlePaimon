@@ -1,5 +1,5 @@
 from LittlePaimon.utils import __version__
-from amis import Page, PageSchema, Html, Property, Service, Flex, ActionType, LevelEnum, Divider, ButtonGroupSelect, Log, Alert, Form, Dialog
+from amis import Page, PageSchema, Html, Property, Service, Flex, ActionType, LevelEnum, Divider, ButtonGroupSelect, Log, Alert, Form, Dialog, Select, Group
 
 logo = Html(html=f'''
 <p align="center">
@@ -17,20 +17,48 @@ logo = Html(html=f'''
 </div>
 <br>
 ''')
-select_log = ButtonGroupSelect(
+select_log_num = Select(
+    label='日志数量',
+    name='log_num',
+    value=100,
+    options=[
+        {
+            'label': 100,
+            'value': 100
+        },
+        {
+            'label': 200,
+            'value': 200
+        },
+        {
+            'label': 300,
+            'value': 300
+        },
+        {
+            'label': 400,
+            'value': 400
+        },
+        {
+            'label': 500,
+            'value': 500
+        }
+    ]
+)
+
+select_log_level = ButtonGroupSelect(
     label='日志等级',
     name='log_level',
     btnLevel=LevelEnum.light,
     btnActiveLevel=LevelEnum.info,
-    value='/LittlePaimon/api/log?level=info',
+    value='info',
     options=[
         {
             'label': 'INFO',
-            'value': '/LittlePaimon/api/log?level=info'
+            'value': 'info'
         },
         {
             'label': 'DEBUG',
-            'value': '/LittlePaimon/api/log?level=debug'
+            'value': 'debug'
         }
     ]
 )
@@ -39,7 +67,7 @@ log_page = Log(
     autoScroll=True,
     placeholder='暂无日志数据...',
     operation=['stop', 'showLineNumber', 'filter'],
-    source='${log_level | raw}'
+    source='/LittlePaimon/api/log?level=${log_level | raw}&num=${log_num | raw}'
 )
 
 operation_button = Flex(justify='center', items=[
@@ -65,9 +93,9 @@ operation_button = Flex(justify='center', items=[
                       actions=[],
                       body=[
                           Alert(level=LevelEnum.info,
-                                body='查看最近最多500条日志，不会自动刷新，需要手动点击两次"暂停键"来进行刷新。'),
+                                body='查看最近最多500条日志，不会自动刷新，需要手动点击两次"暂停键"来进行刷新，DEBUG日志需要Nonebot日志模式为DEBUG才能查看。'),
                           Form(
-                              body=[select_log, log_page]
+                              body=[Group(body=[select_log_num, select_log_level]), log_page]
                           )])
     )
 ])

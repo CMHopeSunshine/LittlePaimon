@@ -11,12 +11,6 @@ github_logo = Tpl(className='w-full',
                             tpl='<div class="flex justify-between"><div></div><div><a href="https://github.com/CMHopeSunshine/LittlePaimon" target="_blank" title="Copyright"><i class="fa fa-github fa-2x"></i></a></div></div>')
 header = Flex(className='w-full', justify='flex-end', alignItems='flex-end', items=[github_logo])
 
-log_page = Log(
-    autoScroll=True,
-    placeholder='日志加载中...',
-    operation=['stop', 'filter'],
-    source='/LittlePaimon/api/log'
-)
 
 admin_app = App(brandName='LittlePaimon',
                 logo='http://static.cherishmoon.fun/LittlePaimon/readme/logo.png',
