@@ -5,6 +5,23 @@ from LittlePaimon import database, web
 from LittlePaimon.utils import DRIVER, __version__, NICKNAME, SUPERUSERS
 from LittlePaimon.utils.tool import check_resource
 
+from typing import Dict, Any
+from tortoise.connection import ConnectionHandler
+
+DBConfigType = Dict[str, Any]
+
+
+async def _init(self, db_config: "DBConfigType", create_db: bool):
+    if self._db_config is None:
+        self._db_config = db_config
+    else:
+        self._db_config.update(db_config)
+    self._create_db = create_db
+    await self._init_connections()
+
+
+ConnectionHandler._init = _init
+
 logo = """<g>
 ██╗     ██╗████████╗████████╗██╗     ███████╗  ██████╗  █████╗ ██╗███╗   ███╗ ██████╗ ███╗   ██╗
 ██║     ██║╚══██╔══╝╚══██╔══╝██║     ██╔════╝  ██╔══██╗██╔══██╗██║████╗ ████║██╔═══██╗████╗  ██║
