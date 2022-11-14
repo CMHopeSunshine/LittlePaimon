@@ -60,10 +60,10 @@ class PluginManager:
                             await PluginPermission.filter(
                                 name=plugin.name, session_id=group['group_id'], session_type='group'
                             ).delete()
-                            await first.delete()
-                        await asyncio.gather(
-                            *[PluginPermission.update_or_create(name=plugin.name, session_id=group['group_id'],
-                                                                session_type='group') for group in group_list])
+                            await first.save()
+                        elif count == 0:
+                            await PluginPermission.create(name=plugin.name, session_id=group['group_id'],
+                                                          session_type='group')
                 if user_list:
                     for user in user_list:
                         count = await PluginPermission.filter(
@@ -76,10 +76,10 @@ class PluginManager:
                             await PluginPermission.filter(
                                 name=plugin.name, session_id=user['user_id'], session_type='user'
                             ).delete()
-                            await first.delete()
-                        await asyncio.gather(
-                            *[PluginPermission.update_or_create(name=plugin.name, session_id=user['user_id'],
-                                                                session_type='user') for user in user_list])
+                            await first.save()
+                        elif count == 0:
+                            await PluginPermission.create(name=plugin.name, session_id=user['user_id'],
+                                                          session_type='user')
             if plugin.name not in HIDDEN_PLUGINS:
                 if plugin.name not in cls.plugins:
                     if metadata := plugin.metadata:
@@ -168,7 +168,7 @@ async def _(event: MessageEvent, matcher: Matcher):
 
     # 权限检查
     perm = await PluginPermission.get_or_none(name=matcher.plugin_name, session_id=session_id,
-                                         session_type=session_type)
+                                              session_type=session_type)
     if not perm:
         await PluginPermission.create(name=matcher.plugin_name, session_id=session_id, session_type=session_type)
         return
