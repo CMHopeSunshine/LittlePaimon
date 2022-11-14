@@ -1,3 +1,4 @@
+import asyncio
 from nonebot import on_regex, on_command, on_notice
 from nonebot import plugin as nb_plugin
 from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent, PrivateMessageEvent, MessageEvent
@@ -26,8 +27,11 @@ __plugin_meta__ = PluginMetadata(
 )
 
 
-def notice_rule(event: NoticeEvent):
-    return isinstance(event, (FriendAddNoticeEvent, GroupIncreaseNoticeEvent))
+def notice_rule(event: NoticeEvent) -> bool:
+    if isinstance(event, FriendAddNoticeEvent):
+        return True
+    elif isinstance(event, GroupIncreaseNoticeEvent):
+        return event.user_id == event.self_id
 
 
 def fullmatch(msg: Message = CommandArg()) -> bool:
@@ -183,18 +187,9 @@ async def _(event: MessageEvent, msg: Message = CommandArg()):
 async def _(event: NoticeEvent):
     plugin_list = nb_plugin.get_loaded_plugins()
     if isinstance(event, FriendAddNoticeEvent):
-        models = [
-            PluginPermission(name=plugin, session_id=event.user_id, session_type='user') for plugin in plugin_list if plugin not in HIDDEN_PLUGINS
-        ]
-    elif isinstance(event, GroupIncreaseNoticeEvent) and event.user_id == event.self_id:
-        models = [
-            PluginPermission(name=plugin, session_id=event.group_id, session_type='group') for plugin in plugin_list if
-            plugin not in HIDDEN_PLUGINS
-        ]
-    else:
-        return
-    if models:
-        await PluginPermission.bulk_create(
-            models,
-            ignore_conflicts=True
-        )
+        await asyncio.gather(*[PluginPermission.update_or_create(name=plugin, session_id=event.user_id, session_type='user') for plugin
+                               in plugin_list if plugin not in HIDDEN_PLUGINS])
+    elif isinstance(event, GroupIncreaseNoticeEvent):
+        await asyncio.gather(
+            *[PluginPermission.update_or_create(name=plugin, session_id=event.group_id, session_type='group') for plugin
+              in plugin_list if plugin not in HIDDEN_PLUGINS])

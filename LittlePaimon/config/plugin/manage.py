@@ -1,3 +1,4 @@
+import asyncio
 import datetime
 from typing import Dict, List
 
@@ -46,15 +47,15 @@ class PluginManager:
         user_list = await get_bot().get_friend_list()
         for plugin in plugin_list:
             if plugin.name not in HIDDEN_PLUGINS:
-                models = ([PluginPermission(name=plugin.name, session_id=group['group_id'], session_type='group') for
-                          group in group_list] if group_list else []) + \
-                         ([PluginPermission(name=plugin.name, session_id=user['user_id'], session_type='user') for
-                          user in user_list] if user_list else [])
-                if models:
-                    await PluginPermission.bulk_create(
-                        models,
-                        ignore_conflicts=True
-                    )
+                # 将所有PluginPermission相同的，只保留一个
+                if group_list:
+                    await asyncio.gather(
+                        *[PluginPermission.update_or_create(name=plugin.name, session_id=group['group_id'],
+                                                            session_type='group') for group in group_list])
+                if user_list:
+                    await asyncio.gather(
+                        *[PluginPermission.update_or_create(name=plugin.name, session_id=user['user_id'],
+                                                            session_type='user') for user in user_list])
             if plugin.name not in HIDDEN_PLUGINS:
                 if plugin.name not in cls.plugins:
                     if metadata := plugin.metadata:
@@ -142,8 +143,8 @@ async def _(event: MessageEvent, matcher: Matcher):
         return
 
     # 权限检查
-    perm = await PluginPermission.get_or_none(name=matcher.plugin_name, session_id=session_id,
-                                              session_type=session_type)
+    perm = await PluginPermission.filter(name=matcher.plugin_name, session_id=session_id,
+                                         session_type=session_type).first()
     if not perm:
         await PluginPermission.create(name=matcher.plugin_name, session_id=session_id, session_type=session_type)
         return
