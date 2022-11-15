@@ -9,42 +9,42 @@ from .models import *
 
 DATABASE = {
     "connections": {
-        "genshin":       {
+        "paimon_genshin":       {
             "engine":      "tortoise.backends.sqlite",
             "credentials": {"file_path": GENSHIN_DB_PATH},
         },
-        "subscription":  {
+        "paimon_subscription":  {
             "engine":      "tortoise.backends.sqlite",
             "credentials": {"file_path": SUB_DB_PATH},
         },
-        'genshin_voice': {
+        'paimon_genshin_voice': {
             "engine":      "tortoise.backends.sqlite",
             "credentials": {"file_path": GENSHIN_VOICE_DB_PATH},
         },
-        'manager':       {
+        'paimon_manager':       {
             "engine":      "tortoise.backends.sqlite",
             "credentials": {"file_path": MANAGER_DB_PATH},
         }
     },
     "apps":        {
-        "genshin":       {
+        "paimon_genshin":       {
             "models":             ['LittlePaimon.database.models.player_info',
                                    'LittlePaimon.database.models.abyss_info',
                                    'LittlePaimon.database.models.character',
                                    'LittlePaimon.database.models.cookie'],
-            "default_connection": "genshin",
+            "default_connection": "paimon_genshin",
         },
-        "subscription":  {
+        "paimon_subscription":  {
             "models":             ['LittlePaimon.database.models.subscription'],
-            "default_connection": "subscription",
+            "default_connection": "paimon_subscription",
         },
-        "genshin_voice": {
+        "paimon_genshin_voice": {
             "models":             ['LittlePaimon.database.models.genshin_voice'],
-            "default_connection": "genshin_voice",
+            "default_connection": "paimon_genshin_voice",
         },
-        "manager":       {
+        "paimon_manager":       {
             "models":             ['LittlePaimon.database.models.manager'],
-            "default_connection": "manager",
+            "default_connection": "paimon_manager",
         }
     },
 }

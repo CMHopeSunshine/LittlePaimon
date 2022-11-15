@@ -24,7 +24,8 @@ ENABLE_WORDS = [f'{NICKNAME}会尝试学你们说怪话！', f'好的呢，让{N
 DISABLE_WORDS = [f'好好好，{NICKNAME}不学说话就是了！', f'果面呐噻，{NICKNAME}以后不学了...']
 SORRY_WORDS = [f'{NICKNAME}知道错了...达咩!', f'{NICKNAME}不会再这么说了...', f'果面呐噻,{NICKNAME}说错话了...']
 DOUBT_WORDS = [f'{NICKNAME}有说什么奇怪的话吗？']
-ALL_WORDS = NO_PERMISSION_WORDS + SORRY_WORDS + DOUBT_WORDS + ENABLE_WORDS + DISABLE_WORDS
+BREAK_REPEAT_WORDS = ['打断复读', '打断！']
+ALL_WORDS = NO_PERMISSION_WORDS + SORRY_WORDS + DOUBT_WORDS + ENABLE_WORDS + DISABLE_WORDS + BREAK_REPEAT_WORDS
 
 
 class Result(IntEnum):
@@ -160,14 +161,14 @@ class LearningChat:
             return None
         elif result == Result.Repeat and (messages := await ChatMessage.filter(group_id=self.data.group_id,
                                                                                time__gte=self.data.time - 3600).limit(
-            self.config.repeat_threshold + 2)):
+            self.config.repeat_threshold)):
             # 如果达到阈值，进行复读
             if len(messages) >= self.config.repeat_threshold and all(
                     message.message == self.data.message and message.user_id != self.bot_id for message in
                     messages):
                 if random.random() < self.config.break_probability:
                     logger.debug('群聊学习', f'➤➤是否回复：达到复读阈值，打断复读！')
-                    return [random.choice(['打断复读', '打断！'])]
+                    return [random.choice(BREAK_REPEAT_WORDS)]
                 else:
                     logger.debug('群聊学习', f'➤➤是否回复：达到复读阈值，复读<m>{messages[0].message}</m>')
                     return [self.data.message]
