@@ -17,6 +17,7 @@ from LittlePaimon.utils.path import RESOURCE_BASE_PATH
 from LittlePaimon.utils.tool import freq_limiter
 from .draw_daily_material import draw_material
 from .draw_map import init_map, draw_map, get_full_map
+from .SereniteaPot import draw_pot_materials
 
 __paimon_help__ = {
     'type':  '原神Wiki',
@@ -67,6 +68,12 @@ generate_map = on_command('生成地图', priority=1, block=True, permission=SUP
     'pm_description': '生成材料图鉴等所需要的地图资源，仅超级用户可用。',
     'pm_usage':       '生成地图',
     'pm_priority':    11
+})
+pot_material = on_command('尘歌壶摹本', aliases={'摹本材料', '尘歌壶材料', '尘歌壶摹本材料'}, priority=11, block=True, state={
+    'pm_name':        '尘歌壶摹本材料',
+    'pm_description': '查看尘歌壶摹本所需要的材料总览',
+    'pm_usage':       '尘歌壶材料<摹数>',
+    'pm_priority':    12
 })
 
 week_str = ['周一', '周二', '周三', '周四', '周五', '周六']
@@ -160,6 +167,20 @@ async def _(event: MessageEvent):
     await generate_map.send('开始生成地图资源，这可能需要较长时间。')
     result = await init_map()
     await generate_map.finish(result)
+
+
+@pot_material.handle()
+async def _(event: MessageEvent, msg: Message = CommandArg()):
+    msg = msg.extract_plain_text().strip()
+    if len(msg) != 10 and not msg.isdigit():
+        await pot_material.finish('这个尘歌壶摹数不对哦，必须是十位数的数字')
+    else:
+        try:
+            code = int(msg)
+            result = await draw_pot_materials(code, user_id=str(event.user_id))
+        except Exception as e:
+            result = f'绘制尘歌壶摹本材料失败，错误信息：{e}'
+        await pot_material.finish(result, at_sender=True)
 
 
 def create_wiki_matcher(pattern: str, help_fun: str, help_name: str):

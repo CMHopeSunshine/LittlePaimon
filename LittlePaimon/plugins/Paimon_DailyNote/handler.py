@@ -104,9 +104,12 @@ async def check_note():
                 except Exception as e:
                     logger.info('原神实时便签', '➤➤', {'用户': sub.user_id, 'UID': sub.uid}, f'发送提醒失败，{e}', False)
                 await sub.delete()
+            elif data['retcode'] == 1034:
+                logger.info('原神实时便签', '➤', {'用户': sub.user_id, 'UID': sub.uid},
+                            '获取数据失败，状态码为1034， 疑似验证码', False)
             elif data['retcode'] != 0:
                 logger.info('原神实时便签', '➤', {'用户': sub.user_id, 'UID': sub.uid},
-                            f'获取数据失败，code为{data["retcode"]}， msg为{data["message"]}', False)
+                            f'获取数据失败，状态码为{data["retcode"]}， msg为{data["message"]}', False)
             else:
                 result = result_log = ''
                 if sub.resin_num is not None and data['data']['current_resin'] > sub.resin_num:

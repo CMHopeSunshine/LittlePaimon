@@ -26,7 +26,7 @@ update_log = on_command('更新抽卡记录', aliases={'抽卡记录更新', '�
     'pm_usage':       '更新抽卡记录(uid)',
     'pm_priority':    1
 })
-show_log = on_command('查看抽卡记录', aliases={'抽卡记录'}, priority=12, block=True, state={
+show_log = on_command('查看抽卡记录', aliases={'抽卡记录', '查询抽卡记录'}, priority=12, block=True, state={
     'pm_name':        '查看抽卡记录',
     'pm_description': '*查看你的抽卡记录分析',
     'pm_usage':       '查看抽卡记录(uid)',

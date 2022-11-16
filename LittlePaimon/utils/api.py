@@ -32,8 +32,8 @@ AUTHKEY_API = 'https://api-takumi.mihoyo.com/binding/api/genAuthKey'
 def md5(text: str) -> str:
     """
     md5加密
-    :param text: 文本
-    :return: md5加密后的文本
+        :param text: 文本
+        :return: md5加密后的文本
     """
     md5_ = hashlib.md5()
     md5_.update(text.encode())
@@ -43,8 +43,8 @@ def md5(text: str) -> str:
 def random_hex(length: int) -> str:
     """
     生成指定长度的随机字符串
-    :param length: 长度
-    :return: 随机字符串
+        :param length: 长度
+        :return: 随机字符串
     """
     result = hex(random.randint(0, 16 ** length)).replace('0x', '').upper()
     if len(result) < length:
@@ -55,8 +55,8 @@ def random_hex(length: int) -> str:
 def random_text(length: int) -> str:
     """
     生成指定长度的随机字符串
-    :param length: 长度
-    :return: 随机字符串
+        :param length: 长度
+        :return: 随机字符串
     """
     return ''.join(random.sample(string.ascii_lowercase + string.digits, length))
 
@@ -64,10 +64,10 @@ def random_text(length: int) -> str:
 def get_ds(q: str = '', b: dict = None, mhy_bbs_sign: bool = False) -> str:
     """
     生成米游社headers的ds_token
-    :param q: 查询
-    :param b: 请求体
-    :param mhy_bbs_sign: 是否为米游社讨论区签到
-    :return: ds_token
+        :param q: 查询
+        :param b: 请求体
+        :param mhy_bbs_sign: 是否为米游社讨论区签到
+        :return: ds_token
     """
     br = json.dumps(b) if b else ''
     if mhy_bbs_sign:
@@ -97,10 +97,10 @@ def get_old_version_ds(mhy_bbs: bool = False) -> str:
 def mihoyo_headers(cookie, q='', b=None) -> dict:
     """
     生成米游社headers
-    :param cookie: cookie
-    :param q: 查询
-    :param b: 请求体
-    :return: headers
+        :param cookie: cookie
+        :param q: 查询
+        :param b: 请求体
+        :return: headers
     """
     return {
         'DS':                get_ds(q, b),
@@ -117,9 +117,9 @@ def mihoyo_headers(cookie, q='', b=None) -> dict:
 def mihoyo_sign_headers(cookie: str, extra_headers: Optional[dict] = None) -> dict:
     """
     生成米游社签到headers
-    :param cookie: cookie
-    :param extra_headers: 额外的headers参数
-    :return: headers
+        :param cookie: cookie
+        :param extra_headers: 额外的headers参数
+        :return: headers
     """
     header = {
         'User_Agent':        'Mozilla/5.0 (Linux; Android 12; Unspecified Device) AppleWebKit/537.36 (KHTML, like Gecko) '
@@ -142,12 +142,12 @@ def mihoyo_sign_headers(cookie: str, extra_headers: Optional[dict] = None) -> di
 async def check_retcode(data: dict, cookie_info, cookie_type: str, user_id: str, uid: str) -> bool:
     """
     检查数据响应状态冰进行响应处理
-    :param data: 数据
-    :param cookie_info: cookie信息
-    :param cookie_type: cookie类型
-    :param user_id: 用户id
-    :param uid: 原神uid
-    :return: 数据是否有效
+        :param data: 数据
+        :param cookie_info: cookie信息
+        :param cookie_type: cookie类型
+        :param user_id: 用户id
+        :param uid: 原神uid
+        :return: 数据是否有效
     """
     if not data:
         return False
@@ -194,11 +194,10 @@ async def get_cookie(user_id: str, uid: str, check: bool = True, own: bool = Fal
     Union[None, PrivateCookie, PublicCookie, CookieCache], str]:
     """
     获取可用的cookie
-    :param user_id: 用户id
-    :param uid: 原神uid
-    :param check: 是否获取疑似失效的cookie
-    :param own: 是否只获取和uid对应的cookie
-    :return:
+        :param user_id: 用户id
+        :param uid: 原神uid
+        :param check: 是否获取疑似失效的cookie
+        :param own: 是否只获取和uid对应的cookie
     """
     query = Q(status=1) | Q(status=0) if check else Q(status=1)
     if private_cookie := await PrivateCookie.filter(Q(Q(query) & Q(user_id=user_id) & Q(uid=uid))).first():

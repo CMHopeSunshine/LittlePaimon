@@ -260,7 +260,7 @@ class MihoyoBBSCoin:
                 num_cancel += 1
         logger.info('米游币自动获取', '➤➤点赞任务<g>完成</g>')
         await asyncio.sleep(random.randint(5, 10))
-        return f'点赞帖子：完成{str(num_ok)}个！'
+        return f'点赞帖子：完成{str(num_ok)}个{"，遇验证码" if num_ok == 0 else ""}！'
 
     async def share_post(self):
         """
