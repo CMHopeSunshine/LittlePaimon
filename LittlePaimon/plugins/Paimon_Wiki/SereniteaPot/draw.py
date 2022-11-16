@@ -52,8 +52,8 @@ async def draw_item(item: Item, total_num: int):
         else:
             color = num_color[3]
     num_card_length = 60 if item.num < 100 else 120
-    await bg.draw_rounded_rectangle2((180 - num_card_length, 1), (num_card_length - 1, 33), 17, color[0], ['ur', 'll'])
-    await bg.text(str(item.num), (180 - num_card_length, 179), 1, fm.get('bahnschrift_regular', 40, 'Bold'), color[1],
+    await bg.draw_rounded_rectangle2((179 - num_card_length, 1), (num_card_length - 1, 33), 12, color[0], ['ur', 'll'])
+    await bg.text(str(item.num), (179 - num_card_length, 179), 1, fm.get('bahnschrift_regular', 40, 'Bold'), color[1],
                   'center')
     return bg
 
@@ -74,12 +74,12 @@ async def draw_pot_materials(share_code: int, user_id: Optional[str] = None):
         row += math.ceil(len(material_items) / 5)
     await img.stretch((210, 1890), 205 * row + (120 if isinstance(material_items, list) else 0) - 30, 'height')
     # 标题
-    await img.text('尘歌壶摹数材料图', 36, 29, fm.get('优设标题黑', 72), '#40342d')
+    await img.text('尘歌壶摹本材料', 36, 29, fm.get('优设标题黑', 72), '#40342d')
     bubble = PMImage(await load_image(RESOURCE_BASE_PATH / 'general' / 'bubble.png'))
-    code_length = img.text_length(str(share_code), fm.get('SourceHanSansCN-Bold.otf', 30))
+    code_length = img.text_length(f'摹数{share_code}', fm.get('SourceHanSansCN-Bold.otf', 30))
     await bubble.stretch((15, int(bubble.width) - 15), code_length, 'width')
-    await img.paste(bubble, (560, 38))
-    await img.text(str(share_code), 573, 41, fm.get('SourceHanSansCN-Bold.otf', 30), 'white')
+    await img.paste(bubble, (500, 38))
+    await img.text(f'摹数{share_code}', 513, 41, fm.get('SourceHanSansCN-Bold.otf', 30), 'white')
     # 摆设提示线
     item_line = await load_image(RESOURCE_BASE_PATH / 'general' / 'line.png')
     await img.paste(item_line, (40, 144))
@@ -101,5 +101,5 @@ async def draw_pot_materials(share_code: int, user_id: Optional[str] = None):
         await asyncio.gather(*[
             img.paste(await draw_item(item, total_num), (40 + 205 * (i % 5), now_height + 80 + 205 * (i // 5)))
             for i, item in enumerate(material_items)])
-    await img.save(save_path, mode='RGB', quality=85)
+    img.save(save_path, mode='RGB', quality=85)
     return MessageBuild.Image(img, mode='RGB', quality=85)
