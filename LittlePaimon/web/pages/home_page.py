@@ -1,4 +1,5 @@
 from LittlePaimon.utils import __version__
+from LittlePaimon.config import config
 from amis import Page, PageSchema, Html, Property, Service, Flex, ActionType, LevelEnum, Divider, ButtonGroupSelect, \
     Log, Alert, Form, Dialog, Select, Group, InputText, DisplayModeEnum, Horizontal
 
@@ -68,7 +69,13 @@ log_page = Log(
     autoScroll=True,
     placeholder='暂无日志数据...',
     operation=['stop', 'showLineNumber', 'filter'],
-    source='/LittlePaimon/api/log?level=${log_level | raw}&num=${log_num | raw}'
+    source={
+        'method': 'get',
+        'url': '/LittlePaimon/api/log?level=${log_level | raw}&num=${log_num | raw}',
+        'headers': {
+            'secret_key': config.secret_key[:10]
+        }
+    }
 )
 
 cmd_input = Form(
@@ -86,7 +93,13 @@ cmd_input = Form(
                     autoScroll=True,
                     placeholder='执行命令中，请稍候...',
                     operation=['stop', 'showLineNumber', 'filter'],
-                    source='/LittlePaimon/api/run_cmd?cmd=${command | raw}'),
+                    source={
+                        'method': 'get',
+                        'url': '/LittlePaimon/api/run_cmd?cmd=${command | raw}',
+                        'headers': {
+                            'secret_key': config.secret_key[:10]
+                        }
+                    }),
             )
         ))
     ]
