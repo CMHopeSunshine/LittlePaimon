@@ -31,7 +31,7 @@ logger.add(record_debug_log, level='DEBUG', colorize=True, filter=default_filter
 route = APIRouter()
 
 
-@route.get('/log', response_class=StreamingResponse, dependencies=[authentication()])
+@route.get('/log', response_class=StreamingResponse)
 async def get_log(level: str = 'info', num: Union[int, str] = 100):
     show_logs = info_logs[-(num or 1):] if level == 'info' else debug_logs[-(num or 1):]
 
@@ -43,7 +43,7 @@ async def get_log(level: str = 'info', num: Union[int, str] = 100):
     return StreamingResponse(streaming_logs())
 
 
-@route.get('/run_cmd', response_class=StreamingResponse, dependencies=[authentication()])
+@route.get('/run_cmd', response_class=StreamingResponse)
 async def run_cmd(cmd: str):
     p = await asyncio.create_subprocess_shell(cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
     return StreamingResponse(p.stdout or p.stderr)
