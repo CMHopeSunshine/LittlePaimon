@@ -1,5 +1,6 @@
 from LittlePaimon.utils import __version__
-from amis import Page, PageSchema, Html, Property, Service, Flex, ActionType, LevelEnum, Divider, ButtonGroupSelect, Log, Alert, Form, Dialog, Select, Group
+from amis import Page, PageSchema, Html, Property, Service, Flex, ActionType, LevelEnum, Divider, ButtonGroupSelect, \
+    Log, Alert, Form, Dialog, Select, Group, InputText, DisplayModeEnum, Horizontal
 
 logo = Html(html=f'''
 <p align="center">
@@ -70,6 +71,27 @@ log_page = Log(
     source='/LittlePaimon/api/log?level=${log_level | raw}&num=${log_num | raw}'
 )
 
+cmd_input = Form(
+    mode=DisplayModeEnum.horizontal,
+    horizontal=Horizontal(left=0),
+    wrapWithPanel=False,
+    body=[
+        InputText(name='command', required=True, clearable=True, addOn=ActionType.Dialog(
+            label='执行',
+            level=LevelEnum.primary,
+            dialog=Dialog(
+                title='命令执行结果',
+                size='xl',
+                body=Log(
+                    autoScroll=True,
+                    placeholder='执行命令中，请稍候...',
+                    operation=['stop', 'showLineNumber', 'filter'],
+                    source='/LittlePaimon/api/run_cmd?cmd=${command | raw}'),
+            )
+        ))
+    ]
+)
+
 operation_button = Flex(justify='center', items=[
     ActionType.Ajax(
         label='更新',
@@ -97,6 +119,15 @@ operation_button = Flex(justify='center', items=[
                           Form(
                               body=[Group(body=[select_log_num, select_log_level]), log_page]
                           )])
+    ),
+    ActionType.Dialog(
+        label='执行命令',
+        className='m-l',
+        level=LevelEnum.warning,
+        dialog=Dialog(title='执行命令',
+                      size='lg',
+                      actions=[],
+                      body=[cmd_input])
     )
 ])
 
