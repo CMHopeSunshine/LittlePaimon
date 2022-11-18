@@ -1,7 +1,7 @@
 import asyncio
-from typing import Union
+from typing import Union, Optional
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Header
 from fastapi.responses import JSONResponse, StreamingResponse
 from nonebot.log import logger, default_filter, default_format
 from LittlePaimon.config import config
@@ -33,8 +33,8 @@ route = APIRouter()
 
 
 @route.get('/log')
-async def get_log(request: Request, level: str = 'info', num: Union[int, str] = 100):
-    if request.headers.get('secret_key') != config.secret_key[:10]:
+async def get_log(token: Optional[str] = Header(...), level: str = 'info', num: Union[int, str] = 100):
+    if token != config.secret_key[:16]:
         return '非法请求'
     show_logs = info_logs[-(num or 1):] if level == 'info' else debug_logs[-(num or 1):]
 
@@ -47,9 +47,11 @@ async def get_log(request: Request, level: str = 'info', num: Union[int, str] = 
 
 
 @route.get('/run_cmd')
-async def run_cmd(request: Request, cmd: str):
-    if request.headers.get('secret_key') != config.secret_key[:10]:
+async def run_cmd(token: Optional[str] = Header(...), cmd: str = ''):
+    if token != config.secret_key[:16]:
         return '非法请求'
+    if not cmd:
+        return '无效命令'
     p = await asyncio.create_subprocess_shell(cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
     return StreamingResponse(p.stdout or p.stderr)
 

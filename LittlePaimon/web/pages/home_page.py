@@ -73,7 +73,7 @@ log_page = Log(
         'method': 'get',
         'url': '/LittlePaimon/api/log?level=${log_level | raw}&num=${log_num | raw}',
         'headers': {
-            'secret_key': config.secret_key[:10]
+            'token': config.secret_key[:16]
         }
     }
 )
@@ -97,7 +97,7 @@ cmd_input = Form(
                         'method': 'get',
                         'url': '/LittlePaimon/api/run_cmd?cmd=${command | raw}',
                         'headers': {
-                            'secret_key': config.secret_key[:10]
+                            'token': config.secret_key[:16]
                         }
                     }),
             )
