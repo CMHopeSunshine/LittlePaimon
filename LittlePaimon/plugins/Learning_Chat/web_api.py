@@ -8,6 +8,11 @@ from LittlePaimon.plugins.Learning_Chat.models import ChatMessage, ChatContext, 
 from LittlePaimon.web.api import BaseApiRouter
 from LittlePaimon.web.api.utils import authentication
 
+try:
+    import jieba_fast as jieba
+except ImportError:
+    import jieba
+
 from .handler import LearningChat
 from .config import config_manager
 
@@ -43,6 +48,7 @@ async def post_chat_global_config(data: dict):
         count=config_manager.config.learn_max_count)
     await ChatAnswer.filter(count__gt=config_manager.config.learn_max_count).update(
         count=config_manager.config.learn_max_count)
+    jieba.load_userdict(config_manager.config.dictionary)
     return {
         'status': 0,
         'msg':    '保存成功'

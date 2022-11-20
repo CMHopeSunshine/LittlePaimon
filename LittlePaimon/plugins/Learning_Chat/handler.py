@@ -353,7 +353,7 @@ class LearningChat:
             return cmp(len(left_messages) / left_duration, len(right_messages) / right_duration)
 
         popularity: List[Tuple[int, List[ChatMessage]]] = sorted(total_messages.items(),
-                                                                 key=cmp_to_key(group_popularity_cmp))
+                                                                 key=cmp_to_key(group_popularity_cmp), reverse=True)
         logger.debug('群聊学习', f'主动发言：群热度排行<m>{">>".join([str(g[0]) for g in popularity])}</m>')
         for group_id, messages in popularity:
             if len(messages) < 30:
