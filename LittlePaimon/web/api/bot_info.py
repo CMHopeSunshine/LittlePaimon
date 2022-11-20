@@ -19,10 +19,20 @@ route = APIRouter()
 
 
 @route.get('/get_group_list', response_class=JSONResponse, dependencies=[authentication()])
-async def get_group_list():
+@cache(datetime.timedelta(minutes=3))
+async def get_group_list(include_all: bool = False):
     try:
         group_list = await get_bot().get_group_list()
-        return [{'label': f'{group["group_name"]}({group["group_id"]})', 'value': group['group_id']} for group in group_list]
+        group_list = [{'label': f'{group["group_name"]}({group["group_id"]})', 'value': group['group_id']} for group in group_list]
+        if include_all:
+            group_list.insert(0, {'label': '全局', 'value': 'all'})
+        return {
+            'status': 0,
+            'msg':    'ok',
+            'data':   {
+                'group_list': group_list
+            }
+        }
     except ValueError:
         return {
             'status': -100,
@@ -31,6 +41,7 @@ async def get_group_list():
 
 
 @route.get('/get_group_members', response_class=JSONResponse, dependencies=[authentication()])
+@cache(datetime.timedelta(minutes=3))
 async def get_group_members(group_id: int):
     try:
         return await get_bot().get_group_member_list(group_id=group_id)
@@ -42,7 +53,7 @@ async def get_group_members(group_id: int):
 
 
 @route.get('/get_groups_and_members', response_class=JSONResponse, dependencies=[authentication()])
-@cache(datetime.timedelta(minutes=10))
+@cache(datetime.timedelta(minutes=3))
 async def get_groups_and_members():
     result = []
     try:
@@ -87,7 +98,7 @@ async def get_groups_and_members():
 
 
 @route.get('/get_friend_list', response_class=JSONResponse, dependencies=[authentication()])
-@cache(datetime.timedelta(minutes=10))
+@cache(datetime.timedelta(minutes=3))
 async def get_friend_list():
     try:
         bot: Bot = get_bot()

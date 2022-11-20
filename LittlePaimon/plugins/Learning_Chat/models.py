@@ -18,6 +18,7 @@ from tortoise.models import Model
 from LittlePaimon.database import register_database
 from LittlePaimon.utils.path import DATABASE_PATH
 from .config import config_manager
+
 config = config_manager.config
 
 JSON_DUMPS = functools.partial(json.dumps, ensure_ascii=False)
@@ -125,4 +126,4 @@ class ChatBlackList(Model):
         indexes = ('keywords',)
 
 
-register_database(db_name='LearningChat', models=['LittlePaimon.plugins.Learning_Chat.models'], db_path=DATABASE_PATH / 'LearningChat.db')
+register_database(db_name='LearningChat', models=__name__, db_path=DATABASE_PATH / 'LearningChat.db')

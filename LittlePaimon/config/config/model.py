@@ -45,6 +45,8 @@ class ConfigModel(BaseModel):
     secret_key: str = Field('49c294d32f69b732ef6447c18379451ce1738922a75cd1d4812ef150318a2ed0', alias='Web端token密钥')
     admin_theme: Literal['default', 'antd', 'ang', 'dark'] = Field('default', alias='Web端主题')
 
+    command_alias_enable: bool = Field(True, alias='启用命令别名')
+
     @property
     def alias_dict(self):
         return {v.alias: k for k, v in self.__fields__.items()}

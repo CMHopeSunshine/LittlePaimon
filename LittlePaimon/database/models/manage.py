@@ -1,5 +1,6 @@
 import datetime
 from typing import List
+from enum import Enum
 
 from tortoise import fields
 from tortoise.models import Model
@@ -43,3 +44,30 @@ class PluginStatistics(Model):
 
     class Meta:
         table = 'plugin_statistics'
+
+
+class AliasMode(Enum):
+    prefix: str = '前缀'
+    suffix: str = '后缀'
+    full_match: str = '全匹配'
+
+
+class CommandAlias(Model):
+    id = fields.IntField(pk=True, generated=True, auto_increment=True)
+    command: str = fields.TextField()
+    """目标命令"""
+    alias: str = fields.TextField()
+    """命令别名"""
+    mode: AliasMode = fields.CharEnumField(AliasMode, max_length=10)
+    """别名模式"""
+    is_regex: bool = fields.BooleanField(default=False)
+    """是否为正则表达式"""
+    is_reverse: bool = fields.BooleanField(default=False)
+    """是否反转"""
+    group_id: str = fields.CharField(max_length=30)
+    """启用的群id，all为全局启用"""
+    priority: int = fields.IntField(default=99)
+    """优先级，数字越大优先级越高"""
+
+    class Meta:
+        table = 'command_alias'

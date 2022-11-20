@@ -121,12 +121,11 @@ cards_curd = CardsCRUD(mode='cards',
                        syncLocation=False,
                        api='/LittlePaimon/api/get_plugins',
                        loadDataOnce=True,
-                       source='${rows | filter:name:match:keywords_name | filter:description:match:keywords_description | filter:status:match:status}',
+                       source='${rows | filter:name:match:keywords_name | filter:description:match:keywords_description}',
                        filter={
                            'body': [
                                InputText(name='keywords_name', label='插件名'),
-                               InputText(name='keywords_description', label='插件描述'),
-                               Switch(name='status', label='插件状态', onText='启用', offText='禁用')
+                               InputText(name='keywords_description', label='插件描述')
                            ]
                        },
                        perPage=12,

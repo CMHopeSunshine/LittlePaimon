@@ -5,6 +5,7 @@ from .home_page import page as home_page
 from .plugin_manage import page as plugin_manage_page
 from .private_cookie import page as private_cookie_page
 from .public_cookie import page as public_cookie_page
+from .command_alias import page as command_alias_page
 
 
 github_logo = Tpl(className='w-full',
@@ -21,7 +22,7 @@ admin_app = App(brandName='LittlePaimon',
                         PageSchema(label='Cookie管理', icon='fa fa-key',
                                    children=[public_cookie_page, private_cookie_page]),
                         PageSchema(label='机器人配置', icon='fa fa-wrench',
-                                   children=[plugin_manage_page, config_page])
+                                   children=[plugin_manage_page, config_page, command_alias_page])
                     ]}],
                 footer=f'<div class="p-2 text-center bg-blue-100">Copyright © 2021 - 2022 <a href="https://github.com/CMHopeSunshine/LittlePaimon" target="_blank" class="link-secondary">LittlePaimon v{__version__}</a> X<a target="_blank" href="https://github.com/baidu/amis" class="link-secondary" rel="noopener"> amis v2.2.0</a></div>')
 
