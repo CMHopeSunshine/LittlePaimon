@@ -420,7 +420,7 @@ async def get_authkey_by_stoken(user_id: str, uid: str) -> Tuple[Optional[str], 
                                       'game_uid':   uid,
                                       'region':     server_id})
     data = data.json()
-    if 'data' in data and 'authkey' in data['data']:
+    if data.get('data') is not None and 'authkey' in data['data']:
         return data['data']['authkey'], True, cookie_info
     else:
         return None, False, cookie_info
