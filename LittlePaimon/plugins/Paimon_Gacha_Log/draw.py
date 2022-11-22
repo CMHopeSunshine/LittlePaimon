@@ -151,6 +151,7 @@ async def draw_four_star(info: FourStarItem) -> PMImage:
 
 
 async def draw_four_star_detail(data: List[FourStarItem]):
+    data.sort(key=lambda x: sum(x.num['角色祈愿'] + x.num['武器祈愿'] + x.num['常驻祈愿'] + x.num['新手祈愿']), reverse=True)
     bar = await load_image(RESOURCE_BASE_PATH / 'gacha_log' / 'four_star_bar.png')
     total_height = 105 + 260 * math.ceil(len(data) / 5)
     bg = PMImage(size=(1008, total_height), mode='RGBA', color=(255, 255, 255, 0))
@@ -160,7 +161,7 @@ async def draw_four_star_detail(data: List[FourStarItem]):
 
 
 async def draw_gacha_log(user_id: str, uid: str, nickname: Optional[str], signature: Optional[str], gacha_log: GachaLogInfo):
-    img = PMImage(size=(1080, 8000), mode='RGBA', color=(255, 255, 255, 0))
+    img = PMImage(size=(1080, 12000), mode='RGBA', color=(255, 255, 255, 0))
     bg = PMImage(await load_image(RESOURCE_BASE_PATH / 'gacha_log' / 'bg.png'))
     line = await load_image(RESOURCE_BASE_PATH / 'general' / 'line.png')
     # 头像
