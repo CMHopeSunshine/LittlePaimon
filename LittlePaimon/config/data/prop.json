@@ -11,6 +11,7 @@
   "FIGHT_PROP_ELEMENT_MASTERY": "元素精通",
   "FIGHT_PROP_CRITICAL": "暴击率",
   "FIGHT_PROP_CRITICAL_HURT": "暴击伤害",
+  "FIGHT_PROP_ANTI_CRITICAL": "暴击抗性",
   "FIGHT_PROP_CHARGE_EFFICIENCY": "元素充能效率",
   "FIGHT_PROP_FIRE_SUB_HURT": "火元素抗性",
   "FIGHT_PROP_ELEC_SUB_HURT": "雷元素抗性",
@@ -27,5 +28,6 @@
   "FIGHT_PROP_ROCK_ADD_HURT": "岩元素伤害加成",
   "FIGHT_PROP_GRASS_ADD_HURT": "草元素伤害加成",
   "FIGHT_PROP_PHYSICAL_ADD_HURT": "物理伤害加成",
-  "FIGHT_PROP_HEAL_ADD": "治疗加成"
+  "FIGHT_PROP_HEAL_ADD": "治疗加成",
+  "FIGHT_PROP_HEALED_ADD": "受治疗加成"
 }

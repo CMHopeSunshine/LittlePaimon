@@ -46,8 +46,7 @@ class PluginManager:
         group_list = await get_bot().get_group_list()
         user_list = await get_bot().get_friend_list()
         for plugin in plugin_list:
-            if plugin.name not in HIDDEN_PLUGINS:
-                # 将所有PluginPermission相同的，只保留一个
+            if plugin.name not in HIDDEN_PLUGINS and PluginPermission.default_connection is not None:
                 if group_list:
                     for group in group_list:
                         count = await PluginPermission.filter(
