@@ -90,7 +90,7 @@ def create_guess_matcher(group_id, role_name, game_time):
         role_name = role_name.replace('旅行者（', '').replace('）', '')
     alias_list = get_alias_by_name(role_name)
     re_str = '|'.join(alias_list)
-    guess_matcher = on_regex(re_str, temp=True, rule=Rule(check_group),
+    guess_matcher = on_regex(f'^{re_str}$', temp=True, rule=Rule(check_group),
                              expire_time=datetime.timedelta(seconds=game_time))
     guess_matcher.plugin_name = "Genshin_Voice"
 

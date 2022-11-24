@@ -46,11 +46,11 @@ command_form = InputSubForm(name='matchers',
                                     InputText(label='命令用法', name='pm_usage', value='${pm_usage}',
                                               description='命令的使用方法，建议不要太长'),
                                     Textarea(label='命令详细描述', name='pm_description', value='${pm_description}',
-                                             description='命令的详细描述，可以用\\n强制换行', showCounter=False),
+                                             description='命令的详细描述，可以用^强制换行', showCounter=False),
                                     Switch(label='是否展示', name='pm_show', value='${pm_show}',
                                            description='是否在帮助图中展示该命令'),
                                     InputNumber(label='展示优先级', name='pm_priority', value='${pm_priority}',
-                                                description='展示优先级，数字越大越靠前', min=0, max=99,
+                                                description='在帮助图中展示的优先级，数字越小越靠前', min=0, max=99,
                                                 displayMode='enhance'),
                                 ]
                             ))

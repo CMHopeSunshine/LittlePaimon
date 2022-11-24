@@ -1,10 +1,9 @@
 import asyncio
 import datetime
-import json
 import random
 import time
 from collections import defaultdict
-from typing import Tuple, Dict, Any, Optional, Union
+from typing import Tuple, Union
 
 from nonebot import get_bot
 
@@ -26,30 +25,10 @@ GEETEST_HEADER = {"Accept":           "*/*",
 sign_reward_list: dict = {}
 
 
-async def pass_geetest(data: Dict[str, Any]):
-    if data is not None:
-        url = f'https://api.geetest.com/ajax.php?gt={data["gt"]}&challenge={data["challenge"]}&lang=zh-cn&pt=3&client_type=web_mobile'
-        resp = await aiorequests.get(url, headers=GEETEST_HEADER)
-        if resp.status_code == 200:
-            resp_data = json.loads(resp.text.replace('(', '').replace(')', ''))
-            if 'success' in resp_data['status'] and 'success' in resp_data['data']['result']:
-                return resp_data['data']['validate']
-    return None
-
-
-async def sign_action(user_id: str, uid: str, validate: Optional[dict] = None, last_data: Optional[dict] = None) -> \
-        Union[dict, str]:
+async def sign_action(user_id: str, uid: str) -> Union[dict, str]:
     server_id = 'cn_qd01' if uid[0] == '5' else 'cn_gf01'
     cookie_info = await PrivateCookie.get_or_none(user_id=user_id, uid=uid)
-    if last_data and validate:
-        extra_headers = {
-            'x-rpc-challenge': last_data['data']['challenge'],
-            'x-rpc-validate':  validate,
-            'x-rpc-seccode':   f'{validate}|jordan'
-        }
-    else:
-        extra_headers = None
-    resp = await aiorequests.post(SIGN_ACTION_API, headers=mihoyo_sign_headers(cookie_info.cookie, extra_headers),
+    resp = await aiorequests.post(SIGN_ACTION_API, headers=mihoyo_sign_headers(cookie_info.cookie),
                                   json={
                                       'act_id': 'e202009291139501',
                                       'uid':    uid,
@@ -83,11 +62,8 @@ async def mhy_bbs_sign(user_id: str, uid: str) -> Tuple[SignResult, str]:
             return SignResult.DONE, f'UID{uid}今天已经签过了，获得的奖励为\n{sign_reward_list[signed_days]["name"]}*{sign_reward_list[signed_days]["cnt"]}'
         else:
             return SignResult.DONE, f'UID{uid}今天已经签过了'
-    validate = None
-    sign_data = None
     for i in range(3):
-        sign_data = await sign_action(user_id, uid, validate, sign_data)
-        validate = await pass_geetest(sign_data['data'])
+        sign_data = await sign_action(user_id, uid)
         if isinstance(sign_data, str):
             logger.info('米游社原神签到', '➤', {'用户': user_id, 'UID': uid}, f'获取数据失败, {sign_data}', False)
             return SignResult.FAIL, f'{uid}签到失败，{sign_data}\n'

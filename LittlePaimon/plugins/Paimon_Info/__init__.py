@@ -140,6 +140,8 @@ async def _(event: MessageEvent, players=CommandPlayer(2)):
                     img = await draw_chara_bag(player, player_info, characters_list)
                     logger.info('原神角色背包', '➤➤➤', {}, '制图完成', True)
                     msg += img
+                except AttributeError:
+                    msg += F'UID{player.uid}制图时出错，请尝试使用命令[更新角色信息]后重试\n'
                 except Exception as e:
                     logger.info('原神角色背包', '➤➤➤', {}, f'制图出错:{e}', False)
                     msg += F'UID{player.uid}制图时出错：{e}\n'
@@ -245,6 +247,8 @@ async def _(event: MessageEvent, state: T_State, uid=CommandUID()):
             freq_limiter.start(f'udi{uid}', 180)
             gim = GenshinInfoManager(str(event.user_id), uid)
             result = await gim.update_all(include_talent)
+        except KeyError as e:
+            result = f'更新失败，缺少{e}的数据，请尝试更新bot版本'
         except Exception as e:
             result = f'更新失败，错误信息：{e}'
         running_udi.remove(f'{event.user_id}-{uid}')

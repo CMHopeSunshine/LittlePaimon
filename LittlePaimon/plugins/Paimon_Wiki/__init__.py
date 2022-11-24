@@ -210,7 +210,8 @@ def create_wiki_matcher(pattern: str, help_fun: str, help_name: str):
             state['img_url'] = 'https://static.cherishmoon.fun/LittlePaimon/XFGuide/{}.jpg'
         elif state['type'] == '角色材料':
             state['type'] = '角色'
-            state['img_url'] = 'https://static.cherishmoon.fun/LittlePaimon/RoleMaterials/{}材料.jpg'
+            # state['img_url'] = 'https://static.cherishmoon.fun/LittlePaimon/RoleMaterials/{}材料.jpg'
+            state['img_url'] = 'https://ghproxy.com/https://raw.githubusercontent.com/Nwflower/genshin-atlas/master/material%20for%20role/{}.png'
         elif state['type'] == '收益曲线':
             state['type'] = '角色'
             state['img_url'] = 'https://static.cherishmoon.fun/LittlePaimon/blue/{}.jpg'

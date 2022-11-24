@@ -373,15 +373,18 @@ async def get_sign_reward_list() -> dict:
 
 
 async def get_stoken_by_cookie(cookie: str) -> Optional[str]:
-    if login_ticket := re.search('login_ticket=([0-9a-zA-Z]+)', cookie):
-        bbs_cookie_url = 'https://webapi.account.mihoyo.com/Api/cookie_accountinfo_by_loginticket?login_ticket={}'
-        data = (await aiorequests.get(url=bbs_cookie_url.format(login_ticket[0].split('=')[1]))).json()
+    try:
+        if login_ticket := re.search('login_ticket=([0-9a-zA-Z]+)', cookie):
+            bbs_cookie_url = 'https://webapi.account.mihoyo.com/Api/cookie_accountinfo_by_loginticket?login_ticket={}'
+            data = (await aiorequests.get(url=bbs_cookie_url.format(login_ticket[0].split('=')[1]))).json()
 
-        if '成功' in data['data']['msg']:
-            stuid = data['data']['cookie_info']['account_id']
-            bbs_cookie_url2 = 'https://api-takumi.mihoyo.com/auth/api/getMultiTokenByLoginTicket?login_ticket={}&token_types=3&uid={}'
-            data2 = (await aiorequests.get(url=bbs_cookie_url2.format(login_ticket[0].split('=')[1], stuid))).json()
-            return data2['data']['list'][0]['token']
+            if '成功' in data['data']['msg']:
+                stuid = data['data']['cookie_info']['account_id']
+                bbs_cookie_url2 = 'https://api-takumi.mihoyo.com/auth/api/getMultiTokenByLoginTicket?login_ticket={}&token_types=3&uid={}'
+                data2 = (await aiorequests.get(url=bbs_cookie_url2.format(login_ticket[0].split('=')[1], stuid))).json()
+                return data2['data']['list'][0]['token']
+    except Exception:
+        pass
     return None
 
 
