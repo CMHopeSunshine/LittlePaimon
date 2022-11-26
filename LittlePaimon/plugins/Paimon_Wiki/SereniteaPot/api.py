@@ -23,7 +23,7 @@ MATERIAL_API = 'https://api-takumi.mihoyo.com/event/e20200928calculate/v1/furnit
 
 async def get_blueprint_data(share_code: int, user_id: Optional[str]) -> Tuple[Union[List[Item], str, int, None], Optional[str]]:
     cookies: List[Union[PrivateCookie, PublicCookie]] = []
-    if user_id and (private_cookies := await PrivateCookie.filter(status=1).all()):
+    if user_id and (private_cookies := await PrivateCookie.filter(user_id=user_id, status=1).all()):
         cookies.extend(private_cookies)
     if public_cookies := await PublicCookie.filter(status__in=[1, 2]).all():
         cookies.extend(public_cookies)
