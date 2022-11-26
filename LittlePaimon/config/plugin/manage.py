@@ -1,17 +1,18 @@
-import asyncio
+import contextlib
 import datetime
 from typing import Dict, List
 
 from nonebot import plugin as nb_plugin
-from nonebot import get_bot
-from nonebot.matcher import Matcher
-from nonebot.exception import IgnoredException
-from nonebot.message import run_preprocessor
 from nonebot.adapters.onebot.v11 import MessageEvent, PrivateMessageEvent, GroupMessageEvent
-from LittlePaimon.utils import logger, DRIVER, SUPERUSERS
-from LittlePaimon.utils.path import PLUGIN_CONFIG
+from nonebot.exception import IgnoredException
+from nonebot.matcher import Matcher
+from nonebot.message import run_preprocessor
+from tortoise.queryset import Q
+
+from LittlePaimon.database.models import PluginPermission, PluginStatistics, PluginDisable
+from LittlePaimon.utils import logger, SUPERUSERS
 from LittlePaimon.utils.files import load_yaml, save_yaml
-from LittlePaimon.database.models import PluginPermission, PluginStatistics
+from LittlePaimon.utils.path import PLUGIN_CONFIG
 from .model import MatcherInfo, PluginInfo
 
 HIDDEN_PLUGINS = [
@@ -43,42 +44,22 @@ class PluginManager:
     @classmethod
     async def init(cls):
         plugin_list = nb_plugin.get_loaded_plugins()
-        group_list = await get_bot().get_group_list()
-        user_list = await get_bot().get_friend_list()
+        if not await PluginDisable.all().exists() and await PluginPermission.all().exists():
+            perms = await PluginPermission.filter(Q(status=False) | Q(ban__not=[])).all()
+            for perm in perms:
+                with contextlib.suppress(Exception):
+                    if perm.session_type == 'group':
+                        if not perm.status:
+                            await PluginDisable.update_or_create(name=perm.name, group_id=perm.session_id)
+                        for ban_user in perm.ban:
+                            await PluginDisable.update_or_create(name=perm.name, group_id=perm.session_id,
+                                                                 user_id=ban_user)
+                    else:
+                        if not perm.status:
+                            await PluginDisable.update_or_create(name=perm.name, user_id=perm.session_id)
+            await PluginPermission.all().delete()
+        await PluginDisable.filter(global_disable=False, group_id=None, user_id=None).delete()
         for plugin in plugin_list:
-            if plugin.name not in HIDDEN_PLUGINS and PluginPermission._meta.default_connection is not None:
-                if group_list:
-                    for group in group_list:
-                        count = await PluginPermission.filter(
-                            name=plugin.name, session_id=group['group_id'], session_type='group'
-                        ).count()
-                        if count > 1:
-                            first = await PluginPermission.filter(
-                                name=plugin.name, session_id=group['group_id'], session_type='group'
-                            ).order_by('id').first()
-                            await PluginPermission.filter(
-                                name=plugin.name, session_id=group['group_id'], session_type='group'
-                            ).delete()
-                            await first.save()
-                        elif count == 0:
-                            await PluginPermission.create(name=plugin.name, session_id=group['group_id'],
-                                                          session_type='group')
-                if user_list:
-                    for user in user_list:
-                        count = await PluginPermission.filter(
-                            name=plugin.name, session_id=user['user_id'], session_type='user'
-                        ).count()
-                        if count > 1:
-                            first = await PluginPermission.filter(
-                                name=plugin.name, session_id=user['user_id'], session_type='user'
-                            ).order_by('id').first()
-                            await PluginPermission.filter(
-                                name=plugin.name, session_id=user['user_id'], session_type='user'
-                            ).delete()
-                            await first.save()
-                        elif count == 0:
-                            await PluginPermission.create(name=plugin.name, session_id=user['user_id'],
-                                                          session_type='user')
             if plugin.name not in HIDDEN_PLUGINS:
                 if plugin.name not in cls.plugins:
                     if metadata := plugin.metadata:
@@ -113,15 +94,23 @@ class PluginManager:
             :param message_type: 消息类型
             :param session_id: 消息ID
         """
-        load_plugins = nb_plugin.get_loaded_plugins()
-        load_plugins = [p.name for p in load_plugins]
+        load_plugins = [p.name for p in nb_plugin.get_loaded_plugins()]
         plugin_list = sorted(cls.plugins.values(), key=lambda x: x.priority).copy()
         plugin_list = [p for p in plugin_list if p.show and p.module_name in load_plugins]
         for plugin in plugin_list:
-            if message_type != 'guild':
-                plugin_info = await PluginPermission.get_or_none(name=plugin.module_name, session_id=session_id,
-                                                                 session_type=message_type)
-                plugin.status = True if plugin_info is None else plugin_info.status
+            if not await PluginDisable.filter(name=plugin.module_name, global_disable=True).exists():
+                if message_type != 'guild':
+                    # plugin_info = await PluginPermission.get_or_none(name=plugin.module_name, session_id=session_id,
+                    #                                                  session_type=message_type)
+                    # plugin.status = True if plugin_info is None else plugin_info.status
+                    if message_type == 'group':
+                        plugin.status = not await PluginDisable.filter(name=plugin.module_name,
+                                                                       group_id=session_id).exists()
+                    else:
+                        plugin.status = not await PluginDisable.filter(name=plugin.module_name,
+                                                                       user_id=session_id).exists()
+                else:
+                    plugin.status = True
             else:
                 plugin.status = True
             if plugin.matchers:
@@ -134,57 +123,48 @@ class PluginManager:
         """
         获取插件列表（供Web UI使用）
         """
-        load_plugins = nb_plugin.get_loaded_plugins()
-        load_plugins = [p.name for p in load_plugins]
+        load_plugins = [p.name for p in nb_plugin.get_loaded_plugins()]
         plugin_list = [p.dict(exclude={'status'}) for p in cls.plugins.values()]
         for plugin in plugin_list:
             plugin['matchers'].sort(key=lambda x: x['pm_priority'])
             plugin['isLoad'] = plugin['module_name'] in load_plugins
-            plugin['status'] = await PluginPermission.filter(name=plugin['module_name'], status=True).exists()
+            plugin['status'] = not await PluginDisable.filter(name=plugin['module_name'], global_disable=True).exists()
         plugin_list.sort(key=lambda x: (x['isLoad'], x['status'], -x['priority']), reverse=True)
         return plugin_list
 
 
-@DRIVER.on_bot_connect
-async def _():
-    await PluginManager.init()
-
-
 @run_preprocessor
 async def _(event: MessageEvent, matcher: Matcher):
-    if event.user_id in SUPERUSERS:
-        return
-    if not matcher.plugin_name or matcher.plugin_name in HIDDEN_PLUGINS:
-        return
-    if isinstance(event, PrivateMessageEvent):
-        session_id = event.user_id
-        session_type = 'user'
-    elif isinstance(event, GroupMessageEvent):
-        session_id = event.group_id
-        session_type = 'group'
-    else:
-        return
+    try:
+        if event.user_id in SUPERUSERS:
+            return
+        if not matcher.plugin_name or matcher.plugin_name in HIDDEN_PLUGINS:
+            return
+        if not isinstance(event, (PrivateMessageEvent, GroupMessageEvent)):
+            return
 
-    # 权限检查
-    perm = await PluginPermission.get_or_none(name=matcher.plugin_name, session_id=session_id,
-                                              session_type=session_type)
-    if not perm:
-        await PluginPermission.create(name=matcher.plugin_name, session_id=session_id, session_type=session_type)
-        return
-    if not perm.status:
-        raise IgnoredException('插件使用权限已禁用')
-    if isinstance(event, GroupMessageEvent) and event.user_id in perm.ban:
-        raise IgnoredException('用户被禁止使用该插件')
+        # 权限检查
+        if await PluginDisable.get_or_none(name=matcher.plugin_name, global_disable=True):
+            raise IgnoredException('插件使用权限已禁用')
+        if await PluginDisable.get_or_none(name=matcher.plugin_name, user_id=event.user_id, group_id=None):
+            raise IgnoredException('插件使用权限已禁用')
+        elif isinstance(event, GroupMessageEvent) and (
+                perms := await PluginDisable.filter(name=matcher.plugin_name, group_id=event.group_id)):
+            user_ids = [p.user_id for p in perms]
+            if None in user_ids or event.user_id in user_ids:
+                raise IgnoredException('插件使用权限已禁用')
 
-    # 命令调用统计
-    if matcher.plugin_name in PluginManager.plugins and 'pm_name' in matcher.state:
-        if matcher_info := list(filter(lambda x: x.pm_name == matcher.state['pm_name'],
-                                       PluginManager.plugins[matcher.plugin_name].matchers)):
-            matcher_info = matcher_info[0]
-            await PluginStatistics.create(plugin_name=matcher.plugin_name,
-                                          matcher_name=matcher_info.pm_name,
-                                          matcher_usage=matcher_info.pm_usage,
-                                          group_id=event.group_id if isinstance(event, GroupMessageEvent) else None,
-                                          user_id=event.user_id,
-                                          message_type=session_type,
-                                          time=datetime.datetime.now())
+        # 命令调用统计
+        if matcher.plugin_name in PluginManager.plugins and 'pm_name' in matcher.state:
+            if matcher_info := list(filter(lambda x: x.pm_name == matcher.state['pm_name'],
+                                           PluginManager.plugins[matcher.plugin_name].matchers)):
+                matcher_info = matcher_info[0]
+                await PluginStatistics.create(plugin_name=matcher.plugin_name,
+                                              matcher_name=matcher_info.pm_name,
+                                              matcher_usage=matcher_info.pm_usage,
+                                              group_id=event.group_id if isinstance(event, GroupMessageEvent) else None,
+                                              user_id=event.user_id,
+                                              message_type=event.message_type,
+                                              time=datetime.datetime.now())
+    except Exception as e:
+        logger.info('插件管理器', f'插件权限检查<r>失败：{e}</r>')

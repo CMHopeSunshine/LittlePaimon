@@ -7,6 +7,7 @@ from tortoise.models import Model
 
 
 class PluginPermission(Model):
+    """将在N个版本后废弃"""
     id = fields.IntField(pk=True, generated=True, auto_increment=True)
     name: str = fields.TextField()
     """插件名称"""
@@ -23,6 +24,21 @@ class PluginPermission(Model):
 
     class Meta:
         table = 'plugin_permission'
+
+
+class PluginDisable(Model):
+    id = fields.IntField(pk=True, generated=True, auto_increment=True)
+    name: str = fields.TextField()
+    """插件名称"""
+    global_disable: bool = fields.BooleanField(default=False)
+    """全局禁用"""
+    user_id: int = fields.IntField(null=True)
+    """用户id"""
+    group_id: int = fields.IntField(null=True)
+    """群组id"""
+
+    class Meta:
+        table = 'plugin_disable'
 
 
 class PluginStatistics(Model):

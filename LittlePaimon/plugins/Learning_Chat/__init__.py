@@ -45,7 +45,6 @@ learning_chat = on_message(priority=99, block=False, rule=Rule(ChatRule), permis
 @learning_chat.handle()
 async def _(event: GroupMessageEvent, answers=Arg('answers')):
     for answer in answers:
-        await asyncio.sleep(random.randint(1, 2))
         try:
             logger.info('群聊学习', f'{NICKNAME}将向群<m>{event.group_id}</m>回复<m>"{answer}"</m>')
             msg = await learning_chat.send(Message(answer))
@@ -56,6 +55,7 @@ async def _(event: GroupMessageEvent, answers=Arg('answers')):
                                      raw_message=answer,
                                      time=int(time.time()),
                                      plain_text=Message(answer).extract_plain_text())
+            await asyncio.sleep(random.random() + 0.5)
         except ActionFailed:
             logger.info('群聊学习', f'{NICKNAME}向群<m>{event.group_id}</m>的回复<m>"{answer}"</m>发送<r>失败，可能处于风控中</r>')
 

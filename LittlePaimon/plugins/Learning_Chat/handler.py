@@ -1,3 +1,4 @@
+import asyncio
 import datetime
 import random
 import re
@@ -90,7 +91,7 @@ class LearningChat:
             return Result.Pass
         elif self.reply:
             # 如果是回复消息
-            if not (message := await ChatMessage.get_or_none(message_id=self.reply.message_id)):
+            if not (message := await ChatMessage.filter(message_id=self.reply.message_id).first()):
                 # 回复的消息在数据库中有记录
                 logger.debug('群聊学习', '➤回复的消息不在数据库中，跳过')
                 return Result.Pass
@@ -167,10 +168,17 @@ class LearningChat:
         elif result == Result.Pass:
             # 跳过
             return None
-        elif result == Result.Repeat and (messages := await ChatMessage.filter(group_id=self.data.group_id,
-                                                                               time__gte=self.data.time - 3600).limit(
-            self.config.repeat_threshold)):
-            # 如果达到阈值，且bot没有回复过，且不是全都为同一个人在说，则进行复读
+        elif result == Result.Repeat:
+            query_set = ChatMessage.filter(group_id=self.data.group_id, time__gte=self.data.time - 3600)
+            if await query_set.limit(self.config.repeat_threshold + 5).filter(
+                    user_id=self.bot_id, message=self.data.message).exists():
+                # 如果在阈值+5条消息内，bot已经回复过这句话，则跳过
+                logger.debug('群聊学习', f'➤➤已经复读过了，跳过')
+                return None
+            if not (messages := await query_set.limit(
+                    self.config.repeat_threshold + 5)):
+                return None
+            # 如果达到阈值，且不是全都为同一个人在说，则进行复读
             if len(messages) >= self.config.repeat_threshold and all(
                     message.message == self.data.message and message.user_id != self.bot_id
                     for message in messages) and not all(
@@ -181,12 +189,13 @@ class LearningChat:
                 else:
                     logger.debug('群聊学习', f'➤➤达到复读阈值，复读<m>{messages[0].message}</m>')
                     return [self.data.message]
+            return None
         else:
             # 回复
             if self.data.is_plain_text and len(self.data.plain_text) <= 1:
                 logger.debug('群聊学习', '➤➤消息过短，不回复')
                 return None
-            if not (context := await ChatContext.get_or_none(keywords=self.data.keywords)):
+            if not (context := await ChatContext.filter(keywords=self.data.keywords).first()):
                 logger.debug('群聊学习', '➤➤尚未有已学习的回复，不回复')
                 return None
 
@@ -204,7 +213,8 @@ class LearningChat:
             else:
                 answer_count_threshold = 1
                 cross_group_threshold = 1
-            logger.debug('群聊学习', f'➤➤本次回复阈值为<m>{answer_count_threshold}</m>，跨群阈值为<m>{cross_group_threshold}</m>')
+            logger.debug('群聊学习',
+                         f'➤➤本次回复阈值为<m>{answer_count_threshold}</m>，跨群阈值为<m>{cross_group_threshold}</m>')
             # 获取满足跨群条件的回复
             answers_cross = await ChatAnswer.filter(context=context, count__gte=answer_count_threshold,
                                                     keywords__in=await ChatAnswer.annotate(
@@ -241,6 +251,7 @@ class LearningChat:
                 return None
             result_message = random.choice(result.messages)
             logger.debug('群聊学习', f'➤➤将回复<m>{result_message}</m>')
+            await asyncio.sleep(random.random() + 0.5)
             return [result_message]
 
     async def _ban(self, message_id: Optional[int] = None) -> bool:
@@ -248,7 +259,9 @@ class LearningChat:
         bot = get_bot()
         if message_id:
             # 如果有指定消息ID，则屏蔽该消息
-            if (message := await ChatMessage.get_or_none(message_id=message_id)) and message.message not in ALL_WORDS:
+            if (
+                    message := await ChatMessage.filter(
+                        message_id=message_id).first()) and message.message not in ALL_WORDS:
                 keywords = message.keywords
                 try:
                     await bot.delete_msg(message_id=message_id)
@@ -266,7 +279,7 @@ class LearningChat:
                 logger.info('群聊学习', f'待禁用消息<m>{last_reply.message_id}</m>尝试撤回<r>失败</r>')
         else:
             return False
-        if ban_word := await ChatBlackList.get_or_none(keywords=keywords):
+        if ban_word := await ChatBlackList.filter(keywords=keywords).first():
             # 如果已有屏蔽记录
             if self.data.group_id not in ban_word.ban_group_id:
                 # 如果不在屏蔽群列表中，则添加
@@ -290,7 +303,7 @@ class LearningChat:
 
     @staticmethod
     async def add_ban(data: Union[ChatMessage, ChatContext, ChatAnswer]):
-        if ban_word := await ChatBlackList.get_or_none(keywords=data.keywords):
+        if ban_word := await ChatBlackList.filter(keywords=data.keywords).first():
             # 如果已有屏蔽记录
             if isinstance(data, ChatMessage):
                 if data.group_id not in ban_word.ban_group_id:
@@ -360,7 +373,9 @@ class LearningChat:
                 continue
 
             config = config_manager.get_group_config(group_id)
-            ban_words = set(chat_config.ban_words + config.ban_words + ['[CQ:xml', '[CQ:json', '[CQ:at', '[CQ:video', '[CQ:record', '[CQ:share'])
+            ban_words = set(
+                chat_config.ban_words + config.ban_words + ['[CQ:xml', '[CQ:json', '[CQ:at', '[CQ:video', '[CQ:record',
+                                                            '[CQ:share'])
 
             # 是否开启了主动发言
             if not config.speak_enable:
@@ -400,7 +415,7 @@ class LearningChat:
                         speak_list.append(message)
                         while random.random() < config.speak_continuously_probability and len(
                                 speak_list) < config.speak_continuously_max_len:
-                            if (follow_context := await ChatContext.get_or_none(keywords=answer.keywords)) and (
+                            if (follow_context := await ChatContext.filter(keywords=answer.keywords).first()) and (
                                     follow_answers := await ChatAnswer.filter(
                                         group_id=group_id,
                                         context=follow_context,
@@ -432,13 +447,13 @@ class LearningChat:
                 return None
 
     async def _set_answer(self, message: ChatMessage):
-        if context := await ChatContext.get_or_none(keywords=message.keywords):
+        if context := await ChatContext.filter(keywords=message.keywords).first():
             if context.count < chat_config.learn_max_count:
                 context.count += 1
             context.time = self.data.time
-            if answer := await ChatAnswer.get_or_none(keywords=self.data.keywords,
-                                                      group_id=self.data.group_id,
-                                                      context=context):
+            if answer := await ChatAnswer.filter(keywords=self.data.keywords,
+                                                 group_id=self.data.group_id,
+                                                 context=context).first():
                 if answer.count < chat_config.learn_max_count:
                     answer.count += 1
                 answer.time = self.data.time
@@ -476,7 +491,7 @@ class LearningChat:
         if raw_message.startswith('&#91;') and raw_message.endswith('&#93;'):
             # logger.debug('群聊学习', f'➤检验<m>{keywords}</m><r>不通过</r>')
             return False
-        if ban_word := await ChatBlackList.get_or_none(keywords=message.keywords):
+        if ban_word := await ChatBlackList.filter(keywords=message.keywords).first():
             if ban_word.global_ban or message.group_id in ban_word.ban_group_id:
                 # logger.debug('群聊学习', f'➤检验<m>{keywords}</m><r>不通过</r>')
                 return False

@@ -2,6 +2,7 @@ from pathlib import Path
 
 from nonebot import load_plugins, logger
 from LittlePaimon import database, web
+from LittlePaimon.config import PluginManager
 from LittlePaimon.utils import DRIVER, __version__, NICKNAME, SUPERUSERS
 from LittlePaimon.utils.tool import check_resource
 
@@ -35,6 +36,7 @@ logo = """<g>
 async def startup():
     logger.opt(colors=True).info(logo)
     await database.connect()
+    await PluginManager.init()
     await check_resource()
 
 
