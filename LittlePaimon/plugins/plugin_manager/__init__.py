@@ -61,7 +61,7 @@ async def _(event: GroupMessageEvent, state: T_State, match: dict = RegexDict(),
     state['plugin_no_exist'] = []
     if any(w in match['plugin'] for w in {'all', '全部'}):
         state['is_all'] = True
-        state['plugin'] = [p for p in PluginManager.plugins.keys() if p != 'plugin_manager']
+        state['plugin'] = list(PluginManager.plugins.keys())
     else:
         state['is_all'] = False
         state['plugin'] = []

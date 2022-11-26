@@ -166,5 +166,7 @@ async def _(event: MessageEvent, matcher: Matcher):
                                               user_id=event.user_id,
                                               message_type=event.message_type,
                                               time=datetime.datetime.now())
+    except IgnoredException:
+        pass
     except Exception as e:
         logger.info('插件管理器', f'插件权限检查<r>失败：{e}</r>')

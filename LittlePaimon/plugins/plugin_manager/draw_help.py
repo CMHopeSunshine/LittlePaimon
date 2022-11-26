@@ -25,7 +25,7 @@ async def draw_plugin_card(plugin: PluginInfo):
 
 async def draw_help(plugin_list: List[PluginInfo]):
     bg = PMImage(await load_image(RESOURCE_BASE_PATH / 'general' / 'bg.png'))
-    img = PMImage(size=(1080, 500 * len(plugin_list)), color=(255, 255, 255, 0), mode='RGBA')
+    img = PMImage(size=(1080, 1000 + 600 * len(plugin_list)), color=(255, 255, 255, 0), mode='RGBA')
     orange_line = await load_image(RESOURCE_BASE_PATH / 'general' / 'orange.png')
     orange_name_bg = await load_image(RESOURCE_BASE_PATH / 'general' / 'orange_card.png')
     black_line = await load_image(RESOURCE_BASE_PATH / 'general' / 'black2.png')
