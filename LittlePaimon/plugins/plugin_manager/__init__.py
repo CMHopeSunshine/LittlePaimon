@@ -129,6 +129,7 @@ async def _(state: T_State):
             msg = f'已{"启用" if state["bool"] else "禁用"}群{" ".join(map(str, state["group"]))}的插件{" ".join(state["plugin"]) if not state["is_all"] else "全部"}使用权限{extra_msg}'
     else:
         filter_arg['user_id__in'] = state['user']
+        filter_arg['group_id'] = None
         logger.info('插件管理器',
                     f'已{"<g>启用</g>" if state["bool"] else "<r>禁用</r>"}用户<m>{" ".join(map(str, state["user"]))}</m>的插件<m>{" ".join(state["plugin"]) if not state["is_all"] else "全部"}</m>使用权限')
         msg = f'已{"启用" if state["bool"] else "禁用"}用户{" ".join(map(str, state["user"]))}的插件{" ".join(state["plugin"]) if not state["is_all"] else "全部"}使用权限{extra_msg}'
@@ -142,10 +143,10 @@ async def _(state: T_State):
                         for user in state['user']:
                             await PluginDisable.update_or_create(name=plugin, group_id=group, user_id=user)
                     else:
-                        await PluginDisable.update_or_create(name=plugin, group_id=group)
+                        await PluginDisable.update_or_create(name=plugin, group_id=group, user_id=None)
             else:
                 for user in state['user']:
-                    await PluginDisable.update_or_create(name=plugin, user_id=user)
+                    await PluginDisable.update_or_create(name=plugin, user_id=user, group_id=None)
 
     await manage_cmd.finish(msg)
 
