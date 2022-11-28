@@ -3,14 +3,13 @@ from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent, PrivateMessa
 from nonebot.params import RegexDict, CommandArg
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
-from nonebot.rule import Rule
 from nonebot.typing import T_State
 
 from LittlePaimon import SUPERUSERS
 from LittlePaimon.config import ConfigManager, PluginManager
 from LittlePaimon.database import PluginDisable
 from LittlePaimon.utils import logger
-from LittlePaimon.utils.message import CommandObjectID
+from LittlePaimon.utils.message import CommandObjectID, fullmatch_rule
 from .draw_help import draw_help
 
 __plugin_meta__ = PluginMetadata(
@@ -24,10 +23,6 @@ __plugin_meta__ = PluginMetadata(
 )
 
 
-def fullmatch(msg: Message = CommandArg()) -> bool:
-    return not bool(msg)
-
-
 manage_cmd = on_regex(
     r'^pm (?P<func>ban|unban) (?P<plugin>([\w ]*)|all|全部) ?(-g (?P<group>[\d ]*) ?)?(-u (?P<user>[\d ]*) ?)?',
     priority=1, block=True, state={
@@ -36,7 +31,7 @@ manage_cmd = on_regex(
         'pm_usage':       'pm ban|unban <插件名>',
         'pm_priority':    1
     })
-help_cmd = on_command('help', aliases={'帮助', '菜单', 'pm help'}, priority=1, rule=Rule(fullmatch), block=True, state={
+help_cmd = on_command('help', aliases={'帮助', '菜单', 'pm help'}, priority=1, rule=fullmatch_rule, block=True, state={
     'pm_name':        'pm-help',
     'pm_description': '查看本帮助',
     'pm_usage':       'help',

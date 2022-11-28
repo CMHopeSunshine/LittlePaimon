@@ -8,6 +8,7 @@ from typing import Union, Optional, Tuple, List
 from PIL import Image
 from nonebot import get_bot
 from nonebot.adapters.onebot.v11 import MessageEvent, Message, MessageSegment, GroupMessageEvent
+from nonebot.rule import Rule
 from nonebot.matcher import Matcher
 from nonebot.params import CommandArg, Depends
 from nonebot.typing import T_State
@@ -93,6 +94,12 @@ class MessageBuild:
     @classmethod
     def Video(cls, path: str) -> MessageSegment:
         return MessageSegment.video(path)
+
+
+def fullmatch(msg: Message = CommandArg()) -> bool:
+    return not bool(msg)
+
+fullmatch_rule = Rule(fullmatch)
 
 
 def CommandPlayer(limit: int = 3, only_cn: bool = True) -> List[Player]:

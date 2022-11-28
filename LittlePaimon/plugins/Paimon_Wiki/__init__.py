@@ -12,7 +12,7 @@ from nonebot.typing import T_State
 from LittlePaimon.database import PlayerAlias
 from LittlePaimon.utils import NICKNAME
 from LittlePaimon.utils.alias import get_match_alias
-from LittlePaimon.utils.message import MessageBuild
+from LittlePaimon.utils.message import MessageBuild, fullmatch_rule
 from LittlePaimon.utils.path import RESOURCE_BASE_PATH
 from LittlePaimon.utils.tool import freq_limiter
 from .draw_daily_material import draw_material
@@ -84,7 +84,7 @@ card_wiki = on_command('七圣召唤图鉴', aliases={'原牌图鉴', '原石传
     'pm_priority':    13
 })
 card_wiki_list = on_command('七圣召唤列表', aliases={'七圣召唤卡牌列表', '原牌列表', '原石传说列表'}, priority=11,
-                            block=True, state={
+                            rule=fullmatch_rule, block=True, state={
         'pm_name':        '七圣召唤图鉴列表',
         'pm_description': '查看七圣召唤卡牌图鉴列表',
         'pm_usage':       '原牌列表',

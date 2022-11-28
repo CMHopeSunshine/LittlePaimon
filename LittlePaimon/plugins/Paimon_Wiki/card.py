@@ -12,7 +12,9 @@ async def update_card_list():
     with contextlib.suppress(Exception):
         resp = await aiorequests.get(CARD_RESOURCES_API)
         if resp.status_code == 200:
-            card_list.extend([card['name'].split('.')[0] for card in resp.json()])
+            for card in resp.json():
+                if (name := card['name'].replace('.png', '')) not in card_list:
+                    card_list.append(name)
     return None
 
 
