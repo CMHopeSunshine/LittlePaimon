@@ -18,6 +18,7 @@ from LittlePaimon.utils.tool import freq_limiter
 from .draw_daily_material import draw_material
 from .draw_map import init_map, draw_map, get_full_map
 from .SereniteaPot import draw_pot_materials
+from .card import get_match_card, CARD_API, get_card_list
 
 __paimon_help__ = {
     'type':  '原神Wiki',
@@ -69,12 +70,26 @@ generate_map = on_command('生成地图', priority=1, block=True, permission=SUP
     'pm_usage':       '生成地图',
     'pm_priority':    11
 })
-pot_material = on_command('尘歌壶摹本', aliases={'摹本材料', '尘歌壶材料', '尘歌壶摹本材料'}, priority=11, block=True, state={
-    'pm_name':        '尘歌壶摹本材料',
-    'pm_description': '查看尘歌壶摹本所需要的材料总览',
-    'pm_usage':       '尘歌壶材料<摹数>',
-    'pm_priority':    12
+pot_material = on_command('尘歌壶摹本', aliases={'摹本材料', '尘歌壶材料', '尘歌壶摹本材料'}, priority=11, block=True,
+                          state={
+                              'pm_name':        '尘歌壶摹本材料',
+                              'pm_description': '查看尘歌壶摹本所需要的材料总览',
+                              'pm_usage':       '尘歌壶材料<摹数>',
+                              'pm_priority':    12
+                          })
+card_wiki = on_command('七圣召唤图鉴', aliases={'原牌图鉴', '原石传说图鉴', '原牌'}, priority=11, block=True, state={
+    'pm_name':        '七圣召唤图鉴',
+    'pm_description': '查看七圣召唤图鉴，支持模糊查询',
+    'pm_usage':       '七圣召唤图鉴<卡牌名>',
+    'pm_priority':    13
 })
+card_wiki_list = on_command('七圣召唤列表', aliases={'七圣召唤卡牌列表', '原牌列表', '原石传说列表'}, priority=11,
+                            block=True, state={
+        'pm_name':        '七圣召唤图鉴列表',
+        'pm_description': '查看七圣召唤卡牌图鉴列表',
+        'pm_usage':       '原牌列表',
+        'pm_priority':    14
+    })
 
 week_str = ['周一', '周二', '周三', '周四', '周五', '周六']
 
@@ -194,6 +209,8 @@ def create_wiki_matcher(pattern: str, help_fun: str, help_name: str):
 
     @maps.handle()
     async def _(event: MessageEvent, state: T_State, regex_dict: dict = RegexDict()):
+        if regex_dict['name1'] and regex_dict['name2']:
+            await maps.finish()
         name = regex_dict['name1'] or regex_dict['name2']
         state['type'] = regex_dict['type']
         if '武器' in state['type']:
@@ -211,7 +228,8 @@ def create_wiki_matcher(pattern: str, help_fun: str, help_name: str):
         elif state['type'] == '角色材料':
             state['type'] = '角色'
             # state['img_url'] = 'https://static.cherishmoon.fun/LittlePaimon/RoleMaterials/{}材料.jpg'
-            state['img_url'] = 'https://ghproxy.com/https://raw.githubusercontent.com/Nwflower/genshin-atlas/master/material%20for%20role/{}.png'
+            state[
+                'img_url'] = 'https://ghproxy.com/https://raw.githubusercontent.com/Nwflower/genshin-atlas/master/material%20for%20role/{}.png'
         elif state['type'] == '收益曲线':
             state['type'] = '角色'
             state['img_url'] = 'https://static.cherishmoon.fun/LittlePaimon/blue/{}.jpg'
@@ -251,7 +269,8 @@ def create_wiki_matcher(pattern: str, help_fun: str, help_name: str):
                 await maps.send(msg + '\n回答\"取消\"来取消查询', at_sender=True)
             state['match_alias'] = match_alias
         else:
-            await maps.finish(MessageBuild.Text(f'没有找到{name}的图鉴'))
+            # await maps.finish(MessageBuild.Text(f'没有找到{name}的图鉴'))
+            await maps.finish()
 
     @maps.got('choice', parameterless=[HandleCancellation(f'好吧，有需要再找{NICKNAME}')])
     async def _(event: MessageEvent, state: T_State, choice: str = ArgPlainText('choice')):
@@ -264,24 +283,71 @@ def create_wiki_matcher(pattern: str, help_fun: str, help_name: str):
         if choice not in match_alias:
             state['times'] = state['times'] + 1 if 'times' in state else 1
             if state['times'] == 1:
-                await maps.reject(f'请旅行者从上面的{state["type"]}中选一个问{NICKNAME}\n回答\"取消\"可以取消查询',
-                                  at_sender=True)
+                await maps.reject(f'请旅行者从上面的{state["type"]}中选一个问{NICKNAME}\n回答\"取消\"可以取消查询')
 
             elif state['times'] == 2:
-                await maps.reject(f'别调戏{NICKNAME}啦，快选一个吧，不想问了请回答\"取消\"！', at_sender=True)
+                await maps.reject(f'别调戏{NICKNAME}啦，快选一个吧，不想问了请回答\"取消\"！')
             elif state['times'] >= 3:
-                await maps.finish(f'看来旅行者您有点神志不清哦(，下次再问{NICKNAME}吧{MessageSegment.face(146)}',
-                                  at_sender=True)
+                await maps.finish(
+                    MessageSegment.text(f'看来旅行者您有点神志不清哦(，下次再问{NICKNAME}吧') + MessageSegment.face(146))
         try:
             await maps.finish(MessageSegment.image(state['img_url'].format(choice)))
         except ActionFailed:
             await maps.finish(MessageBuild.Text(f'没有找到{choice}的图鉴'))
 
 
-create_wiki_matcher(r'(?P<name1>\w*)(?P<type>(原魔|怪物)(图鉴|攻略))(?P<name2>\w*)', '原魔图鉴', '原魔')
-create_wiki_matcher(r'(?P<name1>\w*)(?P<type>武器(图鉴|攻略))(?P<name2>\w*)', '武器图鉴', '武器')
-create_wiki_matcher(r'(?P<name1>\w*)(?P<type>圣遗物(图鉴|攻略))(?P<name2>\w*)', '圣遗物图鉴', '圣遗物')
-create_wiki_matcher(r'(?P<name1>\w*)(?P<type>角色攻略)(?P<name2>\w*)', '角色攻略', '角色')
-create_wiki_matcher(r'(?P<name1>\w*)(?P<type>角色材料)(?P<name2>\w*)', '角色材料', '角色')
-create_wiki_matcher(r'(?P<name1>\w*)(?P<type>收益曲线)(?P<name2>\w*)', '收益曲线', '角色')
-create_wiki_matcher(r'(?P<name1>\w*)(?P<type>参考面板)(?P<name2>\w*)', '参考面板', '角色')
+create_wiki_matcher(r'(?P<name1>\w{0,7})(?P<type>(原魔|怪物)(图鉴|攻略))(?P<name2>\w{0,7})', '原魔图鉴', '原魔')
+create_wiki_matcher(r'(?P<name1>\w{0,7})(?P<type>武器(图鉴|攻略))(?P<name2>\w{0,7})', '武器图鉴', '武器')
+create_wiki_matcher(r'(?P<name1>\w{0,7})(?P<type>圣遗物(图鉴|攻略))(?P<name2>\w{0,7})', '圣遗物图鉴', '圣遗物')
+create_wiki_matcher(r'(?P<name1>\w{0,7})(?P<type>角色攻略)(?P<name2>\w{0,7})', '角色攻略', '角色')
+create_wiki_matcher(r'(?P<name1>\w{0,7})(?P<type>角色材料)(?P<name2>\w{0,7})', '角色材料', '角色')
+create_wiki_matcher(r'(?P<name1>\w{0,7})(?P<type>收益曲线)(?P<name2>\w{0,7})', '收益曲线', '角色')
+create_wiki_matcher(r'(?P<name1>\w{0,7})(?P<type>参考面板)(?P<name2>\w{0,7})', '参考面板', '角色')
+
+
+@card_wiki.handle()
+async def _(state: T_State, msg: Message = CommandArg()):
+    state['name'] = msg
+
+
+@card_wiki.got('name', prompt='你想查询哪张卡牌的图鉴呢？')
+async def _(state: T_State, name: str = ArgPlainText('name')):
+    if not (matches := await get_match_card(name)):
+        await card_wiki.finish(MessageBuild.Text(f'暂时没有{name}的卡牌图鉴'))
+    if name in matches:
+        await card_wiki.finish(MessageSegment.image(CARD_API.format(name)))
+    if 'choice' not in state:
+        msg = f'你要查询的卡牌是：\n'
+        msg += '\n'.join([f'{int(i) + 1}. {name}' for i, name in enumerate(matches)])
+        await card_wiki.send(msg + '\n回答\"取消\"来取消查询', at_sender=True)
+    state['matches'] = matches
+
+
+@card_wiki.got('choice', parameterless=[HandleCancellation(f'好吧，有需要再找{NICKNAME}')])
+async def _(state: T_State, choice: str = ArgPlainText('choice')):
+    matches = state['matches']
+    if choice.isdigit() and (1 <= int(choice) <= len(matches)):
+        try:
+            await card_wiki.finish(MessageSegment.image(CARD_API.format(matches[int(choice) - 1])))
+        except ActionFailed:
+            await card_wiki.finish(MessageBuild.Text(f'暂时没有{matches[int(choice) - 1]}的卡牌图鉴'))
+    if choice not in matches:
+        state['times'] = state['times'] + 1 if 'times' in state else 1
+        if state['times'] == 1:
+            await card_wiki.reject(f'请旅行者从上面的卡牌中选一个问{NICKNAME}\n回答\"取消\"可以取消查询')
+
+        elif state['times'] == 2:
+            await card_wiki.reject(f'别调戏{NICKNAME}啦，快选一个吧，不想问了请回答\"取消\"！')
+        elif state['times'] >= 3:
+            await card_wiki.finish(
+                MessageSegment.text(f'看来旅行者您有点神志不清哦(，下次再问{NICKNAME}吧') + MessageSegment.face(146))
+    try:
+        await card_wiki.finish(MessageSegment.image(CARD_API.format(choice)))
+    except ActionFailed:
+        await card_wiki.finish(MessageBuild.Text(f'暂时没有{choice}的卡牌图鉴'))
+
+
+@card_wiki_list.handle()
+async def _():
+    result = await get_card_list()
+    await card_wiki_list.finish(result or '暂时没有卡牌图鉴')

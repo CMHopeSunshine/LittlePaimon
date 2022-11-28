@@ -409,9 +409,12 @@ def weapon_common_fix(info: Character):
         info.prop.elemental_mastery += 5 * (24 + 8 * info.weapon.affix_level)
         for i in info.prop.dmg_bonus:
             info.prop.dmg_bonus[i] = info.prop.dmg_bonus[i] + 2 * (0.06 + 0.04 * info.weapon.affix_level)
-        info.damage_describe.append('千夜浮梦算1同2异')
+        info.damage_describe.append('武器算1同2异')
     elif info.weapon.name == '流浪的晚星':
         info.prop.extra_attack += info.prop.elemental_mastery * (0.18 + 0.06 * info.weapon.affix_level)
+    elif info.weapon.name == '魔导绪论':
+        for i in info.prop.dmg_bonus:
+            info.prop.dmg_bonus[i] = info.prop.dmg_bonus[i] + 0.09 + 0.03 * info.weapon.affix_level
 
     # 系列武器
     elif info.weapon.name.startswith('千岩'):
@@ -985,17 +988,16 @@ def get_damage_multipiler(info: Character) -> Optional[Dict[str, any]]:
         info.prop.elemental_mastery += 160 if len(info.constellation) >= 4 else 0
         eb = skill_data['所闻遍计']['数值']['灭净三业伤害'][level_e].split('+')
         return {
-            'B:l0-增伤-E': (float(skill_data['心景幻成']['数值'][f'火：伤害提升{c}'][level_q].replace('%', '')) / 100.0, f'大招计算{c}名火元素'),
+            'B:l0-增伤-E': (float(skill_data['心景幻成']['数值'][f'火：伤害提升{c}'][level_q].replace('%', '')) / 100.0, f'大招计算{c}火'),
             'B:l70-增伤-E': (0.8 if info.prop.elemental_mastery >= 1000 else (
                     0.001 * (info.prop.elemental_mastery - 200)) if info.prop.elemental_mastery >= 200 else 0, ),
             'B:l70-暴击率-E': (0.24 if info.prop.elemental_mastery >= 1000 else (
                         0.0003 * (info.prop.elemental_mastery - 200)) if info.prop.elemental_mastery >= 200 else 0,),
-            'B:c2-减防-*': (0.3, '二命减防触发'),
+            'B:c2-减防-*': (0.3, '二命减防'),
             'B:l0-额外倍率-E': (float(eb[1].replace('%元素精通', '')) / 100.0 * info.prop.elemental_mastery, ),
             'E-e草:灭净三业': float(eb[0].replace('%攻击力', '')) / 100.0,
             'E-e草-j蔓激化:灭净三业蔓激化': float(eb[0].replace('%攻击力', '')) / 100.0
         }
-
 
 
 async def draw_dmg_pic(dmg: Dict[str, Union[tuple, list]]) -> PMImage:

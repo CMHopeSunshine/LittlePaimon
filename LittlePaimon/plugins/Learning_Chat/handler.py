@@ -87,7 +87,7 @@ class LearningChat:
             return Result.SetEnable
         elif not await self._check_allow(self.data):
             # 本消息不合法，跳过
-            logger.debug('群聊学习', f'➤消息未通过校验，跳过')
+            logger.debug('群聊学习', '➤消息未通过校验，跳过')
             return Result.Pass
         elif self.reply:
             # 如果是回复消息
@@ -150,41 +150,41 @@ class LearningChat:
             else:
                 return [random.choice(DOUBT_WORDS)]
         elif result == Result.SetEnable:
-            # 开启/关闭学习
-            if self.role in {'superuser', 'admin', 'owner'}:
-                # 检查权限
-                if any(w in self.data.message for w in {'学说话', '快学', '开启学习'}):
-                    self.config.update(enable=True)
-                    config_manager.config.group_config[self.data.group_id] = self.config
-                    config_manager.save()
-                    return [random.choice(ENABLE_WORDS)]
-                else:
-                    self.config.update(enable=False)
-                    config_manager.config.group_config[self.data.group_id] = self.config
-                    config_manager.save()
-                    return [random.choice(DISABLE_WORDS)]
-            else:
+            if self.role not in {'superuser', 'admin', 'owner'}:
                 return [random.choice(NO_PERMISSION_WORDS)]
+            # 检查权限
+            if any(w in self.data.message for w in {'学说话', '快学', '开启学习'}):
+                self.config.update(enable=True)
+                config_manager.config.group_config[self.data.group_id] = self.config
+                config_manager.save()
+                return [random.choice(ENABLE_WORDS)]
+            else:
+                self.config.update(enable=False)
+                config_manager.config.group_config[self.data.group_id] = self.config
+                config_manager.save()
+                return [random.choice(DISABLE_WORDS)]
         elif result == Result.Pass:
             # 跳过
             return None
         elif result == Result.Repeat:
-            query_set = ChatMessage.filter(group_id=self.data.group_id, time__gte=self.data.time - 3600)
-            if await query_set.limit(self.config.repeat_threshold + 5).filter(
+            if await ChatMessage.filter(group_id=self.data.group_id,
+                                        time__gte=self.data.time - 3600).limit(
+                self.config.repeat_threshold + 5).filter(
                     user_id=self.bot_id, message=self.data.message).exists():
                 # 如果在阈值+5条消息内，bot已经回复过这句话，则跳过
-                logger.debug('群聊学习', f'➤➤已经复读过了，跳过')
+                logger.debug('群聊学习', '➤➤已经复读过了，跳过')
                 return None
-            if not (messages := await query_set.limit(
-                    self.config.repeat_threshold + 5)):
+            if not (messages := await ChatMessage.filter(
+                    group_id=self.data.group_id,
+                    time__gte=self.data.time - 3600).limit(self.config.repeat_threshold)):
                 return None
             # 如果达到阈值，且不是全都为同一个人在说，则进行复读
             if len(messages) >= self.config.repeat_threshold and all(
-                    message.message == self.data.message and message.user_id != self.bot_id
-                    for message in messages) and not all(
-                message.user_id == messages[0].user_id for message in messages):
+                    message.message == self.data.message
+                    for message in messages) and all(message.user_id != messages[0].user_id
+                                                     for message in messages):
                 if random.random() < self.config.break_probability:
-                    logger.debug('群聊学习', f'➤➤达到复读阈值，打断复读！')
+                    logger.debug('群聊学习', '➤➤达到复读阈值，打断复读！')
                     return [random.choice(BREAK_REPEAT_WORDS)]
                 else:
                     logger.debug('群聊学习', f'➤➤达到复读阈值，复读<m>{messages[0].message}</m>')
@@ -258,17 +258,13 @@ class LearningChat:
         """屏蔽消息"""
         bot = get_bot()
         if message_id:
-            # 如果有指定消息ID，则屏蔽该消息
-            if (
-                    message := await ChatMessage.filter(
-                        message_id=message_id).first()) and message.message not in ALL_WORDS:
-                keywords = message.keywords
-                try:
-                    await bot.delete_msg(message_id=message_id)
-                except ActionFailed:
-                    logger.info('群聊学习', f'待禁用消息<m>{message_id}</m>尝试撤回<r>失败</r>')
-            else:
+            if not (message := await ChatMessage.filter(message_id=message_id).first()) or message.message in ALL_WORDS:
                 return False
+            keywords = message.keywords
+            try:
+                await bot.delete_msg(message_id=message_id)
+            except ActionFailed:
+                logger.info('群聊学习', f'待禁用消息<m>{message_id}</m>尝试撤回<r>失败</r>')
         elif (last_reply := await ChatMessage.filter(group_id=self.data.group_id, user_id=self.bot_id).first()) and (
                 last_reply.message not in ALL_WORDS):
             # 没有指定消息ID，则屏蔽最后一条回复
@@ -328,7 +324,6 @@ class LearningChat:
                 ban_word = ChatBlackList(keywords=data.keywords, ban_group_id=[data.group_id])
                 await ChatAnswer.filter(keywords=data.keywords, group_id=data.group_id).delete()
             else:
-
                 logger.info('群聊学习', f'学习词<m>{data.keywords}</m>将被全局禁用')
                 ban_word = ChatBlackList(keywords=data.keywords, global_ban=True)
                 await ChatAnswer.filter(keywords=data.keywords).delete()
@@ -342,7 +337,7 @@ class LearningChat:
         today_time = time.mktime(datetime.date.today().timetuple())
         # 获取两小时内消息超过10条的群列表
         groups = await ChatMessage.filter(time__gte=today_time).annotate(count=Count('id')).group_by('group_id'). \
-            filter(count__gte=10).values_list('group_id', flat=True)
+                    filter(count__gte=10).values_list('group_id', flat=True)
         if not groups:
             return None
         total_messages = {}
@@ -428,9 +423,8 @@ class LearningChat:
                                     continue
                                 if message.startswith('&#91;') and message.endswith('&#93;'):
                                     continue
-                                if any(word in message for word in ban_words):
-                                    continue
-                                speak_list.append(message)
+                                if all(word not in message for word in ban_words):
+                                    speak_list.append(message)
                             else:
                                 break
                     else:
@@ -438,8 +432,7 @@ class LearningChat:
                 if speak_list:
                     # logger.debug('群聊学习', f'主动发言：将向群<m>{group_id}</m>主动发言<m>{" ".join(speak_list)}</m>')
                     if random.random() < config.speak_poke_probability:
-                        last_speak_users = set(
-                            message.user_id for message in messages[:5] if message.user_id != self_id)
+                        last_speak_users = {message.user_id for message in messages[:5] if message.user_id != self_id}
                         select_user = random.choice(list(last_speak_users))
                         speak_list.append(MessageSegment('poke', {'qq': select_user}))
                     return group_id, speak_list
