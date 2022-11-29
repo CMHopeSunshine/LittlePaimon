@@ -29,18 +29,17 @@ async def handle_command_alias(event: MessageEvent):
 
 
 def combine_msg(new_command: str, extra_msg: str, is_reverse: bool):
-    return (new_command + extra_msg) if not is_reverse else (extra_msg + new_command)
+    return extra_msg + new_command if is_reverse else new_command + extra_msg
 
 
 def modify_msg(all_alias: List[CommandAlias], msg: str):
     for alias in all_alias:
         if alias.is_regex:
             msg = re.sub(alias.alias, alias.command, msg)
-        else:
-            if alias.mode == AliasMode.prefix and msg.startswith(alias.alias):
-                msg = combine_msg(alias.command, msg[len(alias.alias):], alias.is_reverse)
-            elif alias.mode == AliasMode.suffix and msg.endswith(alias.alias):
-                msg = combine_msg(msg[:-len(alias.alias)], alias.command, alias.is_reverse)
-            elif alias.mode == AliasMode.full_match and msg == alias.alias:
-                msg = alias.command
+        elif alias.mode == AliasMode.prefix and msg.startswith(alias.alias):
+            msg = combine_msg(alias.command, msg[len(alias.alias):], alias.is_reverse)
+        elif alias.mode == AliasMode.suffix and msg.endswith(alias.alias):
+            msg = combine_msg(msg[:-len(alias.alias)], alias.command, alias.is_reverse)
+        elif alias.mode == AliasMode.full_match and msg == alias.alias:
+            msg = alias.command
     return msg

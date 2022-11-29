@@ -181,7 +181,7 @@ class LearningChat:
             # 如果达到阈值，且不是全都为同一个人在说，则进行复读
             if len(messages) >= self.config.repeat_threshold and all(
                     message.message == self.data.message
-                    for message in messages) and all(message.user_id != messages[0].user_id
+                    for message in messages) and any(message.user_id != self.data.user_id
                                                      for message in messages):
                 if random.random() < self.config.break_probability:
                     logger.debug('群聊学习', '➤➤达到复读阈值，打断复读！')
@@ -337,7 +337,7 @@ class LearningChat:
         today_time = time.mktime(datetime.date.today().timetuple())
         # 获取两小时内消息超过10条的群列表
         groups = await ChatMessage.filter(time__gte=today_time).annotate(count=Count('id')).group_by('group_id'). \
-                    filter(count__gte=10).values_list('group_id', flat=True)
+            filter(count__gte=10).values_list('group_id', flat=True)
         if not groups:
             return None
         total_messages = {}

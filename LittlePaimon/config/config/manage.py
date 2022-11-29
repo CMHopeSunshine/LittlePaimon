@@ -14,8 +14,8 @@ class ConfigManager:
     def set_config(cls, config_name: str, value: any):
         """
         设置派蒙配置项
-        :param config_name: 配置名
-        :param value: 新配置值
+            :param config_name: 配置名
+            :param value: 新配置值
         """
         if config_name not in cls.config.dict(by_alias=True).keys():
             return f'没有配置项为{config_name}'

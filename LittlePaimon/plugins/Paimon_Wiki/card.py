@@ -30,6 +30,6 @@ async def get_match_card(name: str):
     return difflib.get_close_matches(name, card_list, cutoff=0.6, n=10) if card_list else None
 
 
-@scheduler.scheduled_job('cron', hour='*/2')
+@scheduler.scheduled_job('cron', minute='*/30')
 async def _():
     await update_card_list()
