@@ -215,7 +215,8 @@ def create_wiki_matcher(pattern: str, help_fun: str, help_name: str):
         state['type'] = regex_dict['type']
         if '武器' in state['type']:
             state['type'] = '武器'
-            state['img_url'] = 'https://static.cherishmoon.fun/LittlePaimon/WeaponMaps/{}.jpg'
+            # state['img_url'] = 'https://static.cherishmoon.fun/LittlePaimon/WeaponMaps/{}.jpg'
+            state['img_url'] = 'https://ghproxy.com/https://raw.githubusercontent.com/Nwflower/genshin-atlas/master/weapon/{}.png'
         elif '圣遗物' in state['type']:
             state['type'] = '圣遗物'
             state['img_url'] = 'https://static.cherishmoon.fun/LittlePaimon/ArtifactMaps/{}.jpg'
@@ -230,6 +231,9 @@ def create_wiki_matcher(pattern: str, help_fun: str, help_name: str):
             # state['img_url'] = 'https://static.cherishmoon.fun/LittlePaimon/RoleMaterials/{}材料.jpg'
             state[
                 'img_url'] = 'https://ghproxy.com/https://raw.githubusercontent.com/Nwflower/genshin-atlas/master/material%20for%20role/{}.png'
+        elif state['type'] == '角色图鉴':
+            state['type'] = '角色'
+            state['img_url'] = 'https://ghproxy.com/https://raw.githubusercontent.com/CMHopeSunshine/GenshinWikiMap/master/results/character_map/{}.jpg'
         elif state['type'] == '收益曲线':
             state['type'] = '角色'
             state['img_url'] = 'https://static.cherishmoon.fun/LittlePaimon/blue/{}.jpg'
@@ -301,6 +305,7 @@ create_wiki_matcher(r'(?P<name1>\w{0,7})(?P<type>武器(图鉴|攻略))(?P<name2
 create_wiki_matcher(r'(?P<name1>\w{0,7})(?P<type>圣遗物(图鉴|攻略))(?P<name2>\w{0,7})', '圣遗物图鉴', '圣遗物')
 create_wiki_matcher(r'(?P<name1>\w{0,7})(?P<type>角色攻略)(?P<name2>\w{0,7})', '角色攻略', '角色')
 create_wiki_matcher(r'(?P<name1>\w{0,7})(?P<type>角色材料)(?P<name2>\w{0,7})', '角色材料', '角色')
+create_wiki_matcher(r'(?P<name1>\w{0,7})(?P<type>角色图鉴)(?P<name2>\w{0,7})', '角色图鉴', '角色')
 create_wiki_matcher(r'(?P<name1>\w{0,7})(?P<type>收益曲线)(?P<name2>\w{0,7})', '收益曲线', '角色')
 create_wiki_matcher(r'(?P<name1>\w{0,7})(?P<type>参考面板)(?P<name2>\w{0,7})', '参考面板', '角色')
 
