@@ -122,4 +122,4 @@ async def daily_reset():
         shutil.rmtree(YSC_TEMP_IMG_PATH)
     YSC_TEMP_IMG_PATH.mkdir(parents=True, exist_ok=True)
 
-    await MysAuthKey.filter()
+    # await MysAuthKey.filter()
