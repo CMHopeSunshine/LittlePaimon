@@ -1,7 +1,7 @@
 import datetime
 
 from nonebot import on_regex, on_command
-from nonebot.adapters.onebot.v11 import MessageEvent, Message, MessageSegment, GroupMessageEvent
+from nonebot.adapters.onebot.v11 import MessageEvent, Message, MessageSegment, GroupMessageEvent, PrivateMessageEvent, Bot
 from nonebot.adapters.onebot.v11.exception import ActionFailed
 from nonebot.adapters.onebot.v11.helpers import HandleCancellation
 from nonebot.params import RegexDict, ArgPlainText, CommandArg, Arg
@@ -18,7 +18,7 @@ from LittlePaimon.utils.tool import freq_limiter
 from .draw_daily_material import draw_material
 from .draw_map import init_map, draw_map, get_full_map
 from .SereniteaPot import draw_pot_materials
-from .card import get_match_card, CARD_API, get_card_list
+from .card import get_match_card, CARD_API, get_card_resources
 
 __paimon_help__ = {
     'type':  '原神Wiki',
@@ -216,7 +216,7 @@ def create_wiki_matcher(pattern: str, help_fun: str, help_name: str):
         if '武器' in state['type']:
             state['type'] = '武器'
             # state['img_url'] = 'https://static.cherishmoon.fun/LittlePaimon/WeaponMaps/{}.jpg'
-            state['img_url'] = 'https://ghproxy.com/https://raw.githubusercontent.com/Nwflower/genshin-atlas/master/weapon/{}.png'
+            state['img_url'] = 'https://github.cherishmoon.fun/https://raw.githubusercontent.com/Nwflower/genshin-atlas/master/weapon/{}.png'
         elif '圣遗物' in state['type']:
             state['type'] = '圣遗物'
             state['img_url'] = 'https://static.cherishmoon.fun/LittlePaimon/ArtifactMaps/{}.jpg'
@@ -230,10 +230,10 @@ def create_wiki_matcher(pattern: str, help_fun: str, help_name: str):
             state['type'] = '角色'
             # state['img_url'] = 'https://static.cherishmoon.fun/LittlePaimon/RoleMaterials/{}材料.jpg'
             state[
-                'img_url'] = 'https://ghproxy.com/https://raw.githubusercontent.com/Nwflower/genshin-atlas/master/material%20for%20role/{}.png'
+                'img_url'] = 'https://github.cherishmoon.fun/https://raw.githubusercontent.com/Nwflower/genshin-atlas/master/material%20for%20role/{}.png'
         elif state['type'] == '角色图鉴':
             state['type'] = '角色'
-            state['img_url'] = 'https://ghproxy.com/https://raw.githubusercontent.com/CMHopeSunshine/GenshinWikiMap/master/results/character_map/{}.jpg'
+            state['img_url'] = 'https://github.cherishmoon.fun/https://raw.githubusercontent.com/CMHopeSunshine/GenshinWikiMap/master/results/character_map/{}.jpg'
         elif state['type'] == '收益曲线':
             state['type'] = '角色'
             state['img_url'] = 'https://static.cherishmoon.fun/LittlePaimon/blue/{}.jpg'
@@ -321,6 +321,8 @@ async def _(state: T_State, name: str = ArgPlainText('name')):
         await card_wiki.finish(MessageBuild.Text(f'暂时没有{name}的卡牌图鉴'))
     if name in matches:
         await card_wiki.finish(MessageSegment.image(CARD_API.format(name)))
+    if len(matches) == 1:
+        await card_wiki.finish(MessageSegment.image(CARD_API.format(matches[0])))
     if 'choice' not in state:
         msg = f'你要查询的卡牌是：\n'
         msg += '\n'.join([f'{int(i) + 1}. {name}' for i, name in enumerate(matches)])
@@ -353,6 +355,21 @@ async def _(state: T_State, choice: str = ArgPlainText('choice')):
 
 
 @card_wiki_list.handle()
-async def _():
-    result = await get_card_list()
-    await card_wiki_list.finish(result or '暂时没有卡牌图鉴')
+async def _(bot: Bot, event: MessageEvent):
+    result = await get_card_resources()
+    if not result:
+        await card_wiki_list.finish('读取七圣召唤卡牌列表失败')
+    msg = [{'type': 'node', 'data': {'name': NICKNAME, 'uin': event.self_id, 'content': f'{type}：\n' + '\n'.join(cards)}} for type, cards in result.items()]
+    msg.insert(0, {'type': 'node', 'data': {'name': NICKNAME, 'uin': event.self_id, 'content': '七圣召唤卡牌列表如下'}})
+    try:
+        if isinstance(event, GroupMessageEvent):
+            await bot.call_api('send_group_forward_msg', group_id=event.group_id, messages=msg)
+        elif isinstance(event, PrivateMessageEvent):
+            await bot.call_api('send_private_forward_msg', user_id=event.user_id, messages=msg)
+        else:
+            msg = '七圣召唤卡牌列表:'
+            for type, cards in result.items():
+                msg += f'{type}：\n' + '\n'.join([' '.join(cards[i:i + 3]) for i in range(0, len(cards), 3)])
+            await card_wiki_list.send(msg)
+    except ActionFailed:
+        await card_wiki_list.finish('七圣召唤卡牌列表发送失败，账号可能被风控')

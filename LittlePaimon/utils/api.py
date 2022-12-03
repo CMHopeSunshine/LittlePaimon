@@ -1,3 +1,4 @@
+import contextlib
 import hashlib
 import json
 import random
@@ -27,6 +28,9 @@ SIGN_INFO_API = 'https://api-takumi.mihoyo.com/event/bbs_sign_reward/info'
 SIGN_REWARD_API = 'https://api-takumi.mihoyo.com/event/bbs_sign_reward/home'
 SIGN_ACTION_API = 'https://api-takumi.mihoyo.com/event/bbs_sign_reward/sign'
 AUTHKEY_API = 'https://api-takumi.mihoyo.com/binding/api/genAuthKey'
+STOKEN_API = 'https://api-takumi.mihoyo.com/auth/api/getMultiTokenByLoginTicket'
+COOKIE_TOKEN_API = 'https://api-takumi.mihoyo.com/auth/api/getCookieAccountInfoBySToken'
+LOGIN_TICKET_INFO_API = 'https://webapi.account.mihoyo.com/Api/cookie_accountinfo_by_loginticket'
 
 
 def md5(text: str) -> str:
@@ -213,27 +217,23 @@ async def get_cookie(user_id: str, uid: str, check: bool = True, own: bool = Fal
         return None, ''
 
 
-async def get_bind_game_info(cookie: str, use_for_public: bool = False) -> Optional[dict]:
+async def get_bind_game_info(cookie: str, mys_id: str):
     """
-    通过cookie，获取米游社绑定的原神游戏信息
-    :param cookie: cookie
-    :param use_for_public: 是否用于公共cookie
-    :return: 原神信息
+        通过cookie，获取米游社绑定的原神游戏信息
+        :param cookie: cookie
+        :param mys_id: 米游社id
+        :return: 原神信息
     """
-    if mys_id := re.search(r'(account_id|ltuid|stuid|login_uid)=(\d*)', cookie):
-        mys_id = mys_id[2]
-        data = (await aiorequests.get(url=GAME_RECORD_API,
-                                      headers=mihoyo_headers(cookie, f'uid={mys_id}'),
-                                      params={
-                                          'uid': mys_id
-                                      })).json()
+    with contextlib.suppress(Exception):
+        data = await aiorequests.get(url=GAME_RECORD_API,
+                                     headers=mihoyo_headers(cookie, f'uid={mys_id}'),
+                                     params={
+                                         'uid': mys_id
+                                     })
+        data = data.json()
+        nb_logger.debug(data)
         if data['retcode'] == 0:
-            for game_data in data['data']['list']:
-                if game_data['game_id'] == 2:
-                    game_data['mys_id'] = mys_id
-                    return game_data
-            if use_for_public:
-                return {'game_biz': 'hk4e_cn', 'mys_id': mys_id}
+            return data['data']
     return None
 
 
@@ -372,19 +372,43 @@ async def get_sign_reward_list() -> dict:
     return data
 
 
-async def get_stoken_by_cookie(cookie: str) -> Optional[str]:
-    try:
-        if login_ticket := re.search('login_ticket=([0-9a-zA-Z]+)', cookie):
-            bbs_cookie_url = 'https://webapi.account.mihoyo.com/Api/cookie_accountinfo_by_loginticket?login_ticket={}'
-            data = (await aiorequests.get(url=bbs_cookie_url.format(login_ticket[0].split('=')[1]))).json()
+async def get_stoken_by_login_ticket(login_ticket: str, mys_id: str) -> Optional[str]:
+    with contextlib.suppress(Exception):
+        data = await aiorequests.get(STOKEN_API,
+                                     headers={
+                                         'x-rpc-app_version': '2.11.2',
+                                         'User-Agent':        'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) miHoYoBBS/2.11.1',
+                                         'x-rpc-client_type': '5',
+                                         'Referer':           'https://webstatic.mihoyo.com/',
+                                         'Origin':            'https://webstatic.mihoyo.com',
+                                     },
+                                     params={
+                                         'login_ticket': login_ticket,
+                                         'token_types':  '3',
+                                         'uid':          mys_id
+                                     })
+        data = data.json()
+        return data['data']['list'][0]['token']
+    return None
 
-            if '成功' in data['data']['msg']:
-                stuid = data['data']['cookie_info']['account_id']
-                bbs_cookie_url2 = 'https://api-takumi.mihoyo.com/auth/api/getMultiTokenByLoginTicket?login_ticket={}&token_types=3&uid={}'
-                data2 = (await aiorequests.get(url=bbs_cookie_url2.format(login_ticket[0].split('=')[1], stuid))).json()
-                return data2['data']['list'][0]['token']
-    except Exception:
-        pass
+
+async def get_cookie_token_by_stoken(stoken: str, mys_id: str) -> Optional[str]:
+    with contextlib.suppress(Exception):
+        data = await aiorequests.get(COOKIE_TOKEN_API,
+                                     headers={
+                                         'x-rpc-app_version': '2.11.2',
+                                         'User-Agent':        'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) miHoYoBBS/2.11.1',
+                                         'x-rpc-client_type': '5',
+                                         'Referer':           'https://webstatic.mihoyo.com/',
+                                         'Origin':            'https://webstatic.mihoyo.com',
+                                         'Cookie':            f'stuid={mys_id};stoken={stoken}'
+                                     },
+                                     params={
+                                         'uid':    mys_id,
+                                         'stoken': stoken
+                                     })
+        data = data.json()
+        return data['data']['cookie_token']
     return None
 
 

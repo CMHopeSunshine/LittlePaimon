@@ -1,3 +1,4 @@
+import re
 import datetime
 from typing import Optional
 
@@ -6,7 +7,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 from LittlePaimon.database import PublicCookie, PrivateCookie, LastQuery, CookieCache
-from LittlePaimon.utils.api import get_bind_game_info, get_stoken_by_cookie
+from LittlePaimon.utils.api import get_bind_game_info, get_stoken_by_login_ticket, get_cookie_token_by_stoken
 from .utils import authentication
 
 route = APIRouter()
@@ -21,24 +22,52 @@ class BindCookie(BaseModel):
     stoken: Optional[str]
 
 
+
+
+
 @route.post('/bind_cookie', response_class=JSONResponse)
 async def bind_cookie(data: BindCookie):
-    if game_info := await get_bind_game_info(data.cookie):
-        game_uid = game_info['game_role_id']
-        mys_id = game_info['mys_id']
-        await LastQuery.update_or_create(user_id=data.user_id,
-                                         defaults={'uid': game_uid, 'last_time': datetime.datetime.now()})
-        if 'login_ticket' in data.cookie and (stoken := await get_stoken_by_cookie(data.cookie)):
-            await PrivateCookie.update_or_create(user_id=data.user_id, uid=game_uid, mys_id=mys_id,
-                                                 defaults={'cookie': data.cookie,
-                                                           'stoken': f'stuid={mys_id};stoken={stoken};'})
-            return {'status': 0, 'msg': f'QQ{data.user_id}的UID{game_uid}的Cookie以及Stoken绑定成功。'}
-        else:
-            await PrivateCookie.update_or_create(user_id=data.user_id, uid=game_uid, mys_id=mys_id,
-                                                 defaults={'cookie': data.cookie})
-            return {'status': 0, 'msg': f'QQ{data.user_id}的UID{game_uid}绑定Cookie成功，但未绑定stoken。'}
+    if mys_id := re.search(r'(?:(?:login_uid|account_mid|account_id|stmid|ltmid|stuid|ltuid)(?:_v2)?)=(\d+)',
+                           data.cookie):
+        mys_id = mys_id[1]
     else:
-        return {'status': 200, 'msg': '该Cookie无效，请根据教程重新获取'}
+        return {'status': 200, 'msg': 'Cookie无效，缺少account_id、login_uid或stuid字段，请根据教程重新获取'}
+    cookie_token_match = re.search(r'(?:cookie_token|cookie_token_v2)=([0-9a-zA-Z]+)', data.cookie)
+    cookie_token = cookie_token_match[1] if cookie_token_match else None
+    login_ticket_match = re.search(r'(?:login_ticket|login_ticket_v2)=([0-9a-zA-Z]+)', data.cookie)
+    login_ticket = login_ticket_match[1] if login_ticket_match else None
+    stoken_match = re.search(r'(?:stoken|stoken_v2)=([0-9a-zA-Z]+)', data.cookie)
+    stoken = stoken_match[1] if stoken_match else None
+    if login_ticket and not stoken:
+        # 如果有login_ticket但没有stoken，就通过login_ticket获取stoken
+        stoken = await get_stoken_by_login_ticket(login_ticket, mys_id)
+    if stoken and not cookie_token:
+        # 如果有stoken但没有cookie_token，就通过stoken获取cookie_token
+        cookie_token = await get_cookie_token_by_stoken(stoken, mys_id)
+    if not cookie_token:
+        return {'status': 200, 'msg': 'Cookie无效，缺少cookie_token或login_ticket字段，请根据教程重新获取'}
+
+    if game_info := await get_bind_game_info(f'account_id={mys_id};cookie_token={cookie_token}', mys_id):
+        if not game_info['list']:
+            return {'status': 200, 'msg': '该账号尚未绑定任何游戏，请确认账号无误~'}
+        if not (
+                genshin_games := [{'uid': game['game_role_id'], 'nickname': game['nickname']} for game in
+                                  game_info['list'] if
+                                  game['game_id'] == 2]):
+            return {'status': 200, 'msg': '该账号尚未绑定原神，请确认账号无误~'}
+        await LastQuery.update_or_create(user_id=data.user_id,
+                                         defaults={'uid':       genshin_games[0]['uid'],
+                                                   'last_time': datetime.datetime.now()})
+        send_msg = ''
+        for info in genshin_games:
+            send_msg += f'{info["nickname"]}({info["uid"]}) '
+            await PrivateCookie.update_or_create(user_id=data.user_id, uid=info['uid'], mys_id=mys_id,
+                                                 defaults={'cookie': f'account_id={mys_id};cookie_token={cookie_token}',
+                                                           'stoken': f'stuid={mys_id};stoken={stoken};' if stoken else None})
+        return {'status': 0, 'msg':
+                          f'QQ{data.user_id}绑定玩家{send_msg.strip()}的Cookie{"和Stoken" if stoken else ""}成功{"" if stoken else "当未能绑定Stoken"}'}
+    else:
+        return {'status': 200, 'msg': 'Cookie无效，请根据教程重新获取'}
 
 
 @route.get('/get_public_cookies', response_class=JSONResponse, dependencies=[authentication()])
@@ -58,14 +87,14 @@ async def set_public_cookie(id: int):
         await cookie.save()
         return {
             'status': 0,
-            'msg': f'{id}号公共Cookie暂停使用成功'
+            'msg':    f'{id}号公共Cookie暂停使用成功'
         }
     else:
         cookie.status = 1
         await cookie.save()
         return {
             'status': 0,
-            'msg': f'{id}号公共Cookie恢复使用成功'
+            'msg':    f'{id}号公共Cookie恢复使用成功'
         }
 
 
@@ -115,32 +144,82 @@ async def delete_public_cookie(cookie_type: str, id: int):
 @route.post('/add_cookie', response_class=JSONResponse, dependencies=[authentication()])
 async def add_public_cookie(cookie_type: str, force: bool, data: BindCookie):
     if cookie_type == 'public':
-        if force or await get_bind_game_info(data.cookie, True):
+        if not force:
+            if mys_id := re.search(r'(?:(?:login_uid|account_mid|account_id|stmid|ltmid|stuid|ltuid)(?:_v2)?)=(\d+)',
+                                   data.cookie):
+                mys_id = mys_id[1]
+            else:
+                return {'status': 200, 'msg': 'Cookie无效，缺少account_id、login_uid或stuid字段'}
+            cookie_token_match = re.search(r'(?:cookie_token|cookie_token_v2)=([0-9a-zA-Z]+)', data.cookie)
+            cookie_token = cookie_token_match[1] if cookie_token_match else None
+            login_ticket_match = re.search(r'(?:login_ticket|login_ticket_v2)=([0-9a-zA-Z]+)', data.cookie)
+            login_ticket = login_ticket_match[1] if login_ticket_match else None
+            stoken_match = re.search(r'(?:stoken|stoken_v2)=([0-9a-zA-Z]+)', data.cookie)
+            stoken = stoken_match[1] if stoken_match else None
+            if login_ticket and not stoken:
+                # 如果有login_ticket但没有stoken，就通过login_ticket获取stoken
+                stoken = await get_stoken_by_login_ticket(login_ticket, mys_id)
+            if stoken and not cookie_token:
+                # 如果有stoken但没有cookie_token，就通过stoken获取cookie_token
+                cookie_token = await get_cookie_token_by_stoken(stoken, mys_id)
+            if not cookie_token:
+                return {'status': 200, 'msg': 'Cookie无效，缺少cookie_token或login_ticket字段'}
+            if await get_bind_game_info(f'account_id={mys_id};cookie_token={cookie_token}', mys_id):
+                new_cookie = await PublicCookie.create(cookie=f'account_id={mys_id};cookie_token={cookie_token}')
+                return {'status': 0, 'msg': f'{new_cookie.id}号公共Cookie添加成功'}
+            else:
+                return {'status': 200, 'msg': '该Cookie无效，请根据教程重新获取'}
+        else:
             new_cookie = await PublicCookie.create(cookie=data.cookie)
             return {'status': 0, 'msg': f'{new_cookie.id}号公共Cookie添加成功'}
-        elif not force:
-            return {'status': 200, 'msg': '该Cookie无效，请根据教程重新获取'}
     else:
         if force:
             await PrivateCookie.update_or_create(user_id=data.user_id, uid=data.uid, mys_id=data.mys_id,
                                                  defaults={'cookie': data.cookie, 'stoken': data.stoken})
             return {'status': 0, 'msg': f'QQ{data.user_id}的UID{data.uid}的Cookie强制修改成功。'}
-        elif game_info := await get_bind_game_info(data.cookie):
-            game_uid = game_info['game_role_id']
-            mys_id = game_info['mys_id']
-            await LastQuery.update_or_create(user_id=data.user_id,
-                                             defaults={'uid': game_uid, 'last_time': datetime.datetime.now()})
-            if 'login_ticket' in data.cookie and (stoken := await get_stoken_by_cookie(data.cookie)):
-                await PrivateCookie.update_or_create(user_id=data.user_id, uid=game_uid, mys_id=mys_id,
-                                                     defaults={'cookie': data.cookie,
-                                                               'stoken': f'stuid={mys_id};stoken={stoken};'})
-                return {'status': 0, 'msg': f'QQ{data.user_id}的UID{game_uid}的Cookie以及Stoken添加/保存成功。'}
-            else:
-                await PrivateCookie.update_or_create(user_id=data.user_id, uid=game_uid, mys_id=mys_id,
-                                                     defaults={'cookie': data.cookie})
-                return {'status': 0, 'msg': f'QQ{data.user_id}的UID{game_uid}的Cookie添加/保存成功，但未绑定stoken。'}
         else:
-            return {'status': 200, 'msg': '该Cookie无效，请根据教程重新获取'}
+            if mys_id := re.search(r'(?:(?:login_uid|account_mid|account_id|stmid|ltmid|stuid|ltuid)(?:_v2)?)=(\d+)',
+                                   data.cookie):
+                mys_id = mys_id[1]
+            else:
+                return {'status': 200, 'msg': 'Cookie无效，缺少account_id、login_uid或stuid字段，请根据教程重新获取'}
+            cookie_token_match = re.search(r'(?:cookie_token|cookie_token_v2)=([0-9a-zA-Z]+)', data.cookie)
+            cookie_token = cookie_token_match[1] if cookie_token_match else None
+            login_ticket_match = re.search(r'(?:login_ticket|login_ticket_v2)=([0-9a-zA-Z]+)', data.cookie)
+            login_ticket = login_ticket_match[1] if login_ticket_match else None
+            stoken_match = re.search(r'(?:stoken|stoken_v2)=([0-9a-zA-Z]+)', data.cookie)
+            stoken = stoken_match[1] if stoken_match else None
+            if login_ticket and not stoken:
+                # 如果有login_ticket但没有stoken，就通过login_ticket获取stoken
+                stoken = await get_stoken_by_login_ticket(login_ticket, mys_id)
+            if stoken and not cookie_token:
+                # 如果有stoken但没有cookie_token，就通过stoken获取cookie_token
+                cookie_token = await get_cookie_token_by_stoken(stoken, mys_id)
+            if not cookie_token:
+                return {'status': 200, 'msg': 'Cookie无效，缺少cookie_token或login_ticket字段，请根据教程重新获取'}
+
+            if game_info := await get_bind_game_info(f'account_id={mys_id};cookie_token={cookie_token}', mys_id):
+                if not game_info['list']:
+                    return {'status': 200, 'msg': '该账号尚未绑定任何游戏，请确认账号无误~'}
+                if not (
+                        genshin_games := [{'uid': game['game_role_id'], 'nickname': game['nickname']} for game in
+                                          game_info['list'] if
+                                          game['game_id'] == 2]):
+                    return {'status': 200, 'msg': '该账号尚未绑定原神，请确认账号无误~'}
+                await LastQuery.update_or_create(user_id=data.user_id,
+                                                 defaults={'uid':       genshin_games[0]['uid'],
+                                                           'last_time': datetime.datetime.now()})
+                send_msg = ''
+                for info in genshin_games:
+                    send_msg += f'{info["nickname"]}({info["uid"]}) '
+                    await PrivateCookie.update_or_create(user_id=data.user_id, uid=info['uid'], mys_id=mys_id,
+                                                         defaults={
+                                                             'cookie': f'account_id={mys_id};cookie_token={cookie_token}',
+                                                             'stoken': f'stuid={mys_id};stoken={stoken};' if stoken else None})
+                return {'status': 0, 'msg':
+                                  f'QQ{data.user_id}绑定玩家{send_msg.strip()}的Cookie{"和Stoken" if stoken else ""}成功{"" if stoken else "当未能绑定Stoken"}'}
+            else:
+                return {'status': 200, 'msg': 'Cookie无效，请根据教程重新获取'}
 
 
 @route.post('/update_private_cookie', response_class=JSONResponse, dependencies=[authentication()])
@@ -148,18 +227,46 @@ async def update_cookie(force: bool, data: BindCookie):
     if force:
         await PrivateCookie.filter(id=data.id).update(**data.dict(exclude={'id'}))
         return {'status': 0, 'msg': f'QQ{data.user_id}的UID{data.uid}的Cookie强制修改成功。'}
-    elif game_info := await get_bind_game_info(data.cookie):
-        game_uid = game_info['game_role_id']
-        mys_id = game_info['mys_id']
-        await LastQuery.update_or_create(user_id=data.user_id,
-                                         defaults={'uid': game_uid, 'last_time': datetime.datetime.now()})
-        if 'login_ticket' in data.cookie and (stoken := await get_stoken_by_cookie(data.cookie)):
-            await PrivateCookie.filter(id=data.id).update(user_id=data.user_id, uid=game_uid, mys_id=mys_id,
-                                                          cookie=data.cookie, stoken=f'stuid={mys_id};stoken={stoken};')
-            return {'status': 0, 'msg': f'QQ{data.user_id}的UID{game_uid}的Cookie以及Stoken添加/保存成功。'}
-        else:
-            await PrivateCookie.filter(id=data.id).update(user_id=data.user_id, uid=game_uid, mys_id=mys_id,
-                                                          cookie=data.cookie, stoken=None)
-            return {'status': 0, 'msg': f'QQ{data.user_id}的UID{game_uid}的Cookie添加/保存成功，但未获取到stoken。'}
     else:
-        return {'status': 200, 'msg': '该Cookie无效，请根据教程重新获取'}
+        if mys_id := re.search(r'(?:(?:login_uid|account_mid|account_id|stmid|ltmid|stuid|ltuid)(?:_v2)?)=(\d+)',
+                               data.cookie):
+            mys_id = mys_id[1]
+        else:
+            return {'status': 200, 'msg': 'Cookie无效，缺少account_id、login_uid或stuid字段，请根据教程重新获取'}
+        cookie_token_match = re.search(r'(?:cookie_token|cookie_token_v2)=([0-9a-zA-Z]+)', data.cookie)
+        cookie_token = cookie_token_match[1] if cookie_token_match else None
+        login_ticket_match = re.search(r'(?:login_ticket|login_ticket_v2)=([0-9a-zA-Z]+)', data.cookie)
+        login_ticket = login_ticket_match[1] if login_ticket_match else None
+        stoken_match = re.search(r'(?:stoken|stoken_v2)=([0-9a-zA-Z]+)', data.cookie)
+        stoken = stoken_match[1] if stoken_match else None
+        if login_ticket and not stoken:
+            # 如果有login_ticket但没有stoken，就通过login_ticket获取stoken
+            stoken = await get_stoken_by_login_ticket(login_ticket, mys_id)
+        if stoken and not cookie_token:
+            # 如果有stoken但没有cookie_token，就通过stoken获取cookie_token
+            cookie_token = await get_cookie_token_by_stoken(stoken, mys_id)
+        if not cookie_token:
+            return {'status': 200, 'msg': 'Cookie无效，缺少cookie_token或login_ticket字段，请根据教程重新获取'}
+
+        if game_info := await get_bind_game_info(f'account_id={mys_id};cookie_token={cookie_token}', mys_id):
+            if not game_info['list']:
+                return {'status': 200, 'msg': '该账号尚未绑定任何游戏，请确认账号无误~'}
+            if not (
+                    genshin_games := [{'uid': game['game_role_id'], 'nickname': game['nickname']} for game in
+                                      game_info['list'] if
+                                      game['game_id'] == 2]):
+                return {'status': 200, 'msg': '该账号尚未绑定原神，请确认账号无误~'}
+            await LastQuery.update_or_create(user_id=data.user_id,
+                                             defaults={'uid':       genshin_games[0]['uid'],
+                                                       'last_time': datetime.datetime.now()})
+            send_msg = ''
+            for info in genshin_games:
+                send_msg += f'{info["nickname"]}({info["uid"]}) '
+                await PrivateCookie.update_or_create(user_id=data.user_id, uid=info['uid'], mys_id=mys_id,
+                                                     defaults={
+                                                         'cookie': f'account_id={mys_id};cookie_token={cookie_token}',
+                                                         'stoken': f'stuid={mys_id};stoken={stoken};' if stoken else None})
+            return {'status': 0, 'msg':
+                              f'QQ{data.user_id}绑定玩家{send_msg.strip()}的Cookie{"和Stoken" if stoken else ""}成功{"" if stoken else "当未能绑定Stoken"}'}
+        else:
+            return {'status': 200, 'msg': 'Cookie无效，请根据教程重新获取'}
