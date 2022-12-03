@@ -370,6 +370,6 @@ async def _(bot: Bot, event: MessageEvent):
             msg = '七圣召唤卡牌列表:'
             for type, cards in result.items():
                 msg += f'{type}：\n' + '\n'.join([' '.join(cards[i:i + 3]) for i in range(0, len(cards), 3)])
-            await card_wiki_list.send(msg)
+            await card_wiki_list.send(msg + '\n')
     except ActionFailed:
         await card_wiki_list.finish('七圣召唤卡牌列表发送失败，账号可能被风控')
