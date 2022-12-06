@@ -293,6 +293,31 @@ other_form = Form(
             displayMode='enhance',
             suffix='秒',
             min=5,
+        ),
+        Select(
+            label='github资源地址',
+            name='github资源地址',
+            value='${github资源地址}',
+            labelRemark=Remark(shape='circle', content='本bot部分资源托管在github，如果下载缓慢或无法正常访问，可以尝试更换地址，或者添加你自己的代理地址，注意最后要有/'),
+            creatable=True,
+            options=[
+                {
+                    'label': 'ghproxy.com代理',
+                    'value': 'https://ghproxy.com/'
+                },
+                {
+                    'label': 'github.cherishmoon.fun代理',
+                    'value': 'https://github.cherishmoon.fun/'
+                },
+                {
+                    'label': 'github.91chi.fun代理',
+                    'value': 'https://github.91chi.fun/'
+                },
+                {
+                    'label': 'github原地址',
+                    'value': ''
+                }
+            ]
         )
     ],
     actions=action_button

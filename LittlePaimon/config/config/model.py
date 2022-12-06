@@ -47,6 +47,8 @@ class ConfigModel(BaseModel):
 
     command_alias_enable: bool = Field(True, alias='启用命令别名')
 
+    github_proxy: str = Field('https://ghproxy.com/', alias='github资源地址')
+
     @property
     def alias_dict(self):
         return {v.alias: k for k, v in self.__fields__.items()}

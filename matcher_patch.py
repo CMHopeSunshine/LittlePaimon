@@ -79,4 +79,4 @@ nonebot.on_regex = on_regex_
 nonebot.on_startswith = on_startswith_
 nonebot.on_endswith = on_endswith_
 nonebot.on_keyword = on_keyword_
-v11.bot._check_nickname = _check_nickname
+# v11.bot._check_nickname = _check_nickname

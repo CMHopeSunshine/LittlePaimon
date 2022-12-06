@@ -239,7 +239,7 @@ context_table = TableCRUD(mode='table',
 message_page = PageSchema(url='/chat/messages', icon='fa fa-comments', label='群聊消息',
                           schema=Page(title='群聊消息', body=[
                               Alert(level=LevelEnum.info,
-                                    className='white-space-pre',
+                                    className='white-space-pre-wrap',
                                     body=(f'此数据库记录了{NICKNAME}收到的除指令外的聊天记录。\n'
                                           '· 点击"禁用"可以将某条聊天记录进行禁用，这样其相关的学习就会列入禁用列表。\n'
                                           '· 点击"删除"可以删除某条记录，但不会影响它的学习。\n'
@@ -248,7 +248,7 @@ message_page = PageSchema(url='/chat/messages', icon='fa fa-comments', label='�
 context_page = PageSchema(url='/chat/contexts', icon='fa fa-comment', label='学习内容',
                           schema=Page(title='内容',
                                       body=[Alert(level=LevelEnum.info,
-                                                  className='white-space-pre',
+                                                  className='white-space-pre-wrap',
                                                   body=(f'此数据库记录了{NICKNAME}所学习的内容。\n'
                                                         '· 点击"回复列表"可以查看该条内容已学习到的可能的回复。\n'
                                                         '· 点击"禁用"可以将该学习进行禁用，以后不会再学。\n'
@@ -257,7 +257,7 @@ context_page = PageSchema(url='/chat/contexts', icon='fa fa-comment', label='学
 answer_page = PageSchema(url='/chat/answers', icon='fa fa-commenting-o', label='内容回复',
                          schema=Page(title='回复',
                                      body=[Alert(level=LevelEnum.info,
-                                                 className='white-space-pre',
+                                                 className='white-space-pre-wrap',
                                                  body=(f'此数据库记录了{NICKNAME}已学习到的所有回复，但看不到这些回复属于哪些内容，推荐到"学习内容"表进行操作。\n'
                                                        '· 点击"禁用"可以将该回复进行禁用，以后不会再学。\n'
                                                        '· 点击"删除"可以删除该回复，让它重新开始学习。')),
@@ -265,7 +265,7 @@ answer_page = PageSchema(url='/chat/answers', icon='fa fa-commenting-o', label='
 blacklist_page = PageSchema(url='/chat/blacklist', icon='fa fa-ban', label='禁用列表',
                             schema=Page(title='禁用列表',
                                         body=[Alert(level=LevelEnum.info,
-                                                    className='white-space-pre',
+                                                    className='white-space-pre-wrap',
                                                     body=f'此数据库记录了{NICKNAME}被禁用的内容/关键词。\n'
                                                          '· 可以取消禁用，使其能够重新继续学习。\n'
                                                          '· 不能在此添加禁用，只能在群中回复[不可以]或者在<配置>中添加屏蔽词来达到禁用效果。'),
