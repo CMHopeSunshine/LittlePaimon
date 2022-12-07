@@ -1,7 +1,8 @@
 import datetime
 
 from nonebot import on_regex, on_command
-from nonebot.adapters.onebot.v11 import MessageEvent, Message, MessageSegment, GroupMessageEvent, PrivateMessageEvent, Bot
+from nonebot.adapters.onebot.v11 import MessageEvent, Message, MessageSegment, GroupMessageEvent, PrivateMessageEvent, \
+    Bot
 from nonebot.adapters.onebot.v11.exception import ActionFailed
 from nonebot.adapters.onebot.v11.helpers import HandleCancellation
 from nonebot.params import RegexDict, ArgPlainText, CommandArg, Arg
@@ -234,7 +235,8 @@ def create_wiki_matcher(pattern: str, help_fun: str, help_name: str):
                 'img_url'] = '{}https://raw.githubusercontent.com/Nwflower/genshin-atlas/master/material%20for%20role/{}.png'
         elif state['type'] == '角色图鉴':
             state['type'] = '角色'
-            state['img_url'] = '{}https://raw.githubusercontent.com/CMHopeSunshine/GenshinWikiMap/master/results/character_map/{}.jpg'
+            state[
+                'img_url'] = '{}https://raw.githubusercontent.com/CMHopeSunshine/GenshinWikiMap/master/results/character_map/{}.jpg'
         elif state['type'] == '收益曲线':
             state['type'] = '角色'
             state['img_url'] = 'https://static.cherishmoon.fun/LittlePaimon/blue/{}.jpg'
@@ -252,8 +254,12 @@ def create_wiki_matcher(pattern: str, help_fun: str, help_name: str):
             name = name.extract_plain_text().strip()
         if state['type'] == '角色' and (
                 match_alias := await PlayerAlias.get_or_none(user_id=str(event.user_id), alias=name)):
+            a = '1'
             try:
-                await maps.finish(MessageSegment.image(state['img_url'].format(config.github_proxy, match_alias.character)))
+                await maps.finish(
+                    MessageSegment.image(state['img_url'].format(config.github_proxy, match_alias.character) if
+                                         state['img_url'].startswith('http') else state['img_url'].format(
+                        match_alias.character)))
             except ActionFailed:
                 await maps.finish(MessageBuild.Text(f'没有找到{name}的图鉴'))
         match_alias = get_match_alias(name, state['type'])
@@ -262,7 +268,9 @@ def create_wiki_matcher(pattern: str, help_fun: str, help_name: str):
                                                                                                         str) else None
         if true_name:
             try:
-                await maps.finish(MessageSegment.image(state['img_url'].format(config.github_proxy, match_alias)))
+                await maps.finish(MessageSegment.image(state['img_url'].format(config.github_proxy, match_alias)
+                                                       if state['img_url'].startswith('http') else state[
+                    'img_url'].format(match_alias)))
             except ActionFailed:
                 await maps.finish(MessageBuild.Text(f'没有找到{name}的图鉴'))
         elif match_alias:
@@ -282,7 +290,10 @@ def create_wiki_matcher(pattern: str, help_fun: str, help_name: str):
         match_alias = state['match_alias']
         if choice.isdigit() and (1 <= int(choice) <= len(match_alias)):
             try:
-                await maps.finish(MessageSegment.image(state['img_url'].format(config.github_proxy, match_alias[int(choice) - 1])))
+                await maps.finish(
+                    MessageSegment.image(state['img_url'].format(config.github_proxy, match_alias[int(choice) - 1])
+                                         if state['img_url'].startswith('http') else state['img_url'].format(
+                        match_alias[int(choice) - 1])))
             except ActionFailed:
                 await maps.finish(MessageBuild.Text(f'没有找到{match_alias[int(choice) - 1]}的图鉴'))
         if choice not in match_alias:
@@ -296,7 +307,9 @@ def create_wiki_matcher(pattern: str, help_fun: str, help_name: str):
                 await maps.finish(
                     MessageSegment.text(f'看来旅行者您有点神志不清哦(，下次再问{NICKNAME}吧') + MessageSegment.face(146))
         try:
-            await maps.finish(MessageSegment.image(state['img_url'].format(config.github_proxy, choice)))
+            await maps.finish(MessageSegment.image(state['img_url'].format(
+                state['img_url'].format(config.github_proxy, choice) if state['img_url'].startswith(
+                    'http') else state['img_url'].format(choice))))
         except ActionFailed:
             await maps.finish(MessageBuild.Text(f'没有找到{choice}的图鉴'))
 
@@ -338,7 +351,8 @@ async def _(state: T_State, choice: str = ArgPlainText('choice')):
         try:
             await card_wiki.finish(MessageSegment.image(CARD_API.format(config.github_proxy, matches[int(choice) - 1])))
         except ActionFailed:
-            await card_wiki.finish(MessageBuild.Text(f'获取{matches[int(choice) - 1]}的卡牌图鉴失败，请检查网络或更换资源地址'))
+            await card_wiki.finish(
+                MessageBuild.Text(f'获取{matches[int(choice) - 1]}的卡牌图鉴失败，请检查网络或更换资源地址'))
     if choice not in matches:
         state['times'] = state['times'] + 1 if 'times' in state else 1
         if state['times'] == 1:
@@ -360,7 +374,9 @@ async def _(bot: Bot, event: MessageEvent):
     result = await get_card_resources()
     if not result:
         await card_wiki_list.finish('读取七圣召唤卡牌列表失败')
-    msg = [{'type': 'node', 'data': {'name': NICKNAME, 'uin': event.self_id, 'content': f'{type}：\n' + '\n'.join(cards)}} for type, cards in result.items()]
+    msg = [
+        {'type': 'node', 'data': {'name': NICKNAME, 'uin': event.self_id, 'content': f'{type}：\n' + '\n'.join(cards)}}
+        for type, cards in result.items()]
     msg.insert(0, {'type': 'node', 'data': {'name': NICKNAME, 'uin': event.self_id, 'content': '七圣召唤卡牌列表如下'}})
     try:
         if isinstance(event, GroupMessageEvent):
