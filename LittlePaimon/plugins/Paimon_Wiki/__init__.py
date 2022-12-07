@@ -258,7 +258,7 @@ def create_wiki_matcher(pattern: str, help_fun: str, help_name: str):
             try:
                 await maps.finish(
                     MessageSegment.image(state['img_url'].format(config.github_proxy, match_alias.character) if
-                                         state['img_url'].startswith('http') else state['img_url'].format(
+                                         not state['img_url'].startswith('http') else state['img_url'].format(
                         match_alias.character)))
             except ActionFailed:
                 await maps.finish(MessageBuild.Text(f'没有找到{name}的图鉴'))
@@ -269,7 +269,7 @@ def create_wiki_matcher(pattern: str, help_fun: str, help_name: str):
         if true_name:
             try:
                 await maps.finish(MessageSegment.image(state['img_url'].format(config.github_proxy, match_alias)
-                                                       if state['img_url'].startswith('http') else state[
+                                                       if not state['img_url'].startswith('http') else state[
                     'img_url'].format(match_alias)))
             except ActionFailed:
                 await maps.finish(MessageBuild.Text(f'没有找到{name}的图鉴'))
@@ -290,10 +290,10 @@ def create_wiki_matcher(pattern: str, help_fun: str, help_name: str):
         match_alias = state['match_alias']
         if choice.isdigit() and (1 <= int(choice) <= len(match_alias)):
             try:
-                await maps.finish(
-                    MessageSegment.image(state['img_url'].format(config.github_proxy, match_alias[int(choice) - 1])
-                                         if state['img_url'].startswith('http') else state['img_url'].format(
-                        match_alias[int(choice) - 1])))
+                await maps.finish(MessageSegment.image(
+                    state['img_url'].format(match_alias[int(choice) - 1]) if state['img_url'].startswith('http')
+                    else state['img_url'].format(config.github_proxy, match_alias[int(choice) - 1])))
+
             except ActionFailed:
                 await maps.finish(MessageBuild.Text(f'没有找到{match_alias[int(choice) - 1]}的图鉴'))
         if choice not in match_alias:
@@ -308,7 +308,7 @@ def create_wiki_matcher(pattern: str, help_fun: str, help_name: str):
                     MessageSegment.text(f'看来旅行者您有点神志不清哦(，下次再问{NICKNAME}吧') + MessageSegment.face(146))
         try:
             await maps.finish(MessageSegment.image(state['img_url'].format(
-                state['img_url'].format(config.github_proxy, choice) if state['img_url'].startswith(
+                state['img_url'].format(config.github_proxy, choice) if not state['img_url'].startswith(
                     'http') else state['img_url'].format(choice))))
         except ActionFailed:
             await maps.finish(MessageBuild.Text(f'没有找到{choice}的图鉴'))
