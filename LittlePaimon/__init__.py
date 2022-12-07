@@ -1,4 +1,5 @@
 from pathlib import Path
+import asyncio
 
 from nonebot import load_plugins, logger
 from LittlePaimon import database, web
@@ -37,7 +38,7 @@ async def startup():
     logger.opt(colors=True).info(logo)
     await database.connect()
     await PluginManager.init()
-    await check_resource()
+    asyncio.ensure_future(check_resource())
 
 
 DRIVER.on_shutdown(database.disconnect)

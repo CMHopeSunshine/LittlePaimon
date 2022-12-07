@@ -371,7 +371,19 @@
     "743": "长宵宣秘",
     "744": "星示昭明",
     "745": "悬神系流",
-    "746": "曜光灵炬"
+    "746": "曜光灵炬",
+    "751": "初番·茂风流羽行",
+    "752": "二番·箙岛廓白浪",
+    "753": "三番·久世舞夕颜",
+    "754": "四番·花月歌浮舟",
+    "755": "末番·今昔渡来殿",
+    "756": "祝言·霞幕倾松风",
+    "761": "舍径求真",
+    "762": "忘形炼智",
+    "763": "漫行灵圃",
+    "764": "神机明悟",
+    "765": "繁想奇境",
+    "766": "妙道合真"
   },
   "Icon": {
     "21": "UI_Talent_S_Ayaka_01",
@@ -745,6 +757,18 @@
     "743": "UI_Talent_U_Layla_01",
     "744": "UI_Talent_S_Layla_03",
     "745": "UI_Talent_U_Layla_02",
-    "746": "UI_Talent_S_Layla_04"
+    "746": "UI_Talent_S_Layla_04",
+    "751": "UI_Talent_S_Wanderer_01",
+    "752": "UI_Talent_S_Wanderer_02",
+    "753": "UI_Talent_U_Wanderer_02",
+    "754": "UI_Talent_S_Wanderer_03",
+    "755": "UI_Talent_U_Wanderer_01",
+    "756": "UI_Talent_S_Wanderer_04",
+    "761": "UI_Talent_S_Faruzan_01",
+    "762": "UI_Talent_S_Faruzan_02",
+    "763": "UI_Talent_U_Faruzan_01",
+    "764": "UI_Talent_S_Faruzan_03",
+    "765": "UI_Talent_U_Faruzan_02",
+    "766": "UI_Talent_S_Faruzan_04"
   }
 }

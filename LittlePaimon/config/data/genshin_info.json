@@ -2112,5 +2112,31 @@
     },
     "SideIconName": "UI_AvatarIcon_Side_PlayerGirl",
     "QualityType": "QUALITY_ORANGE"
+  },
+  "10000075": {
+    "SkillOrder": [
+      10751,
+      10752,
+      10753
+    ],
+    "Skills": {
+      "10018": "Skill_A_Catalyst_MD",
+      "10019": "Skill_S_Wanderer_01",
+      "10024": "Skill_E_Wanderer_01"
+    },
+    "SideIconName": "UI_AvatarIcon_Side_Wanderer"
+  },
+  "10000076": {
+    "SkillOrder": [
+      10761,
+      10762,
+      10765
+    ],
+    "Skills": {
+      "10018": "Skill_A_02",
+      "10019": "Skill_S_Faruzan_01",
+      "10024": "Skill_E_Faruzan_01"
+    },
+    "SideIconName": "UI_AvatarIcon_Side_Faruzan"
   }
 }
