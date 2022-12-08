@@ -27,7 +27,7 @@ talent_color = [('#d5f2b6', '#6d993d'), ('#d5f2b6', '#6d993d'), ('#d5f2b6', '#6d
 
 
 async def draw_chara_card(info: Character):
-    img = await aiorequests.get_img(f'http://img.genshin.cherishmoon.fun/{info.name}', mode='RGBA')
+    img = await aiorequests.get_img(f'http://img.genshin.cherishmoon.fun/{info.name}', mode='RGBA', follow_redirects=True)
     if img == 'No Such File':
         return '暂时没有这个角色的同人图哦~', None
     # 新建卡片

@@ -96,7 +96,6 @@ class aiorequests:
                                             headers=headers,
                                             params=params,
                                             timeout=timeout,
-                                            follow_redirects=True,
                                             **kwargs)
                     # 不保存安柏计划的问号图标
                     if resp.headers.get('etag') == 'W/"6363798a-13c7"' or resp.headers.get(
@@ -112,7 +111,6 @@ class aiorequests:
                                             headers=headers,
                                             params=params,
                                             timeout=timeout,
-                                            follow_redirects=True,
                                             **kwargs)
                     if resp.headers.get('etag') == 'W/"6363798a-13c7"' or resp.headers.get(
                             'content-md5') == 'JeG5b/z8SpViMmO/E9eayA==':

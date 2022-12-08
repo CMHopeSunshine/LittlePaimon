@@ -58,6 +58,7 @@ def cache(ttl=datetime.timedelta(hours=1)):
     缓存装饰器
         :param ttl: 过期时间
     """
+
     def wrap(func):
         cache_data = {}
 
@@ -87,7 +88,9 @@ def cache(ttl=datetime.timedelta(hours=1)):
 async def check_resource():
     logger.info('资源检查', '开始检查资源')
     try:
-        resource_list = await aiorequests.get(f'{config.github_proxy}https://raw.githubusercontent.com/CMHopeSunshine/LittlePaimonRes/main/resources_list.json')
+        resource_list = await aiorequests.get(
+            f'{config.github_proxy}https://raw.githubusercontent.com/CMHopeSunshine/LittlePaimonRes/main/resources_list.json',
+            follow_redirects=True)
         resource_list = resource_list.json()
     except Exception:
         logger.info('资源检查', '读取资源列表<r>失败</r>，请尝试更换<m>github资源地址</m>')
@@ -102,8 +105,9 @@ async def check_resource():
                 file_path.unlink()
         flag = True
         try:
-            await aiorequests.download(url=f'{config.github_proxy}https://raw.githubusercontent.com/CMHopeSunshine/LittlePaimonRes/main/{resource["path"]}',
-                                       save_path=file_path, exclude_json=resource['path'].split('.')[-1] != 'json')
+            await aiorequests.download(
+                url=f'{config.github_proxy}https://raw.githubusercontent.com/CMHopeSunshine/LittlePaimonRes/main/{resource["path"]}',
+                save_path=file_path, exclude_json=resource['path'].split('.')[-1] != 'json')
             await asyncio.sleep(0.5)
         except Exception:
             logger.warning('资源检查', f'下载<m>{resource["path"]}</m>时<r>出错</r>，请尝试更换<m>github资源地址</m>')
