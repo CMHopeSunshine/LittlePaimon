@@ -101,9 +101,9 @@ class aiorequests:
                     if resp.headers.get('etag') == 'W/"6363798a-13c7"' or resp.headers.get(
                             'content-md5') == 'JeG5b/z8SpViMmO/E9eayA==':
                         save_path = False
-                    resp = resp.read()
-                    if b'NoSuchKey' in resp or b'character not exists' in resp:
+                    if resp.headers.get('Content-Type') not in ['image/png', 'image/jpeg']:
                         return 'No Such File'
+                    resp = resp.read()
                     img = Image.open(BytesIO(resp))
             except SSLCertVerificationError:
                 async with httpx.AsyncClient() as client:
@@ -115,9 +115,9 @@ class aiorequests:
                     if resp.headers.get('etag') == 'W/"6363798a-13c7"' or resp.headers.get(
                             'content-md5') == 'JeG5b/z8SpViMmO/E9eayA==':
                         save_path = False
-                    resp = resp.read()
-                    if b'error' in resp:
+                    if resp.headers.get('Content-Type') not in ['image/png', 'image/jpeg']:
                         return 'No Such File'
+                    resp = resp.read()
                     img = Image.open(BytesIO(resp))
         if size:
             if isinstance(size, float):
@@ -169,24 +169,29 @@ class aiorequests:
             :param headers: 请求头
             :param save_path: 保存路径
         """
-        url = None
-        if name.startswith(('UI_EquipIcon', 'UI_RelicIcon')):
-            url = f'https://upload-bbs.mihoyo.com/game_record/genshin/equip/{name}'
-        elif name.startswith('UI_Talent'):
-            url = f'https://upload-bbs.mihoyo.com/game_record/genshin/constellation_icon/{name}'
-        elif name.startswith('UI_AvatarIcon'):
-            if name.endswith('UI_AvatarIcon_Side'):
-                url = f'https://upload-bbs.mihoyo.com/game_record/genshin/character_side_icon/{name}'
-            elif name.endswith('Card.png'):
-                url = f'https://upload-bbs.mihoyo.com/game_record/genshin/character_card_icon/{name}'
-            else:
-                url = f'https://upload-bbs.mihoyo.com/game_record/genshin/character_icon/{name}'
         urls = [
-            url,
-            f'https://file.microgg.cn/KimigaiiWuyi/resource/icon/{name}'
+            f'https://file.microgg.cn/KimigaiiWuyi/resource/icon/{name}',
             f'https://api.ambr.top/assets/UI/{name}',
             f'https://enka.network/ui/{name}',
         ]
+        if name.startswith(('UI_EquipIcon', 'UI_RelicIcon')):
+            urls.insert(0, f'https://upload-bbs.mihoyo.com/game_record/genshin/equip/{name}')
+        elif name.startswith('UI_Talent'):
+            urls.insert(0, f'https://upload-bbs.mihoyo.com/game_record/genshin/constellation_icon/{name}')
+            urls.insert(1, f'https://ghproxy.com/https://raw.githubusercontent.com/CMHopeSunshine/GenshinWikiMap/master/resources/constellation/{name}')
+        elif name.startswith('UI_AvatarIcon'):
+            if name.endswith('UI_AvatarIcon_Side'):
+                urls.insert(0, f'https://upload-bbs.mihoyo.com/game_record/genshin/character_side_icon/{name}')
+            elif name.endswith('Card.png'):
+                urls.insert(0, f'https://upload-bbs.mihoyo.com/game_record/genshin/character_card_icon/{name}')
+            else:
+                urls.insert(0, f'https://upload-bbs.mihoyo.com/game_record/genshin/character_icon/{name}')
+        elif name.startswith('UI_Gacha_AvatarImg_'):
+            urls.insert(0, f'https://ghproxy.com/https://raw.githubusercontent.com/CMHopeSunshine/GenshinWikiMap/master/resources/gacha_img/{name}')
+        elif name.startswith('Skill_'):
+            urls.insert(0, f'https://ghproxy.com/https://raw.githubusercontent.com/CMHopeSunshine/GenshinWikiMap/master/resources/talent/{name}')
+        elif name.startswith('UI_ItemIcon_'):
+            urls.insert(0, f'https://ghproxy.com/https://raw.githubusercontent.com/CMHopeSunshine/GenshinWikiMap/master/resources/materials/{name}')
         for url in urls:
             with contextlib.suppress(Exception):
                 if url is not None:
