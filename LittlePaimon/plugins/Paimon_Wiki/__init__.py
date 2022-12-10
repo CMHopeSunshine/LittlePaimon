@@ -20,7 +20,7 @@ from LittlePaimon.utils.tool import freq_limiter
 from .draw_daily_material import draw_material
 from .draw_map import init_map, draw_map, get_full_map
 from .SereniteaPot import draw_pot_materials
-from .card import get_match_card, CARD_API, get_card_resources
+from .card import get_match_card, CARD_API, get_card_resources , get_card_pic
 
 __paimon_help__ = {
     'type':  '原神Wiki',
@@ -334,7 +334,8 @@ async def _(state: T_State, name: str = ArgPlainText('name')):
     if not (matches := await get_match_card(name)):
         await card_wiki.finish(MessageBuild.Text(f'暂时没有{name}的卡牌图鉴'))
     if name in matches:
-        await card_wiki.finish(MessageSegment.image(CARD_API.format(config.github_proxy, name)))
+        # await card_wiki.finish(MessageSegment.image(CARD_API.format(config.github_proxy, name)))
+        await card_wiki.finish(MessageSegment.image(file=str(get_card_pic(name))))
     if len(matches) == 1:
         await card_wiki.finish(MessageSegment.image(CARD_API.format(config.github_proxy, matches[0])))
     if 'choice' not in state:
