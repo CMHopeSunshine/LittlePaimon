@@ -337,7 +337,8 @@ async def _(state: T_State, name: str = ArgPlainText('name')):
         # await card_wiki.finish(MessageSegment.image(CARD_API.format(config.github_proxy, name)))
         await card_wiki.finish(MessageSegment.image(file=str(get_card_pic(name))))
     if len(matches) == 1:
-        await card_wiki.finish(MessageSegment.image(CARD_API.format(config.github_proxy, matches[0])))
+        # await card_wiki.finish(MessageSegment.image(CARD_API.format(config.github_proxy, matches[0])))
+        await card_wiki.finish(MessageSegment.image(file=str(get_card_pic(matches[0]))))
     if 'choice' not in state:
         msg = f'你要查询的卡牌是：\n'
         msg += '\n'.join([f'{int(i) + 1}. {name}' for i, name in enumerate(matches)])
@@ -350,7 +351,8 @@ async def _(state: T_State, choice: str = ArgPlainText('choice')):
     matches = state['matches']
     if choice.isdigit() and (1 <= int(choice) <= len(matches)):
         try:
-            await card_wiki.finish(MessageSegment.image(CARD_API.format(config.github_proxy, matches[int(choice) - 1])))
+            # await card_wiki.finish(MessageSegment.image(CARD_API.format(config.github_proxy, matches[int(choice) - 1])))
+            await card_wiki.finish(MessageSegment.image(file=str(get_card_pic(matches[int(choice) - 1]))))
         except ActionFailed:
             await card_wiki.finish(
                 MessageBuild.Text(f'获取{matches[int(choice) - 1]}的卡牌图鉴失败，请检查网络或更换资源地址'))
@@ -365,7 +367,8 @@ async def _(state: T_State, choice: str = ArgPlainText('choice')):
             await card_wiki.finish(
                 MessageSegment.text(f'看来旅行者您有点神志不清哦(，下次再问{NICKNAME}吧') + MessageSegment.face(146))
     try:
-        await card_wiki.finish(MessageSegment.image(CARD_API.format(config.github_proxy, choice)))
+        # await card_wiki.finish(MessageSegment.image(CARD_API.format(config.github_proxy, choice)))
+        await card_wiki.finish(MessageSegment.image(file=str(get_card_pic(choice))))
     except ActionFailed:
         await card_wiki.finish(MessageBuild.Text(f'获取{choice}的卡牌图鉴失败，请检查网络或更换资源地址'))
 
