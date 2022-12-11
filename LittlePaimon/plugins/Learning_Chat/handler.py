@@ -79,6 +79,7 @@ class LearningChat:
         elif self.data.user_id in self.ban_users:
             # 发言人在屏蔽列表中，跳过
             logger.debug('群聊学习', f'➤发言人<m>{self.data.user_id}</m>在屏蔽列表中，跳过')
+            return Result.Pass
         elif self.to_me and any(w in self.data.message for w in {'不可以', '达咩', '不能说这'}):
             # 如果是对某句话进行禁言
             return Result.Ban
