@@ -173,7 +173,14 @@ class GenshinInfoManager:
             if not character or character.update_time < (
                     datetime.datetime.now() - datetime.timedelta(hours=config.ysd_auto_update)).replace(
                     tzinfo=pytz.timezone('UTC')):
-                await self.update_from_enka()
+                try:
+                    await self.update_from_enka()
+                except Exception as e:
+                    logger.info('原神角色面板', '➤➤', {'角色': name or character_id}, f'数据更新失败，可能是Enka.Network接口出现问题:{e}', False)
+                    if character:
+                        return character
+                    else:
+                        raise e
                 if character := await Character.get_or_none(**query, data_source='enka'):
                     logger.info('原神角色面板', '➤➤', {'角色': name or character_id}, '数据更新成功', True)
                 else:

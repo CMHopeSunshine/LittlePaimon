@@ -198,33 +198,38 @@ async def _(event: MessageEvent):
 async def _(event: MessageEvent, players=CommandPlayer(only_cn=False), characters=CommandCharacter()):
     logger.info('原神角色面板', '开始执行')
     msg = Message()
-    if len(players) == 1:
-        # 当查询对象只有一个时，查询所有角色
-        gim = GenshinInfoManager(players[0].user_id, players[0].uid)
-        await LastQuery.update_last_query(players[0].user_id, players[0].uid)
-        logger.info('原神角色面板', '➤', {'用户': players[0].user_id, 'UID': players[0].uid})
-        for character in characters:
-            character_info = await gim.get_character(name=character, data_source='enka')
-            if not character_info:
-                logger.info('原神角色面板', '➤➤', {'角色': character}, '没有该角色信息', False)
-                msg += f'\n暂无你{character}信息，请在游戏内展柜放置该角色'
-            else:
-                img = await draw_chara_detail(players[0].uid, character_info)
-                logger.info('原神角色面板', '➤➤➤', {}, '制图完成', True)
-                msg += img
-    else:
-        # 当查询对象有多个时，只查询第一个角色
-        for player in players:
-            gim = GenshinInfoManager(player.user_id, player.uid)
-            await LastQuery.update_last_query(player.user_id, player.uid)
-            logger.info('原神角色面板', '➤', {'用户': player.user_id, 'UID': player.uid})
-            character_info = await gim.get_character(name=characters[0], data_source='enka')
-            if not character_info:
-                msg += f'\n暂无{player.uid}的{characters[0]}信息，请在游戏内展柜放置该角色'
-            else:
-                img = await draw_chara_detail(player.uid, character_info)
-                logger.info('原神角色面板', '➤➤➤', {}, '制图完成', True)
-                msg += img
+    try:
+        if len(players) == 1:
+            # 当查询对象只有一个时，查询所有角色
+            gim = GenshinInfoManager(players[0].user_id, players[0].uid)
+            await LastQuery.update_last_query(players[0].user_id, players[0].uid)
+            logger.info('原神角色面板', '➤', {'用户': players[0].user_id, 'UID': players[0].uid})
+            for character in characters:
+                character_info = await gim.get_character(name=character, data_source='enka')
+                if not character_info:
+                    logger.info('原神角色面板', '➤➤', {'角色': character}, '没有该角色信息', False)
+                    msg += f'\n暂无你{character}信息，请在游戏内展柜放置该角色'
+                else:
+                    img = await draw_chara_detail(players[0].uid, character_info)
+                    logger.info('原神角色面板', '➤➤➤', {}, '制图完成', True)
+                    msg += img
+        else:
+            # 当查询对象有多个时，只查询第一个角色
+            for player in players:
+                gim = GenshinInfoManager(player.user_id, player.uid)
+                await LastQuery.update_last_query(player.user_id, player.uid)
+                logger.info('原神角色面板', '➤', {'用户': player.user_id, 'UID': player.uid})
+                character_info = await gim.get_character(name=characters[0], data_source='enka')
+                if not character_info:
+                    msg += f'\n暂无{player.uid}的{characters[0]}信息，请在游戏内展柜放置该角色'
+                else:
+                    img = await draw_chara_detail(player.uid, character_info)
+                    logger.info('原神角色面板', '➤➤➤', {}, '制图完成', True)
+                    msg += img
+    except KeyError as e:
+        msg = f'获取角色信息失败，缺少{e}的数据，可能是Enka.Network接口出现问题'
+    except Exception as e:
+        msg = f'获取角色信息失败，错误信息：{e}'
     await ysd.finish(msg, at_sender=True)
 
 
@@ -248,7 +253,7 @@ async def _(event: MessageEvent, state: T_State, uid=CommandUID()):
             gim = GenshinInfoManager(str(event.user_id), uid)
             result = await gim.update_all(include_talent)
         except KeyError as e:
-            result = f'更新失败，缺少{e}的数据，请尝试更新bot版本'
+            result = f'更新失败，缺少{e}的数据，可能是Enka.Network接口出现问题'
         except Exception as e:
             result = f'更新失败，错误信息：{e}'
         running_udi.remove(f'{event.user_id}-{uid}')
