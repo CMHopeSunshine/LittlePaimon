@@ -10,7 +10,7 @@ from LittlePaimon.utils.brower import screenshot
 
 
 async def permission_check(event: MessageEvent) -> bool:
-    return True if config.screenshot_enable else event.user_id not in SUPERUSERS
+    return config.screenshot_enable or event.user_id in SUPERUSERS
 
 
 __plugin_meta__ = PluginMetadata(
@@ -40,4 +40,4 @@ async def _(event: MessageEvent, msg: Message = CommandArg()):
         img = await screenshot(url)
         await screenshot_cmd.send(MessageSegment.image(img))
     except Exception:
-        await screenshot_cmd.send('网页截图失败，无法访问该网页，请稍候再试')
+        await screenshot_cmd.send('尝试网页截图失败，无法访问该网页，请稍候再试')
