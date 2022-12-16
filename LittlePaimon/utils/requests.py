@@ -73,7 +73,7 @@ class aiorequests:
                       size: Optional[Union[Tuple[int, int], float]] = None,
                       mode: Optional[str] = None,
                       crop: Optional[Tuple[int, int, int, int]] = None,
-                      **kwargs) -> Union[str, Image.Image]:
+                      **kwargs) -> Union[None, Image.Image]:
         """
         说明：
             httpx的get请求封装，获取图片
@@ -100,9 +100,11 @@ class aiorequests:
                     # 不保存安柏计划的问号图标
                     if resp.headers.get('etag') == 'W/"6363798a-13c7"' or resp.headers.get(
                             'content-md5') == 'JeG5b/z8SpViMmO/E9eayA==':
-                        save_path = False
+                        # save_path = False
+                        return None
                     if resp.headers.get('Content-Type') not in ['image/png', 'image/jpeg']:
-                        return 'No Such File'
+                        # return 'No Such File'
+                        return None
                     resp = resp.read()
                     img = Image.open(BytesIO(resp))
             except SSLCertVerificationError:
@@ -114,9 +116,11 @@ class aiorequests:
                                             **kwargs)
                     if resp.headers.get('etag') == 'W/"6363798a-13c7"' or resp.headers.get(
                             'content-md5') == 'JeG5b/z8SpViMmO/E9eayA==':
-                        save_path = False
+                        # save_path = False
+                        return None
                     if resp.headers.get('Content-Type') not in ['image/png', 'image/jpeg']:
-                        return 'No Such File'
+                        # return 'No Such File'
+                        return None
                     resp = resp.read()
                     img = Image.open(BytesIO(resp))
         if size:
@@ -195,6 +199,7 @@ class aiorequests:
         for url in urls:
             with contextlib.suppress(Exception):
                 if url is not None:
-                    return await aiorequests.get_img(url=url, headers=headers, save_path=save_path, **kwargs)
+                    if (img := await aiorequests.get_img(url=url, headers=headers, save_path=save_path, **kwargs)) is not None:
+                        return img
         logger.opt(colors=True).info(f'<u><y>[资源检查]</y></u>图标资源<m>{name}</m><r>下载失败</r>')
         return None
