@@ -78,20 +78,16 @@ async def draw_daily_note_card(data, uid):
         await bg_img.text(f"剩余{data['remain_resin_discount_num']}次", 977, 1127, fm.get('优设标题黑.ttf', 40), 'white')
         await bg_img.text("周本减半", 965, 1167, fm.get('优设标题黑.ttf', 40), 'white')
     # 深渊文字
-    abyss_new_month = datetime.datetime.now().month if datetime.datetime.now().day < 16 else datetime.datetime.now().month + 1
-    abyss_new_day = 16 if datetime.datetime.now().day < 16 else 1
-    abyss_new = datetime.datetime.strptime('2022.' + str(abyss_new_month) + '.' + str(abyss_new_day) + '.00:00',
-                                           '%Y.%m.%d.%H:%M') - datetime.datetime.now()
-    abyss_new_total = datetime.datetime.strptime('2022.' + str(abyss_new_month) + '.' + str(abyss_new_day) + '.00:00',
-                                                 '%Y.%m.%d.%H:%M') - datetime.datetime.strptime(
-        '2022.' + str(
-            abyss_new_month if abyss_new_month == datetime.datetime.now().month else abyss_new_month - 1) + '.' + str(
-            1 if datetime.datetime.now().day < 16 else 16) + '.00:00',
-        '%Y.%m.%d.%H:%M')
-    await bg_img.text(f"{abyss_new.days}/{abyss_new_total.days}", 337, 1358, fm.get('number.ttf', 48), 'white')
-    await bg_img.text(f"本期深渊还有{abyss_new.days if abyss_new.days <= abyss_new_total.days else abyss_new_total.days}天结束",
+    now = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    abyss_new = now.replace(day=16) if now.day < 16 else now.replace(
+        year=now.year + 1 if (next_month := now.month % 12 + 1) == 1 else now.year, month=next_month, day=1)
+    abyss_now = now.replace(day=1) if now.day < 16 else now.replace(day=16)
+    left_day = (abyss_new - now).days
+    total_day = (abyss_new - abyss_now).days
+    await bg_img.text(f"{left_day}/{total_day}", 337, 1358, fm.get('number.ttf', 48), 'white')
+    await bg_img.text(f"本期深渊还有{total_day}天结束",
                       745, 1358, fm.get('优设标题黑.ttf', 40), 'white')
-    await bg_img.draw_ring(percent=abyss_new.days / abyss_new_total.days, pos=(100, 1249), size=(266, 266), width=0.18,
+    await bg_img.draw_ring(percent=left_day / total_day, pos=(100, 1249), size=(266, 266), width=0.18,
                            colors=['#507bd0', '#FFFFFF'])
 
     # 派遣情况
