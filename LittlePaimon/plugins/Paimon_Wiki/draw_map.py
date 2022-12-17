@@ -15,13 +15,13 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 Image.MAX_IMAGE_PIXELS = None
 
 map_name = {
-    'teyvat': '提瓦特',
+    'teyvat':     '提瓦特',
     'enkanomiya': '渊下宫',
-    'chasm': '层岩巨渊'
+    'chasm':      '层岩巨渊'
 }
 map_name_reverse = {
-    '提瓦特': 'teyvat',
-    '渊下宫': 'enkanomiya',
+    '提瓦特':   'teyvat',
+    '渊下宫':   'enkanomiya',
     '层岩巨渊': 'chasm'
 }
 
@@ -81,9 +81,9 @@ async def draw_map(name: str, map_: str):
         y1_temp = int(points[0].y) - 700
         y2_temp = int(points[0].y) + 700
         group_point = [(
-                models.XYPoint(x1_temp, y1_temp),
-                models.XYPoint(x2_temp, y2_temp),
-                points)]
+            models.XYPoint(x1_temp, y1_temp),
+            models.XYPoint(x2_temp, y2_temp),
+            points)]
     map_img = (await load_image(RESOURCE_BASE_PATH / 'genshin_map' / 'results' / f'{map_id.name}.png')).copy()
     lt_point = group_point[0][0]
     rb_point = group_point[0][1]
@@ -111,8 +111,10 @@ async def draw_map(name: str, map_: str):
     if 'source' in info:
         des += '\n推荐采集地点：' + '，'.join(info['source']).replace('推荐：', '')
     if des:
-        await total_img.text_box(des.replace('\n', '^'), (482, 1010), (281, 520), fm.get('SourceHanSansCN-Bold.otf', 30), '#3c3c3c')
-    await total_img.text('CREATED BY LITTLEPAIMON', (0, total_img.width), total_img.height - 45, fm.get('bahnschrift_bold', 36, 'Bold'), '#3c3c3c', align='center')
+        await total_img.text_box(des.replace('\n', '^'), (482, 1010), (281, 520),
+                                 fm.get('SourceHanSansCN-Bold.otf', 30), '#3c3c3c')
+    await total_img.text('CREATED BY LITTLEPAIMON', (0, total_img.width), total_img.height - 45,
+                         fm.get('bahnschrift_bold', 36, 'Bold'), '#3c3c3c', align='center')
     total_img.save(RESOURCE_BASE_PATH / 'genshin_map' / 'results' / f'{map_}_{name}.png')
     return MessageBuild.Image(total_img, mode='RGB', quality=85)
 
@@ -144,20 +146,19 @@ async def get_full_map(names: List[str], map_: str):
         return MessageBuild.Text(f'{map_}未查找到材料{"、".join(names)}，请尝试其他地图')
     map_img = (await load_image(RESOURCE_BASE_PATH / 'genshin_map' / 'results' / f'{map_id.name}.png')).copy()
     box_icon = await load_image(RESOURCE_BASE_PATH / 'genshin_map' / 'point_box.png')
-    i = 0
     max_point = XYPoint(x=0, y=0)
-    min_point = XYPoint(x=16384, y=12288)
-    for points in resources_points:
+    min_point = XYPoint(x=map_img.width, y=map_img.height)
+    for i, points in enumerate(resources_points):
         resource_icon = box_icon.copy()
         resource_icon.alpha_composite(await aiorequests.get_img(resources[i].icon, size=(90, 90)), (28, 15))
         resource_icon = resource_icon.resize((48, 48), Image.ANTIALIAS)
         if len(points) >= 3:
-            group_point = img.k_means_points(points, 16000)
+            group_point = img.k_means_points(points, 2000)
         else:
-            x1_temp = int(points[0].x) - 16000
-            x2_temp = int(points[0].x) + 16000
-            y1_temp = int(points[0].y) - 16000
-            y2_temp = int(points[0].y) + 16000
+            x1_temp = int(points[0].x) - 2000
+            x2_temp = int(points[0].x) + 2000
+            y1_temp = int(points[0].y) - 2000
+            y2_temp = int(points[0].y) + 2000
             group_point = [(
                 models.XYPoint(x1_temp, y1_temp),
                 models.XYPoint(x2_temp, y2_temp),
@@ -169,13 +170,9 @@ async def get_full_map(names: List[str], map_: str):
         for point in group_point[0][2]:
             point_trans = (int(point.x), int(point.y))
             map_img.paste(resource_icon, (point_trans[0] - 24, point_trans[1] - 48), resource_icon)
-        i += 1
     map_img = map_img.crop((int(min_point.x) - 50, int(min_point.y) - 50, int(max_point.x) + 50, int(max_point.y) + 50))
     if resources_not:
-        return MessageBuild.Text(f'{map_}未找到材料{"、".join(resources_not)}，请尝试其他地图\n') + MessageBuild.Image(map_img)
+        return MessageBuild.Text(f'{map_}未找到材料{"、".join(resources_not)}，请尝试其他地图\n') + MessageBuild.Image(
+            map_img)
     else:
         return MessageBuild.Image(map_img)
-
-
-
-

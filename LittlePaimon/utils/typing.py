@@ -7,6 +7,11 @@ try:
 except ImportError:
     import json
 
+from . import DRIVER
+
+command_start = list(DRIVER.config.command_start)
+COMMAND_START_RE = '^' + '|'.join(command_start) if command_start else '^'
+
 
 ElementType = Literal['火', '水', '冰', '雷', '风', '岩', '草', '物理']
 WeaponType = Literal['单手剑', '双手剑', '长柄武器', '弓', '法器']

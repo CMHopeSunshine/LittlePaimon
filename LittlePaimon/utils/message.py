@@ -210,7 +210,7 @@ def CommandCharacter(limit: int = 3) -> List[str]:
                     character_list.append(random.choice(FEMALE_CHARACTERS))
                 msg.replace(character_name, '')
             # 如果有匹配别名
-            elif character_match := get_match_alias(character_name, '角色', True):
+            elif character_match := get_match_alias(character_name, ['角色'], True):
                 character_list.append(list(character_match.keys())[0])
                 msg.replace(character_name, '')
         # 没有匹配到角色时，结束事件

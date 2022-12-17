@@ -32,6 +32,14 @@ class PluginManager:
         if file.is_file() and file.name.endswith('.yml'):
             data = load_yaml(file)
             plugins[file.name.replace('.yml', '')] = PluginInfo.parse_obj(data)
+    # ------临时删除------
+    if plugins.get('Paimon_Wiki'):
+        plugins['Paimon_Wiki'].matchers = [matcher for matcher in plugins['Paimon_Wiki'].matchers
+                                           if matcher.pm_name not in {'圣遗物图鉴', '每日材料', '原魔图鉴', '参考面板',
+                                                                      '武器图鉴',
+                                                                      '收益曲线', '角色材料', '角色攻略',
+                                                                      '七圣召唤图鉴',
+                                                                      '角色图鉴'}]
 
     @classmethod
     def save(cls):
@@ -73,16 +81,15 @@ class PluginManager:
                         })
                     else:
                         cls.plugins[plugin.name] = PluginInfo(name=plugin.name, module_name=plugin.name)
+                if cls.plugins[plugin.name].matchers is None:
+                    cls.plugins[plugin.name].matchers = []
                 matchers = plugin.matcher
                 for matcher in matchers:
                     if matcher._default_state:
-                        matcher_info = MatcherInfo.parse_obj(matcher._default_state)
-                        if cls.plugins[plugin.name].matchers is not None and matcher_info.pm_name not in [m.pm_name for
-                                                                                                          m
-                                                                                                          in
-                                                                                                          cls.plugins[
-                                                                                                              plugin.name].matchers]:
-                            cls.plugins[plugin.name].matchers.append(matcher_info)
+                        with contextlib.suppress(Exception):
+                            matcher_info = MatcherInfo.parse_obj(matcher._default_state)
+                            if matcher_info.pm_name not in [m.pm_name for m in cls.plugins[plugin.name].matchers]:
+                                cls.plugins[plugin.name].matchers.append(matcher_info)
         cls.save()
         logger.success('插件管理器', '<g>初始化完成</g>')
 

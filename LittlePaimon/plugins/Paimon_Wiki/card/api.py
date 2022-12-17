@@ -6,13 +6,13 @@ from ruamel import yaml
 from LittlePaimon.config import config
 from LittlePaimon.utils.requests import aiorequests
 
-CARD_RESOURCES_API = '{}https://raw.githubusercontent.com/Nwflower/Atlas/master/resource/text/card.yaml'
-CARD_API = '{}https://raw.githubusercontent.com/Nwflower/genshin-atlas/master/card/{}.png'
+CARD_RESOURCES_API = '{proxy}https://raw.githubusercontent.com/Nwflower/Atlas/master/resource/text/card.yaml'
+CARD_API = '{proxy}https://raw.githubusercontent.com/Nwflower/genshin-atlas/master/card/{name}.png'
 
 
 async def get_card_resources() -> Optional[dict]:
     with contextlib.suppress(Exception):
-        resp = await aiorequests.get(CARD_RESOURCES_API.format(config.github_proxy))
+        resp = await aiorequests.get(CARD_RESOURCES_API.format(proxy=config.github_proxy))
         data = yaml.load(resp.content, Loader=yaml.Loader)
         data.pop('召唤')
         return data
