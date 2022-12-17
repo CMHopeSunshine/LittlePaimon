@@ -262,11 +262,21 @@ async def _(event: MessageEvent, state: T_State, type: str = Arg('type'), name: 
         elif type.startswith('七圣召唤'):
             matches = await get_match_card(name)
         else:
+            if alias := await PlayerAlias.get_or_none(user_id=str(event.user_id), alias=name):
+                final_name = alias.character
+                if type in {'材料', '攻略', '图鉴'}:
+                    type = f'角色{type}'
+                try:
+                    await total_wiki.finish(
+                        MessageSegment.image(API[type].format(proxy=config.github_proxy, name=final_name)))
+                except ActionFailed:
+                    await total_wiki.finish(
+                        MessageBuild.Text(f'{final_name}的{type}发送失败，可能是网络问题或者不存在该资源'))
             matches = get_match_alias(name, ['角色', '武器', '原魔', '圣遗物'])
             if m := await get_match_card(name):
                 matches['七圣召唤'] = m
         if not matches:
-            await total_wiki.finish()
+            await total_wiki.finish(MessageBuild.Text(f'没有名为{name}的{type}哦，是不是打错了~'), at_sender=True)
         elif len(matches) == 1 and len(list(matches.values())[0]) == 1:
             final_name = list(matches.values())[0][0]
             temp_type = list(matches.keys())[0]

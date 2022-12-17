@@ -78,7 +78,7 @@ async def _(event: Union[GroupMessageEvent, PrivateMessageEvent], lang=CommandLa
         await get_voice.finish(MessageBuild.Record(voice.voice_url) if voice else MessageBuild.Text(f'没有{msg}号原神语音'))
     else:
         if chara := get_match_alias(msg, ['角色'], True):
-            chara = list(chara.keys())[0]
+            chara = chara[0]
         else:
             await get_voice.finish(MessageBuild.Text(f'没有叫{chara}的角色'))
         voices = await GenshinVoice.filter(character=chara, language=lang).all()
