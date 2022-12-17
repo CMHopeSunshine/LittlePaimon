@@ -163,6 +163,8 @@ async def get_full_map(names: List[str], map_: str):
                 models.XYPoint(x1_temp, y1_temp),
                 models.XYPoint(x2_temp, y2_temp),
                 points)]
+        if len(group_point[0][2]) > 400:
+            group_point = img.k_means_points(points, 600)
         lt_point = group_point[0][0]
         rb_point = group_point[0][1]
         min_point = XYPoint(x=min(min_point.x, lt_point.x), y=min(min_point.y, lt_point.y))

@@ -269,10 +269,9 @@ async def _(event: MessageEvent, state: T_State, type: str = Arg('type'), name: 
             await total_wiki.finish()
         elif len(matches) == 1 and len(list(matches.values())[0]) == 1:
             final_name = list(matches.values())[0][0]
+            temp_type = list(matches.keys())[0]
             if type in {'材料', '攻略', '图鉴'}:
-                type = list(matches.keys())[0] + type
-                if type.endswith(('攻略', '图鉴')) and type.startswith(('原魔', '圣遗物', '武器', '七圣召唤')):
-                    type = f'{type[-2:]}图鉴'
+                type = f'{temp_type}图鉴' if temp_type != '角色' else f'{temp_type}{type}'
             try:
                 await total_wiki.finish(
                     MessageSegment.image(API[type].format(proxy=config.github_proxy, name=final_name)))
