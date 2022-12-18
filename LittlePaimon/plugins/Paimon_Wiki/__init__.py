@@ -202,12 +202,12 @@ async def _(state: T_State, regex_dict: dict = RegexDict()):
         elif name.endswith('圣遗物'):
             state['type'] = '圣遗物图鉴'
             name = name[:-3]
-        elif name.endswith(('七圣召唤', '原牌', '卡牌')):
+        elif name.endswith(('七圣召唤', '原牌', '卡牌', '七圣')):
             state['type'] = '七圣召唤图鉴'
             name = name.replace('七圣召唤', '').replace('原牌', '').replace('卡牌', '')
         else:
             state['type'] = type
-    elif type in {'参考面板', '收益曲线'}:
+    else:
         state['type'] = type
     if name:
         state['name'] = Message(name)
@@ -218,7 +218,7 @@ week_str = ['周一', '周二', '周三', '周四', '周五', '周六']
 
 
 @total_wiki.got('name', prompt=Message.template('你要查询谁的{type}呢？'), parameterless=cancel)
-async def _(event: MessageEvent, state: T_State, type: str = Arg('type'), name: str = ArgPlainText('name')):
+async def _(bot: Bot, event: MessageEvent, state: T_State, type: str = Arg('type'), name: str = ArgPlainText('name')):
     if not name:
         if state['times'] == 2:
             await total_wiki.finish('旅行者似乎不太能理解，下次再问我吧' + MessageSegment.face(146))
@@ -270,8 +270,7 @@ async def _(event: MessageEvent, state: T_State, type: str = Arg('type'), name: 
                     await total_wiki.finish(
                         MessageSegment.image(API[type].format(proxy=config.github_proxy, name=final_name)))
                 except ActionFailed:
-                    await total_wiki.finish(
-                        MessageBuild.Text(f'{final_name}的{type}发送失败，可能是网络问题或者不存在该资源'))
+                    await total_wiki.finish(f'{final_name}的{type}发送失败，可能是网络问题或者不存在该资源')
             matches = get_match_alias(name, ['角色', '武器', '原魔', '圣遗物'])
             if m := await get_match_card(name):
                 matches['七圣召唤'] = m
@@ -286,18 +285,33 @@ async def _(event: MessageEvent, state: T_State, type: str = Arg('type'), name: 
                 await total_wiki.finish(
                     MessageSegment.image(API[type].format(proxy=config.github_proxy, name=final_name)))
             except ActionFailed:
-                await total_wiki.finish(
-                    MessageBuild.Text(f'{final_name}的{type}发送失败，可能是网络问题或者不存在该资源'))
+                await total_wiki.finish(f'{final_name}的{type}发送失败，可能是网络问题或者不存在该资源')
         else:
-            msg = f'你要查询的{type}是：\n'
-            index = 1
-            for key, value in matches.items():
-                for v in value:
-                    msg += f'{index}.{v}({key})\n' if len(matches) > 1 else f'{index}.{v}\n'
-                    index += 1
-                # msg += '\n'.join([f'{i}({key})' if len(matches) > 1 else f'{i}' for i in value]) + '\n'
-            msg += '回答\"序号\"查询或回答\"取消\"取消查询'
-            await total_wiki.send(msg)
+            send_flag = False
+            if sum(len(value) for value in matches.values()) >= 15 and isinstance(event, (PrivateMessageEvent, GroupMessageEvent)):
+                msg = [
+                    {'type': 'node',
+                     'data': {'name': NICKNAME, 'uin': event.self_id, 'content': f'{type}：\n' + '\n'.join(names)}}
+                    for type, names in matches.items()]
+                msg.insert(0, {'type': 'node', 'data': {'name': NICKNAME, 'uin': event.self_id, 'content': f'你要查询哪个的{type}呢？'}})
+                msg.append({'type': 'node', 'data': {'name': NICKNAME, 'uin': event.self_id, 'content': '回答\"序号\"查询或回答\"取消\"取消查询'}})
+                try:
+                    send_flag = True
+                    if isinstance(event, GroupMessageEvent):
+                        await bot.call_api('send_group_forward_msg', group_id=event.group_id, messages=msg)
+                    elif isinstance(event, PrivateMessageEvent):
+                        await bot.call_api('send_private_forward_msg', user_id=event.user_id, messages=msg)
+                except ActionFailed:
+                    send_flag = False
+            if not send_flag:
+                index = 1
+                msg = f'你要查询的{type}是：\n'
+                for key, value in matches.items():
+                    for v in value:
+                        msg += f'{index}.{v}({key})\n' if len(matches) > 1 else f'{index}.{v}\n'
+                        index += 1
+                msg += '回答\"序号\"查询或回答\"取消\"取消查询'
+                await total_wiki.send(msg)
             state['matches'] = matches
 
 
@@ -328,8 +342,7 @@ async def _(state: T_State, matches: dict = Arg('matches'), choice: str = ArgPla
             await total_wiki.finish(
                 MessageSegment.image(API[type].format(proxy=config.github_proxy, name=final_name)))
         except ActionFailed:
-            await total_wiki.finish(
-                MessageBuild.Text(f'{final_name}的{type}发送失败，可能是网络问题或者不存在该资源'))
+            await total_wiki.finish(f'{final_name}的{type}发送失败，可能是网络问题或者不存在该资源')
     elif state['times'] == 2:
         await total_wiki.finish(f'旅行者似乎不太能理解，下次再问我吧{MessageSegment.face(146)}')
     else:
@@ -352,7 +365,7 @@ async def _(bot: Bot, event: MessageEvent):
         elif isinstance(event, PrivateMessageEvent):
             await bot.call_api('send_private_forward_msg', user_id=event.user_id, messages=msg)
         else:
-            msg = '七圣召唤卡牌列表:'
+            msg = '七圣召唤卡牌列表:\n'
             for type, cards in result.items():
                 msg += f'{type}：\n' + '\n'.join([' '.join(cards[i:i + 3]) for i in range(0, len(cards), 3)]) + '\n'
             await card_wiki_list.send(msg)
