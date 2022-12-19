@@ -10,7 +10,13 @@ except ImportError:
 from . import DRIVER
 
 command_start = list(DRIVER.config.command_start)
-COMMAND_START_RE = '^' + '|'.join(command_start) if command_start else '^'
+if len(command_start) == 1 and command_start[0] == '':
+    COMMAND_START_RE = '^'
+elif '' in command_start:
+    command_start.remove('')
+    COMMAND_START_RE = '^(' + '|'.join(command_start) + ')?'
+else:
+    COMMAND_START_RE = '^(' + '|'.join(command_start) + ')'
 
 
 ElementType = Literal['火', '水', '冰', '雷', '风', '岩', '草', '物理']
