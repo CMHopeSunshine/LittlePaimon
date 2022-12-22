@@ -78,7 +78,11 @@ async def detail_avatar(info: FiveStarItem):
     return bg
 
 
-async def draw_pool_detail(pool_name: str, data: List[FiveStarItem], total_count: int, not_out: int) -> Optional[
+async def draw_pool_detail(pool_name: str,
+                           data: List[FiveStarItem],
+                           total_count: int,
+                           not_out: int,
+                           record_time: Tuple[datetime.datetime, datetime.datetime]) -> Optional[
     PMImage]:
     if not data:
         return None
@@ -88,6 +92,8 @@ async def draw_pool_detail(pool_name: str, data: List[FiveStarItem], total_count
     await img.paste(await load_image(RESOURCE_BASE_PATH / 'general' / 'line.png'), (0, 0))
     pool_type = pool_name[:2]
     await img.text(f'{pool_type}卡池', 25, 11, fm.get('hywh', 30), 'white')
+    await img.text(f'{record_time[0].strftime("%Y-%m-%d %H:%M")}~{record_time[1].strftime("%Y-%m-%d %H:%M")}', 990, 15,
+                   fm.get('bahnschrift_regular', 30), '#252525', 'right')
     # 数据
     await img.text('平均出货', 174, 137, fm.get('hywh', 24), (24, 24, 24, 102))
     ave = round((total_count - not_out) / len(data), 2)
@@ -180,6 +186,7 @@ async def draw_gacha_log(user_id: str, uid: str, nickname: Optional[str], signat
         await img.text(f'UID{uid}', 165, 103, fm.get('bahnschrift_regular', 48, 'Regular'), '#252525')
 
     data5, data4, data_not = gacha_log.get_statistics()
+    record_time = gacha_log.get_record_time()
     # 数据总览
     await img.paste(line, (36, 181))
     await img.text('数据总览', 60, 192, fm.get('hywh', 30), 'white')
@@ -218,7 +225,7 @@ async def draw_gacha_log(user_id: str, uid: str, nickname: Optional[str], signat
         now_height = 525
         for pool_name, data in data5.items():
             pool_detail_img = await draw_pool_detail(pool_name, data, len(gacha_log.item_list[pool_name]),
-                                                     data_not[pool_name])
+                                                     data_not[pool_name], record_time[pool_name])
             if pool_detail_img:
                 await img.paste(pool_detail_img, (36, now_height))
                 now_height += pool_detail_img.height

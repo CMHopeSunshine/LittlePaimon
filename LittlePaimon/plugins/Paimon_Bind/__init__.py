@@ -15,6 +15,12 @@ from LittlePaimon.database import LastQuery, PrivateCookie, PublicCookie, Charac
 from LittlePaimon.utils import logger, NICKNAME
 from LittlePaimon.utils.api import get_bind_game_info, get_stoken_by_login_ticket, get_cookie_token_by_stoken
 
+try:
+    from .get_cookie import *
+except ImportError:
+    bind_tips = '获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1\n获取后，使用[ysb cookie]指令绑定'
+    bind_tips_web = '获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1\n获取后，使用[ysb cookie]指令绑定或前往{cookie_web_url}网页添加绑定'
+
 __plugin_meta__ = PluginMetadata(
     name='原神绑定',
     description='原神绑定信息',
@@ -44,13 +50,15 @@ delete_ck = on_command('删除ck', aliases={'删除cookie'}, priority=1, block=T
     'pm_usage':       '删除ck[uid|全部]',
     'pm_priority':    3
 })
-ysbca = on_command('校验所有ck', aliases={'校验所有cookie', '校验所有绑定'}, priority=1, block=True, permission=SUPERUSER, state={
-    'pm_name':        '校验所有ck',
-    'pm_description': '校验所有cookie情况，仅超级管理员可用',
-    'pm_usage':       '校验所有ck',
-    'pm_priority':    4
-})
-pck = on_command('添加公共cookie', aliases={'添加pck', '添加公共ck', 'add_pck'}, permission=SUPERUSER, block=True, priority=1,
+ysbca = on_command('校验所有ck', aliases={'校验所有cookie', '校验所有绑定'}, priority=1, block=True,
+                   permission=SUPERUSER, state={
+        'pm_name':        '校验所有ck',
+        'pm_description': '校验所有cookie情况，仅超级管理员可用',
+        'pm_usage':       '校验所有ck',
+        'pm_priority':    4
+    })
+pck = on_command('添加公共cookie', aliases={'添加pck', '添加公共ck', 'add_pck'}, permission=SUPERUSER, block=True,
+                 priority=1,
                  state={
                      'pm_name':        '添加公共ck',
                      'pm_description': '添加公共cookie，仅超级管理员可用',
@@ -77,12 +85,14 @@ async def _(event: MessageEvent, msg: Message = CommandArg()):
                              at_sender=True)
     if msg:
         if msg in {'cookie', 'Cookie', 'ck', 'CK'}:
-            await ysb.finish(f'你在和{NICKNAME}开玩笑嘛？请看教程获取Cookie：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1', at_sender=True)
+            await ysb.finish(f'你在和{NICKNAME}开玩笑嘛？请看教程获取Cookie：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1',
+                             at_sender=True)
         if mys_id := re.search(r'(?:(?:login_uid|account_mid|account_id|stmid|ltmid|stuid|ltuid)(?:_v2)?)=(\d+)', msg):
             mys_id = mys_id[1]
         else:
-            await ysb.finish('Cookie无效，缺少account_id、login_uid或stuid字段\n获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1',
-                             at_sender=True)
+            await ysb.finish(
+                'Cookie无效，缺少account_id、login_uid或stuid字段\n获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1',
+                at_sender=True)
         cookie_token_match = re.search(r'(?:cookie_token|cookie_token_v2)=([0-9a-zA-Z]+)', msg)
         cookie_token = cookie_token_match[1] if cookie_token_match else None
         login_ticket_match = re.search(r'(?:login_ticket|login_ticket_v2)=([0-9a-zA-Z]+)', msg)
@@ -96,30 +106,37 @@ async def _(event: MessageEvent, msg: Message = CommandArg()):
             # 如果有stoken但没有cookie_token，就通过stoken获取cookie_token
             cookie_token = await get_cookie_token_by_stoken(stoken, mys_id)
         if not cookie_token:
-            await ysb.finish('Cookie无效，缺少cookie_token或login_ticket字段\n获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1', at_sender=True)
+            await ysb.finish(
+                'Cookie无效，缺少cookie_token或login_ticket字段\n获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1',
+                at_sender=True)
         if game_info := await get_bind_game_info(f'account_id={mys_id};cookie_token={cookie_token}', mys_id):
             if not game_info['list']:
                 await ysb.finish('该账号尚未绑定任何游戏，请确认账号无误~', at_sender=True)
-            if not (genshin_games := [{'uid': game['game_role_id'], 'nickname': game['nickname']} for game in game_info['list'] if game['game_id'] == 2]):
+            if not (
+            genshin_games := [{'uid': game['game_role_id'], 'nickname': game['nickname']} for game in game_info['list']
+                              if game['game_id'] == 2]):
                 await ysb.finish('该账号尚未绑定原神，请确认账号无误~', at_sender=True)
             await LastQuery.update_or_create(user_id=str(event.user_id),
-                                             defaults={'uid': genshin_games[0]['uid'], 'last_time': datetime.datetime.now()})
+                                             defaults={'uid':       genshin_games[0]['uid'],
+                                                       'last_time': datetime.datetime.now()})
             send_msg = ''
             for info in genshin_games:
                 send_msg += f'{info["nickname"]}({info["uid"]}) '
                 await PrivateCookie.update_or_create(user_id=str(event.user_id), uid=info['uid'], mys_id=mys_id,
-                                                     defaults={'cookie': f'account_id={mys_id};cookie_token={cookie_token}',
-                                                               'stoken': f'stuid={mys_id};stoken={stoken};' if stoken else None})
-            await ysb.finish(f'玩家{send_msg.strip()}绑定Cookie{"和Stoken" if stoken else ""}成功{"" if stoken else "当未能绑定Stoken"}'
-                             f'{"，当前非私聊对话建议将Cookie撤回哦" if not isinstance(event, PrivateMessageEvent) else ""}', at_sender=True)
+                                                     defaults={
+                                                         'cookie': f'account_id={mys_id};cookie_token={cookie_token}',
+                                                         'stoken': f'stuid={mys_id};stoken={stoken};' if stoken else None})
+            await ysb.finish(
+                f'玩家{send_msg.strip()}绑定Cookie{"和Stoken" if stoken else ""}成功{"" if stoken else "当未能绑定Stoken"}{"" if isinstance(event, PrivateMessageEvent) else "，当前非私聊对话建议将Cookie撤回哦"}',
+                at_sender=True,
+            )
         else:
             await ysb.finish(
                 'Cookie无效，请确认是否已过期\n获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1',
                 at_sender=True)
     elif config.CookieWeb_enable:
         await ysb.finish(
-            f'获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1\n获取后，使用[ysb cookie]指令绑定或前往{config.CookieWeb_url}网页添加绑定',
-            at_sender=True)
+            bind_tips.format(cookie_web_url=config.CookieWeb_url), at_sender=True)
     else:
         await ysb.finish('获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1\n获取后，使用[ysb cookie]指令绑定',
                          at_sender=True)
@@ -142,7 +159,8 @@ async def _(event: MessageEvent):
 
         await ysbc.finish(msg.strip(), at_sender=True)
     elif uid:
-        await ysbc.finish(f'{event.sender.card or event.sender.nickname}当前已绑定uid{uid.uid}，但未绑定cookie', at_sender=True)
+        await ysbc.finish(f'{event.sender.card or event.sender.nickname}当前已绑定uid{uid.uid}，但未绑定cookie',
+                          at_sender=True)
 
     else:
         await ysbc.finish(f'{event.sender.card or event.sender.nickname}当前无绑定信息', at_sender=True)
@@ -191,7 +209,8 @@ async def _(event: MessageEvent):
             await cookie.delete()
         await sleep(1)
     for cookie in public_cookies:
-        if mys_id := re.search(r'(?:(?:login_uid|account_mid|account_id|stmid|ltmid|stuid|ltuid)(?:_v2)?)=(\d+)', cookie.cookie):
+        if mys_id := re.search(r'(?:(?:login_uid|account_mid|account_id|stmid|ltmid|stuid|ltuid)(?:_v2)?)=(\d+)',
+                               cookie.cookie):
             mys_id = mys_id[1]
             if not await get_bind_game_info(cookie.cookie, mys_id):
                 useless_public.append(str(cookie.id))
@@ -217,8 +236,9 @@ async def _(event: MessageEvent, msg: Message = CommandArg()):
         if mys_id := re.search(r'(?:(?:login_uid|account_mid|account_id|stmid|ltmid|stuid|ltuid)(?:_v2)?)=(\d+)', msg):
             mys_id = mys_id[1]
         else:
-            await pck.finish('Cookie无效，缺少account_id、login_uid或stuid字段\n获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1',
-                             at_sender=True)
+            await pck.finish(
+                'Cookie无效，缺少account_id、login_uid或stuid字段\n获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1',
+                at_sender=True)
         cookie_token_match = re.search(r'(?:cookie_token|cookie_token_v2)=([0-9a-zA-Z]+)', msg)
         cookie_token = cookie_token_match[1] if cookie_token_match else None
         login_ticket_match = re.search(r'(?:login_ticket|login_ticket_v2)=([0-9a-zA-Z]+)', msg)
@@ -232,14 +252,17 @@ async def _(event: MessageEvent, msg: Message = CommandArg()):
             # 如果有stoken但没有cookie_token，就通过stoken获取cookie_token
             cookie_token = await get_cookie_token_by_stoken(stoken, mys_id)
         if not cookie_token:
-            await pck.finish('Cookie无效，缺少cookie_token或login_ticket字段\n获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1', at_sender=True)
+            await pck.finish(
+                'Cookie无效，缺少cookie_token或login_ticket字段\n获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1',
+                at_sender=True)
         if await get_bind_game_info(f'account_id={mys_id};cookie_token={cookie_token}', mys_id):
             ck = await PublicCookie.create(cookie=f'account_id={mys_id};cookie_token={cookie_token}')
             logger.info('原神Cookie', f'{ck.id}号公共cookie', None, '添加成功', True)
             await pck.finish(f'成功添加{ck.id}号公共cookie', at_sender=True)
         else:
             logger.info('原神Cookie', '公共cookie', None, '添加失败，cookie已失效', True)
-            await pck.finish('Cookie无效，请确认是否已过期\n获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1', at_sender=True)
+            await pck.finish('Cookie无效，请确认是否已过期\n获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1',
+                             at_sender=True)
     else:
         await pck.finish('获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1\n获取到后，用[添加公共ck cookie]指令添加',
                          at_sender=True)

@@ -46,6 +46,14 @@ class GachaLogInfo(BaseModel):
         '新手祈愿': [],
     }
 
+    def get_record_time(self) -> Dict[str, Tuple[datetime.datetime, datetime.datetime]]:
+        return {
+            '角色祈愿': (self.item_list['角色祈愿'][0].time, self.item_list['角色祈愿'][-1].time) if self.item_list['角色祈愿'] else (None, None),
+            '武器祈愿': (self.item_list['武器祈愿'][0].time, self.item_list['武器祈愿'][-1].time) if self.item_list['武器祈愿'] else (None, None),
+            '常驻祈愿': (self.item_list['常驻祈愿'][0].time, self.item_list['常驻祈愿'][-1].time) if self.item_list['常驻祈愿'] else (None, None),
+            '新手祈愿': (self.item_list['新手祈愿'][0].time, self.item_list['新手祈愿'][-1].time) if self.item_list['新手祈愿'] else (None, None)
+        }
+
     def get_statistics(self) -> Tuple[Dict[str, List[FiveStarItem]], Dict[str, FourStarItem],  Dict[str, int]]:
         gacha_data_five: Dict[str, List[FiveStarItem]] = {
             '角色祈愿': [],
