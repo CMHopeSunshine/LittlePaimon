@@ -1,5 +1,6 @@
 # main code from lulu: https://github.com/lulu666lulu
 import asyncio
+import contextlib
 import datetime
 import json
 import random
@@ -22,8 +23,8 @@ from LittlePaimon.utils.api import get_bind_game_info
 from LittlePaimon.utils.message import fullmatch_rule
 
 CN_DS_SALT = 'JwYDpKvLj6MrMqqYU6jTKF17KNO2PXoS'
-bind_tips = '绑定方法二选一：\n1.通过米游社扫码绑定：\n请发送指令[原神扫码绑定 uid]\n2.通过Cookie绑定：获取教程\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1\n获取后，使用[ysb cookie]指令绑定'
-bind_tips_web = '绑定方法二选一：\n1.通过米游社扫码绑定：\n请发送指令[原神扫码绑定 uid]\n2.通过Cookie绑定：获取教程\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1\n获取后，使用[ysb cookie]指令绑定或前往{cookie_web_url}网页添加绑定'
+bind_tips = '绑定方法二选一：\n1.通过米游社扫码绑定：\n请发送指令[原神扫码绑定]\n2.通过Cookie绑定：获取教程\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1\n获取后，使用[ysb cookie]指令绑定'
+bind_tips_web = '绑定方法二选一：\n1.通过米游社扫码绑定：\n请发送指令[原神扫码绑定]\n2.通过Cookie绑定：获取教程\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1\n获取后，使用[ysb cookie]指令绑定或前往{cookie_web_url}网页添加绑定'
 
 running_login_data = {}
 
@@ -139,7 +140,7 @@ async def _(event: MessageEvent):  # sourcery skip: use-fstring-for-concatenatio
 
 @scheduler.scheduled_job('cron', second='*/10', misfire_grace_time=10)
 async def check_qrcode():
-    try:
+    with contextlib.suppress(RuntimeError):
         for user_id, data in running_login_data.items():
             send_msg = None
             status_data = await check_login(data)
@@ -189,5 +190,3 @@ async def check_qrcode():
             if not running_login_data:
                 break
             await asyncio.sleep(1)
-    except RuntimeError:
-        pass
