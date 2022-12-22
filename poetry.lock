@@ -1128,6 +1128,29 @@ url = "https://pypi.tuna.tsinghua.edu.cn/simple"
 reference = "tsinghua"
 
 [[package]]
+name = "qrcode"
+version = "7.3.1"
+description = "QR Code image generator"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+colorama = {version = "*", markers = "platform_system == \"Windows\""}
+
+[package.extras]
+all = ["zest.releaser", "tox", "pytest", "pytest", "pytest-cov", "pillow"]
+dev = ["tox", "pytest"]
+maintainer = ["zest.releaser"]
+pil = ["pillow"]
+test = ["pytest", "pytest-cov"]
+
+[package.source]
+type = "legacy"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+reference = "tsinghua"
+
+[[package]]
 name = "requests"
 version = "2.28.1"
 description = "Python HTTP for Humans."
@@ -1679,7 +1702,7 @@ reference = "tsinghua"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "0698b5610a641bb5e546688b2fa039053ce981df14006652bf3ba2c60c3863f9"
+content-hash = "52e844c62959c2ed83ce37b58e50bb6be6bfd6bf734af15c9a6fccea9d813a34"
 
 [metadata.files]
 aiosqlite = [
@@ -2599,6 +2622,9 @@ pyyaml = [
     {file = "PyYAML-6.0-cp39-cp39-win32.whl", hash = "sha256:b5b9eccad747aabaaffbc6064800670f0c297e52c12754eb1d976c57e4f74dcb"},
     {file = "PyYAML-6.0-cp39-cp39-win_amd64.whl", hash = "sha256:b3d267842bf12586ba6c734f89d1f5b871df0273157918b0ccefa29deb05c21c"},
     {file = "PyYAML-6.0.tar.gz", hash = "sha256:68fb519c14306fec9720a2a5b45bc9f0c8d1b9c72adf45c37baedfcd949c35a2"},
+]
+qrcode = [
+    {file = "qrcode-7.3.1.tar.gz", hash = "sha256:375a6ff240ca9bd41adc070428b5dfc1dcfbb0f2507f1ac848f6cded38956578"},
 ]
 requests = [
     {file = "requests-2.28.1-py3-none-any.whl", hash = "sha256:8fefa2a1a1365bf5520aac41836fbee479da67864514bdb821f31ce07ce65349"},
