@@ -37,7 +37,7 @@ class MessageBuild:
               ) -> MessageSegment:
         """
         说明：
-            图片预处理并构造成MessageSegment
+        图片预处理并构造成MessageSegment
             :param img: 图片Image对象或图片路径
             :param size: 预处理尺寸
             :param crop: 预处理裁剪大小
@@ -66,7 +66,7 @@ class MessageBuild:
     @classmethod
     def Text(cls, text: str) -> MessageSegment:
         """
-            过滤文本中的敏感违禁词，并构造成MessageSegment
+        过滤文本中的敏感违禁词，并构造成MessageSegment
             :param text: 文本
             :return: MessageSegment.text
         """
@@ -79,7 +79,7 @@ class MessageBuild:
     @classmethod
     async def StaticRecord(cls, url: str) -> MessageSegment:
         """
-            从url中下载音频文件，并构造成MessageSegment，如果本地已有该音频文件，则直接读取本地文件
+        从url中下载音频文件，并构造成MessageSegment，如果本地已有该音频文件，则直接读取本地文件
             :param url: 语音url
             :return: MessageSegment.record
         """
@@ -134,7 +134,7 @@ def CommandPlayer(limit: int = 3, only_cn: bool = True) -> List[Player]:
             elif uid := await get_uid(event=event, user_id=user):
                 uids = [uid]
             else:
-                await matcher.finish('第一次查询请把uid给我哦', at_sender=True)
+                await matcher.finish('第一次查询请把UID加在指令后面', at_sender=True)
             extra_info = replace_all(extra_info, uids)
             for uid in uids:
                 query_list.append(Player(user_id=user, uid=uid))
@@ -152,8 +152,8 @@ def CommandPlayer(limit: int = 3, only_cn: bool = True) -> List[Player]:
 def CommandUID(only_cn: bool = True) -> str:
     """
     从消息中提取uid
-    :param only_cn: 是否只接受国服uid
-    :return: uid
+        :param only_cn: 是否只接受国服uid
+        :return: uid
     """
 
     async def _uid(event: MessageEvent, state: T_State, matcher: Matcher, msg: Message = CommandArg()):
@@ -165,7 +165,7 @@ def CommandUID(only_cn: bool = True) -> str:
         elif uid := await get_uid(event=event):
             uid = uid
         else:
-            await matcher.finish('第一次查询请把UID给我哦')
+            await matcher.finish('第一次查询请把UID加在指令后面')
         state['clear_msg'] = event.message.extract_plain_text().replace(uid, '')
         return uid
 
@@ -175,8 +175,8 @@ def CommandUID(only_cn: bool = True) -> str:
 def CommandCharacter(limit: int = 3) -> List[str]:
     """
     从命令中提取出原神的角色，需配合CommandUID使用
-    :param limit: 限制个数
-    :return: 角色名列表
+        :param limit: 限制个数
+        :return: 角色名列表
     """
 
     async def _character(matcher: Matcher, state: T_State, event: MessageEvent, msg: Message = CommandArg()):
@@ -229,7 +229,7 @@ def CommandObjectID() -> int:
     私聊->用户id
     群聊->群id
     频道->子频道id
-    :return: 对象id
+        :return: 对象id
     """
 
     def _event_id(event):
@@ -246,7 +246,7 @@ def CommandObjectID() -> int:
 def CommandSwitch() -> Optional[bool]:
     """
     获取消息中的开关类型，如果没有则返回None
-    :return: Optional[bool]
+        :return: Optional[bool]
     """
 
     def _switch(event: MessageEvent, msg: Message = CommandArg()):
@@ -281,7 +281,7 @@ def CommandLang() -> str:
 def CommandTime() -> Optional[Tuple[int, int]]:
     """
     获取消息中的小时:分钟格式时间元组，如果没有则返回None
-    :return: (小时, 分钟)
+        :return: (小时, 分钟)
     """
 
     def _datetime(msg: Message = CommandArg()):
@@ -297,10 +297,10 @@ async def get_uid(event: Optional[MessageEvent] = None, user_id: Optional[str] =
                   group_id: Optional[int] = None) -> Optional[str]:
     """
     根据event或者用户id获取uid
-    :param event: 消息事件
-    :param user_id: 用户id
-    :param group_id: 用户所在群id
-    :return: uid
+        :param event: 消息事件
+        :param user_id: 用户id
+        :param group_id: 用户所在群id
+        :return: uid
     """
     if event and not user_id:
         user_id = event.sender.user_id
@@ -327,9 +327,9 @@ async def get_uid(event: Optional[MessageEvent] = None, user_id: Optional[str] =
 def replace_all(raw_text: str, text_list: Union[str, list]) -> str:
     """
     删除字符串中指定的所有子字符串
-    :param raw_text: 原字符串
-    :param text_list: 待删除的子字符串
-    :return: 新字符串
+        :param raw_text: 原字符串
+        :param text_list: 待删除的子字符串
+        :return: 新字符串
     """
     if text_list:
         if isinstance(text_list, str):
@@ -342,9 +342,9 @@ def replace_all(raw_text: str, text_list: Union[str, list]) -> str:
 def check_time(time_stamp: float, days: int = 1):
     """
     检查时间戳是否在指定天数内
-    :param time_stamp: 时间戳
-    :param days: 天数
-    :return: True/False
+        :param time_stamp: 时间戳
+        :param days: 天数
+        :return: True/False
     """
     time_stamp = int(time_stamp)
     now = int(time.time())
@@ -354,8 +354,8 @@ def check_time(time_stamp: float, days: int = 1):
 async def recall_message(event: MessageEvent) -> bool:
     """
     撤回指定群消息（需管理员权限且权限大于发送者）
-    :param event: 消息事件
-    :return: 是否撤回成功
+        :param event: 消息事件
+        :return: 是否撤回成功
     """
     bot = get_bot(str(event.self_id))
     if not isinstance(event, GroupMessageEvent):
