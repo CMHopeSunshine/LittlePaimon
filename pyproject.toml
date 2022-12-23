@@ -35,6 +35,7 @@ amis-python = "^1.0.5"
 psutil = "^5.9.3"
 nonebot-plugin-apscheduler = "^0.2.0"
 playwright = "^1.27.1"
+qrcode = "^7.3.1"
 
 [tool.poetry.dev-dependencies]
 nb-cli = "^0.6.7"

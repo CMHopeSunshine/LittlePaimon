@@ -18,6 +18,7 @@ from LittlePaimon.utils.api import get_bind_game_info, get_stoken_by_login_ticke
 try:
     from .get_cookie import *
 except ImportError:
+    logger.info('原神绑定', '导入扫码绑定功能<r>失败</r>，请检查是否已安装<m>qrcode</m>库(运行<m>poetry run pip install qrcode</m>)')
     bind_tips = '获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1\n获取后，使用[ysb cookie]指令绑定'
     bind_tips_web = '获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1\n获取后，使用[ysb cookie]指令绑定或前往{cookie_web_url}网页添加绑定'
 

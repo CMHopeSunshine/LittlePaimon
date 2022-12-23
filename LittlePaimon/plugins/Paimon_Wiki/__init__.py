@@ -14,7 +14,7 @@ from nonebot.typing import T_State
 from LittlePaimon.database import PlayerAlias
 from LittlePaimon.utils import NICKNAME
 from LittlePaimon.config import config
-from LittlePaimon.utils.alias import get_match_alias
+from LittlePaimon.utils.alias import get_match_alias, WEAPON_TYPE_ALIAS, type_file, alias_file
 from LittlePaimon.utils.message import MessageBuild, fullmatch_rule
 from LittlePaimon.utils.path import RESOURCE_BASE_PATH
 from LittlePaimon.utils.tool import freq_limiter
@@ -22,9 +22,8 @@ from LittlePaimon.utils.typing import COMMAND_START_RE
 from .draw_daily_material import draw_material
 from .draw_map import init_map, draw_map, get_full_map
 from .SereniteaPot import draw_pot_materials
-from .card import get_match_card, get_card_resources
+from .Atlas import get_match_card, get_card_resources, get_match_specialty, get_all_specialty
 from .wiki_api import API
-
 
 __plugin_meta__ = PluginMetadata(
     name='原神Wiki',
@@ -38,9 +37,16 @@ __plugin_meta__ = PluginMetadata(
 )
 
 cancel = [HandleCancellation(f'好吧，有需要再找{NICKNAME}')]
+BASE_TYPE = ['角色', '天赋', '培养', '命座', '技能', '武器', '圣遗物', '原魔', '怪物', '七圣召唤', '原牌', '卡牌',
+             '特产', '材料']
+BASE_TYPE_RE = '(' + '|'.join(BASE_TYPE) + ')'
+IMG_TYPE = ['图鉴', '攻略', '材料', '参考面板', '收益曲线']
+IMG_TYPE_RE = '(' + '|'.join(IMG_TYPE) + ')'
+
+WIKI_RE = fr'{COMMAND_START_RE}(?P<name1>\w{{0,7}}?)(?P<type>{BASE_TYPE_RE}?{IMG_TYPE_RE})(?P<name2>\w{{0,7}})'
 
 total_wiki = on_regex(
-    COMMAND_START_RE + r'(?P<name1>\w{0,7})(?P<type>(材料|图鉴|攻略|参考面板|收益曲线))(?P<name2>\w{0,7})',
+    WIKI_RE,
     priority=12,
     block=True,
     state={
@@ -176,41 +182,27 @@ async def _(event: MessageEvent, msg: Message = CommandArg()):
 async def _(state: T_State, regex_dict: dict = RegexDict()):
     if regex_dict['name1'] and regex_dict['name2']:
         await total_wiki.finish()
-    name = regex_dict['name1'] or regex_dict['name2'] or ''
-    type = regex_dict.get('type')
-    if type == '材料':
-        if name.endswith(('角色', '天赋', '培养')):
-            state['type'] = '角色材料'
-            name = name[:-2]
-        elif name.endswith('武器'):
-            state['type'] = '武器图鉴'
-            name = name[:-2]
-        elif re.match(r'现在|[今明后][天日]|周[一二三四五六日]', name):
-            state['type'] = '每日材料'
-        else:
-            state['type'] = '材料'
-    elif type in {'图鉴', '攻略'}:
-        if name.endswith(('角色', '天赋', '命座', '技能')):
-            state['type'] = f'角色{type}'
-            name = name[:-2]
-        elif name.endswith('武器'):
-            state['type'] = '武器图鉴'
-            name = name[:-2]
-        elif name.endswith(('原魔', '怪物')):
-            state['type'] = '原魔图鉴'
-            name = name[:-2]
-        elif name.endswith('圣遗物'):
-            state['type'] = '圣遗物图鉴'
-            name = name[:-3]
-        elif name.endswith(('七圣召唤', '原牌', '卡牌', '七圣')):
-            state['type'] = '七圣召唤图鉴'
-            name = name.replace('七圣召唤', '').replace('原牌', '').replace('卡牌', '')
-        else:
-            state['type'] = type
-    else:
-        state['type'] = type
+    name: str = regex_dict['name1'] or regex_dict['name2'] or ''
+    type: str = regex_dict.get('type')
+    if type.startswith(('角色', '天赋', '培养', '命座', '技能')):
+        type = f'角色{type[2:]}'
+    elif type.startswith('武器'):
+        type = '武器图鉴'
+    elif type.startswith(('材料', '特产')) and type != '材料':
+        type = '特产图鉴'
+    elif type.startswith(('原魔', '怪物')):
+        type = '原魔图鉴'
+    elif type.startswith(('七圣召唤', '原牌', '卡牌')):
+        type = '七圣召唤图鉴'
+    if type.endswith('材料') and re.match(r'现在|[今明后][天日]|周[一二三四五六日]', name):
+        type = '每日材料'
+    elif type.endswith(('参考面板', '收益曲线')):
+        type = type[-4:]
+    state['type'] = type
     if name:
         state['name'] = Message(name)
+    elif type not in {'图鉴', '攻略', '材料'}:
+        state['name'] = Message('全部')
     state['times'] = 1
 
 
@@ -243,8 +235,17 @@ async def _(bot: Bot, event: MessageEvent, state: T_State, type: str = Arg('type
             await total_wiki.send('开始获取每日材料，请稍候...')
             await total_wiki.finish(await draw_material(str(event.user_id), week_str[day]), at_sender=True)
     else:
-        if type.startswith('角色') or type in {'参考面板', '收益曲线'}:
-            if alias := await PlayerAlias.get_or_none(user_id=str(event.user_id), alias=name):
+        matches = {}
+        if type == '参考面板' and name in {'火', '水', '冰', '雷', '风', '岩', '草'}:
+            await total_wiki.finish(MessageSegment.image(API[type].format(proxy=config.github_proxy, name=name)))
+        elif type.startswith('角色') or type in {'参考面板', '收益曲线'}:
+            if name == '全部':
+                matches = type_file['角色']['元素类型']
+            elif re.match('[火水冰雷风岩草](元素|属性)?', name):
+                matches = {'角色': type_file['角色']['元素类型'][name[0]]}
+            elif re.match('|'.join(WEAPON_TYPE_ALIAS.keys()), name):
+                matches = {'角色': type_file['角色']['武器类型'][WEAPON_TYPE_ALIAS[name]]}
+            elif alias := await PlayerAlias.get_or_none(user_id=str(event.user_id), alias=name):
                 final_name = alias.character
                 matches = {}
                 try:
@@ -254,15 +255,32 @@ async def _(bot: Bot, event: MessageEvent, state: T_State, type: str = Arg('type
                     await total_wiki.finish(
                         MessageBuild.Text(f'{final_name}的{type}发送失败，可能是网络问题或者不存在该资源'))
             else:
-                matches = get_match_alias(name, ['角色'])
-        elif type.startswith(('武器', '原魔')):
-            matches = get_match_alias(name, [type[:2]])
+                matches = get_match_alias(name, '角色')
+        elif type.startswith('武器'):
+            if name == '全部':
+                matches = type_file['武器']
+            elif re.match('|'.join(WEAPON_TYPE_ALIAS.keys()), name):
+                matches = {'武器': type_file['武器'][WEAPON_TYPE_ALIAS[name]]}
+            else:
+                matches = get_match_alias(name, '武器')
+        elif type.startswith('原魔'):
+            matches = {'原魔': alias_file['原魔']} if name == '全部' else get_match_alias(name, '原魔')
         elif type.startswith('圣遗物'):
-            matches = get_match_alias(name, ['圣遗物'])
+            matches = {'圣遗物': list(alias_file['圣遗物'].keys())} if name == '全部' else get_match_alias(name, '圣遗物')
         elif type.startswith('七圣召唤'):
-            matches = await get_match_card(name)
+            if name == '全部':
+                matches = await get_match_card(name)
+            else:
+                matches = {'七圣召唤': await get_match_card(name)}
+        elif type == '特产图鉴':
+            matches = {'特产': await get_match_specialty(name)}
         else:
-            if alias := await PlayerAlias.get_or_none(user_id=str(event.user_id), alias=name):
+            if re.match('[火水冰雷风岩草](元素|属性)?', name):
+                matches = {'角色': type_file['角色']['元素类型'][name[0]]}
+            elif re.match('|'.join(WEAPON_TYPE_ALIAS.keys()), name):
+                matches = {'角色': type_file['角色']['武器类型'][WEAPON_TYPE_ALIAS[name]],
+                           '武器': type_file['武器'][WEAPON_TYPE_ALIAS[name]]}
+            elif alias := await PlayerAlias.get_or_none(user_id=str(event.user_id), alias=name):
                 final_name = alias.character
                 if type in {'材料', '攻略', '图鉴'}:
                     type = f'角色{type}'
@@ -271,9 +289,12 @@ async def _(bot: Bot, event: MessageEvent, state: T_State, type: str = Arg('type
                         MessageSegment.image(API[type].format(proxy=config.github_proxy, name=final_name)))
                 except ActionFailed:
                     await total_wiki.finish(f'{final_name}的{type}发送失败，可能是网络问题或者不存在该资源')
-            matches = get_match_alias(name, ['角色', '武器', '原魔', '圣遗物'])
-            if m := await get_match_card(name):
-                matches['七圣召唤'] = m
+            else:
+                matches = get_match_alias(name, ['角色', '武器', '原魔', '圣遗物'])
+                if m := await get_match_card(name):
+                    matches['七圣召唤'] = m
+                if s := await get_match_specialty(name):
+                    matches['特产'] = s
         if not matches:
             await total_wiki.finish(MessageBuild.Text(f'没有名为{name}的{type}哦，是不是打错了~'), at_sender=True)
         elif len(matches) == 1 and len(list(matches.values())[0]) == 1:
@@ -288,13 +309,23 @@ async def _(bot: Bot, event: MessageEvent, state: T_State, type: str = Arg('type
                 await total_wiki.finish(f'{final_name}的{type}发送失败，可能是网络问题或者不存在该资源')
         else:
             send_flag = False
-            if sum(len(value) for value in matches.values()) >= 15 and isinstance(event, (PrivateMessageEvent, GroupMessageEvent)):
-                msg = [
-                    {'type': 'node',
-                     'data': {'name': NICKNAME, 'uin': event.self_id, 'content': f'{type}：\n' + '\n'.join(names)}}
-                    for type, names in matches.items()]
-                msg.insert(0, {'type': 'node', 'data': {'name': NICKNAME, 'uin': event.self_id, 'content': f'你要查询哪个的{type}呢？'}})
-                msg.append({'type': 'node', 'data': {'name': NICKNAME, 'uin': event.self_id, 'content': '回答\"序号\"查询或回答\"取消\"取消查询'}})
+            if sum(len(value) for value in matches.values()) >= 15 and isinstance(event, (
+                    PrivateMessageEvent, GroupMessageEvent)):
+                if len(matches) == 1:
+                    matches = {i: matches[list(matches.keys())[0]][i:i + 5] for i in
+                               range(0, len(matches[list(matches.keys())[0]]), 5)}
+                index = 1
+                msg = []
+                for key, value in matches.items():
+                    temp_msg = f'{key}:\n' if not isinstance(key, int) else ''
+                    for v in value:
+                        temp_msg += f'{index}.{v}\n'
+                        index += 1
+                    msg.append({'type': 'node', 'data': {'name': NICKNAME, 'uin': event.self_id, 'content': temp_msg}})
+                msg.insert(0, {'type': 'node',
+                               'data': {'name': NICKNAME, 'uin': event.self_id, 'content': f'你要查询哪个的{type}呢？'}})
+                msg.append({'type': 'node', 'data': {'name':    NICKNAME, 'uin': event.self_id,
+                                                     'content': '回答\"序号\"查询或回答\"取消\"取消查询'}})
                 try:
                     send_flag = True
                     if isinstance(event, GroupMessageEvent):

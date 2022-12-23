@@ -1,5 +1,5 @@
 from typing import Dict
-from .card import CARD_API
+from .Atlas import CARD_API
 
 API: Dict[str, str] = {
     '角色图鉴': '{proxy}https://raw.githubusercontent.com/CMHopeSunshine/GenshinWikiMap/master/results/character_map/{name}.jpg',
@@ -10,5 +10,6 @@ API: Dict[str, str] = {
     '武器图鉴': '{proxy}https://raw.githubusercontent.com/Nwflower/genshin-atlas/master/weapon/{name}.png',
     '圣遗物图鉴': '{proxy}https://raw.githubusercontent.com/Nwflower/genshin-atlas/master/artifact/{name}.png',
     '原魔图鉴': 'https://static.cherishmoon.fun/LittlePaimon/MonsterMaps/{name}.jpg',
+    '特产图鉴': '{proxy}https://raw.githubusercontent.com/Nwflower/genshin-atlas/master/specialty/{name}.png',
     '七圣召唤图鉴': CARD_API
 }

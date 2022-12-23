@@ -1,12 +1,30 @@
+import re
 from difflib import get_close_matches
 from typing import Union, Literal, List, Optional, Dict
 
 from .files import load_json
-from .path import JSON_DATA
+from .path import JSON_DATA, GACHA_RES
 
 alias_file = load_json(JSON_DATA / 'alias.json')
 info_file = load_json(JSON_DATA / 'genshin_info.json')
 weapon_file = load_json(JSON_DATA / 'weapon.json')
+item_type_file = load_json(GACHA_RES / 'type.json')
+type_file = load_json(JSON_DATA / '类型.json')
+
+WEAPON_TYPE_ALIAS = {
+    '单手剑': '单手剑',
+    '双手剑': '双手剑',
+    '大剑': '双手剑',
+    '长柄武器': '长柄武器',
+    '枪': '长柄武器',
+    '长枪': '长柄武器',
+    '长柄': '长柄武器',
+    '法器': '法器',
+    '法书': '法器',
+    '书': '法器',
+    '弓': '弓',
+    '弓箭': '弓'
+}
 
 
 def get_id_by_name(name: str) -> Optional[str]:
@@ -43,7 +61,10 @@ def get_alias_by_name(name: str) -> Optional[List[str]]:
     return next((r for r in name_list.values() if name in r), None)
 
 
-def get_match_alias(name: str, types: List[Literal['角色', '武器', '原魔', '圣遗物']] = None,
+ALIAS_TYPE = Literal['角色', '武器', '原魔', '圣遗物']
+
+
+def get_match_alias(name: str, types: Union[List[ALIAS_TYPE], ALIAS_TYPE] = None,
                     one_to_list: bool = False) -> Union[
     Dict[str, List[str]], List[str]]:
     """
@@ -55,6 +76,8 @@ def get_match_alias(name: str, types: List[Literal['角色', '武器', '原魔',
     """
     if types is None:
         types = ['角色']
+    elif isinstance(types, str):
+        types = [types]
     matches = {}
     for type in types:
         alias_list = alias_file[type]
@@ -63,13 +86,15 @@ def get_match_alias(name: str, types: List[Literal['角色', '武器', '原魔',
             if name.startswith(('风', '岩', '雷', '草', '水', '火', '冰')) and name.endswith(
                     ('主', '主角', '空', '荧', '旅行者')):
                 matches[type].append(name if name.endswith(('空', '荧')) else f'{name[0]}荧')
-                continue
-            for alias in alias_list.values():
-                if name in alias:
-                    matches[type].append(alias[0])
-                    break
-                if get_close_matches(name, alias, cutoff=0.6, n=3):
-                    matches[type].append(alias[0])
+            else:
+                for alias in alias_list.values():
+                    if name in alias:
+                        if len(types) == 1 and one_to_list:
+                            return [name]
+                        matches[type].append(alias[0])
+                        break
+                    if get_close_matches(name, alias, cutoff=0.6, n=3):
+                        matches[type].append(alias[0])
         elif type in {'武器', '圣遗物'}:
             for raw_name, alias in alias_list.items():
                 if name in alias:
@@ -103,6 +128,7 @@ def get_chara_icon(name: Optional[str] = None, chara_id: Optional[int] = None,
         side_icon = info['SideIconName']
     else:
         return None
+    # UI_AvatarIcon_Side_Wanderer
     if icon_type == 'side':
         return side_icon
     elif icon_type == 'avatar':
