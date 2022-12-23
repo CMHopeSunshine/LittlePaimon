@@ -16,7 +16,6 @@ from LittlePaimon.utils import NICKNAME
 from LittlePaimon.config import config
 from LittlePaimon.utils.alias import get_match_alias, WEAPON_TYPE_ALIAS, type_file, alias_file
 from LittlePaimon.utils.message import MessageBuild, fullmatch_rule
-from LittlePaimon.utils.path import RESOURCE_BASE_PATH
 from LittlePaimon.utils.tool import freq_limiter
 from LittlePaimon.utils.typing import COMMAND_START_RE
 from .draw_daily_material import draw_material
@@ -47,7 +46,7 @@ WIKI_RE = fr'{COMMAND_START_RE}(?P<name1>\w{{0,7}}?)(?P<type>{BASE_TYPE_RE}?{IMG
 
 total_wiki = on_regex(
     WIKI_RE,
-    priority=12,
+    priority=9,
     block=True,
     state={
         'pm_name':        '原神WIKI',
@@ -56,12 +55,12 @@ total_wiki = on_regex(
         'pm_usage':       '<对象名><图鉴|攻略|材料>',
         'pm_priority':    1
     })
-material_map = on_command('材料图鉴', priority=11, block=True, state={
-    'pm_name':        '材料图鉴',
-    'pm_description': '查看某个材料的介绍和采集点。',
-    'pm_usage':       '材料图鉴<材料名>[地图]',
-    'pm_priority':    2
-})
+# material_map = on_command('材料图鉴', priority=11, block=True, state={
+#     'pm_name':        '材料图鉴',
+#     'pm_description': '查看某个材料的介绍和采集点。',
+#     'pm_usage':       '材料图鉴<材料名>[地图]',
+#     'pm_priority':    2
+# })
 material_map_full = on_command('材料地图', priority=11, block=True, state={
     'pm_name':        '材料地图',
     'pm_description': '查看多个材料大地图采集点。\n示例：材料地图 鸣草 鬼兜虫 提瓦特',
@@ -90,38 +89,38 @@ card_wiki_list = on_command('七圣召唤列表', aliases={'七圣召唤卡牌�
     })
 
 
-@material_map.handle()
-async def _(event: MessageEvent, state: T_State, msg: Message = CommandArg()):
-    if params := msg.extract_plain_text().strip():
-        params = params.split(' ')
-        state['name'] = Message(params[0])
-        if len(params) > 1:
-            if params[1] in {'提瓦特', '层岩巨渊', '渊下宫'}:
-                state['map'] = params[1]
-        else:
-            state['map'] = Message('提瓦特')
-    else:
-        state['map'] = Message('提瓦特')
+# @material_map.handle()
+# async def _(event: MessageEvent, state: T_State, msg: Message = CommandArg()):
+#     if params := msg.extract_plain_text().strip():
+#         params = params.split(' ')
+#         state['name'] = Message(params[0])
+#         if len(params) > 1:
+#             if params[1] in {'提瓦特', '层岩巨渊', '渊下宫'}:
+#                 state['map'] = params[1]
+#         else:
+#             state['map'] = Message('提瓦特')
+#     else:
+#         state['map'] = Message('提瓦特')
 
 
-@material_map.got('map', prompt='地图名称有误，请在【提瓦特、层岩巨渊、渊下宫】中选择，或回答【取消】退出',
-                  parameterless=cancel)
-async def _(event: MessageEvent, state: T_State, map_: str = ArgPlainText('map')):
-    if map_ not in {'提瓦特', '层岩巨渊', '渊下宫'}:
-        await material_map.reject('地图名称有误，请在【提瓦特、层岩巨渊、渊下宫】中选择')
-    else:
-        state['map'] = Message(map_)
-
-
-@material_map.got('name', prompt='请输入要查询的材料名称，或回答【取消】退出',
-                  parameterless=cancel)
-async def _(event: MessageEvent, map_: str = ArgPlainText('map'), name: str = ArgPlainText('name')):
-    if (file_path := RESOURCE_BASE_PATH / 'genshin_map' / 'results' / f'{map_}_{name}.png').exists():
-        await material_map.finish(MessageSegment.image(file_path), at_sender=True)
-    else:
-        await material_map.send(MessageBuild.Text(f'开始查找{name}的资源点，请稍候...'))
-        result = await draw_map(name, map_)
-        await material_map.finish(result, at_sender=True)
+# @material_map.got('map', prompt='地图名称有误，请在【提瓦特、层岩巨渊、渊下宫】中选择，或回答【取消】退出',
+#                   parameterless=cancel)
+# async def _(event: MessageEvent, state: T_State, map_: str = ArgPlainText('map')):
+#     if map_ not in {'提瓦特', '层岩巨渊', '渊下宫'}:
+#         await material_map.reject('地图名称有误，请在【提瓦特、层岩巨渊、渊下宫】中选择')
+#     else:
+#         state['map'] = Message(map_)
+#
+#
+# @material_map.got('name', prompt='请输入要查询的材料名称，或回答【取消】退出',
+#                   parameterless=cancel)
+# async def _(event: MessageEvent, map_: str = ArgPlainText('map'), name: str = ArgPlainText('name')):
+#     if (file_path := RESOURCE_BASE_PATH / 'genshin_map' / 'results' / f'{map_}_{name}.png').exists():
+#         await material_map.finish(MessageSegment.image(file_path), at_sender=True)
+#     else:
+#         await material_map.send(MessageBuild.Text(f'开始查找{name}的资源点，请稍候...'))
+#         result = await draw_map(name, map_)
+#         await material_map.finish(result, at_sender=True)
 
 
 @material_map_full.handle()

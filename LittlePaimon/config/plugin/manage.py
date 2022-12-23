@@ -39,7 +39,8 @@ class PluginManager:
                                                                       '武器图鉴',
                                                                       '收益曲线', '角色材料', '角色攻略',
                                                                       '七圣召唤图鉴',
-                                                                      '角色图鉴'}]
+                                                                      '角色图鉴',
+                                                                      '材料图鉴'}]
 
     @classmethod
     def save(cls):
