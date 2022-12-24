@@ -114,8 +114,9 @@ async def _(event: MessageEvent, msg: Message = CommandArg()):
             if not game_info['list']:
                 await ysb.finish('该账号尚未绑定任何游戏，请确认账号无误~', at_sender=True)
             if not (
-            genshin_games := [{'uid': game['game_role_id'], 'nickname': game['nickname']} for game in game_info['list']
-                              if game['game_id'] == 2]):
+                    genshin_games := [{'uid': game['game_role_id'], 'nickname': game['nickname']} for game in
+                                      game_info['list']
+                                      if game['game_id'] == 2]):
                 await ysb.finish('该账号尚未绑定原神，请确认账号无误~', at_sender=True)
             await LastQuery.update_or_create(user_id=str(event.user_id),
                                              defaults={'uid':       genshin_games[0]['uid'],
@@ -136,11 +137,9 @@ async def _(event: MessageEvent, msg: Message = CommandArg()):
                 'Cookie无效，请确认是否已过期\n获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1',
                 at_sender=True)
     elif config.CookieWeb_enable:
-        await ysb.finish(
-            bind_tips.format(cookie_web_url=config.CookieWeb_url), at_sender=True)
+        await ysb.finish(bind_tips_web.format(cookie_web_url=config.CookieWeb_url), at_sender=True)
     else:
-        await ysb.finish('获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1\n获取后，使用[ysb cookie]指令绑定',
-                         at_sender=True)
+        await ysb.finish(bind_tips, at_sender=True)
 
 
 @ysbc.handle()

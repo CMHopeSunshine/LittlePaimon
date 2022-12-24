@@ -320,7 +320,7 @@ async def _(bot: Bot, event: MessageEvent, state: T_State, type: str = Arg('type
                     for v in value:
                         temp_msg += f'{index}.{v}\n'
                         index += 1
-                    msg.append({'type': 'node', 'data': {'name': NICKNAME, 'uin': event.self_id, 'content': temp_msg}})
+                    msg.append({'type': 'node', 'data': {'name': NICKNAME, 'uin': event.self_id, 'content': temp_msg.strip()}})
                 msg.insert(0, {'type': 'node',
                                'data': {'name': NICKNAME, 'uin': event.self_id, 'content': f'你要查询哪个的{type}呢？'}})
                 msg.append({'type': 'node', 'data': {'name':    NICKNAME, 'uin': event.self_id,
