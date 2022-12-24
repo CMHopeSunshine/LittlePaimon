@@ -90,7 +90,7 @@ def get_match_alias(name: str, types: Union[List[ALIAS_TYPE], ALIAS_TYPE] = None
                 for alias in alias_list.values():
                     if name in alias:
                         if len(types) == 1 and one_to_list:
-                            return [name]
+                            return [alias[0]]
                         matches[type].append(alias[0])
                         break
                     if get_close_matches(name, alias, cutoff=0.6, n=3):
