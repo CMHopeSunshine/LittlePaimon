@@ -61,7 +61,7 @@ total_wiki = on_regex(
 #     'pm_usage':       '材料图鉴<材料名>[地图]',
 #     'pm_priority':    2
 # })
-material_map_full = on_command('材料地图', priority=11, block=True, state={
+material_map_full = on_command('材料地图', priority=8, block=True, state={
     'pm_name':        '材料地图',
     'pm_description': '查看多个材料大地图采集点。\n示例：材料地图 鸣草 鬼兜虫 提瓦特',
     'pm_usage':       '材料地图<材料名列表>[地图]',
