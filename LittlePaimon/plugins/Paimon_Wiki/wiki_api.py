@@ -5,7 +5,7 @@ API: Dict[str, str] = {
     '角色图鉴': '{proxy}https://raw.githubusercontent.com/CMHopeSunshine/GenshinWikiMap/master/results/character_map/{name}.jpg',
     '角色攻略': '{proxy}https://raw.githubusercontent.com/CMHopeSunshine/LittlePaimonRes/main/genshin_guide/guide/{name}.jpg',
     '角色材料': '{proxy}https://raw.githubusercontent.com/Nwflower/genshin-atlas/master/material%20for%20role/{name}.png',
-    '收益曲线': 'https://static.cherishmoon.fun/LittlePaimon/blue/{name}.jpg',
+    '收益曲线': '{proxy}https://raw.githubusercontent.com/CMHopeSunshine/LittlePaimonRes/main/genshin_guide/curve/{name}.jpg',
     '参考面板': '{proxy}https://raw.githubusercontent.com/CMHopeSunshine/LittlePaimonRes/main/genshin_guide/panel/{name}.jpg',
     '武器图鉴': '{proxy}https://raw.githubusercontent.com/Nwflower/genshin-atlas/master/weapon/{name}.png',
     '圣遗物图鉴': '{proxy}https://raw.githubusercontent.com/Nwflower/genshin-atlas/master/artifact/{name}.png',

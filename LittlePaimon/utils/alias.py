@@ -84,8 +84,10 @@ def get_match_alias(name: str, types: Union[List[ALIAS_TYPE], ALIAS_TYPE] = None
         matches[type] = []
         if type == '角色':
             if name.startswith(('风', '岩', '雷', '草', '水', '火', '冰')) and name.endswith(
-                    ('主', '主角', '空', '荧', '旅行者')):
-                matches[type].append(name if name.endswith(('空', '荧')) else f'{name[0]}荧')
+                    ('主', '主角', '旅行者')):
+                matches[type].append(f'旅行者{name[0]}')
+            elif name.startswith('旅行者') and name.endswith(('风', '岩', '雷', '草', '水', '火', '冰')):
+                matches[type].append(name)
             else:
                 for alias in alias_list.values():
                     if name in alias:
