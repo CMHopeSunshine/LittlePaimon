@@ -240,9 +240,9 @@ async def _(bot: Bot, event: MessageEvent, state: T_State, type: str = Arg('type
         elif type.startswith('角色') or type in {'参考面板', '收益曲线'}:
             if name == '全部':
                 matches = type_file['角色']['元素类型']
-            elif re.match('[火水冰雷风岩草](元素|属性)?', name):
+            elif re.match('^[火水冰雷风岩草](元素|属性|系)?$', name):
                 matches = {'角色': type_file['角色']['元素类型'][name[0]]}
-            elif re.match('|'.join(WEAPON_TYPE_ALIAS.keys()), name):
+            elif re.match('^' + '|'.join(WEAPON_TYPE_ALIAS.keys()) + '$', name):
                 matches = {'角色': type_file['角色']['武器类型'][WEAPON_TYPE_ALIAS[name]]}
             elif alias := await PlayerAlias.get_or_none(user_id=str(event.user_id), alias=name):
                 final_name = alias.character
@@ -258,7 +258,7 @@ async def _(bot: Bot, event: MessageEvent, state: T_State, type: str = Arg('type
         elif type.startswith('武器'):
             if name == '全部':
                 matches = type_file['武器']
-            elif re.match('|'.join(WEAPON_TYPE_ALIAS.keys()), name):
+            elif re.match('^' + '|'.join(WEAPON_TYPE_ALIAS.keys()) + '$', name):
                 matches = {'武器': type_file['武器'][WEAPON_TYPE_ALIAS[name]]}
             else:
                 matches = get_match_alias(name, '武器')
@@ -274,9 +274,9 @@ async def _(bot: Bot, event: MessageEvent, state: T_State, type: str = Arg('type
         elif type == '特产图鉴':
             matches = {'特产': await get_match_specialty(name)}
         else:
-            if re.match('[火水冰雷风岩草](元素|属性)?', name):
+            if re.match('^[火水冰雷风岩草](元素|属性|系)?$', name):
                 matches = {'角色': type_file['角色']['元素类型'][name[0]]}
-            elif re.match('|'.join(WEAPON_TYPE_ALIAS.keys()), name):
+            elif re.match('^' + '|'.join(WEAPON_TYPE_ALIAS.keys()) + '$', name):
                 matches = {'角色': type_file['角色']['武器类型'][WEAPON_TYPE_ALIAS[name]],
                            '武器': type_file['武器'][WEAPON_TYPE_ALIAS[name]]}
             elif alias := await PlayerAlias.get_or_none(user_id=str(event.user_id), alias=name):
