@@ -85,7 +85,7 @@ async def draw_daily_note_card(data, uid):
     left_day = (abyss_new - now).days
     total_day = (abyss_new - abyss_now).days
     await bg_img.text(f"{left_day}/{total_day}", 337, 1358, fm.get('number.ttf', 48), 'white')
-    await bg_img.text(f"本期深渊还有{total_day}天结束",
+    await bg_img.text(f"本期深渊还有{left_day}天结束",
                       745, 1358, fm.get('优设标题黑.ttf', 40), 'white')
     await bg_img.draw_ring(percent=left_day / total_day, pos=(100, 1249), size=(266, 266), width=0.18,
                            colors=['#507bd0', '#FFFFFF'])
