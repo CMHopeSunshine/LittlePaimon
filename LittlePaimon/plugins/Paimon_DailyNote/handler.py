@@ -90,7 +90,7 @@ async def check_note():
         if sub.today_remind_num <= limit_num and (
                 sub.last_remind_time is None or (sub.last_remind_time is not None and (
                 sub.last_remind_time + datetime.timedelta(minutes=30) <= datetime.datetime.now().replace(
-                tzinfo=pytz.timezone('UTC'))))):
+                tzinfo=pytz.timezone('Asia/Shanghai'))))):
             data = await get_mihoyo_private_data(sub.uid, str(sub.user_id), 'daily_note')
             if isinstance(data, str):
                 logger.info('原神实时便签', '➤', {'用户': sub.user_id, 'UID': sub.uid}, 'Cookie未绑定或已失效，删除任务', False)
