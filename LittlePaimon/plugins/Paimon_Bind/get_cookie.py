@@ -6,15 +6,19 @@ import json
 import random
 import time
 import uuid
+import base64
 from hashlib import md5
 from io import BytesIO
 from string import ascii_letters
 from string import digits
 
 import qrcode
-from nonebot import on_command, get_bot
+from fastapi import FastAPI
+from fastapi.responses import StreamingResponse
+from nonebot import on_command, get_bot, get_app
 from nonebot.adapters.onebot.v11 import Bot, MessageSegment, MessageEvent, GroupMessageEvent
 
+from LittlePaimon.config import config
 from LittlePaimon.database.models import PrivateCookie, LastQuery
 from LittlePaimon.utils import NICKNAME
 from LittlePaimon.utils.requests import aiorequests
@@ -75,7 +79,7 @@ def generate_qrcode(url):
     img = qr.make_image(fill_color='black', back_color='white')
     bio = BytesIO()
     img.save(bio)
-    return MessageSegment.image(bio)
+    return f'base64://{base64.b64encode(bio.getvalue()).decode()}'
 
 
 async def create_login_data():
@@ -124,7 +128,9 @@ async def _(event: MessageEvent):  # sourcery skip: use-fstring-for-concatenatio
         await qrcode_bind.finish('你已经在绑定中了，请扫描上一次的二维码')
     login_data = await create_login_data()
     running_login_data[str(event.user_id)] = login_data
-    img = generate_qrcode(login_data['url'])
+    img_b64 = generate_qrcode(login_data['url'])
+    running_login_data[str(event.user_id)]['img_b64'] = img_b64
+    img = f'二维码链接：{config.CookieWeb_url}/qrcode?user_id={event.user_id}' if config.CookieWeb_enable else MessageSegment.image(img_b64)
     msg_data = await qrcode_bind.send(
         img + f'\n请在3分钟内使用米游社扫码并确认进行绑定。\n注意：1.扫码即代表你同意将Cookie信息授权给{NICKNAME}\n2.扫码时会提示登录原神，实际不会把你顶掉原神\n3.其他人请不要乱扫，否则会将你的账号绑到TA身上！',
         at_sender=True)
@@ -190,3 +196,14 @@ async def check_qrcode():
             if not running_login_data:
                 break
             await asyncio.sleep(1)
+
+
+app: FastAPI = get_app()
+
+
+@app.get('/LittlePaimon/cookie/qrcode')
+async def qrcode_img_url(user_id: str):
+    if user_id not in running_login_data:
+        return {'status': 'error', 'msg': '二维码不存在'}
+    img_base64 = running_login_data[user_id]['img_b64'].lstrip('base64://')
+    return StreamingResponse(BytesIO(base64.b64decode(img_base64)), media_type='image/png')
