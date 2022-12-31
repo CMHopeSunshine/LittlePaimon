@@ -43,7 +43,7 @@ async def get_match_specialty(name: str) -> Optional[list]:
         resp = await aiorequests.get(SPECIALTY_RESOURCES_API.format(proxy=config.github_proxy))
         data = resp.json()['specialty']
         return (
-            difflib.get_close_matches(name, data, cutoff=0.6, n=10)
+            difflib.get_close_matches(name, list(data.keys()), cutoff=0.6, n=10)
             if name != '全部'
             else list(data.keys())
         )

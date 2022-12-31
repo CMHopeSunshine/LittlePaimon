@@ -269,10 +269,10 @@ async def _(bot: Bot, event: MessageEvent, state: T_State, type: str = Arg('type
         elif type.startswith('七圣召唤'):
             if name == '全部':
                 matches = await get_match_card(name)
-            else:
-                matches = {'七圣召唤': await get_match_card(name)}
-        elif type == '特产图鉴':
-            matches = {'特产': await get_match_specialty(name)}
+            elif c := await get_match_card(name):
+                matches = {'七圣召唤': c}
+        elif type == '特产图鉴' and (s := await get_match_specialty(name)):
+            matches = {'特产': s}
         else:
             if re.match('^[火水冰雷风岩草](元素|属性|系)?$', name):
                 matches = {'角色': type_file['角色']['元素类型'][name[0]]}
@@ -374,7 +374,7 @@ async def _(state: T_State, matches: dict = Arg('matches'), choice: str = ArgPla
         except ActionFailed:
             await total_wiki.finish(f'{final_name}的{type}发送失败，可能是网络问题或者不存在该资源')
     elif state['times'] == 2:
-        await total_wiki.finish(f'旅行者似乎不太能理解，下次再问我吧{MessageSegment.face(146)}')
+        await total_wiki.finish('旅行者似乎不太能理解，下次再问我吧' + MessageSegment.face(146))
     else:
         state['times'] = state['times'] + 1
         await total_wiki.reject(f'请旅行者从上面的{type}中选一个问{NICKNAME}或回答\"取消\"可以取消查询', at_sender=True)
