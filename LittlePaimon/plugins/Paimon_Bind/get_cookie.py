@@ -132,16 +132,20 @@ async def _(event: MessageEvent):  # sourcery skip: use-fstring-for-concatenatio
     running_login_data[str(event.user_id)] = login_data
     img_b64 = generate_qrcode(login_data['url'])
     running_login_data[str(event.user_id)]['img_b64'] = img_b64
-    imgurl = f'二维码链接：{config.CookieWeb_url}/qrcode?user_id={event.user_id}' if config.CookieWeb_enable else MessageSegment.image(img_b64)
+    imgurl = f'二维码链接：{config.CookieWeb_url}/qrcode?user_id={event.user_id}'
     img = generate_qrcode(login_data['url'])
     if config.qrcode_enable:
         msg_data = await qrcode_bind.send(
             img + f'\n请在3分钟内使用米游社扫码并确认进行绑定。\n注意：1.扫码即代表你同意将Cookie信息授权给{NICKNAME}\n2.扫码时会提示登录原神，实际不会把你顶掉原神\n3.其他人请不要乱扫，否则会将你的账号绑到TA身上！',
             at_sender=True)
     else:
-        msg_data = await qrcode_bind.send(
-            imgurl + f'\n请在3分钟内使用米游社扫码并确认进行绑定。\n注意：1.扫码即代表你同意将Cookie信息授权给{NICKNAME}\n2.扫码时会提示登录原神，实际不会把你顶掉原神\n3.其他人请不要乱扫，否则会将你的账号绑到TA身上！',
-            at_sender=True)
+        if config.CookieWeb_enable:
+            msg_data = await qrcode_bind.send(
+                imgurl + f'\n请在3分钟内使用米游社扫码并确认进行绑定。\n注意：1.扫码即代表你同意将Cookie信息授权给{NICKNAME}\n2.扫码时会提示登录原神，实际不会把你顶掉原神\n3.其他人请不要乱扫，否则会将你的账号绑到TA身上！',
+                at_sender=True)
+        else:
+            await qrcode_bind.send(f'{NICKNAME}尚未开启CookieWeb或二维码发送，请联系超级管理员在后台开启后再使用吧',at_sender=True)
+
     running_login_data[str(event.user_id)]['msg_id'] = msg_data['message_id']
     if isinstance(event, GroupMessageEvent):
         running_login_data[str(event.user_id)]['group_id'] = event.group_id
