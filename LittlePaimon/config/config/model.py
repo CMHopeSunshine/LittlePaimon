@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field
 class ConfigModel(BaseModel):
     CookieWeb_enable: bool = Field(True, alias='启用CookieWeb')
     CookieWeb_url: str = Field('http://127.0.0.1:13579/LittlePaimon/cookie', alias='CookieWeb地址')
+    qrcode_bind_use_url: bool = Field(False, alias='绑定二维码以链接形式发送')
 
     sim_gacha_cd_group: int = Field(30, alias='模拟抽卡群冷却')
     sim_gacha_cd_member: int = Field(60, alias='模拟抽卡群员冷却')

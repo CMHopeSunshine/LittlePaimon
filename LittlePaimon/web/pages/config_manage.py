@@ -285,6 +285,14 @@ other_form = Form(
             onText='所有人',
             offText='仅超级用户'
         ),
+        Switch(
+            label='原神绑定二维码发送形式',
+            name='绑定二维码以链接形式发送',
+            value='${绑定二维码以链接形式发送}',
+            labelRemark=Remark(shape='circle', content='选择原神绑定二维码的发送形式(直接图片发送或者链接形式发送)'),
+            onText='链接',
+            offText='图片'
+        ),
         InputNumber(
             label='原神猜语音时间',
             name='原神猜语音时间',

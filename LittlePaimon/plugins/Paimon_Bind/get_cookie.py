@@ -130,7 +130,7 @@ async def _(event: MessageEvent):  # sourcery skip: use-fstring-for-concatenatio
     running_login_data[str(event.user_id)] = login_data
     img_b64 = generate_qrcode(login_data['url'])
     running_login_data[str(event.user_id)]['img_b64'] = img_b64
-    img = f'二维码链接：{config.CookieWeb_url}/qrcode?user_id={event.user_id}' if config.CookieWeb_enable else MessageSegment.image(img_b64)
+    img = f'二维码链接：{config.CookieWeb_url}/qrcode?user_id={event.user_id}' if config.qrcode_bind_use_url else MessageSegment.image(img_b64)
     msg_data = await qrcode_bind.send(
         img + f'\n请在3分钟内使用米游社扫码并确认进行绑定。\n注意：1.扫码即代表你同意将Cookie信息授权给{NICKNAME}\n2.扫码时会提示登录原神，实际不会把你顶掉原神\n3.其他人请不要乱扫，否则会将你的账号绑到TA身上！',
         at_sender=True)
@@ -203,6 +203,8 @@ app: FastAPI = get_app()
 
 @app.get('/LittlePaimon/cookie/qrcode')
 async def qrcode_img_url(user_id: str):
+    if not config.qrcode_bind_use_url:
+        return {'status': 'error', 'msg': '请在QQ内查看二维码'}
     if user_id not in running_login_data:
         return {'status': 'error', 'msg': '二维码不存在'}
     img_base64 = running_login_data[user_id]['img_b64'].lstrip('base64://')
