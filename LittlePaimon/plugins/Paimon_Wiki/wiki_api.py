@@ -9,7 +9,7 @@ API: Dict[str, str] = {
     '参考面板': '{proxy}https://raw.githubusercontent.com/CMHopeSunshine/LittlePaimonRes/main/genshin_guide/panel/{name}.jpg',
     '武器图鉴': '{proxy}https://raw.githubusercontent.com/Nwflower/genshin-atlas/master/weapon/{name}.png',
     '圣遗物图鉴': '{proxy}https://raw.githubusercontent.com/Nwflower/genshin-atlas/master/artifact/{name}.png',
-    '原魔图鉴': 'https://static.cherishmoon.fun/LittlePaimon/MonsterMaps/{name}.jpg',
+    '原魔图鉴': '{proxy}https://raw.githubusercontent.com/CMHopeSunshine/GenshinWikiMap/master/results/monster_map/{name}.jpg',
     '特产图鉴': '{proxy}https://raw.githubusercontent.com/Nwflower/genshin-atlas/master/specialty/{name}.png',
     '七圣召唤图鉴': CARD_API
 }

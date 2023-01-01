@@ -97,7 +97,7 @@ def get_match_alias(name: str, types: Union[List[ALIAS_TYPE], ALIAS_TYPE] = None
                         break
                     if get_close_matches(name, alias, cutoff=0.6, n=3):
                         matches[type].append(alias[0])
-        elif type in {'武器', '圣遗物'}:
+        elif type in {'武器', '圣遗物', '原魔'}:
             for raw_name, alias in alias_list.items():
                 if name in alias:
                     matches[type].append(raw_name)
@@ -105,8 +105,8 @@ def get_match_alias(name: str, types: Union[List[ALIAS_TYPE], ALIAS_TYPE] = None
                 else:
                     if get_close_matches(name, alias, cutoff=0.6, n=3):
                         matches[type].append(raw_name)
-        elif type == '原魔':
-            matches[type] = get_close_matches(name, alias_list, cutoff=0.4, n=5)
+        # elif type == '原魔':
+        #     matches[type] = get_close_matches(name, alias_list, cutoff=0.4, n=5)
         if not matches[type]:
             del matches[type]
     if one_to_list and len(matches) == 1:

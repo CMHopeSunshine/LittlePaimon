@@ -263,7 +263,7 @@ async def _(bot: Bot, event: MessageEvent, state: T_State, type: str = Arg('type
             else:
                 matches = get_match_alias(name, '武器')
         elif type.startswith('原魔'):
-            matches = {'原魔': alias_file['原魔']} if name == '全部' else get_match_alias(name, '原魔')
+            matches = {'原魔': list(alias_file['原魔'].keys())} if name == '全部' else get_match_alias(name, '原魔')
         elif type.startswith('圣遗物'):
             matches = {'圣遗物': list(alias_file['圣遗物'].keys())} if name == '全部' else get_match_alias(name, '圣遗物')
         elif type.startswith('七圣召唤'):
