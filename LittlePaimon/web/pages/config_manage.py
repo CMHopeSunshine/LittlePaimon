@@ -285,6 +285,14 @@ other_form = Form(
             onText='所有人',
             offText='仅超级用户'
         ),
+        Switch(
+            label='扫码绑定网页开关',
+            name='扫码绑定网页开关',
+            value='${扫码绑定网页开关}',
+            labelRemark=Remark(shape='circle', content='开启后将直接发送二维码，关闭后将以链接的方式发送'),
+            onText='二维码',
+            offText='链接'
+        ),
         InputNumber(
             label='原神猜语音时间',
             name='原神猜语音时间',

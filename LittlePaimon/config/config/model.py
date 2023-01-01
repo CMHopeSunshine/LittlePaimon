@@ -38,6 +38,8 @@ class ConfigModel(BaseModel):
 
     screenshot_enable: bool = Field(False, alias='启用网页截图权限')
 
+    qrcode_enable: bool = Field(True, alias='扫码绑定网页开关')
+
     guess_voice_time: int = Field(30, alias='原神猜语音时间')
 
     admin_enable: bool = Field(True, alias='启用Web端')
