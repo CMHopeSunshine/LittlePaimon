@@ -187,6 +187,8 @@ async def _(state: T_State, regex_dict: dict = RegexDict()):
         type = f'角色{type[2:]}'
     elif type.startswith('武器'):
         type = '武器图鉴'
+    elif type.startswith('圣遗物'):
+        type = '圣遗物图鉴'
     elif type.startswith(('材料', '特产')) and type != '材料':
         type = '特产图鉴'
     elif type.startswith(('原魔', '怪物')):
@@ -295,7 +297,8 @@ async def _(bot: Bot, event: MessageEvent, state: T_State, type: str = Arg('type
                 if s := await get_match_specialty(name):
                     matches['特产'] = s
         if not matches:
-            await total_wiki.finish(MessageBuild.Text(f'没有名为{name}的{type}哦，是不是打错了~'), at_sender=True)
+            # await total_wiki.finish(MessageBuild.Text(f'没有名为{name}的{type}哦，是不是打错了~'), at_sender=True)
+            await total_wiki.finish()
         elif len(matches) == 1 and len(list(matches.values())[0]) == 1:
             final_name = list(matches.values())[0][0]
             temp_type = list(matches.keys())[0]
