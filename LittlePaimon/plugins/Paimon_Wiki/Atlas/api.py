@@ -8,7 +8,7 @@ from LittlePaimon.utils.requests import aiorequests
 
 CARD_RESOURCES_API = '{proxy}https://raw.githubusercontent.com/Nwflower/Atlas/master/resource/text/card.yaml'
 CARD_API = '{proxy}https://raw.githubusercontent.com/Nwflower/genshin-atlas/master/card/{name}.png'
-SPECIALTY_RESOURCES_API = '{proxy}https://raw.githubusercontent.com/Nwflower/genshin-atlas/master/path.json'
+RESOURCES_API = '{proxy}https://raw.githubusercontent.com/Nwflower/genshin-atlas/master/path.json'
 
 
 async def get_card_resources() -> Optional[dict]:
@@ -18,6 +18,14 @@ async def get_card_resources() -> Optional[dict]:
         data.pop('召唤')
         return data
     return None
+
+
+async def get_atlas_full_path(name: str, type: str) -> str:
+    with contextlib.suppress(Exception):
+        resp = await aiorequests.get(RESOURCES_API.format(proxy=config.github_proxy))
+        data = resp.json()
+        return data[type][name]
+    return name
 
 
 async def get_match_card(name: str) -> Optional[list]:
@@ -33,14 +41,14 @@ async def get_match_card(name: str) -> Optional[list]:
 
 async def get_all_specialty() -> Optional[list]:
     with contextlib.suppress(Exception):
-        resp = await aiorequests.get(SPECIALTY_RESOURCES_API.format(proxy=config.github_proxy))
+        resp = await aiorequests.get(RESOURCES_API.format(proxy=config.github_proxy))
         return resp.json()['specialty'].keys()
     return None
 
 
 async def get_match_specialty(name: str) -> Optional[list]:
     with contextlib.suppress(Exception):
-        resp = await aiorequests.get(SPECIALTY_RESOURCES_API.format(proxy=config.github_proxy))
+        resp = await aiorequests.get(RESOURCES_API.format(proxy=config.github_proxy))
         data = resp.json()['specialty']
         return (
             difflib.get_close_matches(name, list(data.keys()), cutoff=0.6, n=10)
