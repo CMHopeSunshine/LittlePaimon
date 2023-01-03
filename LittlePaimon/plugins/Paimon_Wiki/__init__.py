@@ -21,7 +21,7 @@ from LittlePaimon.utils.typing import COMMAND_START_RE
 from .draw_daily_material import draw_material
 from .draw_map import init_map, draw_map, get_full_map
 from .SereniteaPot import draw_pot_materials
-from .Atlas import get_match_card, get_card_resources, get_match_specialty, get_all_specialty
+from .Atlas import get_match_card, get_card_resources, get_match_specialty, get_all_specialty, get_atlas_full_path
 from .wiki_api import API
 
 __plugin_meta__ = PluginMetadata(
@@ -304,6 +304,8 @@ async def _(bot: Bot, event: MessageEvent, state: T_State, type: str = Arg('type
             temp_type = list(matches.keys())[0]
             if type in {'材料', '攻略', '图鉴'}:
                 type = f'{temp_type}图鉴' if temp_type != '角色' else f'{temp_type}{type}'
+            if type == '七圣召唤图鉴':
+                final_name = (await get_atlas_full_path(final_name, 'card')).replace('/card/', '').rstrip('.png')
             try:
                 await total_wiki.finish(
                     MessageSegment.image(API[type].format(proxy=config.github_proxy, name=final_name)))
@@ -371,6 +373,8 @@ async def _(state: T_State, matches: dict = Arg('matches'), choice: str = ArgPla
                 type = f'{key}图鉴' if key != '角色' else f'{key}{type}'
             break
     if final_name:
+        if type == '七圣召唤图鉴':
+            final_name = (await get_atlas_full_path(final_name, 'card')).replace('/card/', '').rstrip('.png')
         try:
             await total_wiki.finish(
                 MessageSegment.image(API[type].format(proxy=config.github_proxy, name=final_name)))
