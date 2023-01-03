@@ -17,7 +17,7 @@ __plugin_meta__ = PluginMetadata(
     }
 )
 
-post_screenshot = on_regex(r'(https://)?(m\.)?bbs.mihoyo.com/.+/article/\d+', priority=20, block=False, state={
+post_screenshot = on_regex(r'(https://)?((m\.)?bbs.mihoyo|www.miyoushe).com/.+/article/\d+', priority=20, block=False, state={
     'pm_name':        '米游社帖子截图',
     'pm_description': '(被动技能)自动对消息中的米游社帖子链接内容进行截图发送',
     'pm_usage':       '米游社帖子截图',
