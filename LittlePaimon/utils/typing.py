@@ -9,20 +9,21 @@ except ImportError:
 
 from . import DRIVER
 
+need_escape = {'.', '^', '$', '*', '+', '?', '[', ']', '|', '{', '}', '(', ')', '\\'}
+
 command_start = list(DRIVER.config.command_start)
-if len(command_start) == 1 and command_start[0] == '':
-    COMMAND_START_RE = '^'
-elif '' in command_start:
-    command_start.remove('')
-    COMMAND_START_RE = '^(' + '|'.join(command_start) + ')?'
-else:
-    COMMAND_START_RE = '^(' + '|'.join(command_start) + ')'
+command_start_new = [(f'\\{c}' if c in need_escape else c) for c in command_start if c != '']
+COMMAND_START_RE = (
+    '^(' + '|'.join(command_start_new) + ')' if command_start_new else '^'
+)
+if '' in command_start:
+    COMMAND_START_RE += '?'
 
 
 ElementType = Literal['火', '水', '冰', '雷', '风', '岩', '草', '物理']
 WeaponType = Literal['单手剑', '双手剑', '长柄武器', '弓', '法器']
 DataSourceType = Literal['mihoyo', 'enka']
-RegionType = Literal['蒙德', '璃月', '稻妻', '须弥', '枫丹', '纳塔', '至冬']
+RegionType = Literal['蒙德', '璃月', '稻妻', '须弥', '枫丹', '纳塔', '至冬', '其它']
 TalentType = Literal['name', 'level', 'icon']
 ConstellationType = Literal['name', 'icon']
 EquipType = Literal['name', 'value']
