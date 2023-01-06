@@ -5,7 +5,7 @@ from pydantic import BaseModel, validator
 
 class Member(BaseModel):
     star: int
-    attr: str
+    avatar: str
     name: str
 
 
