@@ -33,7 +33,7 @@ async def ChatRule(event: GroupMessageEvent, state: T_State) -> bool:
     return False
 
 
-learning_chat = on_message(priority=99, block=False, rule=Rule(ChatRule), permission=GROUP, state={
+learning_chat = on_message(priority=95, block=True, rule=Rule(ChatRule), permission=GROUP, state={
     'pm_name':        '群聊学习',
     'pm_description': '(被动技能)bot会学习群友们的发言',
     'pm_usage':       '群聊学习',
