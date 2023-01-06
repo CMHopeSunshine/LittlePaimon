@@ -16,7 +16,7 @@ command_start_new = [(f'\\{c}' if c in need_escape else c) for c in command_star
 COMMAND_START_RE = (
     '^(' + '|'.join(command_start_new) + ')' if command_start_new else '^'
 )
-if '' in command_start:
+if command_start_new and '' in command_start:
     COMMAND_START_RE += '?'
 
 
