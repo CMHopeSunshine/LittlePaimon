@@ -54,7 +54,8 @@ async def draw_help(plugin_list: List[PluginInfo]):
         await img.text(plugin.name, 63, height_now + 5, fm.get('SourceHanSerifCN-Bold.otf', 30), 'white')
         height_now += plugin_line.height + 11
         if plugin.matchers:
-            matcher_groups = [plugin.matchers[i:i + 3] for i in range(0, len(plugin.matchers), 3)]
+            matchers = [matcher for matcher in plugin.matchers if matcher.pm_show and matcher.pm_usage]
+            matcher_groups = [matchers[i:i + 3] for i in range(0, len(matchers), 3)]
             for matcher_group in matcher_groups:
                 max_length = max(len(matcher.pm_description) if matcher.pm_description else 0 for matcher in matcher_group)
                 max_height = math.ceil(max_length / 16) * 22 + 40
