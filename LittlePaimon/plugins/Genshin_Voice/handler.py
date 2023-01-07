@@ -6,9 +6,8 @@ from nonebot.adapters.onebot.v11 import GroupMessageEvent, Message, MessageSegme
 from nonebot.rule import Rule
 
 from LittlePaimon.database import GenshinVoice, GuessVoiceRank
-from LittlePaimon.utils import scheduler, logger
+from LittlePaimon.utils import scheduler, logger, aiorequests
 from LittlePaimon.utils.alias import get_alias_by_name
-from LittlePaimon.utils.requests import aiorequests
 from .draw import draw_voice_list
 
 gaming = {}
@@ -122,7 +121,7 @@ async def get_voice_list(character: str, language: str = '中'):
 
 
 async def get_record(url):
-    resp = await aiorequests.get(url, timeout=20)
+    resp = await aiorequests.get(url)
     resp.raise_for_status()
     voice = resp.content
     return MessageSegment.record(voice)
