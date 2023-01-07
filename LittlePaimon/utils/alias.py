@@ -91,23 +91,21 @@ def get_match_alias(name: str, types: Union[List[ALIAS_TYPE], ALIAS_TYPE] = None
             else:
                 for alias in alias_list.values():
                     if name in alias:
-                        if len(types) == 1 and one_to_list:
-                            return [alias[0]]
-                        matches[type].append(alias[0])
+                        matches[type] = [alias[0]]
                         break
-                    if get_close_matches(name, alias, cutoff=0.6, n=3):
+                    if get_close_matches(name, alias, cutoff=0.6):
                         matches[type].append(alias[0])
         elif type in {'武器', '圣遗物'}:
             for raw_name, alias in alias_list.items():
                 if name in alias:
-                    matches[type].append(raw_name)
+                    matches[type] = [raw_name]
                     break
                 else:
-                    if get_close_matches(name, alias, cutoff=0.6, n=3):
+                    if get_close_matches(name, alias, cutoff=0.6):
                         matches[type].append(raw_name)
         elif type == '原魔':
             for raw_name, alias in alias_list.items():
-                if get_close_matches(name, alias, cutoff=0.4, n=5):
+                if get_close_matches(name, alias, cutoff=0.5):
                     matches[type].append(raw_name)
         if not matches[type]:
             del matches[type]
