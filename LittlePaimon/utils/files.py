@@ -4,58 +4,13 @@ except ImportError:
     import json
 from pathlib import Path
 from ssl import SSLCertVerificationError
-from typing import Union, Optional, Tuple, Dict
+from typing import Union
 
 import httpx
 import tqdm.asyncio
-from PIL import Image
 from ruamel import yaml
 
 from .requests import aiorequests
-
-
-cache_image: Dict[str, any] = {}
-headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36'}
-
-
-async def load_image(
-        path: Union[Path, str],
-        *,
-        size: Optional[Union[Tuple[int, int], float]] = None,
-        crop: Optional[Tuple[int, int, int, int]] = None,
-        mode: Optional[str] = None,
-) -> Image.Image:
-    """
-    读取图像，并预处理
-        :param path: 图片路径
-        :param size: 预处理尺寸
-        :param crop: 预处理裁剪大小
-        :param mode: 预处理图像模式
-        :return: 图像对象
-    """
-    if str(path) in cache_image:
-        img = cache_image[str(path)]
-    else:
-        if path.exists():
-            img = Image.open(path)
-        elif path.name.startswith(('UI_', 'Skill_')):
-            img = await aiorequests.download_icon(path.name, headers=headers, save_path=path, follow_redirects=True)
-            if img is None or isinstance(img, str):
-                return Image.new('RGBA', size=size or (50, 50), color=(0, 0, 0, 0))
-        else:
-            raise FileNotFoundError(f'{path} not found')
-        cache_image[str(path)] = img
-    if mode:
-        img = img.convert(mode)
-    if size:
-        if isinstance(size, float):
-            img = img.resize((int(img.size[0] * size), int(img.size[1] * size)), Image.ANTIALIAS)
-        elif isinstance(size, tuple):
-            img = img.resize(size, Image.ANTIALIAS)
-    if crop:
-        img = img.crop(crop)
-    return img
 
 
 def load_json(path: Union[Path, str], encoding: str = 'utf-8'):

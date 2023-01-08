@@ -4,8 +4,7 @@ import math
 import random
 from typing import Tuple, List, Optional
 
-from LittlePaimon.utils.files import load_image
-from LittlePaimon.utils.image import PMImage, get_qq_avatar, font_manager as fm
+from LittlePaimon.utils.image import PMImage, get_qq_avatar, font_manager as fm, load_image
 from LittlePaimon.utils.message import MessageBuild
 from LittlePaimon.utils.path import RESOURCE_BASE_PATH
 from .models import GachaLogInfo, FiveStarItem, FourStarItem

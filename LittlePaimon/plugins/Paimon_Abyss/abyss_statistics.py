@@ -6,8 +6,7 @@ import pytz
 from nonebot import get_bot
 
 from LittlePaimon.database import AbyssInfo
-from LittlePaimon.utils.files import load_image
-from LittlePaimon.utils.image import PMImage, font_manager as fm, get_qq_avatar
+from LittlePaimon.utils.image import PMImage, font_manager as fm, get_qq_avatar, load_image
 from LittlePaimon.utils.message import MessageBuild
 from LittlePaimon.utils.path import RESOURCE_BASE_PATH
 from LittlePaimon.utils.requests import aiorequests
