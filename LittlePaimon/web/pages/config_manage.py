@@ -1,4 +1,5 @@
-from amis import Action,  Divider, Form, InputText, LevelEnum, Page, PageSchema, Switch, Remark, InputNumber, InputTime, InputTimeRange, Alert, Editor, \
+from amis import Action, Divider, Form, InputText, LevelEnum, Page, PageSchema, Switch, Remark, InputNumber, InputTime, \
+    InputTimeRange, Alert, Editor, \
     Select
 
 action_button = [Action(label='保存', level=LevelEnum.success, type='submit'),
@@ -65,7 +66,8 @@ cookie_web_form = Form(
             label='Web端token密钥',
             name='Web端token密钥',
             value='${Web端token密钥}',
-            labelRemark=Remark(shape='circle', content='用于对Web端身份认证的token进行加密，为32位字符串，请不要保持为默认密钥，务必进行修改，修改后重启生效')
+            labelRemark=Remark(shape='circle',
+                               content='用于对Web端身份认证的token进行加密，为32位字符串，请不要保持为默认密钥，务必进行修改，修改后重启生效')
         ),
     ],
     actions=action_button
@@ -180,7 +182,7 @@ ssbq_form = Form(
             name='实时便签停止检查时间段',
             value='${实时便签停止检查时间段}',
             labelRemark=Remark(shape='circle',
-                content='在这段时间(例如深夜)不进行实时便签检查，注意开始时间不要晚于结束时间，不然会有问题'),
+                               content='在这段时间(例如深夜)不进行实时便签检查，注意开始时间不要晚于结束时间，不然会有问题'),
             timeFormat='HH',
             format='HH',
             inputFormat='HH时'
@@ -278,6 +280,15 @@ other_form = Form(
     visibleOn='${select == 7}',
     body=[
         Switch(
+            label='图片资源缓存',
+            name='图片资源缓存开关',
+            value='${图片资源缓存开关}',
+            labelRemark=Remark(shape='circle',
+                               content='开启时，会将制图所需的图片资源加载到内存中进行缓存，以提高制图速度，如果机器内存较小，建议关闭'),
+            onText='开启',
+            offText='关闭'
+        ),
+        Switch(
             label='网页截图权限',
             name='启用网页截图权限',
             value='${启用网页截图权限}',
@@ -306,7 +317,8 @@ other_form = Form(
             label='github资源地址',
             name='github资源地址',
             value='${github资源地址}',
-            labelRemark=Remark(shape='circle', content='本bot部分资源托管在github，如果下载缓慢或无法正常访问，可以尝试更换地址，或者添加你自己的代理地址，注意最后要有/'),
+            labelRemark=Remark(shape='circle',
+                               content='本bot部分资源托管在github，如果下载缓慢或无法正常访问，可以尝试更换地址，或者添加你自己的代理地址，注意最后要有/'),
             creatable=True,
             options=[
                 {
@@ -403,4 +415,6 @@ select = Select(label='选择配置类',
                     }
                 ])
 page = PageSchema(url='/bot_config/configs', icon='fa fa-wrench', label='配置项管理',
-                  schema=Page(title='配置项管理', initApi='/LittlePaimon/api/get_config', body=[select, cookie_web_form, sim_gacha_form, auto_mys_form, ssbq_form, ys_form, notice_form, other_form, nonebot_form]))
+                  schema=Page(title='配置项管理', initApi='/LittlePaimon/api/get_config',
+                              body=[select, cookie_web_form, sim_gacha_form, auto_mys_form, ssbq_form, ys_form,
+                                    notice_form, other_form, nonebot_form]))

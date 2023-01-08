@@ -3,8 +3,7 @@ import math
 from typing import Optional
 
 from nonebot.adapters.onebot.v11 import MessageSegment
-from LittlePaimon.utils.files import load_image
-from LittlePaimon.utils.image import PMImage, font_manager as fm
+from LittlePaimon.utils.image import PMImage, font_manager as fm, load_image
 from LittlePaimon.utils.message import MessageBuild
 from LittlePaimon.utils.path import RESOURCE_BASE_PATH
 from LittlePaimon.utils.requests import aiorequests

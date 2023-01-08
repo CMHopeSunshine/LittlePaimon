@@ -16,9 +16,8 @@ from nonebot.typing import T_State
 from LittlePaimon.database import LastQuery, PrivateCookie, Player, PlayerAlias
 from . import NICKNAME
 from .alias import get_match_alias
-from .files import load_image
 from .filter import filter_msg
-from .image import PMImage
+from .image import PMImage, load_image
 from .requests import aiorequests
 from .typing import CHARACTERS, MALE_CHARACTERS, FEMALE_CHARACTERS, GIRL_CHARACTERS, BOY_CHARACTERS, \
     LOLI_CHARACTERS

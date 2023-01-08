@@ -1,11 +1,12 @@
 from io import BytesIO
 from pathlib import Path
-from typing import Tuple, Union, Literal, List
+from typing import Tuple, Union, Literal, List, Optional, Dict
 
 import matplotlib.pyplot as plt
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 from nonebot.utils import run_sync
 
+from LittlePaimon.config import config
 from .path import FONTS_PATH
 from .requests import aiorequests
 
@@ -22,17 +23,14 @@ class PMImage:
                  mode: str = 'RGBA'
                  ):
         """
-            初始化图像，优先读取image参数，如无则新建图像
-        :param image: PIL对象或图像路径
-        :param size: 图像大小
-        :param color: 图像颜色
-        :param mode: 图像模式
+        初始化图像，优先读取image参数，如无则新建图像
+            :param image: PIL对象或图像路径
+            :param size: 图像大小
+            :param color: 图像颜色
+            :param mode: 图像模式
         """
         if image:
-            if isinstance(image, Path):
-                self.image = Image.open(image)
-            else:
-                self.image = image.copy()
+            self.image = Image.open(image) if isinstance(image, Path) else image.copy()
         else:
             if mode == 'RGB':
                 color = (color[0], color[1], color[2])
@@ -68,8 +66,7 @@ class PMImage:
     def save(self, path: Union[str, Path], **kwargs):
         """
         保存图像
-        :param path: 保存路径
-        :return:
+            :param path: 保存路径
         """
         self.image.save(path, **kwargs)
 
@@ -84,7 +81,7 @@ class PMImage:
     def copy(self) -> "PMImage":
         """
         返回一个本对象的复制
-        :return: PMImage
+            :return: PMImage
         """
         return PMImage(self.image.copy())
 
@@ -117,7 +114,7 @@ class PMImage:
     def resize(self, size: Union[float, Tuple[int, int]]):
         """
         缩放图片
-        :param size: 缩放大小/区域
+            :param size: 缩放大小/区域
         """
         if isinstance(size, (float, int)):
             self.image = self.image.resize((int(self.width * size), int(self.height * size)), Image.Resampling.LANCZOS)
@@ -129,7 +126,7 @@ class PMImage:
     def crop(self, box: Tuple[int, int, int, int]):
         """
         裁剪图像
-        :param box: 目标区域
+            :param box: 目标区域
         """
         self.image = self.image.crop(box)
         self.draw = ImageDraw.Draw(self.image)
@@ -138,8 +135,8 @@ class PMImage:
     def rotate(self, angle: float, expand: bool = False, **kwargs):
         """
         旋转图像
-        :param angle: 角度
-        :param expand: expand
+            :param angle: 角度
+            :param expand: expand
         """
         self.image.rotate(angle, resample=Image.BICUBIC, expand=expand, **kwargs)
         self.draw = ImageDraw.Draw(self.image)
@@ -152,9 +149,9 @@ class PMImage:
               ):
         """
         粘贴图像
-        :param image: 图像
-        :param pos: 位置
-        :param alpha: 是否透明
+            :param image: 图像
+            :param pos: 位置
+            :param alpha: 是否透明
         """
         if image is None:
             return
@@ -178,12 +175,12 @@ class PMImage:
              ):
         """
         写文本
-        :param text: 文本
-        :param width: 位置横坐标
-        :param height: 位置纵坐标
-        :param font: 字体
-        :param color: 颜色
-        :param align: 对齐类型
+            :param text: 文本
+            :param width: 位置横坐标
+            :param height: 位置纵坐标
+            :param font: 字体
+            :param color: 颜色
+            :param align: 对齐类型
         """
         if align == 'left':
             if isinstance(width, tuple):
@@ -235,7 +232,6 @@ class PMImage:
             else:
                 width_now += c_length
 
-
     @run_sync
     def stretch(self,
                 pos: Tuple[int, int],
@@ -243,9 +239,9 @@ class PMImage:
                 type: Literal['width', 'height'] = 'height'):
         """
         将某一部分进行拉伸
-        :param pos: 拉伸的部分
-        :param length: 拉伸的目标长/宽度
-        :param type: 拉伸方向，width:横向, height: 竖向
+            :param pos: 拉伸的部分
+            :param length: 拉伸的目标长/宽度
+            :param type: 拉伸方向，width:横向, height: 竖向
         """
         if pos[0] <= 0:
             raise ValueError('起始轴必须大于等于0')
@@ -295,9 +291,9 @@ class PMImage:
                        width: int = 1):
         """
         绘制矩形
-        :param pos: 位置
-        :param color: 颜色
-        :param width: 宽度
+            :param pos: 位置
+            :param color: 颜色
+            :param width: 宽度
         """
         self.draw.rectangle(pos, color, width=width)
 
@@ -309,10 +305,10 @@ class PMImage:
                                width: int = 1):
         """
         绘制圆角矩形
-        :param pos: 圆角矩形的位置
-        :param radius: 半径
-        :param color: 颜色
-        :param width: 宽度
+            :param pos: 圆角矩形的位置
+            :param radius: 半径
+            :param color: 颜色
+            :param width: 宽度
         """
         self.convert("RGBA")
         self.draw.rounded_rectangle(xy=pos, radius=radius, fill=color, width=width)
@@ -326,15 +322,16 @@ class PMImage:
                                 angles: List[Literal['ul', 'ur', 'll', 'lr']] = None):
         """
         选择最多4个角绘制圆角矩形
-        :param pos: 左上角起点坐标
-        :param size: 矩形大小
-        :param radius: 半径
-        :param color: 颜色
-        :param angles: 角列表
-        :return:
+            :param pos: 左上角起点坐标
+            :param size: 矩形大小
+            :param radius: 半径
+            :param color: 颜色
+            :param angles: 角列表
         """
-        self.draw.rectangle((pos[0] + radius / 2, pos[1], pos[0] + size[0] - (radius / 2), pos[1] + size[1]), fill=color)
-        self.draw.rectangle((pos[0], pos[1] + radius / 2, pos[0] + size[0], pos[1] + size[1] - (radius / 2)), fill=color)
+        self.draw.rectangle((pos[0] + radius / 2, pos[1], pos[0] + size[0] - (radius / 2), pos[1] + size[1]),
+                            fill=color)
+        self.draw.rectangle((pos[0], pos[1] + radius / 2, pos[0] + size[0], pos[1] + size[1] - (radius / 2)),
+                            fill=color)
         angle_pos = {
             'ul': (pos[0], pos[1], pos[0] + radius, pos[1] + radius),
             'ur': (pos[0] + size[0] - radius, pos[1], pos[0] + size[0], pos[1] + radius),
@@ -355,11 +352,10 @@ class PMImage:
                   width: int = 1):
         """
         画线
-        :param begin: 起始点
-        :param end: 终点
-        :param color: 颜色
-        :param width: 宽度
-        :return:
+            :param begin: 起始点
+            :param end: 终点
+            :param color: 颜色
+            :param width: 宽度
         """
         self.draw.line(begin + end, fill=color, width=width)
 
@@ -375,13 +371,13 @@ class PMImage:
                   ):
         """
         画百分比圆环
-        :param size: 圆环大小
-        :param pos: 圆环位置
-        :param width: 圆环宽度
-        :param percent: 百分比
-        :param colors: 颜色
-        :param startangle: 角度
-        :param transparent: 是否透明
+            :param size: 圆环大小
+            :param pos: 圆环位置
+            :param width: 圆环宽度
+            :param percent: 百分比
+            :param colors: 颜色
+            :param startangle: 角度
+            :param transparent: 是否透明
         """
         if isinstance(percent, float):
             if percent < 0 or percent > 1:
@@ -449,7 +445,7 @@ class PMImage:
     def to_rounded_corner(self, radii: int = 30):
         """
         将图片变为圆角
-        :param radii: 半径
+            :param radii: 半径
         """
         circle = Image.new("L", (radii * 2, radii * 2), 0)
         draw = ImageDraw.Draw(circle)
@@ -468,12 +464,12 @@ class PMImage:
 
     @run_sync
     def add_border(self, border_size: int = 10, color: Union[str, Tuple[int, int, int, int]] = 'black',
-                   shape: str = 'rectangle'):
+                   shape: Literal['rectangle', 'circle'] = 'rectangle'):
         """
         给图片添加边框
-        :param border_size: 边框宽度
-        :param color: 边框颜色
-        :param shape: 边框形状，rectangle或circle
+            :param border_size: 边框宽度
+            :param color: 边框颜色
+            :param shape: 边框形状，rectangle或circle
         """
         self.convert("RGBA")
         if shape == 'circle':
@@ -502,9 +498,9 @@ class FontManager:
     def get(self, font_name: str = 'hywh.ttf', size: int = 25, variation: str = None) -> ImageFont.ImageFont:
         """
         获取字体，如果已在缓存中，则直接返回
-        :param font_name: 字体名称
-        :param size: 字体大小
-        :param variation: 字体变体
+            :param font_name: 字体名称
+            :param size: 字体大小
+            :param variation: 字体变体
         """
         if 'ttf' not in font_name and 'ttc' not in font_name and 'otf' not in font_name:
             font_name += '.ttf'
@@ -523,6 +519,50 @@ class FontManager:
 
 
 font_manager = FontManager()
+
+cache_image: Dict[str, any] = {}
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36'}
+
+
+async def load_image(
+        path: Union[Path, str],
+        *,
+        size: Optional[Union[Tuple[int, int], float]] = None,
+        crop: Optional[Tuple[int, int, int, int]] = None,
+        mode: Optional[str] = None,
+) -> Image.Image:
+    """
+    读取图像，并预处理
+        :param path: 图片路径
+        :param size: 预处理尺寸
+        :param crop: 预处理裁剪大小
+        :param mode: 预处理图像模式
+        :return: 图像对象
+    """
+    if config.img_use_cache and str(path) in cache_image:
+        img = cache_image[str(path)]
+    else:
+        if path.exists():
+            img = Image.open(path)
+        elif path.name.startswith(('UI_', 'Skill_')):
+            img = await aiorequests.download_icon(path.name, headers=headers, save_path=path, follow_redirects=True)
+            if img is None or isinstance(img, str):
+                return Image.new('RGBA', size=size or (50, 50), color=(0, 0, 0, 0))
+        else:
+            raise FileNotFoundError(f'{path} not found')
+        if config.img_use_cache:
+            cache_image[str(path)] = img
+    if mode:
+        img = img.convert(mode)
+    if size:
+        if isinstance(size, float):
+            img = img.resize((int(img.size[0] * size), int(img.size[1] * size)), Image.ANTIALIAS)
+        elif isinstance(size, tuple):
+            img = img.resize(size, Image.ANTIALIAS)
+    if crop:
+        img = img.crop(crop)
+    return img
 
 
 async def get_qq_avatar(qid: str) -> PMImage:

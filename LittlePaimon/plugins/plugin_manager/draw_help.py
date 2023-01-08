@@ -3,8 +3,7 @@ from typing import List
 
 from LittlePaimon import __version__
 from LittlePaimon.config import PluginInfo
-from LittlePaimon.utils.files import load_image
-from LittlePaimon.utils.image import PMImage, font_manager as fm
+from LittlePaimon.utils.image import PMImage, font_manager as fm, load_image
 from LittlePaimon.utils.message import MessageBuild
 from LittlePaimon.utils.path import RESOURCE_BASE_PATH
 
@@ -47,22 +46,22 @@ async def draw_help(plugin_list: List[PluginInfo]):
             plugin_line = PMImage(orange_line)
             plugin_name_bg = PMImage(orange_name_bg)
             matcher_card = PMImage(orange_bord)
-        name_length = img.text_length(plugin.name, fm.get('SourceHanSerifCN-Bold.otf', 30))
+        plugin_name = plugin.name.replace('\n', '')
+        name_length = img.text_length(plugin_name, fm.get('SourceHanSerifCN-Bold.otf', 30))
         await img.paste(plugin_line, (40, height_now))
         await plugin_name_bg.stretch((23, plugin_name_bg.width - 36), int(name_length), 'width')
         await img.paste(plugin_name_bg, (40, height_now))
-        await img.text(plugin.name, 63, height_now + 5, fm.get('SourceHanSerifCN-Bold.otf', 30), 'white')
+        await img.text(plugin_name, 63, height_now + 5, fm.get('SourceHanSerifCN-Bold.otf', 30), 'white')
         height_now += plugin_line.height + 11
-        if plugin.matchers:
-            matchers = [matcher for matcher in plugin.matchers if matcher.pm_show and matcher.pm_usage]
+        if plugin.matchers and (matchers := [matcher for matcher in plugin.matchers if matcher.pm_show and (matcher.pm_usage or matcher.pm_name)]):
             matcher_groups = [matchers[i:i + 3] for i in range(0, len(matchers), 3)]
             for matcher_group in matcher_groups:
-                max_length = max(len(matcher.pm_description) if matcher.pm_description else 0 for matcher in matcher_group)
+                max_length = max(len(matcher.pm_description.replace('\n', '')) if matcher.pm_description else 0 for matcher in matcher_group)
                 max_height = math.ceil(max_length / 16) * 22 + 40
                 await matcher_card.stretch((5, matcher_card.height - 5), max_height, 'height')
                 for matcher in matcher_group:
                     await img.paste(matcher_card, (40 + 336 * matcher_group.index(matcher), height_now))
-                    await img.text(matcher.pm_usage, 40 + 336 * matcher_group.index(matcher) + 15, height_now + 10, fm.get('SourceHanSansCN-Bold.otf', 24), 'black')
+                    await img.text(matcher.pm_usage or matcher.pm_name, 40 + 336 * matcher_group.index(matcher) + 15, height_now + 10, fm.get('SourceHanSansCN-Bold.otf', 24), 'black')
                     if matcher.pm_description:
                         await img.text_box(matcher.pm_description.replace('\n', '^'), (40 + 336 * matcher_group.index(matcher) + 10, 40 + 336 * matcher_group.index(matcher) + matcher_card.width - 22),
                                            (height_now + 44, height_now + max_height - 10), fm.get('SourceHanSansCN-Bold.otf', 18), '#40342d')
