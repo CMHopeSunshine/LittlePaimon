@@ -6,8 +6,9 @@ from nonebot.adapters.onebot.v11 import GroupMessageEvent, Message, MessageSegme
 from nonebot.rule import Rule
 
 from LittlePaimon.database import GenshinVoice, GuessVoiceRank
-from LittlePaimon.utils import scheduler, logger, aiorequests
+from LittlePaimon.utils import scheduler, logger
 from LittlePaimon.utils.alias import get_alias_by_name
+from LittlePaimon.utils.requests import aiorequests
 from .draw import draw_voice_list
 
 gaming = {}
