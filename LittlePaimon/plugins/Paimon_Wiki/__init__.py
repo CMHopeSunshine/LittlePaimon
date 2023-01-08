@@ -252,9 +252,12 @@ async def _(bot: Bot, event: MessageEvent, state: T_State, type: str = Arg('type
                 except ActionFailed:
                     await total_wiki.finish(f'{final_name}的{type}发送失败，可能是网络问题或者不存在该资源')
             else:
-                matches = get_match_alias(name, ['角色', '武器', '原魔', '圣遗物'])
-                if m := await get_match_card(name):
-                    matches['七圣召唤'] = m
+                if type == '材料':
+                    matches = get_match_alias(name, ['角色', '武器', '原魔'])
+                else:
+                    matches = get_match_alias(name, ['角色', '武器', '原魔', '圣遗物'])
+                    if m := await get_match_card(name):
+                        matches['七圣召唤'] = m
                 if s := await get_match_specialty(name):
                     matches['特产'] = s
         if not matches:
