@@ -8,6 +8,7 @@ from nonebot.rule import Rule
 from LittlePaimon.database import GenshinVoice, GuessVoiceRank
 from LittlePaimon.utils import scheduler, logger
 from LittlePaimon.utils.alias import get_alias_by_name
+from LittlePaimon.utils.requests import aiorequests
 from .draw import draw_voice_list
 
 gaming = {}
@@ -42,7 +43,7 @@ class GuessVoice:
                           run_date=datetime.datetime.now() + datetime.timedelta(seconds=self.game_time),
                           id=f'Guess_voice_{self.group_id}',
                           misfire_grace_time=10)
-        return MessageSegment.record(voice.voice_url)
+        return await get_record(voice.voice_url)
 
     async def end(self, exception: bool = False):
         if not exception and self.is_gaming:
@@ -118,3 +119,10 @@ async def get_character_voice(character: str, language: str = '中'):
 async def get_voice_list(character: str, language: str = '中'):
     voice_list = await GenshinVoice.filter(character=character, language=language).all()
     return await draw_voice_list(voice_list) if voice_list else MessageSegment.text(f'暂无{character}的{language}语音资源，让超级用户[更新原神语音资源]吧！')
+
+
+async def get_record(url):
+    resp = await aiorequests.get(url)
+    resp.raise_for_status()
+    voice = resp.content
+    return MessageSegment.record(voice)

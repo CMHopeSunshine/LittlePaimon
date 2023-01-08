@@ -336,8 +336,8 @@ def weapon_common_fix(info: Character):
         info.prop.extra_attack += info.prop.base_attack * 6 * (0.024 + 0.006 * info.weapon.affix_level)
         info.damage_describe.append('息灾前台满层')
     elif info.weapon.name == '薙草之稻光':
-        info.prop.extra_attack += info.prop.base_attack * (info.prop.elemental_efficiency - 1) * (
-                    0.21 + 0.07 * info.weapon.affix_level)
+        # info.prop.extra_attack += info.prop.base_attack * (info.prop.elemental_efficiency - 1) * (
+        #             0.21 + 0.07 * info.weapon.affix_level)
         info.prop.elemental_efficiency += 0.25 + 0.05 * info.weapon.affix_level
     elif info.weapon.name == '「渔获」':
         extra_q['增伤'] += 0.12 + 0.04 * info.weapon.affix_level
@@ -365,9 +365,9 @@ def weapon_common_fix(info: Character):
         for i in info.prop.dmg_bonus:
             info.prop.dmg_bonus[i] = info.prop.dmg_bonus[i] + (0.075 + 0.025 * info.weapon.affix_level)
         info.damage_describe.append('白辰触发')
-    elif info.weapon.name == '天空之卷':
-        for i in info.prop.dmg_bonus:
-            info.prop.dmg_bonus[i] = info.prop.dmg_bonus[i] + (0.09 + 0.03 * info.weapon.affix_level)
+    # elif info.weapon.name == '天空之卷':
+    #     for i in info.prop.dmg_bonus:
+    #         info.prop.dmg_bonus[i] = info.prop.dmg_bonus[i] + (0.09 + 0.03 * info.weapon.affix_level)
     elif info.weapon.name == '四风原典':
         for i in info.prop.dmg_bonus:
             info.prop.dmg_bonus[i] = info.prop.dmg_bonus[i] + 4 * (0.06 + 0.02 * info.weapon.affix_level)

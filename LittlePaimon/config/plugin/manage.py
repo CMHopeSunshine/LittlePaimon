@@ -102,7 +102,7 @@ class PluginManager:
             :param session_id: 消息ID
         """
         load_plugins = [p.name for p in nb_plugin.get_loaded_plugins()]
-        plugin_list = sorted(cls.plugins.values(), key=lambda x: x.priority).copy()
+        plugin_list = sorted(cls.plugins.values(), key=lambda x: x.priority)
         plugin_list = [p for p in plugin_list if p.show and p.module_name in load_plugins]
         for plugin in plugin_list:
             if await PluginDisable.filter(name=plugin.module_name, global_disable=True).exists():
@@ -117,7 +117,6 @@ class PluginManager:
                                                                user_id=session_id).exists()
             if plugin.matchers:
                 plugin.matchers.sort(key=lambda x: x.pm_priority)
-                plugin.matchers = [m for m in plugin.matchers if m.pm_show and m.pm_usage]
         return plugin_list
 
     @classmethod

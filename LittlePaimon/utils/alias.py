@@ -65,8 +65,7 @@ ALIAS_TYPE = Literal['角色', '武器', '原魔', '圣遗物']
 
 
 def get_match_alias(name: str, types: Union[List[ALIAS_TYPE], ALIAS_TYPE] = None,
-                    one_to_list: bool = False) -> Union[
-    Dict[str, List[str]], List[str]]:
+                    one_to_list: bool = False) -> Union[Dict[str, List[str]], List[str]]:
     """
     根据字符串消息，获取与之相似或匹配的角色、武器、原魔名
         :param name: 名称
@@ -79,10 +78,12 @@ def get_match_alias(name: str, types: Union[List[ALIAS_TYPE], ALIAS_TYPE] = None
     elif isinstance(types, str):
         types = [types]
     matches = {}
+    include_flag = False
     for type in types:
         alias_list = alias_file[type]
         matches[type] = []
         if type == '角色':
+            # 如果是主角，则返回旅行者+元素类型
             if name.startswith(('风', '岩', '雷', '草', '水', '火', '冰')) and name.endswith(
                     ('主', '主角', '旅行者')):
                 matches[type].append(f'旅行者{name[0]}')
@@ -90,37 +91,45 @@ def get_match_alias(name: str, types: Union[List[ALIAS_TYPE], ALIAS_TYPE] = None
                 matches[type].append(name)
             else:
                 for alias in alias_list.values():
+                    # 如果该角色别名列表里有和待匹配的name，则只保留该角色
                     if name in alias:
-                        if len(types) == 1 and one_to_list:
-                            return [alias[0]]
-                        matches[type].append(alias[0])
+                        matches[type] = [alias[0]]
+                        include_flag = True
                         break
-                    if get_close_matches(name, alias, cutoff=0.6, n=3):
+                    # 否则，则模糊匹配，有匹配到的别名，具把角色添加到匹配列表
+                    if get_close_matches(name, alias, cutoff=0.6):
                         matches[type].append(alias[0])
         elif type in {'武器', '圣遗物'}:
+            # 逻辑和角色一样
             for raw_name, alias in alias_list.items():
                 if name in alias:
-                    matches[type].append(raw_name)
+                    matches[type] = [raw_name]
+                    include_flag = True
                     break
-                else:
-                    if get_close_matches(name, alias, cutoff=0.6, n=3):
-                        matches[type].append(raw_name)
-        elif type == '原魔':
-            for raw_name, alias in alias_list.items():
-                if get_close_matches(name, alias, cutoff=0.4, n=5):
+                if get_close_matches(name, alias, cutoff=0.6):
                     matches[type].append(raw_name)
+        elif type == '原魔':
+            # 如果已经有精准匹配到的角色、武器或圣遗物，则不再继续匹配原魔
+            if not include_flag:
+                # 尽可能的匹配所有类似的原魔名
+                for raw_name, alias in alias_list.items():
+                    if get_close_matches(name, alias, cutoff=0.5):
+                        matches[type].append(raw_name)
         if not matches[type]:
             del matches[type]
+
     if one_to_list and len(matches) == 1:
+        # 如果one_to_list为true且匹配到的种类只有一种，则以列表形式直接返回该种类匹配结果
         return list(matches.values())[0]
     else:
+        # 否则，以字典形式返回各种类的匹配结果
         return matches
 
 
 def get_chara_icon(name: Optional[str] = None, chara_id: Optional[int] = None,
                    icon_type: Literal['avatar', 'card', 'splash', 'slice', 'side'] = 'avatar') -> Optional[str]:
     """
-        根据角色名字或id获取角色的图标
+    根据角色名字或id获取角色的图标
         :param name: 角色名
         :param chara_id：角色id
         :param icon_type: 图标类型，有roles、weapons、monsters
