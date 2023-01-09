@@ -15,10 +15,14 @@ from nonebot import get_bot
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageSegment, ActionFailed
 from tortoise.functions import Count
 from LittlePaimon.utils import NICKNAME, SUPERUSERS, logger
+from LittlePaimon.utils.typing import command_start
 from .models import ChatBlackList, ChatContext, ChatAnswer, ChatMessage
 from .config import config_manager
 
 chat_config = config_manager.config
+command_start_ = command_start.copy()
+if '' in command_start_:
+    command_start.remove('')
 
 NO_PERMISSION_WORDS = [f'{NICKNAME}就喜欢说这个，哼！', f'你管得着{NICKNAME}吗！']
 ENABLE_WORDS = [f'{NICKNAME}会尝试学你们说怪话！', f'好的呢，让{NICKNAME}学学你们的说话方式~']
@@ -75,6 +79,10 @@ class LearningChat:
         if not chat_config.total_enable or not self.config.enable:
             logger.debug('群聊学习', f'➤该群<m>{self.data.group_id}</m>未开启群聊学习，跳过')
             # 如果未开启群聊学习，跳过
+            return Result.Pass
+        elif command_start_ and self.data.message.startswith(tuple(command_start_)):
+            # 以命令前缀开头的消息，跳过
+            logger.debug('群聊学习', '➤消息以命令前缀开头，跳过')
             return Result.Pass
         elif self.data.user_id in self.ban_users:
             # 发言人在屏蔽列表中，跳过

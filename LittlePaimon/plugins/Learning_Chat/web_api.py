@@ -164,10 +164,7 @@ async def get_chat_blacklist(page: int = 1, perPage: int = 10, keywords: Optiona
     filter_arg = {'keywords__contains': keywords} if keywords else {}
     items = await ChatBlackList.filter(**filter_arg).offset((page - 1) * perPage).limit(perPage).values()
     for item in items:
-        if item['global_ban']:
-            item['bans'] = '全局禁用'
-        else:
-            item['bans'] = str(item['ban_group_id'][0])
+        item['bans'] = '全局禁用' if item['global_ban'] else str(item['ban_group_id'][0])
     if bans:
         items = list(filter(lambda x: bans in x['bans'], items))
     return {
@@ -175,7 +172,7 @@ async def get_chat_blacklist(page: int = 1, perPage: int = 10, keywords: Optiona
         'msg':    'ok',
         'data':   {
             'items': items,
-            'total': len(items)
+            'total': await ChatBlackList.filter(**filter_arg).count()
         }
     }
 
