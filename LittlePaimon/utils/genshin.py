@@ -33,7 +33,7 @@ class GenshinInfoManager:
         检查是否已绑定私人cookie
             :return: bool
         """
-        return bool(await PrivateCookie.get_or_none(user_id=self.user_id, uid=self.uid))
+        return await PrivateCookie.filter(user_id=self.user_id, uid=self.uid).exists()
 
     async def update_all(self, include_talent: bool = False) -> str:
         """
@@ -116,7 +116,11 @@ class GenshinInfoManager:
             return data
         elif data['retcode'] == 1034:
             logger.info('原神信息', f'更新<m>{self.uid}</m>的玩家数据时出错，状态码为1034，<r>疑似验证码</r>')
-            return '遇验证码阻拦，需手动前往米游社进行验证后才能继续使用'
+            return (
+                '遇验证码阻拦，需手动前往米游社进行验证后才能继续使用'
+                if await self.is_bind()
+                else '未绑定私人Cookie，更新米游社数据时遇验证码阻拦而失败'
+            )
         elif data['retcode'] != 0:
             logger.info('原神信息', f'更新<m>{self.uid}</m>的玩家数据时出错，消息为<r>{data["message"]}</r>')
             return data['message']
