@@ -22,7 +22,7 @@ from .config import config_manager
 chat_config = config_manager.config
 command_start_ = command_start.copy()
 if '' in command_start_:
-    command_start.remove('')
+    command_start_.remove('')
 
 NO_PERMISSION_WORDS = [f'{NICKNAME}就喜欢说这个，哼！', f'你管得着{NICKNAME}吗！']
 ENABLE_WORDS = [f'{NICKNAME}会尝试学你们说怪话！', f'好的呢，让{NICKNAME}学学你们的说话方式~']
