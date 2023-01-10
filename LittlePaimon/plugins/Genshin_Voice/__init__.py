@@ -12,7 +12,7 @@ from LittlePaimon.config import config
 from LittlePaimon.database import GenshinVoice
 from LittlePaimon.utils.alias import get_match_alias
 from LittlePaimon.utils.message import CommandCharacter, CommandLang, MessageBuild
-from .handler import GuessVoice, get_character_voice, get_rank, get_voice_list
+from .handler import GuessVoice, get_character_voice, get_rank, get_voice_list, get_record
 from .resources import update_voice_resources
 
 __plugin_meta__ = PluginMetadata(
@@ -75,7 +75,7 @@ async def _(event: Union[GroupMessageEvent, PrivateMessageEvent], lang=CommandLa
     msg = msg.extract_plain_text().strip().split(' ')[0]
     if msg.isdigit():
         voice = await GenshinVoice.get_or_none(id=int(msg))
-        await get_voice.finish(MessageBuild.Record(voice.voice_url) if voice else MessageBuild.Text(f'没有{msg}号原神语音'))
+        await get_voice.finish(await get_record(voice.voice_url) if voice else MessageBuild.Text(f'没有{msg}号原神语音'))
     else:
         if chara := get_match_alias(msg, ['角色'], True):
             chara = chara[0]
@@ -83,7 +83,7 @@ async def _(event: Union[GroupMessageEvent, PrivateMessageEvent], lang=CommandLa
             await get_voice.finish(MessageBuild.Text(f'没有叫{chara}的角色'))
         voices = await GenshinVoice.filter(character=chara, language=lang).all()
         if voices:
-            await get_voice.finish(MessageBuild.Record(random.choice(voices).voice_url))
+            await get_voice.finish(await get_record(random.choice(voices).voice_url))
         else:
             await get_voice.finish(MessageBuild.Text(f'暂无{chara}的{lang}文语音资源，让超级用户[更新原神语音资源]吧！'))
 
