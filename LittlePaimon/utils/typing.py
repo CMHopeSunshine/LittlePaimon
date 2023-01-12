@@ -1,3 +1,4 @@
+import re
 from typing import Literal, List
 
 from pydantic import BaseModel, parse_raw_as
@@ -9,10 +10,9 @@ except ImportError:
 
 from . import DRIVER
 
-need_escape = {'.', '^', '$', '*', '+', '?', '[', ']', '|', '{', '}', '(', ')', '\\'}
 
 command_start = list(DRIVER.config.command_start)
-command_start_new = [(f'\\{c}' if c in need_escape else c) for c in command_start if c != '']
+command_start_new = [re.escape(c) for c in command_start if c != '']
 COMMAND_START_RE = (
     '^(' + '|'.join(command_start_new) + ')' if command_start_new else '^'
 )
