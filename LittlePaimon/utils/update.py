@@ -3,11 +3,12 @@ import re
 from pathlib import Path
 
 import git
-from git.exc import InvalidGitRepositoryError
+from git.exc import InvalidGitRepositoryError, GitCommandError
 from nonebot.utils import run_sync
 
 from . import __version__, NICKNAME
 from .requests import aiorequests
+from .logger import logger
 
 
 async def check_update():
@@ -43,28 +44,44 @@ def update():
         repo = git.Repo(Path().absolute())
     except InvalidGitRepositoryError:
         return '没有发现git仓库，无法通过git更新，请手动下载最新版本的文件进行替换。'
+    logger.info('派蒙更新', '开始执行<m>git pull</m>更新操作')
     origin = repo.remotes.origin
-    pyproject_file = Path().parent / 'pyproject.toml'
-    pyproject_raw_content = pyproject_file.read_text(encoding='utf-8')
-    if raw_plugins_load := re.search(r'^plugins = \[.+]$', pyproject_raw_content, flags=re.M):
-        pyproject_new_content = pyproject_raw_content.replace(raw_plugins_load.group(), 'plugins = []')
-    else:
-        pyproject_new_content = pyproject_raw_content
-    pyproject_file.write_text(pyproject_new_content, encoding='utf-8')
     try:
         origin.pull()
         msg = f'更新完成，版本：{__version__}\n最新更新日志为：\n{repo.head.commit.message.replace(":bug:", "🐛").replace(":sparkles:", "✨").replace(":memo:", "📝")}\n可使用命令[@bot 重启]重启{NICKNAME}'
-    except Exception as e:
-        if 'timeout' in e or 'unable to access' in e:
+    except GitCommandError as e:
+        emsg = e.stdout + '\n' + e.stderr
+        if 'timeout' in emsg or 'unable to access' in emsg:
             msg = '更新失败，连接git仓库超时，请重试或修改源为代理源后再重试。'
-        elif ' Your local changes to the following files would be overwritten by merge' in e:
-            msg = ('error: Your local changes to the following files would be overwritten by merge\n'
-                   '更新失败，本地修改过文件导致冲突，可在命令行运行git pull查看冲突的文件是哪些，请解决冲突后再更新。')
-        else:
-            msg = f'更新失败，错误信息：{e}，请尝试手动进行更新'
-    finally:
-        if raw_plugins_load:
-            pyproject_new_content = pyproject_file.read_text(encoding='utf-8')
-            pyproject_new_content = pyproject_new_content.replace('plugins = []', raw_plugins_load.group())
+        elif 'Your local changes' in emsg:
+            pyproject_file = Path().parent / 'pyproject.toml'
+            pyproject_raw_content = pyproject_file.read_text(encoding='utf-8')
+            if raw_plugins_load := re.search(r'^plugins = \[.+]$', pyproject_raw_content, flags=re.M):
+                pyproject_new_content = pyproject_raw_content.replace(raw_plugins_load.group(), 'plugins = []')
+                logger.info('派蒙更新', f'检测到已安装插件：{raw_plugins_load.group()}，暂时重置')
+            else:
+                pyproject_new_content = pyproject_raw_content
             pyproject_file.write_text(pyproject_new_content, encoding='utf-8')
+            try:
+                origin.pull()
+                msg = f'更新完成，版本：{__version__}\n最新更新日志为：\n{repo.head.commit.message.replace(":bug:", "🐛").replace(":sparkles:", "✨").replace(":memo:", "📝")}\n可使用命令[@bot 重启]重启{NICKNAME}'
+            except GitCommandError as e:
+                emsg = e.stdout + '\n' + e.stderr
+                if 'timeout' in emsg or 'unable to access' in emsg:
+                    msg = '更新失败，连接git仓库超时，请重试或修改源为代理源后再重试。'
+                elif ' Your local changes' in emsg:
+                    msg = f'更新失败，本地修改过文件导致冲突，请解决冲突后再更新。\n{emsg}'
+                else:
+                    msg = f'更新失败，错误信息：{emsg}，请尝试手动进行更新'
+            finally:
+                if raw_plugins_load:
+                    pyproject_new_content = pyproject_file.read_text(encoding='utf-8')
+                    pyproject_new_content = re.sub(r'^plugins = \[.*]$', raw_plugins_load.group(),
+                                                   pyproject_new_content)
+                    pyproject_new_content = pyproject_new_content.replace('plugins = []', raw_plugins_load.group())
+                    pyproject_file.write_text(pyproject_new_content, encoding='utf-8')
+                    logger.info('派蒙更新', f'更新结束，还原插件：{raw_plugins_load.group()}')
+            return msg
+        else:
+            msg = f'更新失败，错误信息：{emsg}，请尝试手动进行更新'
     return msg

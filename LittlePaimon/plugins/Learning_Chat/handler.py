@@ -76,7 +76,6 @@ class LearningChat:
         self.ban_words = set(chat_config.ban_words + self.config.ban_words)
 
     async def _learn(self) -> Result:
-        # logger.debug('群聊学习', f'收到来自群<m>{self.data.group_id}</m>的消息<m>{self.data.message}</m>')
         if self.to_me and any(
                 w in self.data.message for w in {'学说话', '快学', '开启学习'}):
             return Result.SetEnable
@@ -374,6 +373,7 @@ class LearningChat:
         logger.debug('群聊学习', f'主动发言：群热度排行<m>{">>".join([str(g[0]) for g in popularity])}</m>')
         for group_id, messages in popularity:
             if len(messages) < 30:
+                logger.debug('群聊学习', f'主动发言：群<m>{group_id}</m>消息小于30条，不发言')
                 continue
 
             config = config_manager.get_group_config(group_id)
@@ -382,26 +382,35 @@ class LearningChat:
                                                             '[CQ:share'])
 
             # 是否开启了主动发言
-            if not config.speak_enable:
+            if not config.speak_enable or not config.enable:
+                logger.debug('群聊学习', f'主动发言：群<m>{group_id}</m>未开启，不发言')
                 continue
 
             # 如果最后一条消息是自己发的，则不主动发言
-            last_reply = await ChatMessage.filter(group_id=group_id, user_id=self_id).first()
-            if last_reply and last_reply.time >= messages[0].time:
-                continue
+            if last_reply := await ChatMessage.filter(group_id=group_id, user_id=self_id).first():
+                if last_reply.time >= messages[0].time:
+                    logger.debug('群聊学习', f'主动发言：群<m>{group_id}</m>最后一条消息是{NICKNAME}发的{last_reply.message}，不发言')
+                    continue
+                elif cur_time - last_reply.time < config.speak_min_interval:
+                    logger.debug('群聊学习', f'主动发言：群<m>{group_id}</m>上次主动发言时间小于主动发言最小间隔，不发言')
+                    continue
 
             # 该群每多少秒发一条消息
             avg_interval = (messages[0].time - messages[-1].time) / len(messages)
             # 如果该群已沉默的时间小于阈值，则不主动发言
-            if cur_time - messages[0].time < avg_interval * config.speak_threshold + config.speak_min_interval:
+            silent_time = cur_time - messages[0].time
+            threshold = avg_interval * config.speak_threshold
+            if silent_time < threshold:
+                logger.debug('群聊学习', f'主动发言：群<m>{group_id}</m>已沉默时间({silent_time})小于阈值({int(threshold)})，不发言')
                 continue
 
             if contexts := await ChatContext.filter(count__gte=config.answer_threshold).all():
                 speak_list = []
                 # context = random.choices(contexts, weights=[context.count for context in contexts])[0]
-                contexts.sort(key=lambda x: x.count)
+                # contexts.sort(key=lambda x: x.count, reverse=True)
+                random.shuffle(contexts)
                 for context in contexts:
-                    if (random.random() < config.speak_continuously_probability or not len(speak_list)) and len(
+                    if (not speak_list or random.random() < config.speak_continuously_probability) and len(
                             speak_list) < config.speak_continuously_max_len and (
                             answers := await ChatAnswer.filter(context=context,
                                                                group_id=group_id,
@@ -417,9 +426,10 @@ class LearningChat:
                         if any(word in message for word in ban_words):
                             continue
                         speak_list.append(message)
+                        follow_answers = answer
                         while random.random() < config.speak_continuously_probability and len(
                                 speak_list) < config.speak_continuously_max_len:
-                            if (follow_context := await ChatContext.filter(keywords=answer.keywords).first()) and (
+                            if (follow_context := await ChatContext.filter(keywords=follow_answers.keywords).first()) and (
                                     follow_answers := await ChatAnswer.filter(
                                         group_id=group_id,
                                         context=follow_context,
@@ -436,17 +446,18 @@ class LearningChat:
                                     speak_list.append(message)
                             else:
                                 break
-                    else:
+                    elif len(speak_list) >= config.speak_continuously_max_len:
                         break
                 if speak_list:
-                    # logger.debug('群聊学习', f'主动发言：将向群<m>{group_id}</m>主动发言<m>{" ".join(speak_list)}</m>')
                     if random.random() < config.speak_poke_probability:
                         last_speak_users = {message.user_id for message in messages[:5] if message.user_id != self_id}
                         select_user = random.choice(list(last_speak_users))
                         speak_list.append(MessageSegment('poke', {'qq': select_user}))
                     return group_id, speak_list
-            else:
-                return None
+                else:
+                    logger.debug('群聊学习', f'主动发言：群<m>{group_id}</m>没有找到符合条件的发言，不发言')
+            logger.debug('群聊学习', '主动发言：没有符合条件的群，不主动发言')
+            return None
 
     async def _set_answer(self, message: ChatMessage):
         if context := await ChatContext.filter(keywords=message.keywords).first():
@@ -481,21 +492,16 @@ class LearningChat:
 
     async def _check_allow(self, message: Union[ChatMessage, ChatAnswer]) -> bool:
         raw_message = message.message if isinstance(message, ChatMessage) else message.messages[0]
-        if len(raw_message) < 2:
-            return False
+        # if len(raw_message) < 2:
+        #     return False
         if any(i in raw_message for i in
                {'[CQ:xml', '[CQ:json', '[CQ:at', '[CQ:video', '[CQ:record', '[CQ:share'}):
-            # logger.debug('群聊学习', f'➤检验<m>{keywords}</m><r>不通过</r>')
             return False
         if any(i in raw_message for i in self.ban_words):
-            # logger.debug('群聊学习', f'➤检验<m>{keywords}</m><r>不通过</r>')
             return False
         if raw_message.startswith('&#91;') and raw_message.endswith('&#93;'):
-            # logger.debug('群聊学习', f'➤检验<m>{keywords}</m><r>不通过</r>')
             return False
         if ban_word := await ChatBlackList.filter(keywords=message.keywords).first():
             if ban_word.global_ban or message.group_id in ban_word.ban_group_id:
-                # logger.debug('群聊学习', f'➤检验<m>{keywords}</m><r>不通过</r>')
                 return False
-        # logger.debug('群聊学习', f'➤检验<m>{keywords}</m><g>通过</g>')
         return True
