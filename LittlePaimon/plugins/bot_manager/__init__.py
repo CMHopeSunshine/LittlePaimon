@@ -63,13 +63,6 @@ broadcast = on_command('广播', permission=SUPERUSER, rule=to_me(), priority=1,
 })
 
 
-def get_bot() -> Optional[Bot]:
-    try:
-        return list(nonebot.get_bots().values())[0]
-    except IndexError:
-        return None
-
-
 
 @update_cmd.handle()
 async def _(event: MessageEvent):
