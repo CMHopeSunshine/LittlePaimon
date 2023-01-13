@@ -39,6 +39,7 @@ class Result(IntEnum):
     Repeat = auto()
     Ban = auto()
     SetEnable = auto()
+    SetDisable = auto()
 
 
 class LearningChat:
@@ -76,13 +77,19 @@ class LearningChat:
 
     async def _learn(self) -> Result:
         # logger.debug('群聊学习', f'收到来自群<m>{self.data.group_id}</m>的消息<m>{self.data.message}</m>')
-        if not chat_config.total_enable or not self.config.enable:
+        if self.to_me and any(
+                w in self.data.message for w in {'学说话', '快学', '开启学习'}):
+            return Result.SetEnable
+        elif self.to_me and any(
+                w in self.data.message for w in {'闭嘴', '别学', '关闭学习'}):
+            return Result.SetDisable
+        elif not chat_config.total_enable or not self.config.enable:
             logger.debug('群聊学习', f'➤该群<m>{self.data.group_id}</m>未开启群聊学习，跳过')
             # 如果未开启群聊学习，跳过
             return Result.Pass
         elif command_start_ and self.data.message.startswith(tuple(command_start_)):
             # 以命令前缀开头的消息，跳过
-            logger.debug('群聊学习', '➤消息以命令前缀开头，跳过')
+            logger.debug('群聊学习', '➤该消息以命令前缀开头，跳过')
             return Result.Pass
         elif self.data.user_id in self.ban_users:
             # 发言人在屏蔽列表中，跳过
@@ -91,9 +98,6 @@ class LearningChat:
         elif self.to_me and any(w in self.data.message for w in {'不可以', '达咩', '不能说这'}):
             # 如果是对某句话进行禁言
             return Result.Ban
-        elif self.to_me and any(
-                w in self.data.message for w in {'学说话', '快学', '开启学习', '闭嘴', '别学', '关闭学习'}):
-            return Result.SetEnable
         elif not await self._check_allow(self.data):
             # 本消息不合法，跳过
             logger.debug('群聊学习', '➤消息未通过校验，跳过')
@@ -158,20 +162,16 @@ class LearningChat:
                 return [random.choice(SORRY_WORDS)]
             else:
                 return [random.choice(DOUBT_WORDS)]
-        elif result == Result.SetEnable:
+        elif result in [Result.SetEnable, Result.SetDisable]:
+            # 检查权限
             if self.role not in {'superuser', 'admin', 'owner'}:
                 return [random.choice(NO_PERMISSION_WORDS)]
-            # 检查权限
-            if any(w in self.data.message for w in {'学说话', '快学', '开启学习'}):
-                self.config.update(enable=True)
-                config_manager.config.group_config[self.data.group_id] = self.config
-                config_manager.save()
-                return [random.choice(ENABLE_WORDS)]
-            else:
-                self.config.update(enable=False)
-                config_manager.config.group_config[self.data.group_id] = self.config
-                config_manager.save()
-                return [random.choice(DISABLE_WORDS)]
+            self.config.update(enable=(result == Result.SetEnable))
+            config_manager.config.group_config[self.data.group_id] = self.config
+            config_manager.save()
+            logger.info('群聊学习',
+                        f'群<m>{self.data.group_id}</m>{"开启" if result == Result.SetEnable else "关闭"}学习功能')
+            return [random.choice(ENABLE_WORDS if result == Result.SetEnable else DISABLE_WORDS)]
         elif result == Result.Pass:
             # 跳过
             return None
@@ -179,7 +179,7 @@ class LearningChat:
             if await ChatMessage.filter(group_id=self.data.group_id,
                                         time__gte=self.data.time - 3600).limit(
                 self.config.repeat_threshold + 5).filter(
-                    user_id=self.bot_id, message=self.data.message).exists():
+                user_id=self.bot_id, message=self.data.message).exists():
                 # 如果在阈值+5条消息内，bot已经回复过这句话，则跳过
                 logger.debug('群聊学习', '➤➤已经复读过了，跳过')
                 return None

@@ -553,6 +553,8 @@ async def load_image(
             raise FileNotFoundError(f'{path} not found')
         if config.img_use_cache:
             cache_image[str(path)] = img
+        elif cache_image:
+            cache_image.clear()
     if mode:
         img = img.convert(mode)
     if size:

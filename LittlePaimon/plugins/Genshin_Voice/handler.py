@@ -121,7 +121,7 @@ async def get_voice_list(character: str, language: str = '中'):
     return await draw_voice_list(voice_list) if voice_list else MessageSegment.text(f'暂无{character}的{language}语音资源，让超级用户[更新原神语音资源]吧！')
 
 
-async def get_record(url):
+async def get_record(url: str) -> MessageSegment.record:
     resp = await aiorequests.get(url)
     resp.raise_for_status()
     voice = resp.content

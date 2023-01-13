@@ -25,7 +25,7 @@ __plugin_meta__ = PluginMetadata(
     }
 )
 
-sim_gacha = on_regex(r'^抽((?P<num>\d+)|(?:.*))十连(?P<pool>.*?)$', priority=13, block=True, state={
+sim_gacha = on_regex(r'^抽(?P<num>.*?)十连(?P<pool>.*?)$', priority=13, block=True, state={
         'pm_name':        '模拟抽卡',
         'pm_description': '原神模拟抽卡，卡池有常驻|角色1|角色2|武器',
         'pm_usage':       '抽[数量]十连[卡池]',
@@ -62,6 +62,15 @@ show_log = on_command('模拟抽卡记录', aliases={'查看模拟抽卡记录'}
 #         'pm_priority':    6
 #     })
 
+def get_num(num):
+    if num and num.isdigit():
+        return int(num)
+    else:
+        try:
+            digit_dict={'一': 1, '二': 2, '三': 3, '四': 4, '五': 5, '六': 6, '七': 7, '八': 8, '九': 9 }
+            return digit_dict[num]
+        except:
+            return 1
 
 @sim_gacha.handle()
 async def _(event: MessageEvent, reGroup: Dict = RegexDict()):
@@ -73,7 +82,7 @@ async def _(event: MessageEvent, reGroup: Dict = RegexDict()):
             await sim_gacha.finish(f'你的模拟抽卡冷却ing...剩余{freq_limiter.left(f"gacha-group{event.group_id}-{event.user_id}")}秒', at_sender=True)
     num = reGroup['num']
     pool = reGroup['pool']
-    num = int(num) if num and num.isdigit() else 1
+    num = get_num(num)
     if num > config.sim_gacha_max:
         await sim_gacha.finish(f'单次最多只能{config.sim_gacha_max}十连哦！')
     pool = pool or '角色1'
