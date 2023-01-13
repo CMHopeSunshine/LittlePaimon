@@ -288,6 +288,16 @@ other_form = Form(
             onText='开启',
             offText='关闭'
         ),
+        InputTag(
+                label='禁用重启时修改群名片群列表', 
+                name='reboot_card_ban', 
+                value='${reboot_card_ban}',
+                enableBatchAdd=True,
+                placeholder='添加禁用群名片修改的群号', 
+                joinValues=False, 
+                extractValue=True,
+                labelRemark=Remark(shape='circle', content='默认在重启时会把所在的群的群名片中增加"重启中"作为提示，在重启完成后修改回来，在此处添加不想修改群名片的群')
+        ),
         Switch(
             label='网页截图权限',
             name='启用网页截图权限',
