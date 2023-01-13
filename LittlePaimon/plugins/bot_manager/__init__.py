@@ -3,7 +3,9 @@ import asyncio
 import random
 import sys
 from pathlib import Path
+from typing import Optional
 
+import nonebot
 from nonebot import on_command, get_bot
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
@@ -11,7 +13,9 @@ from nonebot.rule import to_me
 from nonebot.params import CommandArg, ArgPlainText, Arg
 from nonebot.typing import T_State
 from nonebot.adapters.onebot.v11 import Bot, Message, MessageEvent, GroupMessageEvent, ActionFailed
-from nonebot.adapters.onebot.v11.helpers import convert_chinese_to_bool
+#from nonebot.adapters.onebot.v11.helpers import convert_chinese_to_bool
+
+from LittlePaimon.plugins.NoticeAndRequest import config
 from LittlePaimon.utils import NICKNAME, DRIVER, __version__
 from LittlePaimon.utils.files import save_json, load_json
 from LittlePaimon.utils.update import check_update, update
@@ -59,6 +63,14 @@ broadcast = on_command('广播', permission=SUPERUSER, rule=to_me(), priority=1,
 })
 
 
+def get_bot() -> Optional[Bot]:
+    try:
+        return list(nonebot.get_bots().values())[0]
+    except IndexError:
+        return None
+
+
+
 @update_cmd.handle()
 async def _(event: MessageEvent):
     await update_cmd.send(f'{NICKNAME}开始更新', at_sender=True)
@@ -78,18 +90,32 @@ async def _(event: MessageEvent):
     await check_update_cmd.finish(result, at_sender=True)
 
 
-@reboot_cmd.got('confirm', prompt='确定要重启吗？(是|否)')
+@reboot_cmd.handle()
 async def _(event: MessageEvent):
-    if convert_chinese_to_bool(event.message):
-        await reboot_cmd.send(f'{NICKNAME}开始执行重启，请等待{NICKNAME}的归来', at_sender=True)
-        save_json({'session_type': event.message_type,
-                   'session_id':   event.group_id if isinstance(event, GroupMessageEvent) else event.user_id},
-                  Path() / 'rebooting.json')
-        if sys.argv[0].endswith('nb'):
-            sys.argv[0] = 'bot.py'
-        os.execv(sys.executable, ['python'] + sys.argv)
-    else:
-        await reboot_cmd.finish('取消重启')
+    #if convert_chinese_to_bool(event.message):
+    await reboot_cmd.send(f'{NICKNAME}开始执行重启，请等待{NICKNAME}的归来', at_sender=True)
+    save_json({'session_type': event.message_type,
+               'session_id':   event.group_id if isinstance(event, GroupMessageEvent) else event.user_id},
+              Path() / 'rebooting.json')
+    info = load_json(Path() / 'rebooting.json')
+    bot = get_bot()
+    group_list = await bot.get_group_list()
+    group_list_id = [gg["group_id"] for gg in group_list]
+    if config.card_open:
+        group_len = len(config.card_open)
+        for i in range(group_len):
+            group = config.card_open[i]
+            if group in group_list_id:
+                card = await bot.get_group_member_info(group_id=group, user_id=int(bot.self_id), no_cache=True)
+                info[group] = {"group_id": group, "card": card["card"]}
+                save_json(info, Path() / 'rebooting.json')
+                await bot.set_group_card(group_id=group, user_id=int(bot.self_id),
+                                         card=f'{NICKNAME}重启中')
+    if sys.argv[0].endswith('nb'):
+        sys.argv[0] = 'bot.py'
+    os.execv(sys.executable, ['python'] + sys.argv)
+    #else:
+        #await reboot_cmd.finish('取消重启')
 
 
 @run_cmd.handle()
@@ -149,4 +175,10 @@ async def _():
             await get_bot().send_group_msg(group_id=info['session_id'], message=f'{NICKNAME}已重启完成，当前版本为{__version__}')
         else:
             await get_bot().send_private_msg(user_id=info['session_id'], message=f'{NICKNAME}已重启完成，当前版本为{__version__}')
+        for group_id, card_info in info.items():
+            if group_id not in {"session_type", "session_id"}:
+                card = card_info["card"]
+                group_id = group_id
+                bot = get_bot()
+                await bot.set_group_card(group_id=group_id, user_id=int(bot.self_id), card=card)
         (Path() / 'rebooting.json').unlink()

@@ -15,6 +15,7 @@ class GreetConfig:
         self.new_group: str = data.get('新群见面语', '旅行者们大家好呀，这里是{nickname}，对我说“help”查看帮助吧~')
         self.group_greet: Dict[Union[str, int], str] = data.get('群新人欢迎语', {'默认': '欢迎新旅行者~{at_user}'})
         self.group_ban = data.get('群欢迎语禁用列表', [])
+        self.card_open = data.get('重启时更改群名片启用列表', [])
         self.save()
 
     def save(self):
@@ -22,7 +23,8 @@ class GreetConfig:
             '新好友见面语': self.new_friend,
             '新群见面语': self.new_group,
             '群新人欢迎语': self.group_greet,
-            '群欢迎语禁用列表': self.group_ban
+            '群欢迎语禁用列表': self.group_ban,
+            '重启时更改群名片启用列表': self.card_open
         }
         save_yaml(data, GREET_CONFIG)
 
