@@ -2,7 +2,6 @@ import contextlib
 import hashlib
 import json
 import random
-import re
 import string
 import time
 from typing import Optional, Literal, Union, Tuple
@@ -143,12 +142,11 @@ def mihoyo_sign_headers(cookie: str, extra_headers: Optional[dict] = None) -> di
     return header
 
 
-async def check_retcode(data: dict, cookie_info, cookie_type: str, user_id: str, uid: str) -> bool:
+async def check_retcode(data: dict, cookie_info, user_id: str, uid: str) -> bool:
     """
     检查数据响应状态冰进行响应处理
         :param data: 数据
         :param cookie_info: cookie信息
-        :param cookie_type: cookie类型
         :param user_id: 用户id
         :param uid: 原神uid
         :return: 数据是否有效
@@ -156,7 +154,7 @@ async def check_retcode(data: dict, cookie_info, cookie_type: str, user_id: str,
     if not data:
         return False
     if data['retcode'] in [10001, -100]:
-        if cookie_type == 'private':
+        if isinstance(cookie_info, PrivateCookie):
             if cookie_info.status == 1:
                 cookie_info.status = 0
                 await cookie_info.save()
@@ -164,7 +162,7 @@ async def check_retcode(data: dict, cookie_info, cookie_type: str, user_id: str,
             elif cookie_info.status == 0:
                 await cookie_info.delete()
                 logger.info('原神Cookie', f'用户<m>{user_id}</m>的私人cookie<m>{uid}</m>连续失效，<r>已删除</r>')
-        elif cookie_type == 'public':
+        elif isinstance(cookie_info, PublicCookie):
             await CookieCache.filter(cookie=cookie_info.cookie).delete()
             await cookie_info.delete()
             logger.info('原神Cookie', f'<m>{cookie_info.id}</m>号公共cookie已失效，<r>已删除</r>')
@@ -175,11 +173,11 @@ async def check_retcode(data: dict, cookie_info, cookie_type: str, user_id: str,
         return False
     elif data['retcode'] == 10101:
         cookie_info.status = 2
-        if cookie_type == 'private':
+        if isinstance(cookie_info, PrivateCookie):
             cookie_info.status = 2
             await cookie_info.save()
             logger.info('原神Cookie', f'用户<m>{user_id}</m>的私人cookie<m>{uid}</m>已达到每日30次查询上限')
-        elif cookie_type == 'public':
+        elif isinstance(cookie_info, PublicCookie):
             cookie_info.status = 2
             await cookie_info.save()
             logger.info('原神Cookie', f'<m>{cookie_info.id}</m>号公共cookie已达到每日30次查询上限')
@@ -189,13 +187,15 @@ async def check_retcode(data: dict, cookie_info, cookie_type: str, user_id: str,
             logger.info('原神Cookie', f'UID<m>{cookie_info.uid}</m>使用的缓存cookie已达到每日30次查询上限')
         return False
     else:
-        if cookie_type == 'public' and data['retcode'] != 1034:
+        if isinstance(cookie_info, PublicCookie) and data['retcode'] != 1034:
             await CookieCache.update_or_create(uid=uid, defaults={'cookie': cookie_info.cookie})
         return True
 
 
-async def get_cookie(user_id: str, uid: str, check: bool = True, own: bool = False) -> Tuple[
-    Union[None, PrivateCookie, PublicCookie, CookieCache], str]:
+async def get_cookie(user_id: str,
+                     uid: str,
+                     check: bool = True,
+                     own: bool = False) -> Union[None, PrivateCookie, PublicCookie, CookieCache]:
     """
     获取可用的cookie
         :param user_id: 用户id
@@ -205,16 +205,16 @@ async def get_cookie(user_id: str, uid: str, check: bool = True, own: bool = Fal
     """
     query = Q(status=1) | Q(status=0) if check else Q(status=1)
     if private_cookie := await PrivateCookie.filter(Q(Q(query) & Q(user_id=user_id) & Q(uid=uid))).first():
-        return private_cookie, 'private'
+        return private_cookie
     elif not own:
         if cache_cookie := await CookieCache.get_or_none(uid=uid):
-            return cache_cookie, 'cache'
+            return cache_cookie
         elif private_cookie := await PrivateCookie.filter(Q(Q(query) & Q(user_id=user_id))).first():
-            return private_cookie, 'private'
+            return private_cookie
         else:
-            return await PublicCookie.filter(Q(query)).first(), 'public'
+            return await PublicCookie.filter(Q(query)).first()
     else:
-        return None, ''
+        return None
 
 
 async def get_bind_game_info(cookie: str, mys_id: str):
@@ -245,7 +245,7 @@ async def get_mihoyo_public_data(
     server_id = 'cn_qd01' if uid[0] == '5' else 'cn_gf01'
     check = True
     while True:
-        cookie_info, cookie_type = await get_cookie(user_id, uid, check)
+        cookie_info = await get_cookie(user_id, uid, check)
         check = False
         if not cookie_info:
             return '当前没有可使用的cookie，请绑定私人cookie或联系超级管理员添加公共cookie，'
@@ -280,7 +280,7 @@ async def get_mihoyo_public_data(
             data = None
         data = data.json() if data else {'retcode': 999}
         nb_logger.debug(data)
-        if await check_retcode(data, cookie_info, cookie_type, user_id, uid):
+        if await check_retcode(data, cookie_info, user_id, uid):
             return data
 
 
@@ -291,7 +291,7 @@ async def get_mihoyo_private_data(
         role_id: Optional[str] = None,
         month: Optional[str] = None):
     server_id = 'cn_qd01' if uid[0] == '5' else 'cn_gf01'
-    cookie_info, _ = await get_cookie(user_id, uid, True, True)
+    cookie_info = await get_cookie(user_id, uid, True, True)
     if not cookie_info:
         return '未绑定私人cookie，绑定方法二选一：\n1.通过米游社扫码绑定：\n请发送指令[原神扫码绑定]\n2.获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1\n获取后，使用[ysb cookie]指令绑定' \
                + (f'或前往{config.CookieWeb_url}网页添加绑定' if config.CookieWeb_enable else '')
@@ -348,7 +348,7 @@ async def get_mihoyo_private_data(
         data = None
     data = data.json() if data else {'retcode': 999}
     nb_logger.debug(data)
-    if await check_retcode(data, cookie_info, 'private', user_id, uid):
+    if await check_retcode(data, cookie_info, user_id, uid):
         return data
     else:
         return f'你的UID{uid}的cookie疑似失效了'
@@ -420,7 +420,7 @@ async def get_authkey_by_stoken(user_id: str, uid: str) -> Tuple[Optional[str], 
     :return: authkey
     """
     server_id = 'cn_qd01' if uid[0] == '5' else 'cn_gf01'
-    cookie_info, _ = await get_cookie(user_id, uid, True, True)
+    cookie_info = await get_cookie(user_id, uid, True, True)
     if not cookie_info:
         return '未绑定私人cookie，绑定方法二选一：\n1.通过米游社扫码绑定：\n请发送指令[原神扫码绑定]\n2.获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1\n获取后，使用[ysb cookie]指令绑定' \
                + (f'或前往{config.CookieWeb_url}网页添加绑定' if config.CookieWeb_enable else ''), False, cookie_info
@@ -454,15 +454,15 @@ async def get_authkey_by_stoken(user_id: str, uid: str) -> Tuple[Optional[str], 
 
 
 async def get_enka_data(uid):
-    try:
-        url = f'https://enka.network/u/{uid}/__data.json'
-        resp = await aiorequests.get(url=url, headers={'User-Agent': 'LittlePaimon/3.0'}, follow_redirects=True)
-        data = resp.json()
-        nb_logger.debug(data)
-        return data
-    except Exception:
-        url = f'https://enka.microgg.cn/u/{uid}/__data.json'
-        resp = await aiorequests.get(url=url, headers={'User-Agent': 'LittlePaimon/3.0'}, follow_redirects=True)
-        data = resp.json()
-        nb_logger.debug(data)
-        return data
+    urls = [
+        'https://enka.network/u/{uid}/__data.json',
+        'https://enka.microgg.cn/u/{uid}/__data.json'
+    ]
+    for url in urls:
+        with contextlib.suppress(Exception):
+            resp = await aiorequests.get(url=url.format(uid=uid),
+                                         headers={'User-Agent': 'LittlePaimon/3.0'},
+                                         follow_redirects=True)
+            data = resp.json()
+            nb_logger.debug(data)
+            return data

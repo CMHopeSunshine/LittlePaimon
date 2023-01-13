@@ -144,15 +144,17 @@ async def _(event: MessageEvent, bot: Bot, msg: Message = Arg('msg'), groups: st
 
 @DRIVER.on_bot_connect
 async def _():
-    if (reboot_file := (Path() / 'rebooting.json')).exists():
-        bot = get_bot()
-        reboot_data = load_json(reboot_file)
-        if reboot_data['session_type'] == 'group':
-            await bot.send_group_msg(group_id=reboot_data['session_id'],
-                                     message=f'{NICKNAME}已重启完成，当前版本为{__version__}')
-        else:
-            await bot.send_private_msg(user_id=reboot_data['session_id'],
-                                       message=f'{NICKNAME}已重启完成，当前版本为{__version__}')
+    if not (reboot_file := (Path() / 'rebooting.json')).exists():
+        return
+    bot = get_bot()
+    reboot_data = load_json(reboot_file)
+    if reboot_data['session_type'] == 'group':
+        await bot.send_group_msg(group_id=reboot_data['session_id'],
+                                 message=f'{NICKNAME}已重启完成，当前版本为{__version__}')
+    else:
+        await bot.send_private_msg(user_id=reboot_data['session_id'],
+                                   message=f'{NICKNAME}已重启完成，当前版本为{__version__}')
+    if 'group_card' in reboot_data:
         for group_id, card_info in reboot_data['group_card'].items():
             await bot.set_group_card(group_id=int(group_id), user_id=int(bot.self_id), card=card_info)
             await asyncio.sleep(0.25)
