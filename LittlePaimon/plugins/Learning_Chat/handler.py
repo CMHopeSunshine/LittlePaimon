@@ -387,13 +387,13 @@ class LearningChat:
                 continue
 
             # 如果最后一条消息是自己发的，则不主动发言
-            last_reply = await ChatMessage.filter(group_id=group_id, user_id=self_id).first()
-            if last_reply and last_reply.time >= messages[0].time:
-                logger.debug('群聊学习', f'主动发言：群<m>{group_id}</m>最后一条消息是{NICKNAME}发的{last_reply.message}，不发言')
-                continue
-            if cur_time - last_reply.time < config.speak_min_interval:
-                logger.debug('群聊学习', f'主动发言：群<m>{group_id}</m>上次主动发言时间小于主动发言最小间隔，不发言')
-                continue
+            if last_reply := await ChatMessage.filter(group_id=group_id, user_id=self_id).first():
+                if last_reply.time >= messages[0].time:
+                    logger.debug('群聊学习', f'主动发言：群<m>{group_id}</m>最后一条消息是{NICKNAME}发的{last_reply.message}，不发言')
+                    continue
+                elif cur_time - last_reply.time < config.speak_min_interval:
+                    logger.debug('群聊学习', f'主动发言：群<m>{group_id}</m>上次主动发言时间小于主动发言最小间隔，不发言')
+                    continue
 
             # 该群每多少秒发一条消息
             avg_interval = (messages[0].time - messages[-1].time) / len(messages)
