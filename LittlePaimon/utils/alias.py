@@ -1,15 +1,9 @@
-import re
 from difflib import get_close_matches
 from typing import Union, Literal, List, Optional, Dict
 
 from .files import load_json
-from .path import JSON_DATA, GACHA_RES
+from .path import JSON_DATA
 
-alias_file = load_json(JSON_DATA / 'alias.json')
-info_file = load_json(JSON_DATA / 'genshin_info.json')
-weapon_file = load_json(JSON_DATA / 'weapon.json')
-item_type_file = load_json(GACHA_RES / 'type.json')
-type_file = load_json(JSON_DATA / '类型.json')
 
 WEAPON_TYPE_ALIAS = {
     '单手剑': '单手剑',
@@ -33,7 +27,7 @@ def get_id_by_name(name: str) -> Optional[str]:
         :param name: 角色名
         :return: id字符串
     """
-    name_list = alias_file['角色']
+    name_list = load_json(JSON_DATA / 'alias.json')['角色']
     for role_id, alias in name_list.items():
         if name in alias:
             return role_id
@@ -47,7 +41,7 @@ def get_name_by_id(role_id: Union[str, int]) -> Optional[str]:
     """
     if isinstance(role_id, int):
         role_id = str(role_id)
-    name_list = alias_file['角色']
+    name_list = load_json(JSON_DATA / 'alias.json')['角色']
     return name_list[role_id][0] if role_id in name_list else None
 
 
@@ -57,7 +51,7 @@ def get_alias_by_name(name: str) -> Optional[List[str]]:
         :param name: 角色名
         :return: 别名列表
     """
-    name_list = alias_file['角色']
+    name_list = load_json(JSON_DATA / 'alias.json')['角色']
     return next((r for r in name_list.values() if name in r), None)
 
 
@@ -78,6 +72,7 @@ def get_match_alias(name: str, types: Union[List[ALIAS_TYPE], ALIAS_TYPE] = None
     elif isinstance(types, str):
         types = [types]
     matches = {}
+    alias_file = load_json(JSON_DATA / 'alias.json')
     include_flag = False
     for type in types:
         alias_list = alias_file[type]
@@ -137,11 +132,10 @@ def get_chara_icon(name: Optional[str] = None, chara_id: Optional[int] = None,
     """
     if name and not chara_id:
         chara_id = get_id_by_name(name)
-    if info := info_file.get(str(chara_id)):
+    if info := load_json(JSON_DATA / 'genshin_info.json').get(str(chara_id)):
         side_icon = info['SideIconName']
     else:
         return None
-    # UI_AvatarIcon_Side_Wanderer
     if icon_type == 'side':
         return side_icon
     elif icon_type == 'avatar':
@@ -155,5 +149,5 @@ def get_chara_icon(name: Optional[str] = None, chara_id: Optional[int] = None,
 
 
 def get_weapon_icon(name: str) -> Optional[str]:
-    icon_list = weapon_file['Icon']
+    icon_list = load_json(JSON_DATA / 'weapon.json')['Icon']
     return icon_list.get(name)

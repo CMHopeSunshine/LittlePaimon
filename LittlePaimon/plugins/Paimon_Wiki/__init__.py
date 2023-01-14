@@ -14,10 +14,12 @@ from nonebot.typing import T_State
 from LittlePaimon.database import PlayerAlias
 from LittlePaimon.utils import NICKNAME
 from LittlePaimon.config import config
-from LittlePaimon.utils.alias import get_match_alias, WEAPON_TYPE_ALIAS, type_file, alias_file
+from LittlePaimon.utils.alias import get_match_alias, WEAPON_TYPE_ALIAS
 from LittlePaimon.utils.message import MessageBuild, fullmatch_rule
 from LittlePaimon.utils.tool import freq_limiter
 from LittlePaimon.utils.typing import COMMAND_START_RE
+from LittlePaimon.utils.files import load_json
+from LittlePaimon.utils.path import JSON_DATA
 from .draw_daily_material import draw_material
 from .draw_map import init_map, draw_map, get_full_map
 from .SereniteaPot import draw_pot_materials
@@ -202,11 +204,11 @@ async def _(bot: Bot, event: MessageEvent, state: T_State, type: str = Arg('type
             await total_wiki.finish(MessageSegment.image(API[type].format(proxy=config.github_proxy, name=name)))
         elif type.startswith('角色') or type in {'参考面板', '收益曲线'}:
             if name == '全部':
-                matches = type_file['角色']['元素类型']
+                matches = load_json(JSON_DATA / '类型.json')['角色']['元素类型']
             elif re.match('^[火水冰雷风岩草](元素|属性|系)?$', name):
-                matches = {'角色': type_file['角色']['元素类型'][name[0]]}
+                matches = {'角色': load_json(JSON_DATA / '类型.json')['角色']['元素类型'][name[0]]}
             elif re.match('^' + '|'.join(WEAPON_TYPE_ALIAS.keys()) + '$', name):
-                matches = {'角色': type_file['角色']['武器类型'][WEAPON_TYPE_ALIAS[name]]}
+                matches = {'角色': load_json(JSON_DATA / '类型.json')['角色']['武器类型'][WEAPON_TYPE_ALIAS[name]]}
             elif alias := await PlayerAlias.get_or_none(user_id=str(event.user_id), alias=name):
                 final_name = alias.character
                 matches = {}
@@ -220,15 +222,15 @@ async def _(bot: Bot, event: MessageEvent, state: T_State, type: str = Arg('type
                 matches = get_match_alias(name, '角色')
         elif type.startswith('武器'):
             if name == '全部':
-                matches = type_file['武器']
+                matches = load_json(JSON_DATA / '类型.json')['武器']
             elif re.match('^' + '|'.join(WEAPON_TYPE_ALIAS.keys()) + '$', name):
-                matches = {'武器': type_file['武器'][WEAPON_TYPE_ALIAS[name]]}
+                matches = {'武器': load_json(JSON_DATA / '类型.json')['武器'][WEAPON_TYPE_ALIAS[name]]}
             else:
                 matches = get_match_alias(name, '武器')
         elif type.startswith('原魔'):
-            matches = {'原魔': list(alias_file['原魔'].keys())} if name == '全部' else get_match_alias(name, '原魔')
+            matches = {'原魔': list(load_json(JSON_DATA / 'alias.json')['原魔'].keys())} if name == '全部' else get_match_alias(name, '原魔')
         elif type.startswith('圣遗物'):
-            matches = {'圣遗物': list(alias_file['圣遗物'].keys())} if name == '全部' else get_match_alias(name, '圣遗物')
+            matches = {'圣遗物': list(load_json(JSON_DATA / 'alias.json')['圣遗物'].keys())} if name == '全部' else get_match_alias(name, '圣遗物')
         elif type.startswith('七圣召唤'):
             if name == '全部':
                 matches = await get_match_card(name)
@@ -238,10 +240,10 @@ async def _(bot: Bot, event: MessageEvent, state: T_State, type: str = Arg('type
             matches = {'特产': s}
         else:
             if re.match('^[火水冰雷风岩草](元素|属性|系)?$', name):
-                matches = {'角色': type_file['角色']['元素类型'][name[0]]}
+                matches = {'角色': load_json(JSON_DATA / '类型.json')['角色']['元素类型'][name[0]]}
             elif re.match('^' + '|'.join(WEAPON_TYPE_ALIAS.keys()) + '$', name):
-                matches = {'角色': type_file['角色']['武器类型'][WEAPON_TYPE_ALIAS[name]],
-                           '武器': type_file['武器'][WEAPON_TYPE_ALIAS[name]]}
+                matches = {'角色': load_json(JSON_DATA / '类型.json')['角色']['武器类型'][WEAPON_TYPE_ALIAS[name]],
+                           '武器': load_json(JSON_DATA / '类型.json')['武器'][WEAPON_TYPE_ALIAS[name]]}
             elif alias := await PlayerAlias.get_or_none(user_id=str(event.user_id), alias=name):
                 final_name = alias.character
                 if type in {'材料', '攻略', '图鉴'}:

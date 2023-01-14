@@ -50,10 +50,9 @@ def update():
         origin.pull()
         msg = f'更新完成，版本：{__version__}\n最新更新日志为：\n{repo.head.commit.message.replace(":bug:", "🐛").replace(":sparkles:", "✨").replace(":memo:", "📝")}\n可使用命令[@bot 重启]重启{NICKNAME}'
     except GitCommandError as e:
-        emsg = e.stdout + '\n' + e.stderr
-        if 'timeout' in emsg or 'unable to access' in emsg:
+        if 'timeout' in e.stderr or 'unable to access' in e.stderr:
             msg = '更新失败，连接git仓库超时，请重试或修改源为代理源后再重试。'
-        elif 'Your local changes' in emsg:
+        elif 'Your local changes' in e.stderr:
             pyproject_file = Path().parent / 'pyproject.toml'
             pyproject_raw_content = pyproject_file.read_text(encoding='utf-8')
             if raw_plugins_load := re.search(r'^plugins = \[.+]$', pyproject_raw_content, flags=re.M):
@@ -66,13 +65,12 @@ def update():
                 origin.pull()
                 msg = f'更新完成，版本：{__version__}\n最新更新日志为：\n{repo.head.commit.message.replace(":bug:", "🐛").replace(":sparkles:", "✨").replace(":memo:", "📝")}\n可使用命令[@bot 重启]重启{NICKNAME}'
             except GitCommandError as e:
-                emsg = e.stdout + '\n' + e.stderr
-                if 'timeout' in emsg or 'unable to access' in emsg:
+                if 'timeout' in e.stderr or 'unable to access' in e.stderr:
                     msg = '更新失败，连接git仓库超时，请重试或修改源为代理源后再重试。'
-                elif ' Your local changes' in emsg:
-                    msg = f'更新失败，本地修改过文件导致冲突，请解决冲突后再更新。\n{emsg}'
+                elif ' Your local changes' in e.stderr:
+                    msg = f'更新失败，本地修改过文件导致冲突，请解决冲突后再更新。\n{e.stderr}'
                 else:
-                    msg = f'更新失败，错误信息：{emsg}，请尝试手动进行更新'
+                    msg = f'更新失败，错误信息：{e.stderr}，请尝试手动进行更新'
             finally:
                 if raw_plugins_load:
                     pyproject_new_content = pyproject_file.read_text(encoding='utf-8')
@@ -83,5 +81,5 @@ def update():
                     logger.info('派蒙更新', f'更新结束，还原插件：{raw_plugins_load.group()}')
             return msg
         else:
-            msg = f'更新失败，错误信息：{emsg}，请尝试手动进行更新'
+            msg = f'更新失败，错误信息：{e.stderr}，请尝试手动进行更新'
     return msg

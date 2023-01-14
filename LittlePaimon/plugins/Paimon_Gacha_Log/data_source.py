@@ -43,6 +43,7 @@ PARAMS: Dict[str, Union[str, int]] = {
 def load_history_info(user_id: str, uid: str) -> Tuple[GachaLogInfo, bool]:
     """
     读取历史抽卡记录数据
+
     :param user_id: 用户id
     :param uid: 原神uid
     :return: 抽卡记录数据
@@ -59,6 +60,7 @@ def load_history_info(user_id: str, uid: str) -> Tuple[GachaLogInfo, bool]:
 def save_gacha_log_info(user_id: str, uid: str, info: GachaLogInfo):
     """
     保存抽卡记录数据
+
     :param user_id: 用户id
     :param uid: 原神uid
     :param info: 抽卡记录数据
@@ -76,6 +78,12 @@ def save_gacha_log_info(user_id: str, uid: str, info: GachaLogInfo):
 
 
 def gacha_log_to_UIGF(user_id: str, uid: str) -> Tuple[bool, str, Optional[Path]]:
+    """
+    将抽卡记录转换为UIGF格式
+
+    :param user_id: 用户id
+    :param uid: 原神uid
+    """
     data, state = load_history_info(user_id, uid)
     if not state:
         return False, f'UID{uid}还没有抽卡记录数据，请先更新', None
@@ -104,7 +112,8 @@ def gacha_log_to_UIGF(user_id: str, uid: str) -> Tuple[bool, str, Optional[Path]
                 'item_type':       item.item_type,
                 'rank_type':       item.rank_type,
                 'id':              item.id,
-                'uigf_gacha_type': item.gacha_type
+                'uigf_gacha_type': item.gacha_type,
+                'uid':             uid
             })
     save_json(uigf_dict, save_path)
     return True, '导出成功', save_path
@@ -113,12 +122,19 @@ def gacha_log_to_UIGF(user_id: str, uid: str) -> Tuple[bool, str, Optional[Path]
 async def get_gacha_log_data(user_id: str, uid: str):
     """
     使用authkey获取抽卡记录数据，并合并旧数据
+
     :param user_id: 用户id
     :param uid: 原神uid
     :return: 更新结果
     """
     await LastQuery.update_last_query(user_id, uid)
     new_num = 0
+    type_new_num = {
+        '角色祈愿': 0,
+        '武器祈愿': 0,
+        '常驻祈愿': 0,
+        '新手祈愿': 0,
+    }
     server_id = 'cn_qd01' if uid[0] == '5' else 'cn_gf01'
     authkey, state, cookie_info = await get_authkey_by_stoken(user_id, uid)
     if not state:
@@ -152,6 +168,7 @@ async def get_gacha_log_data(user_id: str, uid: str):
                 if item_info not in gacha_log.item_list[pool_name]:
                     gacha_log.item_list[pool_name].append(item_info)
                     new_num += 1
+                    type_new_num[pool_name] += 1
             end_id = data[-1]['id']
             await asyncio.sleep(1)
         logger.info('原神抽卡记录', f'➤➤<m>{pool_name}</m>', {}, '获取完成', True)
@@ -160,12 +177,24 @@ async def get_gacha_log_data(user_id: str, uid: str):
     gacha_log.update_time = datetime.datetime.now()
     save_gacha_log_info(user_id, uid, gacha_log)
     if new_num == 0:
-        return f'UID{uid}更新完成，本次没有新增数据'
-    else:
-        return f'UID{uid}更新完成，本次共新增{new_num}条抽卡记录'
+        return f'UID{uid}更新完成，本次没有新增数据，可使用命令[查看抽卡记录]查看'
+    msg = f'UID{uid}更新完成，本次共新增{new_num}条抽卡记录：\n'
+    for pool_name, num in type_new_num.items():
+        if num != 0:
+            msg += f'{pool_name}{num}条\n'
+    msg += '\n可使用命令[查看抽卡记录]查看'
+    return msg
 
 
 async def get_gacha_log_img(user_id: str, uid: str, nickname: str):
+    """
+    绘制抽卡记录图片入口
+
+    :param user_id: 用户id
+    :param uid: 原神uid
+    :param nickname: 用户昵称
+    :return: 抽卡记录图片
+    """
     await LastQuery.update_last_query(user_id, uid)
     data, state = load_history_info(user_id, uid)
     if not state:
@@ -178,6 +207,11 @@ async def get_gacha_log_img(user_id: str, uid: str, nickname: str):
 
 
 def create_import_command(user_id: int):
+    """
+    创建抽卡记录导入命令
+
+    :param user_id: 用户id
+    """
     def file_rule(event: NoticeEvent):
         if isinstance(event, GroupUploadNoticeEvent) or event.notice_type == 'offline_file':
             return event.dict()['user_id'] == user_id
