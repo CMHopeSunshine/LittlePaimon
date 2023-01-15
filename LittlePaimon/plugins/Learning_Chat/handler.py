@@ -389,7 +389,8 @@ class LearningChat:
             # 如果最后一条消息是自己发的，则不主动发言
             if last_reply := await ChatMessage.filter(group_id=group_id, user_id=self_id).first():
                 if last_reply.time >= messages[0].time:
-                    logger.debug('群聊学习', f'主动发言：群<m>{group_id}</m>最后一条消息是{NICKNAME}发的{last_reply.message}，不发言')
+                    logger.debug('群聊学习',
+                                 f'主动发言：群<m>{group_id}</m>最后一条消息是{NICKNAME}发的{last_reply.message}，不发言')
                     continue
                 elif cur_time - last_reply.time < config.speak_min_interval:
                     logger.debug('群聊学习', f'主动发言：群<m>{group_id}</m>上次主动发言时间小于主动发言最小间隔，不发言')
@@ -401,7 +402,8 @@ class LearningChat:
             silent_time = cur_time - messages[0].time
             threshold = avg_interval * config.speak_threshold
             if silent_time < threshold:
-                logger.debug('群聊学习', f'主动发言：群<m>{group_id}</m>已沉默时间({silent_time})小于阈值({int(threshold)})，不发言')
+                logger.debug('群聊学习',
+                             f'主动发言：群<m>{group_id}</m>已沉默时间({silent_time})小于阈值({int(threshold)})，不发言')
                 continue
 
             if contexts := await ChatContext.filter(count__gte=config.answer_threshold).all():
@@ -411,42 +413,44 @@ class LearningChat:
                 random.shuffle(contexts)
                 for context in contexts:
                     if (not speak_list or random.random() < config.speak_continuously_probability) and len(
-                            speak_list) < config.speak_continuously_max_len and (
-                            answers := await ChatAnswer.filter(context=context,
-                                                               group_id=group_id,
-                                                               count__gte=config.answer_threshold)):
-                        answer = random.choices(answers,
-                                                weights=[answer.count + 1 if answer.time >= today_time else answer.count
-                                                         for answer in answers])[0]
-                        message = random.choice(answer.messages)
-                        if len(message) < 2:
-                            continue
-                        if message.startswith('&#91;') and message.endswith('&#93;'):
-                            continue
-                        if any(word in message for word in ban_words):
-                            continue
-                        speak_list.append(message)
-                        follow_answers = answer
-                        while random.random() < config.speak_continuously_probability and len(
-                                speak_list) < config.speak_continuously_max_len:
-                            if (follow_context := await ChatContext.filter(keywords=follow_answers.keywords).first()) and (
-                                    follow_answers := await ChatAnswer.filter(
-                                        group_id=group_id,
-                                        context=follow_context,
-                                        count__gte=config.answer_threshold)):
-                                answer = random.choices(follow_answers,
-                                                        weights=[a.count + 1 if a.time >= today_time else a.count
-                                                                 for a in follow_answers])[0]
-                                message = random.choice(answer.messages)
-                                if len(message) < 2:
-                                    continue
-                                if message.startswith('&#91;') and message.endswith('&#93;'):
-                                    continue
-                                if all(word not in message for word in ban_words):
-                                    speak_list.append(message)
-                            else:
-                                break
-                    elif len(speak_list) >= config.speak_continuously_max_len:
+                            speak_list) < config.speak_continuously_max_len:
+                        if answers := await ChatAnswer.filter(context=context,
+                                                              group_id=group_id,
+                                                              count__gte=config.answer_threshold):
+                            answer = random.choices(answers,
+                                                    weights=[
+                                                        answer.count + 1 if answer.time >= today_time else answer.count
+                                                        for answer in answers])[0]
+                            message = random.choice(answer.messages)
+                            if len(message) < 2:
+                                continue
+                            if message.startswith('&#91;') and message.endswith('&#93;'):
+                                continue
+                            if any(word in message for word in ban_words):
+                                continue
+                            speak_list.append(message)
+                            follow_answers = answer
+                            while random.random() < config.speak_continuously_probability and len(
+                                    speak_list) < config.speak_continuously_max_len:
+                                if (follow_context := await ChatContext.filter(
+                                        keywords=follow_answers.keywords).first()) and (
+                                        follow_answers := await ChatAnswer.filter(
+                                            group_id=group_id,
+                                            context=follow_context,
+                                            count__gte=config.answer_threshold)):
+                                    answer = random.choices(follow_answers,
+                                                            weights=[a.count + 1 if a.time >= today_time else a.count
+                                                                     for a in follow_answers])[0]
+                                    message = random.choice(answer.messages)
+                                    if len(message) < 2:
+                                        continue
+                                    if message.startswith('&#91;') and message.endswith('&#93;'):
+                                        continue
+                                    if all(word not in message for word in ban_words):
+                                        speak_list.append(message)
+                                else:
+                                    break
+                    else:
                         break
                 if speak_list:
                     if random.random() < config.speak_poke_probability:

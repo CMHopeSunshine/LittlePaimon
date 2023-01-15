@@ -35,7 +35,7 @@ async def sign_action(user_id: str, uid: str) -> Union[dict, str]:
                                       'region': server_id
                                   })
     data = resp.json()
-    if await check_retcode(data, cookie_info, 'private', user_id, uid):
+    if await check_retcode(data, cookie_info, user_id, uid):
         return data
     else:
         return f'你的UID{uid}的cookie疑似失效了'
