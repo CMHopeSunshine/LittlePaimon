@@ -41,7 +41,7 @@ qrcode = "^7.3.1"
 nb-cli = "^0.6.7"
 
 [tool.nonebot]
-plugins = ["nonebot_plugin_gocqhttp", "nonebot_plugin_guild_patch", "nonebot_bison"]
+plugins = ["nonebot_plugin_gocqhttp", "nonebot_plugin_guild_patch", "nonebot_bison", "nonebot_plugin_easy_translate"]
 plugin_dirs = ["src/plugins"]
 
 [build-system]
