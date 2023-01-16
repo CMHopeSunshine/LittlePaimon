@@ -304,9 +304,9 @@ other_form = Form(
             offText='关闭'
         ),
         InputTag(
-                label='禁用重启时修改群名片群列表', 
-                name='reboot_card_ban', 
-                value='${reboot_card_ban}',
+                label='禁用重启时修改群名片群列表',
+                name='禁用重启时修改群名片群列表',
+                value='${禁用重启时修改群名片群列表}',
                 enableBatchAdd=True,
                 placeholder='添加禁用群名片修改的群号', 
                 joinValues=False, 
