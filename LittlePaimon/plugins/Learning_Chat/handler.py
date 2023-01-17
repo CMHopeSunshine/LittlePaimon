@@ -429,19 +429,20 @@ class LearningChat:
                             if any(word in message for word in ban_words):
                                 continue
                             speak_list.append(message)
-                            follow_answers = answer
+                            follow_answer = answer
                             while random.random() < config.speak_continuously_probability and len(
                                     speak_list) < config.speak_continuously_max_len:
                                 if (follow_context := await ChatContext.filter(
-                                        keywords=follow_answers.keywords).first()) and (
+                                        keywords=follow_answer.keywords).first()) and (
                                         follow_answers := await ChatAnswer.filter(
                                             group_id=group_id,
                                             context=follow_context,
                                             count__gte=config.answer_threshold)):
-                                    answer = random.choices(follow_answers,
-                                                            weights=[a.count + 1 if a.time >= today_time else a.count
-                                                                     for a in follow_answers])[0]
-                                    message = random.choice(answer.messages)
+                                    follow_answer = random.choices(follow_answers,
+                                                                   weights=[
+                                                                       a.count + 1 if a.time >= today_time else a.count
+                                                                       for a in follow_answers])[0]
+                                    message = random.choice(follow_answer.messages)
                                     if len(message) < 2:
                                         continue
                                     if message.startswith('&#91;') and message.endswith('&#93;'):
