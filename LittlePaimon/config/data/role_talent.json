@@ -383,7 +383,19 @@
     "763": "漫行灵圃",
     "764": "神机明悟",
     "765": "繁想奇境",
-    "766": "妙道合真"
+    "766": "妙道合真",
+    "771": "妙受琼阁",
+    "772": "正思无邪",
+    "773": "墩墩善道",
+    "774": "爰爰可亲",
+    "775": "恻隐本义",
+    "776": "慈惠仁心",
+    "781": "直观",
+    "782": "辩章",
+    "783": "遮诠",
+    "784": "义贯",
+    "785": "智度",
+    "786": "正理"
   },
   "Icon": {
     "21": "UI_Talent_S_Ayaka_01",
@@ -769,6 +781,18 @@
     "763": "UI_Talent_U_Faruzan_01",
     "764": "UI_Talent_S_Faruzan_03",
     "765": "UI_Talent_U_Faruzan_02",
-    "766": "UI_Talent_S_Faruzan_04"
+    "766": "UI_Talent_S_Faruzan_04",
+    "771": "UI_Talent_S_Yaoyao_01",
+    "772": "UI_Talent_S_Yaoyao_02",
+    "773": "UI_Talent_U_Yaoyao_01",
+    "774": "UI_Talent_S_Yaoyao_03",
+    "775": "UI_Talent_U_Yaoyao_02",
+    "776": "UI_Talent_S_Yaoyao_04",
+    "781": "UI_Talent_S_Alhatham_02",
+    "782": "UI_Talent_S_Alhatham_01",
+    "783": "UI_Talent_U_Alhatham_01",
+    "784": "UI_Talent_S_Alhatham_03",
+    "785": "UI_Talent_U_Alhatham_02",
+    "786": "UI_Talent_S_Alhatham_04"
   }
 }
