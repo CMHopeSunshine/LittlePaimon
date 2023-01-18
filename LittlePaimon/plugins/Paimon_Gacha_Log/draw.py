@@ -139,9 +139,12 @@ async def draw_pool_detail(pool_name: str,
 
 async def draw_four_star(info: FourStarItem) -> PMImage:
     bg = PMImage(await load_image(RESOURCE_BASE_PATH / 'gacha_log' / 'item_avatar_4.png'))
-    img = PMImage(
-        await load_image(RESOURCE_BASE_PATH / ('avatar' if info.type == '角色' else 'weapon') / f'{info.icon}.png',
-                         size=(123, 123)))
+    if info.icon:
+        img = PMImage(
+            await load_image(RESOURCE_BASE_PATH / ('avatar' if info.type == '角色' else 'weapon') / f'{info.icon}.png',
+                             size=(123, 123)))
+    else:
+        img = PMImage(size=(123, 123), color=(255, 255, 255, 0))
     await img.to_circle('circle')
     await bg.paste(img, (34, 26))
     await bg.text(info.name, (0, bg.width), 163, fm.get('hywh', 24), '#221a33', 'center')
