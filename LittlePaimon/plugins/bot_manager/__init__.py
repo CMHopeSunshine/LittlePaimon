@@ -81,7 +81,7 @@ async def _(bot: Bot, event: MessageEvent):
     group_list = await bot.get_group_list()
     group_id_list = [g['group_id'] for g in group_list]
     for group_id in group_id_list:
-        if group_id not in config.reboot_card_ban:
+        if group_id in config.reboot_card_enable:
             member_info = await bot.get_group_member_info(group_id=group_id, user_id=int(bot.self_id), no_cache=True)
             reboot_data['group_card'][str(group_id)] = member_info['card']
             await bot.set_group_card(group_id=group_id, user_id=int(bot.self_id),
