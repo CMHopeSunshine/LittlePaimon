@@ -74,7 +74,9 @@
 - 本项目完全开源免费，仅供学习使用，禁止用于商业用途和非法行为，如有他人非法使用，与本作者无关。
 - 如果您使用并修改了本项目源码，请遵循[GPL-3.0](https://github.com/CMHopeSunshine/LittlePaimon/blob/Bot/LICENSE)将源码开源。
 
-## | 版本
+## | 版本|信息
 BOT 版本 3.0.5
 
 Genshin Impact 版本 3.4
+
+INFO：修复了一些问题
