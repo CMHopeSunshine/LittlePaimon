@@ -2138,5 +2138,31 @@
       "10024": "Skill_E_Faruzan_01"
     },
     "SideIconName": "UI_AvatarIcon_Side_Faruzan"
+  },
+  "10000077": {
+    "SkillOrder": [
+      10771,
+      10772,
+      10775
+    ],
+    "Skills": {
+      "10771": "Skill_A_03",
+      "10772": "Skill_S_Yaoyao_01",
+      "10775": "Skill_E_Yaoyao_01"
+    },
+    "SideIconName": "UI_AvatarIcon_Side_Yaoyao"
+  },
+  "10000078": {
+        "SkillOrder": [
+      10781,
+      10782,
+      10785
+    ],
+    "Skills": {
+      "10781": "Skill_A_01",
+      "10782": "Skill_S_Alhatham_01",
+      "10785": "Skill_E_Alhatham_01"
+    },
+    "SideIconName": "UI_AvatarIcon_Side_Alhatham"
   }
 }
