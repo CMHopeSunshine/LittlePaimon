@@ -76,4 +76,5 @@
 
 ## | 版本
 BOT 版本 3.0.5
+
 Genshin Impact 版本 3.4
