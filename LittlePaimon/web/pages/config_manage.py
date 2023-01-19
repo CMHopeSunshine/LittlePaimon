@@ -304,14 +304,14 @@ other_form = Form(
             offText='关闭'
         ),
         InputTag(
-                label='启用重启时修改群名片群列表',
-                name='启用重启时修改群名片群列表',
-                value='${启用重启时修改群名片群列表}',
+                label='禁用重启时修改群名片群列表',
+                name='禁用重启时修改群名片群列表',
+                value='${禁用重启时修改群名片群列表}',
                 enableBatchAdd=True,
-                placeholder='添加启用群名片修改的群号',
+                placeholder='添加禁用群名片修改的群号',
                 joinValues=False, 
                 extractValue=True,
-                labelRemark=Remark(shape='circle', content='这些群会在重启时在bot自己的群名片中增加"重启中"作为提示，在重启完成后修改回来')
+                labelRemark=Remark(shape='circle', content='默认在重启时会把所在的群的群名片中增加"重启中"作为提示，在重启完成后修改回来，在此处添加不想修改群名片的群')
         ),
         Switch(
             label='网页截图权限',
