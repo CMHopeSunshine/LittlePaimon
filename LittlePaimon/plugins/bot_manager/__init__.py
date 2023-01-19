@@ -158,4 +158,4 @@ async def _():
         for group_id, card_info in reboot_data['group_card'].items():
             await bot.set_group_card(group_id=int(group_id), user_id=int(bot.self_id), card=card_info)
             await asyncio.sleep(0.25)
-        reboot_file.unlink()
+    reboot_file.unlink()
