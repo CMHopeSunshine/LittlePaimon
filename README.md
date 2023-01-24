@@ -77,6 +77,6 @@
 ## | 版本|信息
 BOT 版本 3.0.5
 
-Genshin Impact 版本 3.4
+Genshin Impact 版本 3.5
 
-INFO：修复了一些问题
+INFO：🐛 修复ysa没有艾尔海森和瑶瑶
