@@ -1,0 +1,40 @@
+name: Update Dependencies
+
+on:
+  push:
+    paths:
+      - 'poetry.lock'
+      - 'pyproject.toml'
+  workflow_dispatch:
+
+jobs:
+  UpdateDependencies:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@master
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Set up Poetry
+        uses: Gr1N/setup-poetry@v8
+
+      - name: lock poetry.lock
+        run: poetry lock
+
+      - name: export requirements.txt
+        run: poetry export --without-hashes -f requirements.txt --output requirements.txt
+
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v9
+        with:
+          author_name: github-actions[bot]
+          author_email: github-actions[bot]@users.noreply.github.com
+          message: ':wrench: 自动更新依赖文件'
+          add: |
+            'poetry.lock'
+            'requirements.txt'
