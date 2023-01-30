@@ -142,9 +142,10 @@ class aiorequests:
     async def download(url: str, save_path: Path, exclude_json: bool = False):
         """
         下载文件(带进度条)
-            :param url: url
-            :param save_path: 保存路径
-            :param exclude_json: 是否排除json文件
+
+        :param url: url
+        :param save_path: 保存路径
+        :param exclude_json: 是否排除json文件
         """
         save_path.parent.mkdir(parents=True, exist_ok=True)
         async with httpx.AsyncClient().stream(method='GET', url=url, follow_redirects=True) as datas:

@@ -35,8 +35,9 @@ LOGIN_TICKET_INFO_API = 'https://webapi.account.mihoyo.com/Api/cookie_accountinf
 def md5(text: str) -> str:
     """
     md5加密
-        :param text: 文本
-        :return: md5加密后的文本
+
+    :param text: 文本
+    :return: md5加密后的文本
     """
     md5_ = hashlib.md5()
     md5_.update(text.encode())
@@ -46,8 +47,9 @@ def md5(text: str) -> str:
 def random_hex(length: int) -> str:
     """
     生成指定长度的随机字符串
-        :param length: 长度
-        :return: 随机字符串
+
+    :param length: 长度
+    :return: 随机字符串
     """
     result = hex(random.randint(0, 16 ** length)).replace('0x', '').upper()
     if len(result) < length:
@@ -58,8 +60,9 @@ def random_hex(length: int) -> str:
 def random_text(length: int) -> str:
     """
     生成指定长度的随机字符串
-        :param length: 长度
-        :return: 随机字符串
+
+    :param length: 长度
+    :return: 随机字符串
     """
     return ''.join(random.sample(string.ascii_lowercase + string.digits, length))
 
@@ -67,10 +70,11 @@ def random_text(length: int) -> str:
 def get_ds(q: str = '', b: dict = None, mhy_bbs_sign: bool = False) -> str:
     """
     生成米游社headers的ds_token
-        :param q: 查询
-        :param b: 请求体
-        :param mhy_bbs_sign: 是否为米游社讨论区签到
-        :return: ds_token
+
+    :param q: 查询
+    :param b: 请求体
+    :param mhy_bbs_sign: 是否为米游社讨论区签到
+    :return: ds_token
     """
     br = json.dumps(b) if b else ''
     if mhy_bbs_sign:
@@ -415,6 +419,7 @@ async def get_cookie_token_by_stoken(stoken: str, mys_id: str) -> Optional[str]:
 async def get_authkey_by_stoken(user_id: str, uid: str) -> Tuple[Optional[str], bool, Optional[PrivateCookie]]:
     """
     根据stoken获取authkey
+
     :param user_id: 用户id
     :param uid: 原神uid
     :return: authkey
@@ -455,8 +460,8 @@ async def get_authkey_by_stoken(user_id: str, uid: str) -> Tuple[Optional[str], 
 
 async def get_enka_data(uid):
     urls = [
-        'https://enka.network/u/{uid}/__data.json',
-        'https://enka.microgg.cn/u/{uid}/__data.json'
+        'https://enka.network/api/uid/{uid}',
+        'https://enka.microgg.cn/api/uid/{uid}'
     ]
     for url in urls:
         with contextlib.suppress(Exception):

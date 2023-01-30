@@ -4,6 +4,7 @@ import functools
 import hashlib
 import inspect
 import time
+import zipfile
 from collections import defaultdict
 from pathlib import Path
 
@@ -87,31 +88,47 @@ def cache(ttl=datetime.timedelta(hours=1)):
 
 async def check_resource():
     logger.info('资源检查', '开始检查资源')
-    try:
-        resource_list = await aiorequests.get(
-            f'{config.github_proxy}https://raw.githubusercontent.com/CMHopeSunshine/LittlePaimonRes/main/resources_list.json',
-            follow_redirects=True)
-        resource_list = resource_list.json()
-    except Exception:
-        logger.info('资源检查', '读取资源列表<r>失败</r>，请尝试更换<m>github资源地址</m>')
-        return
-    flag = False
-    for resource in resource_list:
-        file_path = RESOURCE_BASE_PATH / resource['path']
-        if file_path.exists():
-            if not resource['lock'] or hashlib.md5(file_path.read_bytes()).hexdigest() == resource['hash']:
-                continue
-            else:
-                file_path.unlink()
-        flag = True
+    if not (
+            (RESOURCE_BASE_PATH / 'LittlePaimon').is_dir() and
+            len(list((RESOURCE_BASE_PATH / 'LittlePaimon').rglob('*'))) >= 50):
         try:
             await aiorequests.download(
-                url=f'{config.github_proxy}https://raw.githubusercontent.com/CMHopeSunshine/LittlePaimonRes/main/{resource["path"]}',
-                save_path=file_path, exclude_json=resource['path'].split('.')[-1] != 'json')
-            await asyncio.sleep(0.5)
+                url=f'{config.github_proxy}https://raw.githubusercontent.com/CMHopeSunshine/LittlePaimonRes/main/resources.zip',
+                save_path=RESOURCE_BASE_PATH / '小派蒙基础资源.zip')
+            zipfile.ZipFile(RESOURCE_BASE_PATH / '小派蒙基础资源.zip').extractall(RESOURCE_BASE_PATH)
+            (RESOURCE_BASE_PATH / '小派蒙基础资源.zip').unlink()
+
+            await aiorequests.download(
+                url=f'{config.github_proxy}https://raw.githubusercontent.com/CMHopeSunshine/GenshinWikiMap/master/resources/genshin_resources.zip',
+                save_path=RESOURCE_BASE_PATH / '原神图标资源.zip')
+            zipfile.ZipFile(RESOURCE_BASE_PATH / '原神图标资源.zip').extractall(RESOURCE_BASE_PATH / 'LittlePaimon')
+            (RESOURCE_BASE_PATH / '原神图标资源.zip').unlink()
+            logger.info('资源检查', '<g>资源下载完成</g>')
         except Exception:
-            logger.warning('资源检查', f'下载<m>{resource["path"]}</m>时<r>出错</r>，请尝试更换<m>github资源地址</m>')
-    if flag:
-        logger.info('资源检查', '<g>资源下载完成</g>')
+            logger.warning('资源检查', '下载<m>资源</m>时<r>出错</r>，请尝试更换<m>github资源地址</m>')
     else:
-        logger.info('资源检查', '<g>资源完好，无需下载</g>')
+        try:
+            resource_list = await aiorequests.get(
+                f'{config.github_proxy}https://raw.githubusercontent.com/CMHopeSunshine/LittlePaimonRes/main/resources_list.json',
+                follow_redirects=True)
+            resource_list = resource_list.json()
+        except Exception:
+            logger.warning('资源检查', '读取资源列表<r>失败</r>，请尝试更换<m>github资源地址</m>')
+            return
+        flag = False
+        for resource in resource_list:
+            file_path = RESOURCE_BASE_PATH / resource['path']
+            if file_path.exists():
+                if not resource['lock'] or hashlib.md5(file_path.read_bytes()).hexdigest() == resource['hash']:
+                    continue
+                else:
+                    file_path.unlink()
+            try:
+                await aiorequests.download(
+                    url=f'{config.github_proxy}https://raw.githubusercontent.com/CMHopeSunshine/LittlePaimonRes/main/{resource["path"]}',
+                    save_path=file_path, exclude_json=resource['path'].split('.')[-1] != 'json')
+                await asyncio.sleep(0.2)
+                flag = True
+            except Exception:
+                logger.warning('资源检查', f'下载<m>{resource["path"]}</m>时<r>出错</r>，请尝试更换<m>github资源地址</m>')
+        logger.info('资源检查', '<g>资源下载完成</g>' if flag else '<g>资源完好，无需下载</g>')

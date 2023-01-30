@@ -4,7 +4,7 @@ from nonebot import get_driver
 from .logger import logger
 from .scheduler import scheduler
 
-__version__ = '3.0.5'
+__version__ = '3.0.6'
 
 DRIVER = get_driver()
 try:
@@ -13,7 +13,7 @@ except Exception:
     SUPERUSERS = []
 
 if not SUPERUSERS or SUPERUSERS == ['123456']:
-    logger.warning('请在.env.prod文件中配置超级用户SUPERUSERS')
+    logger.warning('超级用户配置', '请在.env.prod文件中配置超级用户SUPERUSERS')
 
 try:
     NICKNAME: str = list(DRIVER.config.nickname)[0]
