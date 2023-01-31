@@ -189,7 +189,7 @@ async def draw_abyss_card(info: AbyssInfo):
         await img.paste(circle, (46, 485))
         await img.paste(chara_img, (49, 488))
     # 最多承伤
-    if info.info.max_take_damage is not None:
+    if info.max_take_damage is not None:
         chara_img = PMImage(
             await load_image(
                 RESOURCE_BASE_PATH / 'avatar' / f'{info.max_take_damage.icon}.png',
