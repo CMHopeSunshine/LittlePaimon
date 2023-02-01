@@ -10,7 +10,7 @@ BASE_API = 'https://www.youchuang.fun'
 TEAM_RATE_API = f'{BASE_API}/gamerole/formationRate'
 
 VERSION_API = 'https://api-cloudgame-static.mihoyo.com/hk4e_cg_cn/gamer/api/getFunctionShieldNew?client_type=1'
-VERSION = 3.3
+VERSION = 3.4
 HEADERS = {
     'Host':         'www.youchuang.fun',
     'Referer':      'https://servicewechat.com/wxce4dbe0cb0f764b3/91/page-frame.html',
