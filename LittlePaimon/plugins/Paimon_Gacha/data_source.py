@@ -93,8 +93,7 @@ def get_once_data(uid: int, gacha_data: dict):
         user_data["抽卡数据"][f"{pool_str}池未出5星数"] += 1
         role['count'] = 1
     else:
-        if rank == 5 and pool_str == '武器' and user_data["抽卡数据"][
-            "定轨能量"] == 2 and "pool_type" not in gacha_data:
+        if rank == 5 and pool_str == '武器' and user_data["抽卡数据"]["定轨能量"] == 2 and "pool_type" not in gacha_data:
             role['item_name'] = user_data["抽卡数据"]["定轨武器名称"]
             role['item_type'] = '武器'
             role['rank'] = rank
@@ -118,7 +117,7 @@ def get_once_data(uid: int, gacha_data: dict):
                     user_data["抽卡数据"]["定轨能量"] += 1
                     role['dg_time'] = user_data["抽卡数据"]["定轨能量"]
                 else:
-                    user_data["抽卡数据"]["定轨武器名称"] = ''
+                    #user_data["抽卡数据"]["定轨武器名称"] = ''
                     user_data["抽卡数据"]["定轨能量"] = 0
                     role['dg_time'] = 3
         user_data["抽卡数据"][f"{rank}星出货数"] += 1
