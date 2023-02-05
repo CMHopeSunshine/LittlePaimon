@@ -17,12 +17,11 @@
 ## 丨快速部署
 使用[小派蒙脚手架插件](https://github.com/CMHopeSunshine/nb-cli-plugin-littlepaimon)快速部署安装小派蒙。
 
+[![asciicast](https://asciinema.org/a/kMBRbuX5lCEnk5lmXcU53ys5b.svg)](https://asciinema.org/a/kMBRbuX5lCEnk5lmXcU53ys5b)
+
 ## 丨文档
 
 详细部署教程、使用和配置等请看[小派蒙文档](https://docs.paimon.cherishmoon.fun/)。
-
-
-[![asciicast](https://asciinema.org/a/kMBRbuX5lCEnk5lmXcU53ys5b.svg)](https://asciinema.org/a/kMBRbuX5lCEnk5lmXcU53ys5b)
 
 ## | 功能示例
 > 更多功能及其详细用法请看文档。
@@ -62,8 +61,8 @@
 </details>
 
 <details>
-<summary>每月札记</summary>
-<img src="https://s1.ax1x.com/2023/02/05/pS624FP.jpg" alt="myzj">
+<summary>角色图鉴</summary>
+<img src="https://s1.ax1x.com/2023/02/05/pS6fAG6.jpg" alt="map">
 </details>
 
 ## | 常见问题&致谢
