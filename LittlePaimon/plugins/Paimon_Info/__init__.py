@@ -164,7 +164,7 @@ async def _(event: MessageEvent, players=CommandPlayer(only_cn=False), character
             character_info = await gim.get_character(name=character)
             if not character_info:
                 logger.info('原神角色卡片', '➤➤', {'角色': character}, '没有该角色信息，发送随机图', True)
-                msg += MessageSegment.image(f'http://img.genshin.cherishmoon.fun/{character}')
+                msg += MessageSegment.image(f'https://genshin-res.cherishmoon.fun/img?name={character}')
             else:
                 img, temp_img = await draw_chara_card(character_info)
                 logger.info('原神角色卡片', '➤➤', {'角色': character}, '制图完成', True)
@@ -178,7 +178,7 @@ async def _(event: MessageEvent, players=CommandPlayer(only_cn=False), character
             character_info = await gim.get_character(name=characters[0])
             if not character_info:
                 logger.info('原神角色卡片', '➤➤', {'角色': characters[0]}, '没有该角色信息，发送随机图', True)
-                msg += MessageSegment.image(f'http://img.genshin.cherishmoon.fun/{characters[0]}')
+                msg += MessageSegment.image(f'https://genshin-res.cherishmoon.fun/img?name={characters[0]}')
             else:
                 img, temp_img = await draw_chara_card(character_info)
                 logger.info('原神角色卡片', '➤➤', {'角色': characters[0]}, '制图完成', True)
