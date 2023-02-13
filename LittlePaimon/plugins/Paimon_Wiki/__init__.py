@@ -271,7 +271,7 @@ async def _(bot: Bot, event: MessageEvent, state: T_State, type: str = Arg('type
             if type in {'材料', '攻略', '图鉴'}:
                 type = f'{temp_type}图鉴' if temp_type != '角色' else f'{temp_type}{type}'
             if type in {'七圣召唤图鉴', '武器图鉴'}:
-                final_name = (await get_atlas_full_path(final_name, 'card' if type == '七圣召唤图鉴' else 'weapon')).replace('/card/', '').rstrip('.png')
+                final_name = (await get_atlas_full_path(final_name, 'card' if type == '七圣召唤图鉴' else 'weapon'))
             try:
                 await total_wiki.finish(
                     MessageSegment.image(API[type].format(proxy=config.github_proxy, name=final_name)))
@@ -339,8 +339,8 @@ async def _(state: T_State, matches: dict = Arg('matches'), choice: str = ArgPla
                 type = f'{key}图鉴' if key != '角色' else f'{key}{type}'
             break
     if final_name:
-        if type == '七圣召唤图鉴':
-            final_name = (await get_atlas_full_path(final_name, 'card')).replace('/card/', '').rstrip('.png')
+        if type in {'七圣召唤图鉴', '武器图鉴'}:
+            final_name = (await get_atlas_full_path(final_name, 'card' if type == '七圣召唤图鉴' else 'weapon'))
         try:
             await total_wiki.finish(
                 MessageSegment.image(API[type].format(proxy=config.github_proxy, name=final_name)))
