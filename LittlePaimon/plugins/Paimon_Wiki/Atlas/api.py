@@ -7,7 +7,7 @@ from LittlePaimon.config import config
 from LittlePaimon.utils.requests import aiorequests
 
 CARD_RESOURCES_API = '{proxy}https://raw.githubusercontent.com/Nwflower/Atlas/master/resource/text/card.yaml'
-CARD_API = '{proxy}https://raw.githubusercontent.com/Nwflower/genshin-atlas/master/{name}.png'
+CARD_API = '{proxy}https://raw.githubusercontent.com/Nwflower/genshin-atlas/master/{name}'
 RESOURCES_API = '{proxy}https://raw.githubusercontent.com/Nwflower/genshin-atlas/master/path.json'
 
 
