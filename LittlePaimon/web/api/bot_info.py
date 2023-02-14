@@ -1,4 +1,5 @@
 import asyncio
+import contextlib
 import datetime
 import os
 import sys
@@ -136,7 +137,11 @@ async def bot_restart():
         {'session_type': 'private', 'session_id': SUPERUSERS[0]},
         Path() / 'rebooting.json',
     )
-    await get_app().router.shutdown()
-    if sys.argv[0].endswith('nb'):
-        sys.argv[0] = 'bot.py'
-    os.execv(sys.executable, [sys.executable] + sys.argv)
+    with contextlib.suppress(Exception):
+        await get_app().router.shutdown()
+    reboot_arg = (
+        [sys.executable] + sys.argv
+        if sys.argv[0].endswith('.py')
+        else [sys.executable, 'bot.py']
+    )
+    os.execv(sys.executable, reboot_arg)

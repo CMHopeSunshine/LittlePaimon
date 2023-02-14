@@ -1,5 +1,6 @@
 import os
 import asyncio
+import contextlib
 import random
 import sys
 from pathlib import Path
@@ -138,10 +139,14 @@ async def _(bot: Bot, event: MessageEvent):
             )
             await asyncio.sleep(0.25)
     save_json(reboot_data, Path() / 'rebooting.json')
-    await get_app().router.shutdown()
-    if sys.argv[0].endswith('nb'):
-        sys.argv[0] = 'bot.py'
-    os.execv(sys.executable, [sys.executable] + sys.argv)
+    with contextlib.suppress(Exception):
+        await get_app().router.shutdown()
+    reboot_arg = (
+        [sys.executable] + sys.argv
+        if sys.argv[0].endswith('.py')
+        else [sys.executable, 'bot.py']
+    )
+    os.execv(sys.executable, reboot_arg)
 
 
 @run_cmd.handle()
