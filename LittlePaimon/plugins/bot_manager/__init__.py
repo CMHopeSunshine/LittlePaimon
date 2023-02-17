@@ -1,26 +1,27 @@
-import os
 import asyncio
 import contextlib
+import os
 import random
 import sys
 from pathlib import Path
-from nonebot import on_command, get_bot, get_app
+
+from nonebot import get_app, get_bot, on_command
+from nonebot.adapters.onebot.v11 import (
+    ActionFailed,
+    Bot,
+    GroupMessageEvent,
+    Message,
+    MessageEvent,
+)
+from nonebot.params import Arg, ArgPlainText, CommandArg
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
 from nonebot.rule import to_me
-from nonebot.params import CommandArg, ArgPlainText, Arg
 from nonebot.typing import T_State
-from nonebot.adapters.onebot.v11 import (
-    Bot,
-    Message,
-    MessageEvent,
-    GroupMessageEvent,
-    ActionFailed,
-)
 
 from LittlePaimon.config import config
-from LittlePaimon.utils import NICKNAME, DRIVER, __version__
-from LittlePaimon.utils.files import save_json, load_json
+from LittlePaimon.utils import DRIVER, NICKNAME, __version__
+from LittlePaimon.utils.files import load_json, save_json
 from LittlePaimon.utils.update import check_update, update
 
 __plugin_meta__ = PluginMetadata(
@@ -209,11 +210,11 @@ async def _(
 
 
 @DRIVER.on_bot_connect
-async def _():
+async def _(bot: Bot):
     if not (reboot_file := (Path() / 'rebooting.json')).exists():
         return
-    bot = get_bot()
     reboot_data = load_json(reboot_file)
+    reboot_file.unlink()
     if reboot_data['session_type'] == 'group':
         await bot.send_group_msg(
             group_id=reboot_data['session_id'],
@@ -230,4 +231,3 @@ async def _():
                 group_id=int(group_id), user_id=int(bot.self_id), card=card_info
             )
             await asyncio.sleep(0.25)
-    reboot_file.unlink()

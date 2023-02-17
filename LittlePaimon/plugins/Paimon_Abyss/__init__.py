@@ -1,11 +1,12 @@
 from nonebot import on_command
-from nonebot.adapters.onebot.v11 import Message, MessageEvent, GroupMessageEvent
+from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, Message, MessageEvent
 from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 
 from LittlePaimon.utils import logger
 from LittlePaimon.utils.genshin import GenshinInfoManager
 from LittlePaimon.utils.message import CommandPlayer
+
 from .abyss_statistics import get_statistics
 from .draw_abyss import draw_abyss_card
 from .youchuang import draw_team
@@ -15,30 +16,48 @@ __plugin_meta__ = PluginMetadata(
     description='原神深渊查询',
     usage='...',
     extra={
-        'author':   '惜月',
-        'version':  '3.0',
+        'author': '惜月',
+        'version': '3.0',
         'priority': 2,
-    }
+    },
 )
 
-sy = on_command('sy', aliases={'深渊战报', '深渊信息'}, priority=10, block=True, state={
-    'pm_name':        'sy',
-    'pm_description': '查看本期|上期的深渊战报',
-    'pm_usage':       'sy(uid)(本期|上期)',
-    'pm_priority':    1
-})
-abyss_stat = on_command('深渊统计', aliases={'深渊群数据', '深渊群排行'}, priority=10, block=True, state={
-    'pm_name':        '深渊统计',
-    'pm_description': '查看本群深渊统计，仅群可用',
-    'pm_usage':       '深渊统计',
-    'pm_priority':    2
-})
-abyss_team = on_command('深渊配队', aliases={'配队推荐', '深渊阵容'}, priority=10, block=True, state={
-    'pm_name':        '深渊配队',
-    'pm_description': '查看深渊配队推荐，数据来源于游创工坊',
-    'pm_usage':       '深渊配队',
-    'pm_priority':    3
-})
+sy = on_command(
+    'sy',
+    aliases={'深渊战报', '深渊信息'},
+    priority=10,
+    block=True,
+    state={
+        'pm_name': 'sy',
+        'pm_description': '查看本期|上期的深渊战报',
+        'pm_usage': 'sy(uid)(本期|上期)',
+        'pm_priority': 1,
+    },
+)
+abyss_stat = on_command(
+    '深渊统计',
+    aliases={'深渊群数据', '深渊群排行'},
+    priority=10,
+    block=True,
+    state={
+        'pm_name': '深渊统计',
+        'pm_description': '查看本群深渊统计，仅群可用',
+        'pm_usage': '深渊统计',
+        'pm_priority': 2,
+    },
+)
+abyss_team = on_command(
+    '深渊配队',
+    aliases={'配队推荐', '深渊阵容'},
+    priority=10,
+    block=True,
+    state={
+        'pm_name': '深渊配队',
+        'pm_description': '查看深渊配队推荐，数据来源于游创工坊',
+        'pm_usage': '深渊配队',
+        'pm_priority': 3,
+    },
+)
 
 
 @sy.handle()
@@ -66,9 +85,9 @@ async def _(event: MessageEvent, players=CommandPlayer(), msg: Message = Command
 
 
 @abyss_stat.handle()
-async def _(event: GroupMessageEvent):
+async def _(bot: Bot, event: GroupMessageEvent):
     try:
-        result = await get_statistics(event.group_id)
+        result = await get_statistics(event.group_id, bot)
     except Exception as e:
         result = f'制作深渊统计时出错：{e}'
     await abyss_stat.finish(result)
