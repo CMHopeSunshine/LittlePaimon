@@ -37,25 +37,26 @@ async def get_group_avatar(group_id: str):
 
 
 async def get_statistics(group_id: int, bot: Bot):
-    now = datetime.datetime.now()
-    abyss_info_list = await AbyssInfo.filter(
-        total_battle__not=None,
-        total_star__not=None,
-        max_damage__not=None,
-        max_take_damage__not=None,
-        start_time__lte=now,
-        end_time__gte=now,
-    )
-    if not abyss_info_list:
+    if not (info_list := await AbyssInfo.all()):
         return '本群还没有深渊战斗数据哦！'
     member_list = await bot.get_group_member_list(group_id=group_id)
     member_id_list = [str(member['user_id']) for member in member_list]
-    info_list = [info for info in abyss_info_list if info.user_id in member_id_list]
-    if not abyss_info_list:
+    info_list = [
+        info
+        for info in info_list
+        if info.user_id in member_id_list
+        and info.total_battle
+        and info.total_star
+        and info.max_damage
+        and info.max_take_damage
+    ]
+    now = datetime.datetime.now().replace(tzinfo=pytz.timezone('Asia/Shanghai'))
+    info_list = [info for info in info_list if info.start_time <= now <= info.end_time]
+    if not info_list:
         return '本群还没有深渊战斗数据哦！'
-    elif len(abyss_info_list) < 3:
+    elif len(info_list) < 3:
         return '本群深渊有效战斗数据不足3人，无法生成统计图！'
-    for info in abyss_info_list:
+    for info in info_list:
         if info.nickname is None:
             for member in member_list:
                 if info.user_id == str(member['user_id']):
