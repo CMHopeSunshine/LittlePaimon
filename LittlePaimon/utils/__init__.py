@@ -4,7 +4,7 @@ from nonebot import get_driver
 from .logger import logger
 from .scheduler import scheduler
 
-__version__ = '3.0.6'
+__version__ = '3.0.8'
 
 DRIVER = get_driver()
 try:
@@ -20,11 +20,4 @@ try:
 except Exception:
     NICKNAME = '派蒙'
 
-__all__ = [
-    'logger',
-    'scheduler',
-    'DRIVER',
-    'SUPERUSERS',
-    'NICKNAME',
-    '__version__'
-]
+__all__ = ['logger', 'scheduler', 'DRIVER', 'SUPERUSERS', 'NICKNAME', '__version__']
