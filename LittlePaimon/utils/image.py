@@ -380,8 +380,12 @@ class PMImage:
             :param transparent: 是否透明
         """
         if isinstance(percent, float):
-            if percent < 0 or percent > 1:
-                raise ValueError('百分比必须在0-1之间')
+            if percent < 0:
+                percent = -percent
+            if percent > 10:
+                raise ValueError('图片传入百分比错误')
+            if percent > 1 and percent < 10:
+                percent /= 10
             percent = [percent, 1 - percent]
         if isinstance(colors, str):
             colors = [colors, '#FFFFFF']
