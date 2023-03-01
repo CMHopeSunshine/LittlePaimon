@@ -2167,28 +2167,28 @@
   },
   "10000079": {
     "SkillOrder": [
-      10781,
-      10782,
-      10785
+      10791,
+      10792,
+      10795
     ],
     "Skills": {
-      "10781": "Skill_A_01",
-      "10782": "Skill_S_Alhatham_01",
-      "10785": "Skill_E_Alhatham_01"
+      "10791": "Skill_A_04",
+      "10792": "Skill_S_Dehya_01",
+      "10795": "Skill_E_Dehya_01"
     },
-    "SideIconName": "UI_AvatarIcon_Side_Alhatham"
+    "SideIconName": "UI_AvatarIcon_Side_Dehya"
   },
   "10000080": {
     "SkillOrder": [
-      10781,
-      10782,
-      10785
+      10801,
+      10802,
+      10805
     ],
     "Skills": {
-      "10781": "Skill_A_01",
-      "10782": "Skill_S_Alhatham_01",
-      "10785": "Skill_E_Alhatham_01"
+      "10801": "Skill_A_03",
+      "10802": "Skill_S_Mika_01",
+      "10805": "Skill_E_Mika_01"
     },
-    "SideIconName": "UI_AvatarIcon_Side_Alhatham"
+    "SideIconName": "UI_AvatarIcon_Side_Mika"
   }
 }
