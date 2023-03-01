@@ -395,7 +395,19 @@
     "783": "遮诠",
     "784": "义贯",
     "785": "智度",
-    "786": "正理"
+    "786": "正理",
+    "791": "皎洁之火铓辉灿漫",
+    "792": "净沙利刃明映万乘",
+    "793": "怒势疾迅如焚掠地",
+    "794": "服膺誓禁恪守无失",
+    "795": "猎兽魁首卓荦不羁",
+    "796": "燎燃利爪裂帛斫金",
+    "801": "遇合的因缘",
+    "802": "伴行的旅路",
+    "803": "游击的心得",
+    "804": "晴霜的祝念",
+    "805": "引示的铃箭",
+    "806": "依随的策援"
   },
   "Icon": {
     "21": "UI_Talent_S_Ayaka_01",
@@ -793,6 +805,18 @@
     "783": "UI_Talent_U_Alhatham_01",
     "784": "UI_Talent_S_Alhatham_03",
     "785": "UI_Talent_U_Alhatham_02",
-    "786": "UI_Talent_S_Alhatham_04"
+    "786": "UI_Talent_S_Alhatham_04",
+    "791": "UI_Talent_S_Dehya_01",
+    "792": "UI_Talent_S_Dehya_02",
+    "793": "UI_Talent_U_Dehya_01",
+    "794": "UI_Talent_S_Dehya_03",
+    "795": "UI_Talent_U_Dehya_02",
+    "796": "UI_Talent_S_Dehya_04",
+    "801": "UI_Talent_S_Mika_01",
+    "802": "UI_Talent_S_Mika_02",
+    "803": "UI_Talent_U_Mika_01",
+    "804": "UI_Talent_S_Mika_03",
+    "805": "UI_Talent_U_Mika_02",
+    "806": "UI_Talent_S_Mika_04"
   }
 }
