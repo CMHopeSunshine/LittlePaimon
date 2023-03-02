@@ -72,6 +72,12 @@ clear = on_command('清除无效用户', permission=SUPERUSER, block=True, prior
     'pm_usage':       '清除无效用户',
     'pm_priority':    6
 })
+refresh_ck = on_command('刷新ck', aliases={'刷新cookie'}, priority=1, block=True, state={
+    'pm_name':        '刷新ck',
+    'pm_description': '如果你的cookie疑似失效了，可尝试使用该指令刷新cookie',
+    'pm_usage':       '刷新ck',
+    'pm_priority':    7
+})
 
 
 @ysb.handle()
@@ -319,3 +325,25 @@ async def _(bot: Bot, event: MessageEvent):
             await s.delete()
 
     await clear.finish('清除完成', at_sender=True)
+
+
+@refresh_ck.handle()
+async def _(event: MessageEvent):
+    cks = await PrivateCookie.filter(user_id=str(event.user_id))
+    if cks:
+        mys_id_done = []
+        refresh_done = []
+        for ck in cks:
+            if ck.mys_id not in mys_id_done and ck.stoken is not None:
+                mys_id_done.append(ck.mys_id)
+                if new_cookie := await get_cookie_token_by_stoken(ck.stoken, ck.mys_id):
+                    await PrivateCookie.filter(user_id=str(event.user_id), mys_id=ck.mys_id).update(
+                        cookie=new_cookie)
+                    refresh_done.append(ck.mys_id)
+        if not refresh_done:
+            await refresh_ck.finish('刷新cookie失败，请重新绑定', at_sender=True)
+        else:
+            await refresh_ck.finish(f'成功刷新米游社ID为{"、".join(refresh_done)}的账号的cookie', at_sender=True)
+    else:
+        await refresh_ck.finish('你还未绑定私人cookie或过期太久已被移除，请重新绑定', at_sender=True)
+
