@@ -336,7 +336,7 @@ async def _(event: MessageEvent):
         for ck in cks:
             if ck.mys_id not in mys_id_done and ck.stoken is not None:
                 mys_id_done.append(ck.mys_id)
-                if new_cookie := await get_cookie_token_by_stoken(ck.stoken, ck.mys_id):
+                if new_cookie := await get_cookie_token_by_stoken(ck.stoken.split('stoken=')[-1], ck.mys_id):
                     await PrivateCookie.filter(user_id=str(event.user_id), mys_id=ck.mys_id).update(
                         cookie=new_cookie)
                     refresh_done.append(ck.mys_id)
