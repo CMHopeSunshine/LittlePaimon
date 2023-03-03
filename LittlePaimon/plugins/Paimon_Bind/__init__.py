@@ -338,7 +338,7 @@ async def _(event: MessageEvent):
                 mys_id_done.append(ck.mys_id)
                 if new_cookie := await get_cookie_token_by_stoken(ck.stoken.split('stoken=')[-1], ck.mys_id):
                     await PrivateCookie.filter(user_id=str(event.user_id), mys_id=ck.mys_id).update(
-                        cookie=new_cookie)
+                        cookie=f'account_id={ck.mys_id};cookie_token={new_cookie}', status=1)
                     refresh_done.append(ck.mys_id)
         if not refresh_done:
             await refresh_ck.finish('刷新cookie失败，请重新绑定', at_sender=True)
