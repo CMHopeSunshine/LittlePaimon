@@ -19,4 +19,8 @@ COPY . .
 RUN sed -i 's/^\-\-index\-url\s.*$//' requirements.txt && \
     pip3 install --no-cache-dir -r requirements.txt
 
+RUN playwright install-deps && \
+    playwright install chromium && \
+    rm -rf /var/lib/apt/lists/*
+
 CMD ["nb", "run"]
