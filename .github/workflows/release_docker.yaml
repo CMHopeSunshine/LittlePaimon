@@ -1,0 +1,48 @@
+name: Release Docker Image
+
+on:
+  push:
+    tags:
+      - v**
+
+jobs:
+  Release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup QEMU Emulator
+        uses: docker/setup-qemu-action@master
+        with:
+          platforms: all
+
+      - name: Setup Docker Buildx Command
+        id: buildx
+        uses: docker/setup-buildx-action@master
+
+      - name: Login to docker registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ secrets.DOCKER_IMAGE_REGISTRY }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Get Docker Image Url
+        id: image
+        env:
+          URL: ${{ secrets.DOCKER_IMAGE_REGISTRY }}${{ secrets.DOCKER_IMAGE_PATH }}
+        run: |
+          echo LATEST=${URL}:latest >> $GITHUB_OUTPUT${{ steps.image.outputs.VERSION }},${{ steps.image.outputs.LATEST }}
+          echo VERSION=${URL}:${GITHUB_REF/refs\/tags\//} >> $GITHUB_OUTPUT
+
+      - name: Build Docker Image and Push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          builder: ${{ steps.buildx.outputs.name }}
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64,linux/386,linux/arm64,linux/arm/v7
+          tags: ${{ steps.image.outputs.VERSION }},${{ steps.image.outputs.LATEST }}
