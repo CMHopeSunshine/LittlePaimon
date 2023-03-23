@@ -1,16 +1,20 @@
+import time
 from typing import Union
+from asyncio import get_running_loop
+from urllib.parse import quote
 
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import (
     Bot,
     MessageEvent,
     GroupMessageEvent,
-    PrivateMessageEvent,
+    PrivateMessageEvent, ActionFailed,
 )
 from nonebot.plugin import PluginMetadata
 
-from LittlePaimon.utils import logger
-from LittlePaimon.utils.message import CommandPlayer
+from LittlePaimon.utils import logger, NICKNAME
+from LittlePaimon.utils.message import CommandPlayer, CommandUID
+from LittlePaimon.utils.api import get_authkey_by_stoken
 from .data_source import (
     get_gacha_log_img,
     get_gacha_log_data,
@@ -76,6 +80,18 @@ export_log = on_command(
         'pm_description': '导出符合UIGF标准的抽卡记录json文件',
         'pm_usage': '导出抽卡记录',
         'pm_priority': 4,
+    },
+)
+gacha_url = on_command(
+    '查看抽卡记录链接',
+    aliases={'导出抽卡记录链接'},
+    priority=11,
+    block=True,
+    state={
+        'pm_name': '查看抽卡记录链接',
+        'pm_description': '*获取你的抽卡记录链接',
+        'pm_usage': '查看抽卡记录链接(uid)',
+        'pm_priority': 5,
     },
 )
 
@@ -153,3 +169,62 @@ async def _(
                 )
         except Exception as e:
             await export_log.finish(f'上传文件失败，错误信息：{e}', at_sender=True)
+
+
+@gacha_url.handle()
+async def _(
+    bot: Bot,
+    event: MessageEvent,
+    uid: str = CommandUID()
+):
+    await gacha_url.send("正在获取抽卡记录链接")
+    logger.info('获取抽卡记录链接', '开始执行')
+    authkey, state, _ = await get_authkey_by_stoken(str(event.user_id), uid)
+    if not state:
+        return authkey
+    if authkey == {}:
+        await gacha_url.finish(authkey, at_sender=True)
+    region = 'cn_qd01' if uid[0] == '5' else 'cn_gf01'
+    url = (
+        f"https://hk4e-api.mihoyo.com/event/gacha_info/api/getGachaLog?"
+        f"authkey_ver=1&sign_type=2&auth_appid=webview_gacha&init_type=301&"
+        f"gacha_id=fecafa7b6560db5f3182222395d88aaa6aaac1bc"
+        f"&timestamp={int(time.time())}"
+        f"&lang=zh-cn&device_type=mobile&plat_type=ios&region={region}"
+        f"&authkey={quote(authkey,'utf-8')}"
+        f"&game_biz=hk4e_cn&gacha_type=301&page=1&size=5&end_id=0"
+    )
+    msgs = [
+        {
+            "type": "node",
+            "data": {
+                "name": NICKNAME,
+                "uin": event.self_id,
+                "content": f"UID{uid}的抽卡记录链接为：",
+            },
+        },
+        {
+            "type": "node",
+            "data": {"name": NICKNAME, "uin": event.self_id, "content": url},
+        },
+    ]
+    try:
+        if isinstance(event, PrivateMessageEvent):
+            msg = await bot.call_api(
+                "send_private_forward_msg", user_id=event.user_id, messages=msgs
+            )
+        else:
+            msg = await bot.call_api(
+                "send_group_forward_msg", group_id=event.group_id, messages=msgs
+            )
+        loop = get_running_loop()
+        loop.call_later(85,
+                        lambda: loop.create_task(bot.delete_msg(message_id=msg['message_id'])))
+    except ActionFailed:
+        logger.info('抽卡记录', '➤抽卡记录链接合并转发<r>发送失败</r>，尝试以普通信息发送')
+        try:
+            await gacha_url.finish(f"UID{uid}的抽卡记录链接为：\n{url}")
+        except ActionFailed as e:
+            logger.info('抽卡记录', f'➤抽卡记录链接<r>发送失败</r>，{e}')
+    except Exception as e:
+        logger.info('抽卡记录', f'➤抽卡记录链接<r>发送失败</r>，报错信息：{e}')
