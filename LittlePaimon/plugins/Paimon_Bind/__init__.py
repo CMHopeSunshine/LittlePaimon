@@ -78,7 +78,33 @@ refresh_ck = on_command('刷新ck', aliases={'刷新cookie'}, priority=1, block=
     'pm_usage':       '刷新ck',
     'pm_priority':    7
 })
+ysch = on_command('ysch', aliases={'原神切换', '切换uid'}, priority=1, block=True, state={
+    'pm_name':        'ysch',
+    'pm_description': '切换绑定Cookie的其他UID',
+    'pm_usage':       'ysch',
+    'pm_priority':    1
+})
 
+@ysch.handle()
+async def _(event: MessageEvent, msg: Message = CommandArg()):
+    user_id = event.user_id
+    cookie_list = await PrivateCookie.filter(user_id=event.user_id)
+    cache_uid = await LastQuery.get_or_none(user_id=user_id)
+
+    if not cookie_list:
+        ysch.finish(f'你还没有绑定Cookie，如需绑定cookie可看教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1')
+    
+    uids = [i.uid for i in cookie_list]
+    current_uid = uids[0]
+    if len(cookie_list)>1 and cache_uid and (cache_uid.uid in uids):
+        current_uid = uids[0]
+        for idx,uid in enumerate(uids):
+            if uid == cache_uid.uid:
+                current_uid = uids[(idx+1)%len(uids)]
+                break
+    await LastQuery.update_or_create(user_id=str(event.user_id),
+                                         defaults={'uid': current_uid, 'last_time': datetime.datetime.now()})
+    ysch.finish(f'当前UID切换为：{current_uid}\n当前绑定的UID列表为[{",".join(uids)}] ')
 
 @ysb.handle()
 async def _(event: MessageEvent, msg: Message = CommandArg()):
