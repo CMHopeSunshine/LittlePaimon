@@ -97,7 +97,6 @@ async def _(event: MessageEvent, msg: Message = CommandArg()):
     uids = [i.uid for i in cookie_list]
     current_uid = uids[0]
     if len(cookie_list)>1 and cache_uid and (cache_uid.uid in uids):
-        current_uid = uids[0]
         for idx,uid in enumerate(uids):
             if uid == cache_uid.uid:
                 current_uid = uids[(idx+1)%len(uids)]
