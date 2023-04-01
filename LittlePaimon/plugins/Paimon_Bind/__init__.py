@@ -33,7 +33,7 @@ __plugin_meta__ = PluginMetadata(
     }
 )
 
-ysb = on_command('ysb', aliases={'原神绑定', '绑定uid'}, priority=1, block=True, state={
+ysb = on_command('ysb', aliases={'原神绑定', '绑定uid', '绑定UID'}, priority=1, block=True, state={
     'pm_name':        'ysb',
     'pm_description': '绑定原神uid或者cookie',
     'pm_usage':       'ysb[uid|cookie]',
@@ -78,6 +78,53 @@ refresh_ck = on_command('刷新ck', aliases={'刷新cookie'}, priority=1, block=
     'pm_usage':       '刷新ck',
     'pm_priority':    7
 })
+ysch = on_command('ysch', aliases={'原神切换', '切换uid', '切换UID'}, priority=1, block=True, state={
+    'pm_name':        'ysch',
+    'pm_description': '切换当前绑定的UID至下一个或指定序号的UID',
+    'pm_usage':       'ysch[序号]',
+    'pm_priority':    8
+})
+
+
+@ysch.handle()
+async def _(event: MessageEvent, msg: Message = CommandArg()):
+    if not (cookie_list := await PrivateCookie.filter(user_id=str(event.user_id))):
+        await ysch.finish(f'你还没有绑定过Cookie的UID，如需绑定cookie可看教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1',
+                          at_sender=True)
+    if len(cookie_list) == 1:
+        await ysch.finish(f'你只绑定了一个UID{cookie_list[0].uid}，无需切换', at_sender=True)
+    uid_list = [i.uid for i in cookie_list]
+    uid_list_text = '\n'.join([f'{uid_list.index(i) + 1}.{i}' for i in uid_list])
+    msg = msg.extract_plain_text().strip()
+    if msg.isdigit():
+        # 如果指令后面跟了数字序号，就切换到对应序号的UID
+        num = int(msg)
+        if len(cookie_list) >= num:
+            await LastQuery.update_or_create(user_id=str(event.user_id),
+                                             defaults={'uid':       cookie_list[num - 1].uid,
+                                                       'last_time': datetime.datetime.now()})
+            await ysch.finish(f'当前已切换至UID{cookie_list[num - 1].uid}\n\n已绑定的UID有：{uid_list_text}\n可使用[切换uid 序号]来切换至指定UID',
+                              at_sender=True)
+        else:
+            await ysch.finish(
+                f'你没有绑定那么多UID哦\n已绑定的UID有：{uid_list_text}\n可使用[切换uid 序号]来切换至指定UID',
+                at_sender=True)
+    else:
+        cache_uid = await LastQuery.get_or_none(user_id=str(event.user_id))
+        if cache_uid and cache_uid.uid in uid_list:
+            index = uid_list.index(cache_uid.uid)
+            if index == len(uid_list) - 1:
+                # 如果当前UID是最后一个，那么切换至第一个
+                index = 0
+            else:
+                # 否则切换至下一个
+                index += 1
+            current_uid = cookie_list[index].uid
+        else:
+            current_uid = cookie_list[0].uid
+        await LastQuery.update_or_create(user_id=str(event.user_id),
+                                         defaults={'uid': current_uid, 'last_time': datetime.datetime.now()})
+        await ysch.finish(f'当前已切换至UID{current_uid}\n\n已绑定的UID有：{uid_list_text}\n可使用[切换uid 序号]来切换至指定UID', at_sender=True)
 
 
 @ysb.handle()
@@ -346,4 +393,3 @@ async def _(event: MessageEvent):
             await refresh_ck.finish(f'成功刷新米游社ID为{"、".join(refresh_done)}的账号的cookie', at_sender=True)
     else:
         await refresh_ck.finish('你还未绑定私人cookie或过期太久已被移除，请重新绑定', at_sender=True)
-

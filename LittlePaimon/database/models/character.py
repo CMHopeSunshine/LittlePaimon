@@ -306,6 +306,7 @@ class Character(Model):
             character.character_id = data['avatarId']
             character.level = int(data['propMap']['4001']['val'])
             character.fetter = data['fetterInfo']['expLevel']
+            character.promote_level = int(data['propMap']['1002'].get('val', 0))
             if name in ['荧', '空']:
                 character.region = '未知'
                 character.rarity = 5
