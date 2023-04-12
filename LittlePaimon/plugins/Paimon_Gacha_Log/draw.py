@@ -83,8 +83,10 @@ async def draw_pool_detail(pool_name: str,
                            not_out: int,
                            record_time: Tuple[datetime.datetime, datetime.datetime]) -> Optional[
     PMImage]:
-    if not data:
+
+    if total_count == 0:
         return None
+
     total_height = 181 + (446 if len(data) > 3 else 0) + 47 + 192 * math.ceil(len(data) / 6) + 20 + 60
     img = PMImage(size=(1009, total_height), mode='RGBA', color=(255, 255, 255, 0))
     # 橙线
@@ -95,7 +97,11 @@ async def draw_pool_detail(pool_name: str,
                    fm.get('bahnschrift_regular', 30), '#252525', 'right')
     # 数据
     await img.text('平均出货', 174, 137, fm.get('hywh', 24), (24, 24, 24, 102))
-    ave = round((total_count - not_out) / len(data), 2)
+
+    ave = 0
+    if data:
+        ave = round((total_count - not_out) / len(data), 2)
+
     await img.text(str(ave), (176, 270), 84,
                    fm.get('bahnschrift_regular', 48, 'Regular'),
                    '#252525', 'center')
@@ -105,7 +111,8 @@ async def draw_pool_detail(pool_name: str,
     await img.text('未出五星', 562, 137, fm.get('hywh', 24), (24, 24, 24, 102))
     await img.text(str(not_out), (562, 655), 84, fm.get('bahnschrift_regular', 48, 'Regular'),
                    '#252525', 'center')
-    lucky = '欧' if ave <= (45 if pool_type == '武器' else 50) else '吉' if ave <= (55 if pool_type == '武器' else 60) else '中' if ave <= (65 if pool_type == '武器' else 70) else '非'
+    lucky_num = ave if ave > 0 else total_count
+    lucky = '欧' if lucky_num <= (45 if pool_type == '武器' else 50) else '吉' if lucky_num <= (55 if pool_type == '武器' else 60) else '中' if lucky_num <= (65 if pool_type == '武器' else 70) else '非'
     await img.paste(await load_image(RESOURCE_BASE_PATH / 'gacha_log' / f'{lucky}{random.randint(1, 3)}.png'), (753, 68))
     # 折线图
     if len(data) > 3:
@@ -126,14 +133,16 @@ async def draw_pool_detail(pool_name: str,
             await img.text(str(chara.count), (point, point + 44), height - 48, fm.get('bahnschrift_regular', 30,
                                                                                       'Regular'), '#040404', 'center')
             i += 1
-    # 详细数据统计
-    chara_bg = PMImage(await load_image(RESOURCE_BASE_PATH / 'gacha_log' / 'detail_bg.png'))
-    await chara_bg.stretch((47, chara_bg.height - 20), 192 + 192 * (len(data) // 6), 'height')
-    await img.paste(chara_bg, (1, 655 if len(data) > 3 else 181))
-    await asyncio.gather(
-        *[img.paste(await detail_avatar(data[i]),
-                    (18 + i % 6 * 163, (708 if len(data) > 3 else 234) + i // 6 * 192))
-          for i in range(len(data))])
+    if data:
+        # 详细数据统计
+        chara_bg = PMImage(await load_image(RESOURCE_BASE_PATH / 'gacha_log' / 'detail_bg.png'))
+        await chara_bg.stretch((47, chara_bg.height - 20), 192 + 192 * (len(data) // 6), 'height')
+        await img.paste(chara_bg, (1, 655 if len(data) > 3 else 181))
+        await asyncio.gather(
+            *[img.paste(await detail_avatar(data[i]),
+                        (18 + i % 6 * 163, (708 if len(data) > 3 else 234) + i // 6 * 192))
+            for i in range(len(data))])
+
     return img
 
 
@@ -204,7 +213,8 @@ async def draw_gacha_log(user_id: str, uid: str, nickname: Optional[str], signat
     await img.text(str(total_gacha_count), (408, 503), 286, fm.get('bahnschrift_regular', 48), '#040404', 'center')
     await img.text('总计出金', 597, 335, fm.get('hywh', 24), (24, 24, 24, 102))
     await img.text(str(total_five_star_count), (598, 694), 286, fm.get('bahnschrift_regular', 48), '#040404', 'center')
-    lucky = '欧' if five_star_average <= 50 else '吉' if five_star_average <= 60 else '中' if five_star_average <= 70 else '非'
+    lucky_num = five_star_average if five_star_average>0 else total_gacha_count
+    lucky = '欧' if lucky_num <= 50 else '吉' if lucky_num <= 60 else '中' if lucky_num <= 70 else '非'
     await img.paste(await load_image(RESOURCE_BASE_PATH / 'gacha_log' / f'{lucky}{random.randint(1, 3)}.png'), (788, 271))
     four_star_detail = await draw_four_star_detail(list(data4.values()))
     if total_five_star_count:
