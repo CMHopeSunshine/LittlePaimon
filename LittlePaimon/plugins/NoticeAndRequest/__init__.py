@@ -10,7 +10,8 @@ from nonebot.params import CommandArg, ArgPlainText
 from nonebot.adapters.onebot.v11 import Bot, Message, MessageEvent, PrivateMessageEvent, FriendRequestEvent, \
     GroupRequestEvent, \
     RequestEvent, NoticeEvent, \
-    GroupIncreaseNoticeEvent, FriendAddNoticeEvent, GroupMessageEvent
+    GroupIncreaseNoticeEvent, FriendAddNoticeEvent, GroupMessageEvent, \
+    ActionFailed
 from nonebot.typing import T_State
 
 from LittlePaimon.config import config as bot_config
@@ -105,7 +106,10 @@ async def _(event: PrivateMessageEvent, bot: Bot, state: T_State, id_: str = Arg
 @requests.handle()
 async def _(bot: Bot, event: FriendRequestEvent):
     done[f'add_friend_{event.user_id}'] = datetime.datetime.now()
-    user_info = await bot.get_stranger_info(user_id=event.user_id)
+    try:
+        user_info = await bot.get_stranger_info(user_id=event.user_id)
+    except ActionFailed:
+        user_info = {'nickname': '未知'}
     base_msg = f'{user_info["nickname"]}({event.user_id})请求添加好友，验证信息为"{event.comment or "无"}"'
     if bot_config.auto_add_friend:
         await asyncio.sleep(random.randint(10, 20))
@@ -121,8 +125,14 @@ async def _(bot: Bot, event: FriendRequestEvent):
 @requests.handle()
 async def _(bot: Bot, event: GroupRequestEvent):
     done[f'add_group_{event.group_id}'] = datetime.datetime.now()
-    user_info = await bot.get_stranger_info(user_id=event.user_id)
-    group_info = await bot.get_group_info(group_id=event.group_id)
+    try:
+        user_info = await bot.get_stranger_info(user_id=event.user_id)
+    except ActionFailed:
+        user_info = {'nickname': '未知'}
+    try:
+        group_info = await bot.get_group_info(group_id=event.group_id)
+    except ActionFailed:
+        group_info = {'group_name': '未知'}
     base_msg = f'{user_info["nickname"]}({event.user_id})邀请{NICKNAME}加入群{group_info["group_name"]}({event.group_id})'
     if bot_config.auto_add_group or event.user_id in SUPERUSERS:
         await asyncio.sleep(random.randint(10, 20))
