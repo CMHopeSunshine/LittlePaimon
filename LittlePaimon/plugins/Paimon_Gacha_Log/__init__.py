@@ -108,7 +108,7 @@ async def _(event: MessageEvent, player=CommandPlayer(1)):
         await update_log.send(f'开始为UID{player[0].uid}更新抽卡记录，请稍候...')
         try:
             result = await get_gacha_log_data(player[0].user_id, player[0].uid)
-            await update_log.send(result or 'Stoken已失效，请重新绑定或刷新cookie之后再更新', at_sender=True)
+            await update_log.send(result or 'Stoken已失效，请重新绑定之后再更新', at_sender=True)
         except Exception as e:
             logger.info('原神抽卡记录', f'➤➤更新抽卡记录时出现错误：<r>{e}</r>')
             await update_log.send(f'更新抽卡记录时出现错误：{e}')

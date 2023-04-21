@@ -86,7 +86,7 @@ def gacha_log_to_UIGF(user_id: str, uid: str) -> Tuple[bool, str, Optional[Path]
     """
     data, state = load_history_info(user_id, uid)
     if not state:
-        return False, f'UID{uid}还没有抽卡记录数据，可使用命令[更新抽卡记录]更新', None
+        return False, f'UID{uid}还没有抽卡记录数据，请先更新', None
     logger.info('原神抽卡记录', '➤', {'用户': user_id, 'UID': uid}, '导出抽卡记录', True)
     save_path = Path() / 'data' / 'LittlePaimon' / 'user_data' / 'gacha_log_data' / f'gacha_log_UIGF-{user_id}-{uid}.json'
     uigf_dict = {
@@ -159,7 +159,7 @@ async def get_gacha_log_data(user_id: str, uid: str):
                 logger.info('原神抽卡记录', '➤➤', {}, 'Stoken已失效，更新失败', False)
                 cookie_info.stoken = None
                 await cookie_info.save()
-                return f'UID{uid}的Stoken已失效，请重新绑定或刷新cookie后再更新抽卡记录'
+                return f'UID{uid}的Stoken已失效，请重新绑定后再更新抽卡记录'
             data = data['data']['list']
             if not data:
                 break
@@ -198,7 +198,7 @@ async def get_gacha_log_img(user_id: str, uid: str, nickname: str):
     await LastQuery.update_last_query(user_id, uid)
     data, state = load_history_info(user_id, uid)
     if not state:
-        return f'UID{uid}还没有抽卡记录数据，可使用命令[更新抽卡记录]更新'
+        return f'UID{uid}还没有抽卡记录数据，请先更新'
     if player_info := await PlayerInfo.get_or_none(user_id=user_id, uid=uid):
         return await draw_gacha_log(player_info.user_id, player_info.uid, player_info.nickname, player_info.signature,
                                     data)

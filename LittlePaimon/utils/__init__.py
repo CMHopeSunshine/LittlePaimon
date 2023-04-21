@@ -4,7 +4,7 @@ from nonebot import get_driver
 from .logger import logger
 from .scheduler import scheduler
 
-__version__ = '3.0.8'
+__version__ = '1.8.9'
 
 DRIVER = get_driver()
 try:
@@ -18,6 +18,6 @@ if not SUPERUSERS or SUPERUSERS == ['123456']:
 try:
     NICKNAME: str = list(DRIVER.config.nickname)[0]
 except Exception:
-    NICKNAME = '派蒙'
+    NICKNAME = '脑积水'
 
 __all__ = ['logger', 'scheduler', 'DRIVER', 'SUPERUSERS', 'NICKNAME', '__version__']

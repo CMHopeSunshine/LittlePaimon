@@ -2190,31 +2190,5 @@
       "10805": "Skill_E_Mika_01"
     },
     "SideIconName": "UI_AvatarIcon_Side_Mika"
-  },
-    "10000081": {
-    "SkillOrder": [
-      10801,
-      10802,
-      10805
-    ],
-    "Skills": {
-      "10801": "Skill_A_Catalyst_MD",
-      "10802": "Skill_S_Baizhuer_01",
-      "10805": "Skill_E_Baizhuer_01"
-    },
-    "SideIconName": "UI_AvatarIcon_Side_Baizhuer"
-  },
-    "10000082": {
-    "SkillOrder": [
-      10801,
-      10802,
-      10805
-    ],
-    "Skills": {
-      "10801": "Skill_A_04",
-      "10802": "Skill_S_Kaveh_01",
-      "10805": "Skill_E_Kaveh_01"
-    },
-    "SideIconName": "UI_AvatarIcon_Side_Kaveh"
   }
 }

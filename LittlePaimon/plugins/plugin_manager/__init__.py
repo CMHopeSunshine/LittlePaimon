@@ -31,7 +31,7 @@ manage_cmd = on_regex(
         'pm_usage':       'pm ban|unban <插件名>',
         'pm_priority':    1
     })
-help_cmd = on_command('help', aliases={'帮助', '菜单', 'pm help'}, priority=1, rule=fullmatch_rule, block=True, state={
+help_cmd = on_command('pmhelp', aliases={'派蒙帮助', '派蒙菜单', 'pm help'}, priority=1, rule=fullmatch_rule, block=True, state={
     'pm_name':        'pm-help',
     'pm_description': '查看本帮助',
     'pm_usage':       'help',
