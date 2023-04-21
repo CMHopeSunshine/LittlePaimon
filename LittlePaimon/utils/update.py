@@ -12,7 +12,7 @@ from .logger import logger
 
 
 async def check_update():
-    resp = await aiorequests.get('https://api.github.com/repos/CMHopeSunshine/LittlePaimon/commits')
+    resp = await aiorequests.get('https://api.github.com/repos/zhulinyv/NJS/commits')
     data = resp.json()
     if not isinstance(data, list):
         return '检查更新失败，可能是网络问题，请稍后再试'
@@ -44,7 +44,7 @@ def update():
         repo = git.Repo(Path().absolute())
     except InvalidGitRepositoryError:
         return '没有发现git仓库，无法通过git更新，请手动下载最新版本的文件进行替换。'
-    logger.info('派蒙更新', '开始执行<m>git pull</m>更新操作')
+    logger.info('脑积水更新', '开始执行<m>git pull</m>更新操作')
     origin = repo.remotes.origin
     try:
         origin.pull()
@@ -57,7 +57,7 @@ def update():
             pyproject_raw_content = pyproject_file.read_text(encoding='utf-8')
             if raw_plugins_load := re.search(r'^plugins = \[.+]$', pyproject_raw_content, flags=re.M):
                 pyproject_new_content = pyproject_raw_content.replace(raw_plugins_load.group(), 'plugins = []')
-                logger.info('派蒙更新', f'检测到已安装插件：{raw_plugins_load.group()}，暂时重置')
+                logger.info('脑积水更新', f'检测到已安装插件：{raw_plugins_load.group()}，暂时重置')
             else:
                 pyproject_new_content = pyproject_raw_content
             pyproject_file.write_text(pyproject_new_content, encoding='utf-8')
@@ -78,7 +78,7 @@ def update():
                                                    pyproject_new_content)
                     pyproject_new_content = pyproject_new_content.replace('plugins = []', raw_plugins_load.group())
                     pyproject_file.write_text(pyproject_new_content, encoding='utf-8')
-                    logger.info('派蒙更新', f'更新结束，还原插件：{raw_plugins_load.group()}')
+                    logger.info('脑积水更新', f'更新结束，还原插件：{raw_plugins_load.group()}')
             return msg
         else:
             msg = f'更新失败，错误信息：{e.stderr}，请尝试手动进行更新'

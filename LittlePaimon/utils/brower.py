@@ -104,6 +104,37 @@ async def screenshot(url: str,
         if page:
             await page.close()
 
+async def blhx_screenshot(url: str,
+                     *,
+                     elements: Optional[Union[List[str]]] = None,
+                     timeout: Optional[float] = 100000,
+                     wait_until: Literal["domcontentloaded", "load", "networkidle", "load", "commit"] = "networkidle",
+                     viewport_size: Tuple[int, int] = (1280, 4500),
+                     full_page=True,
+                     **kwargs):
+    if not url.startswith(('https://', 'http://')):
+        url = f'https://{url}'
+    viewport_size = {'width': viewport_size[0], 'height': viewport_size[1]}
+    brower = await get_browser()
+    page = await brower.new_page(
+        viewport=viewport_size,
+        **kwargs)
+    try:
+        await page.goto(url, wait_until=wait_until, timeout=timeout)
+        assert page
+        if not elements:
+            return await page.screenshot(timeout=timeout)
+        for e in elements:
+            card = await page.wait_for_selector(e, timeout=timeout, state='visible')
+            assert card
+            clip = await card.bounding_box()
+        return await page.screenshot(clip=clip, timeout=timeout, path='test.png')
+
+    except Exception as e:
+        raise e
+    finally:
+        if page:
+            await page.close()
 
 @asynccontextmanager
 async def get_new_page(**kwargs) -> AsyncIterator[Page]:
