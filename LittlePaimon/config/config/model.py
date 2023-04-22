@@ -9,7 +9,7 @@ class ConfigModel(BaseModel):
     qrcode_bind_use_url: bool = Field(False, alias='绑定二维码以链接形式发送')
 
     img_use_cache: bool = Field(True, alias='图片资源缓存开关')
-    reboot_card_enable: List[int] = Field([], alias='启用重启时修改群名片群列表')
+    reboot_card_enable: List[int] = Field([], alias='重启时修改群名片群列表')
 
     sim_gacha_cd_group: int = Field(30, alias='模拟抽卡群冷却')
     sim_gacha_cd_member: int = Field(60, alias='模拟抽卡群员冷却')
