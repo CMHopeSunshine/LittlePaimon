@@ -5,7 +5,6 @@ from typing import Dict
 
 from nonebot import on_regex
 from nonebot.adapters.onebot.v11 import Message, MessageSegment, ActionFailed
-from nonebot.adapters.onebot.v11.helpers import HandleCancellation
 from nonebot.internal.matcher import Matcher
 from nonebot.internal.params import Arg, ArgPlainText
 from nonebot.params import RegexDict
@@ -20,8 +19,7 @@ from LittlePaimon.utils.typing import COMMAND_START_RE
 wiki_data: Dict[str, Dict[str, str]] = {}
 last_update_time: datetime.datetime = datetime.datetime.now()
 
-cancel = [HandleCancellation(f'好吧，有需要再找{NICKNAME}')]
-GAME_ALIAS = ['星穹铁道', '星铁', '崩铁', '穹轨', '铁轨', escape('*'), '']
+GAME_ALIAS = ['星穹铁道', '星铁', '崩铁', '穹轨', '铁轨', '铁道', escape('*'), '']
 BASE_TYPE = ['图鉴', '材料', '角色图鉴', '角色材料', '遗器图鉴', '光锥图鉴']
 GAME_ALIAS_RE = '(' + '|'.join(GAME_ALIAS) + ')'
 BASE_TYPE_RE = '(' + '|'.join(BASE_TYPE) + ')'
@@ -85,11 +83,13 @@ async def sr_wiki_handler(state: T_State, regex_dict: dict = RegexDict()):
     state['times'] = 1
 
 
-@wiki.got('name', prompt=Message.template('目前支持以下{type}：\n{name_list}\n你要查询哪个呢？'), parameterless=cancel)
+@wiki.got('name', prompt=Message.template('目前支持以下{type}：\n{name_list}\n你要查询哪个呢？'))
 async def sr_wiki_got(matcher: Matcher,
                       state: T_State,
                       type: str = Arg('type'),
                       name: str = ArgPlainText('name')):
+    if name in {'取消', '退出', '结束'}:
+        await wiki.finish(f'好吧，有需要再找{NICKNAME}')
     if not name:
         if state['times'] == 2:
             await wiki.finish('旅行者似乎不太能理解，下次再问我吧' + MessageSegment.face(146))
