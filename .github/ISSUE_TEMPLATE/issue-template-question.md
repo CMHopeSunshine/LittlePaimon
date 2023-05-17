@@ -9,15 +9,15 @@ assignees: ''
 
 ### 确认
 
-- 我的Bot版本已更新到最新，且已尝试使用`poetry install`更新依赖库
+- 我的Bot版本已更新到最新，且已尝试使用`nb paimon install`更新依赖库
 - 我已查阅[文档-常见问题](https://docs.paimon.cherishmoon.fun/question.html)，无相关解决方案
 - 我已确认[issue](https://github.com/CMHopeSunshine/LittlePaimon/issues)中没有类似的问题或仍然得不到解决
 
 ### 环境信息
 
-- 系统版本: Windows10
-- Python版本: 3.9.10
-- Nonebot2版本: 2.0.0rc2
+- 系统版本: Windows10(example)
+- Python版本: 3.9.10(example)
+- Nonebot2版本: 2.0.0rc4(example)
 
 ### 问题描述
 

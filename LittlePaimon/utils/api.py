@@ -281,7 +281,7 @@ async def get_mihoyo_public_data(
         cookie_info = await get_cookie(user_id, uid, check)
         check = False
         if not cookie_info:
-            return '当前没有可使用的cookie，请绑定私人cookie或联系超级管理员添加公共cookie，'
+            return '当前没有可使用的cookie，请使用命令[原神扫码绑定]/[ysb]绑定私人cookie或联系超级管理员添加公共cookie，'
         if mode == 'abyss':
             data = await aiorequests.get(
                 url=ABYSS_API,

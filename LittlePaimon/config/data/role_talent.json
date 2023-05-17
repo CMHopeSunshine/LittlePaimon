@@ -407,7 +407,19 @@
     "803": "游击的心得",
     "804": "晴霜的祝念",
     "805": "引示的铃箭",
-    "806": "依随的策援"
+    "806": "依随的策援",
+    "811": "高门的谒礼",
+    "812": "御驿的径迹",
+    "813": "金塔的香献",
+    "814": "百柱的酣宴",
+    "815": "圣古的库藏",
+    "816": "天园的理想",
+    "821": "呿吟至微",
+    "822": "动静精明",
+    "823": "八正定气",
+    "824": "法古观冥",
+    "825": "盈虚藏象",
+    "826": "真邪合离"
   },
   "Icon": {
     "21": "UI_Talent_S_Ayaka_01",
@@ -817,6 +829,18 @@
     "803": "UI_Talent_U_Mika_01",
     "804": "UI_Talent_S_Mika_03",
     "805": "UI_Talent_U_Mika_02",
-    "806": "UI_Talent_S_Mika_04"
+    "806": "UI_Talent_S_Mika_04",
+    "811": "UI_Talent_S_Kaveh_01",
+    "812": "UI_Talent_S_Kaveh_02",
+    "813": "UI_Talent_U_Kaveh_02",
+    "814": "UI_Talent_S_Kaveh_03",
+    "815": "UI_Talent_U_Kaveh_01",
+    "816": "UI_Talent_S_Kaveh_04",
+    "821": "UI_Talent_S_Baizhuer_01",
+    "822": "UI_Talent_S_Baizhuer_02",
+    "823": "UI_Talent_U_Baizhuer_01",
+    "824": "UI_Talent_S_Baizhuer_03",
+    "825": "UI_Talent_U_Baizhuer_02",
+    "826": "UI_Talent_S_Baizhuer_04"
   }
 }
