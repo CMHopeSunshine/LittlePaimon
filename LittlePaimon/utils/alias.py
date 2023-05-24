@@ -154,7 +154,7 @@ def get_weapon_icon(name: str) -> Optional[str]:
 
 
 def get_artifact_icon(name: str) -> Optional[str]:
-    icon_list = load_json(JSON_DATA / 'artifact.json')['Icon']
+    icon_list = load_json(JSON_DATA / 'artifact.json')
     for k, v in icon_list['Name'].items():
         if name == v:
             return k
