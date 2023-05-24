@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from tortoise import fields
 from tortoise.models import Model
 
-from LittlePaimon.utils.alias import get_name_by_id
+from LittlePaimon.utils.alias import get_name_by_id, get_chara_icon
 from .player_info import PlayerInfo
 
 
@@ -232,13 +232,13 @@ class AbyssInfo(Model):
                     battles_up.append(AbyssCharacters(characters=[AbyssCharacter(
                         name=get_name_by_id(c['id']),
                         character_id=c['id'],
-                        icon=c['icon'].split('/')[-1].replace('.png', ''),
+                        icon=get_chara_icon(chara_id=c['id']),
                         rarity=c['rarity'],
                         level=c['level']) for c in level['battles'][0]['avatars']]))
                     battles_down.append(AbyssCharacters(characters=[AbyssCharacter(
                         name=get_name_by_id(c['id']),
                         character_id=c['id'],
-                        icon=c['icon'].split('/')[-1].replace('.png', ''),
+                        icon=get_chara_icon(chara_id=c['id']),
                         rarity=c['rarity'],
                         level=c['level']) for c in level['battles'][1]['avatars']]))
                 floor_info.battles_up = battles_up
