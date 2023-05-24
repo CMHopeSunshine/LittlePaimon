@@ -26,7 +26,15 @@
     },
     "NameTextMapHash": 1006042610,
     "SideIconName": "UI_AvatarIcon_Side_Ayaka",
-    "QualityType": "QUALITY_ORANGE"
+    "QualityType": "QUALITY_ORANGE",
+    "Costumes": {
+      "200201": {
+        "sideIconName": "UI_AvatarIcon_Side_AyakaCostumeFruhling",
+        "icon": "UI_AvatarIcon_AyakaCostumeFruhling",
+        "art": "UI_Costume_AyakaCostumeFruhling",
+        "avatarId": 10000002
+      }
+    }
   },
   "10000003": {
     "Element": "Wind",
@@ -127,7 +135,15 @@
     },
     "NameTextMapHash": 3344622722,
     "SideIconName": "UI_AvatarIcon_Side_Lisa",
-    "QualityType": "QUALITY_PURPLE"
+    "QualityType": "QUALITY_PURPLE",
+    "Costumes": {
+      "200601": {
+        "sideIconName": "UI_AvatarIcon_Side_LisaCostumeStudentin",
+        "icon": "UI_AvatarIcon_LisaCostumeStudentin",
+        "art": "UI_Costume_LisaCostumeStudentin",
+        "avatarId": 10000006
+      }
+    }
   },
   "10000007": {
     "Element": "Wind",
@@ -1440,6 +1456,19 @@
     "SideIconName": "UI_AvatarIcon_Side_Yelan",
     "QualityType": "QUALITY_ORANGE"
   },
+  "10000061":{
+    "SkillOrder": [
+      10611,
+      10612,
+      10615
+    ],
+    "Skills": {
+      "10611": "Skill_A_01",
+      "10612": "Skill_S_Momoka_01",
+      "10615": "Skill_E_Momoka_01"
+    },
+    "SideIconName": "UI_AvatarIcon_Side_Momoka"
+  },
   "10000062": {
     "Element": "Ice",
     "Consts": [
@@ -1817,6 +1846,238 @@
     "SideIconName": "UI_AvatarIcon_Side_Layla",
     "QualityType": "QUALITY_PURPLE"
   },
+  "10000075": {
+    "Element": "Wind",
+    "Consts": [
+      "UI_Talent_S_Wanderer_01",
+      "UI_Talent_S_Wanderer_02",
+      "UI_Talent_U_Wanderer_02",
+      "UI_Talent_S_Wanderer_03",
+      "UI_Talent_U_Wanderer_01",
+      "UI_Talent_S_Wanderer_04"
+    ],
+    "SkillOrder": [
+      10751,
+      10752,
+      10755
+    ],
+    "Skills": {
+      "10751": "Skill_A_Catalyst_MD",
+      "10752": "Skill_S_Wanderer_01",
+      "10755": "Skill_E_Wanderer_01"
+    },
+    "ProudMap": {
+      "10751": 7531,
+      "10752": 7532,
+      "10755": 7539
+    },
+    "NameTextMapHash": 3230559562,
+    "SideIconName": "UI_AvatarIcon_Side_Wanderer",
+    "QualityType": "QUALITY_ORANGE"
+  },
+  "10000076": {
+    "Element": "Wind",
+    "Consts": [
+      "UI_Talent_S_Faruzan_01",
+      "UI_Talent_S_Faruzan_02",
+      "UI_Talent_U_Faruzan_01",
+      "UI_Talent_S_Faruzan_03",
+      "UI_Talent_U_Faruzan_02",
+      "UI_Talent_S_Faruzan_04"
+    ],
+    "SkillOrder": [
+      10761,
+      10762,
+      10765
+    ],
+    "Skills": {
+      "10761": "Skill_A_02",
+      "10762": "Skill_S_Faruzan_01",
+      "10765": "Skill_E_Faruzan_01"
+    },
+    "ProudMap": {
+      "10761": 7631,
+      "10762": 7632,
+      "10765": 7639
+    },
+    "NameTextMapHash": 2387711994,
+    "SideIconName": "UI_AvatarIcon_Side_Faruzan",
+    "QualityType": "QUALITY_PURPLE"
+  },
+  "10000077": {
+    "Element": "Grass",
+    "Consts": [
+      "UI_Talent_S_Yaoyao_01",
+      "UI_Talent_S_Yaoyao_02",
+      "UI_Talent_U_Yaoyao_01",
+      "UI_Talent_S_Yaoyao_03",
+      "UI_Talent_U_Yaoyao_02",
+      "UI_Talent_S_Yaoyao_04"
+    ],
+    "SkillOrder": [
+      10771,
+      10772,
+      10775
+    ],
+    "Skills": {
+      "10771": "Skill_A_03",
+      "10772": "Skill_S_Yaoyao_01",
+      "10775": "Skill_E_Yaoyao_01"
+    },
+    "ProudMap": {
+      "10771": 7731,
+      "10772": 7732,
+      "10775": 7739
+    },
+    "NameTextMapHash": 1732418482,
+    "SideIconName": "UI_AvatarIcon_Side_Yaoyao",
+    "QualityType": "QUALITY_PURPLE"
+  },
+  "10000078": {
+    "Element": "Grass",
+    "Consts": [
+      "UI_Talent_S_Alhatham_02",
+      "UI_Talent_S_Alhatham_01",
+      "UI_Talent_U_Alhatham_01",
+      "UI_Talent_S_Alhatham_03",
+      "UI_Talent_U_Alhatham_02",
+      "UI_Talent_S_Alhatham_04"
+    ],
+    "SkillOrder": [
+      10781,
+      10782,
+      10785
+    ],
+    "Skills": {
+      "10781": "Skill_A_01",
+      "10782": "Skill_S_Alhatham_01",
+      "10785": "Skill_E_Alhatham_01"
+    },
+    "ProudMap": {
+      "10781": 7831,
+      "10782": 7832,
+      "10785": 7839
+    },
+    "NameTextMapHash": 4002157418,
+    "SideIconName": "UI_AvatarIcon_Side_Alhatham",
+    "QualityType": "QUALITY_ORANGE"
+  },
+  "10000079": {
+    "Element": "Fire",
+    "Consts": [
+      "UI_Talent_S_Dehya_01",
+      "UI_Talent_S_Dehya_02",
+      "UI_Talent_U_Dehya_01",
+      "UI_Talent_S_Dehya_03",
+      "UI_Talent_U_Dehya_02",
+      "UI_Talent_S_Dehya_04"
+    ],
+    "SkillOrder": [
+      10791,
+      10792,
+      10795
+    ],
+    "Skills": {
+      "10791": "Skill_A_04",
+      "10792": "Skill_S_Dehya_01",
+      "10795": "Skill_E_Dehya_01"
+    },
+    "ProudMap": {
+      "10791": 7931,
+      "10792": 7932,
+      "10795": 7939
+    },
+    "NameTextMapHash": 2360533154,
+    "SideIconName": "UI_AvatarIcon_Side_Dehya",
+    "QualityType": "QUALITY_ORANGE"
+  },
+  "10000080": {
+    "Element": "Ice",
+    "Consts": [
+      "UI_Talent_S_Mika_01",
+      "UI_Talent_S_Mika_02",
+      "UI_Talent_U_Mika_01",
+      "UI_Talent_S_Mika_03",
+      "UI_Talent_U_Mika_02",
+      "UI_Talent_S_Mika_04"
+    ],
+    "SkillOrder": [
+      10801,
+      10802,
+      10805
+    ],
+    "Skills": {
+      "10801": "Skill_A_03",
+      "10802": "Skill_S_Mika_01",
+      "10805": "Skill_E_Mika_01"
+    },
+    "ProudMap": {
+      "10801": 8031,
+      "10802": 8032,
+      "10805": 8039
+    },
+    "NameTextMapHash": 231911858,
+    "SideIconName": "UI_AvatarIcon_Side_Mika",
+    "QualityType": "QUALITY_PURPLE"
+  },
+  "10000081": {
+    "Element": "Grass",
+    "Consts": [
+      "UI_Talent_S_Kaveh_01",
+      "UI_Talent_S_Kaveh_02",
+      "UI_Talent_U_Kaveh_02",
+      "UI_Talent_S_Kaveh_03",
+      "UI_Talent_U_Kaveh_01",
+      "UI_Talent_S_Kaveh_04"
+    ],
+    "SkillOrder": [
+      10811,
+      10812,
+      10815
+    ],
+    "Skills": {
+      "10811": "Skill_A_04",
+      "10812": "Skill_S_Kaveh_01",
+      "10815": "Skill_E_Kaveh_01"
+    },
+    "ProudMap": {
+      "10811": 8131,
+      "10812": 8132,
+      "10815": 8139
+    },
+    "NameTextMapHash": 466355514,
+    "SideIconName": "UI_AvatarIcon_Side_Kaveh",
+    "QualityType": "QUALITY_PURPLE"
+  },
+  "10000082": {
+    "Element": "Grass",
+    "Consts": [
+      "UI_Talent_S_Baizhuer_01",
+      "UI_Talent_S_Baizhuer_02",
+      "UI_Talent_U_Baizhuer_01",
+      "UI_Talent_S_Baizhuer_03",
+      "UI_Talent_U_Baizhuer_02",
+      "UI_Talent_S_Baizhuer_04"
+    ],
+    "SkillOrder": [
+      10821,
+      10822,
+      10825
+    ],
+    "Skills": {
+      "10821": "Skill_A_Catalyst_MD",
+      "10822": "Skill_S_Baizhuer_01",
+      "10825": "Skill_E_Baizhuer_01"
+    },
+    "ProudMap": {
+      "10821": 8231,
+      "10822": 8232,
+      "10825": 8239
+    },
+    "NameTextMapHash": 2984815066,
+    "SideIconName": "UI_AvatarIcon_Side_Baizhuer",
+    "QualityType": "QUALITY_ORANGE"
+  },
   "10000005-501": {
     "Element": "None",
     "Consts": [
@@ -2112,109 +2373,5 @@
     },
     "SideIconName": "UI_AvatarIcon_Side_PlayerGirl",
     "QualityType": "QUALITY_ORANGE"
-  },
-  "10000075": {
-    "SkillOrder": [
-      10751,
-      10752,
-      10753
-    ],
-    "Skills": {
-      "10018": "Skill_A_Catalyst_MD",
-      "10019": "Skill_S_Wanderer_01",
-      "10024": "Skill_E_Wanderer_01"
-    },
-    "SideIconName": "UI_AvatarIcon_Side_Wanderer"
-  },
-  "10000076": {
-    "SkillOrder": [
-      10761,
-      10762,
-      10765
-    ],
-    "Skills": {
-      "10018": "Skill_A_02",
-      "10019": "Skill_S_Faruzan_01",
-      "10024": "Skill_E_Faruzan_01"
-    },
-    "SideIconName": "UI_AvatarIcon_Side_Faruzan"
-  },
-  "10000077": {
-    "SkillOrder": [
-      10771,
-      10772,
-      10775
-    ],
-    "Skills": {
-      "10771": "Skill_A_03",
-      "10772": "Skill_S_Yaoyao_01",
-      "10775": "Skill_E_Yaoyao_01"
-    },
-    "SideIconName": "UI_AvatarIcon_Side_Yaoyao"
-  },
-  "10000078": {
-    "SkillOrder": [
-      10781,
-      10782,
-      10785
-    ],
-    "Skills": {
-      "10781": "Skill_A_01",
-      "10782": "Skill_S_Alhatham_01",
-      "10785": "Skill_E_Alhatham_01"
-    },
-    "SideIconName": "UI_AvatarIcon_Side_Alhatham"
-  },
-  "10000079": {
-    "SkillOrder": [
-      10791,
-      10792,
-      10795
-    ],
-    "Skills": {
-      "10791": "Skill_A_04",
-      "10792": "Skill_S_Dehya_01",
-      "10795": "Skill_E_Dehya_01"
-    },
-    "SideIconName": "UI_AvatarIcon_Side_Dehya"
-  },
-  "10000080": {
-    "SkillOrder": [
-      10801,
-      10802,
-      10805
-    ],
-    "Skills": {
-      "10801": "Skill_A_03",
-      "10802": "Skill_S_Mika_01",
-      "10805": "Skill_E_Mika_01"
-    },
-    "SideIconName": "UI_AvatarIcon_Side_Mika"
-  },
-  "10000081": {
-    "SkillOrder": [
-      10801,
-      10802,
-      10805
-    ],
-    "Skills": {
-      "10801": "Skill_A_04",
-      "10802": "Skill_S_Kaveh_01",
-      "10805": "Skill_E_Kaveh_01"
-    },
-    "SideIconName": "UI_AvatarIcon_Side_Kaveh"
-  },
-  "10000082": {
-    "SkillOrder": [
-      10801,
-      10802,
-      10805
-    ],
-    "Skills": {
-      "10801": "Skill_A_Catalyst_MD",
-      "10802": "Skill_S_Baizhuer_01",
-      "10805": "Skill_E_Baizhuer_01"
-    },
-    "SideIconName": "UI_AvatarIcon_Side_Baizhuer"
   }
 }
