@@ -228,7 +228,7 @@ class PlayerInfo(Model):
                                                                tree_level=daoqi_data['offerings'][0]['level'],
                                                                percent=daoqi_data['exploration_percentage'])
                 else:
-                    info.world_explore.DaoQi = PlayerWorldInfo(name='稻妻', unlock=True)
+                    info.world_explore.DaoQi = PlayerWorldInfo(name='稻妻', unlock=False)
                 if yxg_data := list(filter(lambda h: h['name'] == '渊下宫', data['world_explorations'])):
                     yxg_data = yxg_data[0]
                     info.world_explore.Enkanomiya = PlayerWorldInfo(name='渊下宫', unlock=True,
