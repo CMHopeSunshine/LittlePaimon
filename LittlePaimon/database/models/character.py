@@ -6,7 +6,7 @@ from tortoise import fields
 from tortoise.models import Model
 
 from LittlePaimon.utils.path import JSON_DATA
-from LittlePaimon.utils.alias import get_name_by_id
+from LittlePaimon.utils.alias import get_name_by_id, get_weapon_icon, get_artifact_icon, get_constellation_icon
 from LittlePaimon.utils.files import load_json
 from LittlePaimon.utils.typing import *
 
@@ -429,7 +429,7 @@ class Character(Model):
             character.promote_level = 0 if character.level < 20 else 1 if character.level < 40 else 2 if character.level < 50 else 3 if character.level < 60 else 4 if character.level < 70 else 5 if character.level < 80 else 6
             character.constellation = Constellations(constellation_list=[
                 Constellation(name=data['constellations'][i]['name'],
-                              icon=data['constellations'][i]['icon'].split('/')[-1].replace('.png', '')) for i in
+                              icon=get_constellation_icon(data['constellations'][i]['name'])) for i in
                 range(data['actived_constellation_num'])
             ])
             if character.name in ['荧', '空']:
@@ -460,7 +460,7 @@ class Character(Model):
                 character.weapon = Weapon(
                     name=data['weapon']['name'],
                     type=data['weapon']['type_name'],
-                    icon=data['weapon']['icon'].split('/')[-1].replace('.png', ''),
+                    icon=get_weapon_icon(data['weapon']['name']),
                     level=data['weapon']['level'],
                     rarity=data['weapon']['rarity'],
                     affix_level=data['weapon']['affix_level'],
@@ -468,7 +468,7 @@ class Character(Model):
             if 'reliquaries' in data:
                 character.artifacts = Artifacts(artifact_list=[Artifact(
                     name=a['name'],
-                    icon=a['icon'].split('/')[-1].replace('.png', ''),
+                    icon=get_artifact_icon(a['name']),
                     level=a['level'],
                     rarity=a['rarity'],
                     suit=a['set']['name'],

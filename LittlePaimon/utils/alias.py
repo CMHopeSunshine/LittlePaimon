@@ -151,3 +151,18 @@ def get_chara_icon(name: Optional[str] = None, chara_id: Optional[int] = None,
 def get_weapon_icon(name: str) -> Optional[str]:
     icon_list = load_json(JSON_DATA / 'weapon.json')['Icon']
     return icon_list.get(name)
+
+
+def get_artifact_icon(name: str) -> Optional[str]:
+    icon_list = load_json(JSON_DATA / 'artifact.json')
+    for k, v in icon_list['Name'].items():
+        if name == v:
+            return k
+        
+
+
+def get_constellation_icon(name: str) -> Optional[str]:
+    icon_list = load_json(JSON_DATA / 'role_talent.json')
+    for k, v in icon_list['Name'].items():
+        if name == v:
+            return icon_list['Icon'].get(k)
