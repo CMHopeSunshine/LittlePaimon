@@ -161,6 +161,7 @@
     "4230231107": "若水",
     "2918525947": "飞雷之弦振",
     "1348687251": "猎人之径",
+    "316078811": "鹮穿之喙",
     "4137694339": "(test)竿测试",
     "2719832059": "(test)穿模测试",
     "500987603": "(test)穿模测试",
@@ -329,6 +330,7 @@
     "若水": "弓",
     "飞雷之弦振": "弓",
     "猎人之径": "弓",
+    "鹮穿之喙": "弓",
     "(test)竿测试": "单手剑",
     "(test)穿模测试": "弓"
   },
@@ -492,6 +494,7 @@
     "若水": "UI_EquipIcon_Bow_Kirin",
     "飞雷之弦振": "UI_EquipIcon_Bow_Narukami",
     "猎人之径": "UI_EquipIcon_Bow_Ayus",
+    "鹮穿之喙": "UI_EquipIcon_Bow_Ibis",
     "(test)竿测试": "UI_EquipIcon_FishingRod",
     "(test)穿模测试": "UI_EquipIcon_Bow_Template"
   }
