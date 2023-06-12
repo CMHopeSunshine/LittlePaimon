@@ -43,15 +43,19 @@ bind_cmd = on_command("星铁绑定", aliases={"崩铁绑定", "星穹铁道绑�
 
 @panel_cmd.handle()
 async def panel_cmd_handler(event: MessageEvent, args: Message = CommandArg()):
+    if (at_msg := args['at']) and 'qq' in at_msg[0].data:
+        user_id = str(at_msg[0].data['qq'])
+    else:
+        user_id = str(event.user_id)
     name = args.extract_plain_text().strip()
     if not name:
-        await panel_cmd.finish("请给出要查询的角色名全称")
-    uid = get_uid(str(event.user_id))
+        await panel_cmd.finish("请给出要查询的角色名全称~")
+    uid = get_uid(user_id)
     if not uid:
         await panel_cmd.finish("请先使用命令[星铁绑定 uid]来绑定星穹铁道UID")
     data = get_info(uid, name)
     if not data:
-        await panel_cmd.finish("你还没有该角色的面板数据哦，请将该角色放在你的游戏主页中，使用命令[更新星铁面板]来更新")
+        await panel_cmd.finish("还没有该角色的面板数据哦，请将该角色放在游戏支援角色或星海同行中，使用命令[更新星铁面板]来更新")
     try:
         image = await draw_character(data, uid)
     except Exception as e:
