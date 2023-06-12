@@ -105,8 +105,18 @@ async def check_resource():
             (RESOURCE_BASE_PATH / '原神图标资源.zip').unlink()
             logger.info('资源检查', '<g>资源下载完成</g>')
         except Exception:
-            logger.warning('资源检查', '下载<m>资源</m>时<r>出错</r>，请尝试更换<m>github资源地址</m>')
+            logger.warning('资源检查', '下载<m>资源包</m>时<r>出错</r>，请尝试更换<m>github资源地址</m>')
     else:
+        if not (RESOURCE_BASE_PATH / 'LittlePaimon' / 'star_rail').is_dir():
+            try:
+                await aiorequests.download(
+                    url=f'{config.github_proxy}https://raw.githubusercontent.com/CMHopeSunshine/LittlePaimonRes/main/resources/star_rail.zip',
+                    save_path=RESOURCE_BASE_PATH / 'star_rail.zip')
+                zipfile.ZipFile(RESOURCE_BASE_PATH / 'star_rail.zip').extractall(RESOURCE_BASE_PATH / 'LittlePaimon')
+                (RESOURCE_BASE_PATH / 'star_rail.zip').unlink()
+                logger.info('资源检查', '<g>星穹铁道相关资源下载完成</g>')
+            except Exception:
+                logger.warning('资源检查', '下载<m>星穹铁道资源</m>时<r>出错</r>，请尝试更换<m>github资源地址</m>')
         try:
             resource_list = await aiorequests.get(
                 f'{config.github_proxy}https://raw.githubusercontent.com/CMHopeSunshine/LittlePaimonRes/main/resources_list.json',
