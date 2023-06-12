@@ -112,7 +112,7 @@ async def check_resource():
                 await aiorequests.download(
                     url=f'{config.github_proxy}https://raw.githubusercontent.com/CMHopeSunshine/LittlePaimonRes/main/star_rail.zip',
                     save_path=RESOURCE_BASE_PATH / 'star_rail.zip')
-                zipfile.ZipFile(RESOURCE_BASE_PATH / 'star_rail.zip').extractall(RESOURCE_BASE_PATH / 'LittlePaimon')
+                zipfile.ZipFile(RESOURCE_BASE_PATH / 'star_rail.zip').extractall(RESOURCE_BASE_PATH / 'LittlePaimon' / 'star_rail')
                 (RESOURCE_BASE_PATH / 'star_rail.zip').unlink()
                 logger.info('资源检查', '<g>星穹铁道相关资源下载完成</g>')
             except Exception:
