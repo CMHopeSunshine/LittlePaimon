@@ -110,7 +110,7 @@ async def check_resource():
         if not (RESOURCE_BASE_PATH / 'LittlePaimon' / 'star_rail').is_dir():
             try:
                 await aiorequests.download(
-                    url=f'{config.github_proxy}https://raw.githubusercontent.com/CMHopeSunshine/LittlePaimonRes/main/resources/star_rail.zip',
+                    url=f'{config.github_proxy}https://raw.githubusercontent.com/CMHopeSunshine/LittlePaimonRes/main/star_rail.zip',
                     save_path=RESOURCE_BASE_PATH / 'star_rail.zip')
                 zipfile.ZipFile(RESOURCE_BASE_PATH / 'star_rail.zip').extractall(RESOURCE_BASE_PATH / 'LittlePaimon')
                 (RESOURCE_BASE_PATH / 'star_rail.zip').unlink()
