@@ -231,7 +231,7 @@ async def draw_character(chara: Character, uid: str):
         # 等级
         await bg.draw_rectangle(
             (65 + 113 * i, 1024, 104 + 113 * i, 1056),
-            LEVEL_COLOR[(skill.level // 2 - 1) if skill.level < 10 else 5],
+            LEVEL_COLOR[(skill.level // 2 - 1) if skill.level < 10 else 4],
         )
         await bg.text(
             str(skill.level),
