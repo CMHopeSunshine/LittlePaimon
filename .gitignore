@@ -144,5 +144,6 @@ dmypy.json
 accounts
 data
 resources
-!LittlePaimon/config/data
+!LittlePaimon/config
 /resources/
+config
