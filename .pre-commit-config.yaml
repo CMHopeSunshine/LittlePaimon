@@ -1,0 +1,26 @@
+default_install_hook_types: [pre-commit, prepare-commit-msg]
+ci:
+  autofix_commit_msg: ":rotating_light: auto fix by pre-commit hooks"
+  autofix_prs: true
+  autoupdate_branch: master
+  autoupdate_schedule: monthly
+  autoupdate_commit_msg: ":arrow_up: auto update by pre-commit hooks"
+repos:
+  - repo: https://github.com/hadialqattan/pycln
+    rev: v2.1.3
+    hooks:
+      - id: pycln
+        args: [--config, pyproject.toml]
+        stages: [commit]
+
+  - repo: https://github.com/pycqa/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        stages: [commit]
+
+  - repo: https://github.com/psf/black
+    rev: 23.3.0
+    hooks:
+      - id: black
+        stages: [commit]

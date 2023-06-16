@@ -1,0 +1,21 @@
+﻿changelog:
+    categories:
+      - title: 💥 破坏性更新
+        labels:
+          - Semver-Major
+          - breaking-change
+      - title: ✨ 新特性
+        labels:
+          - enhancement
+      - title: 🐛 BUG修复
+        labels:
+          - bug
+      - title: 📝 文档更新
+        labels:
+          - documentation
+      - title: 💫 杂项
+        labels:
+          - "*"
+        exclude:
+          labels:
+            - dependencies
