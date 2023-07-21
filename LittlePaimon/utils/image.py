@@ -1,38 +1,38 @@
 from io import BytesIO
 from pathlib import Path
-from typing import Tuple, Union, Literal, List, Optional, Dict
+from typing import Tuple, Union, Literal, List, Optional, Dict, Any
 
-import matplotlib.pyplot as plt
 from PIL import Image, ImageDraw, ImageFont, ImageOps
+from PIL.ImageFont import FreeTypeFont
 from nonebot.utils import run_sync
 
 from LittlePaimon.config import config
 from .path import FONTS_PATH
 from .requests import aiorequests
 
-plt.switch_backend('agg')
 
 
 class PMImage:
 
     def __init__(self,
-                 image: Union[Image.Image, Path] = None,
+                 image: Union[Image.Image, Path, None] = None,
                  *,
                  size: Tuple[int, int] = (200, 200),
-                 color: Union[str, Tuple[int, int, int, int]] = (255, 255, 255),
-                 mode: str = 'RGBA'
+                 color: Union[str, Tuple[int, int, int, int], Tuple[int, int, int]] = (255, 255, 255, 255),
+                 mode: Literal["1", "CMYK", "F", "HSV", "I", "L", "LAB", "P", "RGB", "RGBA", "RGBX", "YCbCr"] = 'RGBA'
                  ):
         """
         初始化图像，优先读取image参数，如无则新建图像
-            :param image: PIL对象或图像路径
-            :param size: 图像大小
-            :param color: 图像颜色
-            :param mode: 图像模式
+
+        :param image: PIL对象或图像路径
+        :param size: 图像大小
+        :param color: 图像颜色
+        :param mode: 图像模式
         """
         if image:
             self.image = Image.open(image) if isinstance(image, Path) else image.copy()
         else:
-            if mode == 'RGB':
+            if mode == 'RGB' and isinstance(color, tuple):
                 color = (color[0], color[1], color[2])
             self.image = Image.new(mode, size, color)
         self.draw = ImageDraw.Draw(self.image)
@@ -61,12 +61,13 @@ class PMImage:
         self.image = Image.new(size=size, color=color, mode=mode)
 
     def convert(self, mode: str):
-        self.image.convert(mode)
+        self.image = self.image.convert(mode)
 
     def save(self, path: Union[str, Path], **kwargs):
         """
         保存图像
-            :param path: 保存路径
+
+        :param path: 保存路径
         """
         self.image.save(path, **kwargs)
 
@@ -81,7 +82,8 @@ class PMImage:
     def copy(self) -> "PMImage":
         """
         返回一个本对象的复制
-            :return: PMImage
+
+        :return: PMImage
         """
         return PMImage(self.image.copy())
 
@@ -95,7 +97,7 @@ class PMImage:
                         text: str,
                         width: Tuple[int, int],
                         height: Tuple[int, int],
-                        font: ImageFont.ImageFont = None) -> int:
+                        font: ImageFont.ImageFont) -> int:
         text_height = self.draw.textsize(text, font=font)[1]
         width_now = width[0]
         height_now = height[0]
@@ -159,6 +161,7 @@ class PMImage:
             image = image.image
         if alpha:
             image = image.convert('RGBA')
+            self.convert('RGBA')
             self.image.alpha_composite(image, pos)
         else:
             self.image.paste(image, pos)
@@ -169,7 +172,7 @@ class PMImage:
              text: str,
              width: Union[float, Tuple[float, float]],
              height: Union[float, Tuple[float, float]],
-             font: ImageFont.ImageFont = None,
+             font: ImageFont.ImageFont,
              color: Union[str, Tuple[int, int, int, int]] = 'white',
              align: Literal['left', 'center', 'right'] = 'left'
              ):
@@ -210,7 +213,7 @@ class PMImage:
                  text: str,
                  width: Tuple[int, int],
                  height: Tuple[int, int],
-                 font: ImageFont.ImageFont = None,
+                 font: ImageFont.ImageFont,
                  color: Union[str, Tuple[int, int, int, int]] = 'white'):
         text_height = self.draw.textsize(text, font=font)[1]
         width_now = width[0]
@@ -322,11 +325,12 @@ class PMImage:
                                 angles: List[Literal['ul', 'ur', 'll', 'lr']] = None):
         """
         选择最多4个角绘制圆角矩形
-            :param pos: 左上角起点坐标
-            :param size: 矩形大小
-            :param radius: 半径
-            :param color: 颜色
-            :param angles: 角列表
+
+        :param pos: 左上角起点坐标
+        :param size: 矩形大小
+        :param radius: 半径
+        :param color: 颜色
+        :param angles: 角列表
         """
         self.draw.rectangle((pos[0] + radius / 2, pos[1], pos[0] + size[0] - (radius / 2), pos[1] + size[1]),
                             fill=color)
@@ -371,13 +375,14 @@ class PMImage:
                   ):
         """
         画百分比圆环
-            :param size: 圆环大小
-            :param pos: 圆环位置
-            :param width: 圆环宽度
-            :param percent: 百分比
-            :param colors: 颜色
-            :param startangle: 角度
-            :param transparent: 是否透明
+        
+        :param size: 圆环大小
+        :param pos: 圆环位置
+        :param width: 圆环宽度
+        :param percent: 百分比
+        :param colors: 颜色
+        :param startangle: 角度
+        :param transparent: 是否透明
         """
         if isinstance(percent, float):
             if percent < 0:
@@ -432,7 +437,7 @@ class PMImage:
             antialias = 4
             ellipse_box = [0, 0, r2 - 2, r2 - 2]
             mask = Image.new(
-                size=[int(dim * antialias) for dim in self.image.size],
+                size=(int(self.image.size[0] * antialias), int(self.image.size[1] * antialias)),
                 mode="L",
                 color="black")
             draw = ImageDraw.Draw(mask)
@@ -499,12 +504,13 @@ class FontManager:
         self.fonts = fonts
         self.fonts_cache = {}
 
-    def get(self, font_name: str = 'hywh.ttf', size: int = 25, variation: str = None) -> ImageFont.ImageFont:
+    def get(self, font_name: str = 'hywh.ttf', size: int = 25, variation: Optional[str] = None) -> FreeTypeFont:
         """
         获取字体，如果已在缓存中，则直接返回
-            :param font_name: 字体名称
-            :param size: 字体大小
-            :param variation: 字体变体
+        
+        :param font_name: 字体名称
+        :param size: 字体大小
+        :param variation: 字体变体
         """
         if 'ttf' not in font_name and 'ttc' not in font_name and 'otf' not in font_name:
             font_name += '.ttf'
@@ -524,7 +530,7 @@ class FontManager:
 
 font_manager = FontManager()
 
-cache_image: Dict[str, any] = {}
+cache_image: Dict[str, Any] = {}
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36'}
 
@@ -538,12 +544,14 @@ async def load_image(
 ) -> Image.Image:
     """
     读取图像，并预处理
-        :param path: 图片路径
-        :param size: 预处理尺寸
-        :param crop: 预处理裁剪大小
-        :param mode: 预处理图像模式
-        :return: 图像对象
+
+    :param path: 图片路径
+    :param size: 预处理尺寸
+    :param crop: 预处理裁剪大小
+    :param mode: 预处理图像模式
+    :return: 图像对象
     """
+    path = Path(path)
     if config.img_use_cache and str(path) in cache_image:
         img = cache_image[str(path)]
     else:
@@ -552,7 +560,7 @@ async def load_image(
         elif path.name.startswith(('UI_', 'Skill_')):
             img = await aiorequests.download_icon(path.name, headers=headers, save_path=path, follow_redirects=True)
             if img is None or isinstance(img, str):
-                return Image.new('RGBA', size=size or (50, 50), color=(0, 0, 0, 0))
+                return Image.new('RGBA', size=size if isinstance(size, tuple) else (50, 50), color=(0, 0, 0, 0))
         else:
             raise FileNotFoundError(f'{path} not found')
         if config.img_use_cache:
