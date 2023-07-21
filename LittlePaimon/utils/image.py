@@ -62,6 +62,7 @@ class PMImage:
 
     def convert(self, mode: str):
         self.image = self.image.convert(mode)
+        self.draw = ImageDraw.Draw(self.image)
 
     def save(self, path: Union[str, Path], **kwargs):
         """
