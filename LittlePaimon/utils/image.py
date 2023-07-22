@@ -61,8 +61,7 @@ class PMImage:
         self.image = Image.new(size=size, color=color, mode=mode)
 
     def convert(self, mode: str):
-        self.image = self.image.convert(mode)
-        self.draw = ImageDraw.Draw(self.image)
+        return self.image.convert(mode)
 
     def save(self, path: Union[str, Path], **kwargs):
         """
@@ -162,7 +161,8 @@ class PMImage:
             image = image.image
         if alpha:
             image = image.convert('RGBA')
-            self.convert('RGBA')
+            if self.image.mode != 'RGBA':
+                self.image = self.convert('RGBA')
             self.image.alpha_composite(image, pos)
         else:
             self.image.paste(image, pos)
@@ -314,7 +314,7 @@ class PMImage:
             :param color: 颜色
             :param width: 宽度
         """
-        self.convert("RGBA")
+        # self.convert("RGBA")
         self.draw.rounded_rectangle(xy=pos, radius=radius, fill=color, width=width)
 
     @run_sync
@@ -416,7 +416,7 @@ class PMImage:
         """
         将图片转换为圆形
         """
-        self.convert('RGBA')
+        # self.convert('RGBA')
         w, h = self.size
         r2 = min(w, h)
         if w != h:
@@ -460,7 +460,7 @@ class PMImage:
         circle = Image.new("L", (radii * 2, radii * 2), 0)
         draw = ImageDraw.Draw(circle)
         draw.ellipse((0, 0, radii * 2, radii * 2), fill=255)
-        self.convert("RGBA")
+        # self.convert("RGBA")
         w, h = self.image.size
         alpha = Image.new("L", self.image.size, 255)
         alpha.paste(circle.crop((0, 0, radii, radii)), (0, 0))
@@ -481,7 +481,7 @@ class PMImage:
             :param color: 边框颜色
             :param shape: 边框形状，rectangle或circle
         """
-        self.convert("RGBA")
+        # self.convert("RGBA")
         if shape == 'circle':
             new_img = Image.new('RGBA', (self.width + border_size, self.height + border_size), (0, 0, 0, 0))
             draw = ImageDraw.Draw(new_img)
