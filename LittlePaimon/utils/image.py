@@ -2,6 +2,7 @@ from io import BytesIO
 from pathlib import Path
 from typing import Tuple, Union, Literal, List, Optional, Dict, Any
 
+import matplotlib.pyplot as plt
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 from PIL.ImageFont import FreeTypeFont
 from nonebot.utils import run_sync
@@ -10,7 +11,7 @@ from LittlePaimon.config import config
 from .path import FONTS_PATH
 from .requests import aiorequests
 
-
+plt.switch_backend('agg')
 
 class PMImage:
 
