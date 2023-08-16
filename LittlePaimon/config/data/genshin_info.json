@@ -2078,6 +2078,45 @@
     "SideIconName": "UI_AvatarIcon_Side_Baizhuer",
     "QualityType": "QUALITY_ORANGE"
   },
+  "10000083": {
+    "SkillOrder": [
+      10831,
+      10832,
+      10835
+    ],
+    "Skills": {
+      "10831": "Skill_A_01",
+      "10832": "Skill_S_Linette_01",
+      "10835": "Skill_E_Linette_01"
+    },
+    "SideIconName": "UI_AvatarIcon_Side_Linette"
+  },
+  "10000084": {
+    "SkillOrder": [
+      10841,
+      10842,
+      10845
+    ],
+    "Skills": {
+      "10841": "Skill_A_02",
+      "10842": "Skill_S_Liney_01",
+      "10845": "Skill_E_Liney_01"
+    },
+    "SideIconName": "UI_AvatarIcon_Side_Liney"
+  },
+  "10000085": {
+    "SkillOrder": [
+      10851,
+      10852,
+      10855
+    ],
+    "Skills": {
+      "10851": "Skill_A_04",
+      "10852": "Skill_S_Freminet_01",
+      "10855": "Skill_E_Freminet_01"
+    },
+    "SideIconName": "UI_AvatarIcon_Side_Freminet"
+  },
   "10000005-501": {
     "Element": "None",
     "Consts": [
@@ -2108,7 +2147,19 @@
     "QualityType": "QUALITY_ORANGE"
   },
   "10000005-502": {},
-  "10000005-503": {},
+  "10000005-503": {
+    "SkillOrder": [
+      100542,
+      10087,
+      10088
+    ],
+    "Skills": {
+      "10087": "Skill_S_PlayerWater_01",
+      "10088": "Skill_E_PlayerWater_01",
+      "100542": "Skill_A_01"
+    },
+    "SideIconName": "UI_AvatarIcon_Side_PlayerBoy"
+  },
   "10000005-504": {
     "Element": "Wind",
     "Consts": [
@@ -2256,7 +2307,19 @@
     "QualityType": "QUALITY_ORANGE"
   },
   "10000007-702": {},
-  "10000007-703": {},
+  "10000007-703": {
+    "SkillOrder": [
+      100552,
+      10087,
+      10088
+    ],
+    "Skills": {
+      "10087": "Skill_S_PlayerWater_01",
+      "10088": "Skill_E_PlayerWater_01",
+      "100552": "Skill_A_01"
+    },
+    "SideIconName": "UI_AvatarIcon_Side_PlayerGirl"
+  },
   "10000007-704": {
     "Element": "Wind",
     "Consts": [
