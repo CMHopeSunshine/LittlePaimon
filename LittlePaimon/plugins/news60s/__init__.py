@@ -4,6 +4,7 @@ from nonebot import get_bot, on_command
 from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
 from nonebot.plugin import PluginMetadata
 
+from LittlePaimon.config import config
 from LittlePaimon.database import GeneralSub
 from LittlePaimon.utils import scheduler, logger, DRIVER
 from LittlePaimon.utils.message import CommandObjectID, CommandSwitch, CommandTime
@@ -23,6 +24,7 @@ __plugin_meta__ = PluginMetadata(
     },
 )
 
+
 news = on_command('早报', aliases={'今日早报', '今日新闻', '60s读世界', '60秒读世界'}, priority=14, block=True)
 
 
@@ -30,7 +32,7 @@ news = on_command('早报', aliases={'今日早报', '今日新闻', '60s读世�
 async def _(event: MessageEvent, sub_id=CommandObjectID(), switch=CommandSwitch(), sub_time=CommandTime()):
     if switch is None:
         await news.send('60秒读世界新闻获取中，请稍等...')
-        await news.finish(MessageSegment.image(file='https://api.emoao.com/api/60s'))
+        await news.finish(MessageSegment.image(file=config.morning_news))
     else:
         sub_data = {
             'sub_id':    sub_id,
@@ -101,7 +103,7 @@ async def send_news(sub_id: int, sub_type: str, extra_id: Optional[int]):
         else:
             api = 'send_group_msg'
             data = {'group_id': sub_id}
-        data['message'] = MessageSegment.image(file='https://api.emoao.com/api/60s')
+        data['message'] = MessageSegment.image(file=config.morning_news)
         await get_bot().call_api(api, **data)
         logger.info('60秒读世界', '', {sub_type: sub_id}, '推送成功', True)
     except Exception as e:

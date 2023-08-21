@@ -51,6 +51,9 @@ class ConfigModel(BaseModel):
 
     command_alias_enable: bool = Field(True, alias='启用命令别名')
 
+    # 早报60s
+    morning_news: str = Field('https://api.vvhan.com/api/60s', alias='早报60s')
+
     github_proxy: str = Field('https://github.cherishmoon.fun/', alias='github资源地址')
 
     @property

@@ -338,6 +338,13 @@ other_form = Form(
             suffix='秒',
             min=5,
         ),
+        InputText(
+            label='早报60s',
+            name='早报60s',
+            value='${早报60s}',
+            placeholder='请填写早报60s的API地址',
+            labelRemark=Remark(shape='circle', content='修改早报60s的API地址，不填则使用默认地址')
+        ),
         Select(
             label='github资源地址',
             name='github资源地址',
