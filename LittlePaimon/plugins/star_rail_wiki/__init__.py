@@ -20,7 +20,7 @@ wiki_data: Dict[str, Dict[str, str]] = {}
 last_update_time: datetime.datetime = datetime.datetime.now()
 
 GAME_ALIAS = ['星穹铁道', '星铁', '崩铁', '穹轨', '铁轨', '铁道', escape('*'), '']
-BASE_TYPE = ['图鉴', '材料', '角色图鉴', '角色材料', '遗器图鉴', '光锥图鉴']
+BASE_TYPE = ['图鉴', '材料', '角色图鉴', '角色材料', '攻略', '角色攻略', '遗器图鉴', '光锥图鉴']
 GAME_ALIAS_RE = '(' + '|'.join(GAME_ALIAS) + ')'
 BASE_TYPE_RE = '(' + '|'.join(BASE_TYPE) + ')'
 WIKI_RE = fr'{COMMAND_START_RE}(?P<name>\w{{0,10}}?)(?P<game>{GAME_ALIAS_RE})(?P<type>{BASE_TYPE_RE})'
@@ -58,12 +58,14 @@ async def sr_wiki_handler(state: T_State, regex_dict: dict = RegexDict()):
     name: str = regex_dict['name']
     game: str = regex_dict['game']
     type: str = regex_dict['type']
-    if type in {'图鉴', '材料', '角色图鉴', '角色材料'} and not game:
+    if type in {'图鉴', '材料', '攻略', '角色图鉴', '角色材料', '角色攻略'} and not game:
         await wiki.finish()
     if not wiki_data or datetime.datetime.now() - last_update_time > datetime.timedelta(hours=2):
         await init_data()
     if not wiki_data:
         await wiki.finish('无法获取到星穹铁道资源列表，可能是网络问题~')
+    if type in {'攻略', '角色攻略'}:
+        type = '角色攻略'
     if type in {'图鉴', '角色图鉴'}:
         type = '角色图鉴'
     elif type in {'材料', '角色材料'}:
