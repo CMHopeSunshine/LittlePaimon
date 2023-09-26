@@ -28,7 +28,8 @@ TYPE_MAP = {
     '角色图鉴': 'role',
     '角色材料': 'material for role',
     '遗器图鉴': 'relic',
-    '光锥图鉴': 'lightcone'
+    '光锥图鉴': 'lightcone',
+    '角色攻略': 'guide for role'
 }
 
 __plugin_meta__ = PluginMetadata(
@@ -47,8 +48,8 @@ wiki = on_regex(WIKI_RE,
                 block=False,
                 state={
                     'pm_name': '星穹铁道wiki',
-                    'pm_description': '支持查询：角色、光锥、遗器图鉴和角色材料\n示例：希儿星铁图鉴、与行星相会光锥图鉴',
-                    'pm_usage': '<对象名><星铁图鉴|材料>',
+                    'pm_description': '支持查询：角色、光锥、遗器图鉴和角色材料，攻略\n示例：希儿星铁图鉴、与行星相会光锥图鉴',
+                    'pm_usage': '<对象名><星铁图鉴|材料|攻略>',
                     'pm_priority': 1
                 })
 
