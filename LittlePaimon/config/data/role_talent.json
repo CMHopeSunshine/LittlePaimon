@@ -449,7 +449,19 @@
     "853": "洑流与白砂之歌",
     "854": "雪月与芦笛之舞",
     "855": "炉火与欢笑之夜",
-    "856": "梦晓与决意之刻"
+    "856": "梦晓与决意之刻",
+    "861": "予行恶者以惩惧",
+    "862": "予骄暴者以镣锁",
+    "863": "予婪诈者以谴罚",
+    "864": "予贞苦者以拯赎",
+    "865": "予冤诉者以怜恕",
+    "866": "予无罪者以念抚",
+    "871": "尊荣的创定",
+    "872": "律法的命诫",
+    "873": "溯古的拟制",
+    "874": "悲悯的冠冕",
+    "875": "公理的决裁",
+    "876": "忿怒的报偿"
   },
   "Icon": {
     "21": "UI_Talent_S_Ayaka_01",
@@ -901,6 +913,18 @@
     "853": "UI_Talent_U_Freminet_01",
     "854": "UI_Talent_S_Freminet_03",
     "855": "UI_Talent_U_Freminet_02",
-    "856": "UI_Talent_S_Freminet_04"
+    "856": "UI_Talent_S_Freminet_04",
+    "861": "UI_Talent_S_Wriothesley_01",
+    "862": "UI_Talent_S_Wriothesley_02",
+    "863": "UI_Talent_U_Wriothesley_01",
+    "864": "UI_Talent_S_Wriothesley_03",
+    "865": "UI_Talent_U_Wriothesley_02",
+    "866": "UI_Talent_S_Wriothesley_04",
+    "871": "UI_Talent_S_Neuvillette_01",
+    "872": "UI_Talent_S_Neuvillette_02",
+    "873": "UI_Talent_U_Neuvillette_01",
+    "874": "UI_Talent_S_Neuvillette_03",
+    "875": "UI_Talent_U_Neuvillette_02",
+    "876": "UI_Talent_S_Neuvillette_04"
   }
 }

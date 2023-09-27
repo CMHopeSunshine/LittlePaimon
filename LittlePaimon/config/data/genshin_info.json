@@ -2117,6 +2117,32 @@
     },
     "SideIconName": "UI_AvatarIcon_Side_Freminet"
   },
+  "10000086": {
+    "SkillOrder": [
+      10861,
+      10862,
+      10865
+    ],
+    "Skills": {
+      "10861": "Skill_A_Catalyst_MD",
+      "10862": "Skill_S_Wriothesley_01",
+      "10865": "Skill_E_Wriothesley_01"
+    },
+    "SideIconName": "UI_AvatarIcon_Side_Wriothesley"
+  },
+  "10000087": {
+    "SkillOrder": [
+      10871,
+      10872,
+      10875
+    ],
+    "Skills": {
+      "10871": "Skill_A_Catalyst_MD",
+      "10872": "Skill_S_Neuvillette_01",
+      "10875": "Skill_E_Neuvillette_01"
+    },
+    "SideIconName": "UI_AvatarIcon_Side_Neuvillette"
+  },
   "10000005-501": {
     "Element": "None",
     "Consts": [
