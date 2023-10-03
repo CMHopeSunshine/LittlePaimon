@@ -2,6 +2,8 @@ from pathlib import Path
 import asyncio
 
 from nonebot import load_plugins, logger
+from nonebot.plugin import PluginMetadata
+
 from LittlePaimon import database, web
 from LittlePaimon.config import PluginManager
 from LittlePaimon.utils import DRIVER, __version__, NICKNAME, SUPERUSERS
@@ -9,6 +11,17 @@ from LittlePaimon.utils.tool import check_resource
 
 from typing import Dict, Any
 from tortoise.connection import ConnectionHandler
+
+# https://nonebot.dev/docs/developer/plugin-publishing#%E5%A1%AB%E5%86%99%E6%8F%92%E4%BB%B6%E5%85%83%E6%95%B0%E6%8D%AE
+__plugin_meta__ = PluginMetadata(
+    name="LittlePaimon",
+    description="小派蒙！原神qq群机器人，基于NoneBot2的UID查询、抽卡导出分析、模拟抽卡、实时便签、札记等多功能小助手。",
+    usage="https://docs.paimon.cherishmoon.fun/",
+    type="application",
+    homepage="https://github.com/CMHopeSunshine/LittlePaimon",
+    supported_adapters={"~onebot.v11"},
+)
+
 
 DBConfigType = Dict[str, Any]
 
