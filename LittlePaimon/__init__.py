@@ -1,16 +1,16 @@
-from pathlib import Path
 import asyncio
+import os
+from pathlib import Path
+from typing import Dict, Any
 
-from nonebot import load_plugins, logger
+from nonebot import logger, load_plugin
 from nonebot.plugin import PluginMetadata
+from tortoise.connection import ConnectionHandler
 
 from LittlePaimon import database, web
 from LittlePaimon.config import PluginManager
 from LittlePaimon.utils import DRIVER, __version__, NICKNAME, SUPERUSERS
 from LittlePaimon.utils.tool import check_resource
-
-from typing import Dict, Any
-from tortoise.connection import ConnectionHandler
 
 # https://nonebot.dev/docs/developer/plugin-publishing#%E5%A1%AB%E5%86%99%E6%8F%92%E4%BB%B6%E5%85%83%E6%95%B0%E6%8D%AE
 __plugin_meta__ = PluginMetadata(
@@ -56,4 +56,6 @@ async def startup():
 
 DRIVER.on_shutdown(database.disconnect)
 
-load_plugins(str(Path(__file__).parent / 'plugins'))
+# load_plugins(str(Path(__file__).parent / 'plugins'))
+for plugin in os.listdir(str(Path(__file__).parent / 'plugins')):
+    load_plugin(f"LittlePaimon.plugins.{plugin}")
