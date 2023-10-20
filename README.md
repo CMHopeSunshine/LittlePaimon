@@ -2,17 +2,18 @@
   <a href="https://github.com/CMHopeSunshine/LittlePaimon/tree/nonebot2"><img src="https://s1.ax1x.com/2023/02/05/pS62DJK.png" width="256" height="256" alt="LittlePaimon"></a>
 </p>
 <h1 align="center">小派蒙|LittlePaimon</h1>
-<h4 align="center">✨基于<a href="https://github.com/nonebot/nonebot2" target="_blank">NoneBot2</a>的原神Q群机器人✨</h4>
+<h4 align="center">✨基于<a href="https://github.com/nonebot/nonebot2" target="_blank">NoneBot2</a>的原神机器人✨</h4>
 
 <p align="center">
     <a href="https://cdn.jsdelivr.net/gh/CMHopeSunshine/LittlePaimon@master/LICENSE"><img src="https://img.shields.io/github/license/CMHopeSunshine/LittlePaimon" alt="license"></a>
     <img src="https://img.shields.io/badge/Python-3.8+-yellow" alt="python">
-    <a href="https://qun.qq.com/qqweb/qunpro/share?_wv=3&_wwv=128&inviteCode=MmWrI&from=246610&biz=ka"><img src="https://img.shields.io/badge/QQ频道交流-尘世闲游-blue?style=flat-square" alt="QQ guild"></a>
 </p>
 
 ## 丨简介
 
 原神多功能机器人，查询游戏信息、图鉴攻略、树脂提醒等等，以及各种各样的好玩的功能，不仅仅是原神。
+
+目前暂只支持onebot协议，正在开发多聊天平台的~~船新~~版本。
 
 ## 丨快速部署
 使用[小派蒙脚手架插件](https://github.com/CMHopeSunshine/nb-cli-plugin-littlepaimon)快速部署安装小派蒙。
@@ -21,10 +22,9 @@
 
 ## 丨文档
 
-详细部署教程、使用和配置等请看[小派蒙文档](https://docs.paimon.cherishmoon.fun/)。
+因某些原因，文档地址暂时无法访问，请静待后续更新...
 
 ## | 功能示例
-> 更多功能及其详细用法请看文档。
 <details>
 <summary>帮助列表</summary>
 <img src="https://s1.ax1x.com/2023/02/05/pS6gWCT.jpg" alt="help">
