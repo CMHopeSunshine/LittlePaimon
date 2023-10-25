@@ -105,7 +105,7 @@ async def sr_wiki_got(matcher: Matcher,
         final_name = str(matches[0])
         try:
             await wiki.finish(MessageSegment.image(
-                f'{config.github_proxy}https://raw.githubusercontent.com/Nwflower/star-rail-atlas/master{data[final_name]}'
+                f'{config.github_proxy}https://raw.githubusercontent.com/Nwflower/star-rail-atlas/master{data[final_name]}'.replace(" ", "%20")
             ))
         except ActionFailed:
             await wiki.finish(f'{final_name}的{type}发送失败，可能是网络问题')
