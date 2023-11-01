@@ -417,7 +417,7 @@ class PMImage:
         """
         将图片转换为圆形
         """
-        # self.convert('RGBA')
+        self.image = self.convert('RGBA')
         w, h = self.size
         r2 = min(w, h)
         if w != h:
