@@ -92,9 +92,9 @@ async def draw_map(name: str, map_: str):
         map_img.paste(point_icon, (point_trans[0] - 16, point_trans[1] - 16), point_icon)
     scale_f = map_img.width / map_img.height
     if scale_f > 980 / 850:
-        map_img = map_img.resize((math.ceil(850 * scale_f), 850), Image.ANTIALIAS)
+        map_img = map_img.resize((math.ceil(850 * scale_f), 850), Image.LANCZOS)
     else:
-        map_img = map_img.resize((980, math.ceil(980 / scale_f)), Image.ANTIALIAS)
+        map_img = map_img.resize((980, math.ceil(980 / scale_f)), Image.LANCZOS)
     map_img = map_img.crop((0, 0, 980, 850))
     map_img = ImageOps.expand(map_img, border=4, fill='#633da3')
     total_img = PMImage(await load_image(RESOURCE_BASE_PATH / 'genshin_map' / 'bg.png'))
@@ -150,7 +150,7 @@ async def get_full_map(names: List[str], map_: str):
     for i, points in enumerate(resources_points):
         resource_icon = box_icon.copy()
         resource_icon.alpha_composite(await aiorequests.get_img(resources[i].icon, size=(90, 90)), (28, 15))
-        resource_icon = resource_icon.resize((48, 48), Image.ANTIALIAS)
+        resource_icon = resource_icon.resize((48, 48), Image.LANCZOS)
         if len(points) >= 3:
             group_point = img.k_means_points(points, 2000)
         else:

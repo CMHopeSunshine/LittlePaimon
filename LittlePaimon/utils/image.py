@@ -194,7 +194,7 @@ class PMImage:
                 height = height[0]
             self.draw.text((width, height), text, color, font)
         elif align in ['center', 'right']:
-            w, h = self.draw.textsize(text, font)
+            _, _, w, h = self.draw.textbbox((0, 0), text, font)
             if align == 'center':
                 w = width[0] + (width[1] - width[0] - w) / 2 if isinstance(width, tuple) else width
                 h = height[0] + (height[1] - height[0] - h) / 2 if isinstance(height, tuple) else height
@@ -574,9 +574,9 @@ async def load_image(
         img = img.convert(mode)
     if size:
         if isinstance(size, float):
-            img = img.resize((int(img.size[0] * size), int(img.size[1] * size)), Image.ANTIALIAS)
+            img = img.resize((int(img.size[0] * size), int(img.size[1] * size)), Image.LANCZOS)
         elif isinstance(size, tuple):
-            img = img.resize(size, Image.ANTIALIAS)
+            img = img.resize(size, Image.LANCZOS)
     if crop:
         img = img.crop(crop)
     return img
