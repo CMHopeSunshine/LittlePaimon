@@ -125,9 +125,9 @@ class aiorequests:
                     img = Image.open(BytesIO(resp))
         if size:
             if isinstance(size, float):
-                img = img.resize((int(img.size[0] * size), int(img.size[1] * size)), Image.ANTIALIAS)
+                img = img.resize((int(img.size[0] * size), int(img.size[1] * size)), Image.LANCZOS)
             elif isinstance(size, tuple):
-                img = img.resize(size, Image.ANTIALIAS)
+                img = img.resize(size, Image.LANCZOS)
         if mode:
             img = img.convert(mode)
         if crop:

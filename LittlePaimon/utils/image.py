@@ -574,9 +574,9 @@ async def load_image(
         img = img.convert(mode)
     if size:
         if isinstance(size, float):
-            img = img.resize((int(img.size[0] * size), int(img.size[1] * size)), Image.ANTIALIAS)
+            img = img.resize((int(img.size[0] * size), int(img.size[1] * size)), Image.LANCZOS)
         elif isinstance(size, tuple):
-            img = img.resize(size, Image.ANTIALIAS)
+            img = img.resize(size, Image.LANCZOS)
     if crop:
         img = img.crop(crop)
     return img
