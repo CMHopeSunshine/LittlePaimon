@@ -383,8 +383,8 @@ class Character(Model):
             except IndexError:
                 extra_prop = None
             character.weapon = Weapon(
-                name=weapon_map['Name'][weapon_c['flat']['nameTextMapHash']],
-                type=weapon_map['Type'][weapon_map['Name'][weapon_c['flat']['nameTextMapHash']]],
+                name=(weapon_name := weapon_map['Name'][str(weapon_c['flat']['nameTextMapHash'])]),
+                type=weapon_map['Type'][weapon_name],
                 level=weapon_c['weapon']['level'],
                 rarity=weapon_c['flat']['rankLevel'],
                 promote_level=weapon_c['weapon']['promoteLevel'] if 'promoteLevel' in weapon_c['weapon'] else 0,
