@@ -2,6 +2,7 @@ from nonebot import on_command
 from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 from nonebot.adapters.onebot.v11 import Message, MessageEvent
+from nonebot.adapters.onebot.utils import rich_unescape
 
 from LittlePaimon.utils.message import MessageBuild
 from .data_handle import set_uid, get_uid, update_info, get_info
@@ -47,7 +48,7 @@ async def panel_cmd_handler(event: MessageEvent, args: Message = CommandArg()):
         user_id = str(at_msg[0].data['qq'])
     else:
         user_id = str(event.user_id)
-    name = args.extract_plain_text().strip()
+    name = rich_unescape(args.extract_plain_text().strip())
     if not name:
         await panel_cmd.finish("请给出要查询的角色名全称~")
     uid = get_uid(user_id)
