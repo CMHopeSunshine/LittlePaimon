@@ -461,7 +461,19 @@
     "873": "溯古的拟制",
     "874": "悲悯的冠冕",
     "875": "公理的决裁",
-    "876": "忿怒的报偿"
+    "876": "忿怒的报偿",
+    "881": "以核实为约束",
+    "882": "以求真为职守",
+    "883": "以独立为先决",
+    "884": "以督促为责任",
+    "885": "以良知为原则",
+    "886": "以有趣相关为要义",
+    "891": "「爱是难驯鸟，哀乞亦无用。」",
+    "892": "「女人皆善变，仿若水中萍。」",
+    "893": "「秘密藏心间，无人知我名。」",
+    "894": "「若非处幽冥，怎知生可贵！」",
+    "895": "「我已有觉察，他名即是…！」",
+    "896": "「诸君听我颂，共举爱之杯！」"
   },
   "Icon": {
     "21": "UI_Talent_S_Ayaka_01",
@@ -925,6 +937,18 @@
     "873": "UI_Talent_U_Neuvillette_01",
     "874": "UI_Talent_S_Neuvillette_03",
     "875": "UI_Talent_U_Neuvillette_02",
-    "876": "UI_Talent_S_Neuvillette_04"
+    "876": "UI_Talent_S_Neuvillette_04",
+    "881": "UI_Talent_S_Charlotte_01",
+    "882": "UI_Talent_S_Charlotte_02",
+    "883": "UI_Talent_U_Charlotte_01",
+    "884": "UI_Talent_S_Charlotte_03",
+    "885": "UI_Talent_U_Charlotte_02",
+    "886": "UI_Talent_S_Charlotte_04",
+    "891": "UI_Talent_S_Furina_01",
+    "892": "UI_Talent_S_Furina_04",
+    "893": "UI_Talent_U_Furina_02",
+    "894": "UI_Talent_S_Furina_03",
+    "895": "UI_Talent_U_Furina_01",
+    "896": "UI_Talent_S_Furina_02"
   }
 }
