@@ -163,10 +163,10 @@ async def _(event: MessageEvent, cmd: str = ArgPlainText('cmd')):
         cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
     )
     stdout, stderr = await p.communicate()
-    try:
-        result = (stdout or stderr).decode('utf-8')
-    except Exception:
-        result = str(stdout or stderr)
+    # try:
+    result = (stdout or stderr).decode('gbk')
+    # except Exception:
+    #     result = str(stdout or stderr)
     await run_cmd.finish(f'{cmd}\n运行结果：\n{result}')
 
 
