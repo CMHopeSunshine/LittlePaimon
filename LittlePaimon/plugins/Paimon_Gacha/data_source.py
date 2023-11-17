@@ -156,7 +156,7 @@ def get_pool_id(pool_name: str) -> int:
     #     return 999
 
 
-BASE_URL = 'https://operation-webstatic.mihoyo.com/gacha_info/hk4e/cn_gf01%s'
+BASE_URL = 'https://operation-webstatic.mihoyo.com/gacha_info/hk4e/cn_gf01/%s'
 
 
 async def get_gacha_data(pool: str):
