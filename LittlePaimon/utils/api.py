@@ -65,7 +65,7 @@ def random_hex(length: int) -> str:
     :param length: 长度
     :return: 随机字符串
     """
-    result = hex(random.randint(0, 16**length)).replace('0x', '').upper()
+    result = hex(random.randint(0, 16 ** length)).replace('0x', '').upper()
     if len(result) < length:
         result = '0' * (length - len(result)) + result
     return result
@@ -104,6 +104,7 @@ def get_ds(q: str = '', b: dict = None, mhy_bbs_sign: bool = False) -> str:
 def get_old_version_ds(mhy_bbs: bool = False) -> str:
     """
     生成米游社旧版本headers的ds_token
+    salt对应的版本为2.35.2
     """
     if mhy_bbs:
         s = 'N50pqm7FSy2AkFz2B3TqtuZMJ5TOl3Ep'
@@ -129,10 +130,32 @@ def mihoyo_headers(cookie, q='', b=None) -> dict:
         'Cookie': cookie,
         'x-rpc-app_version': "2.11.1",
         'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS '
-        'X) AppleWebKit/605.1.15 (KHTML, like Gecko) miHoYoBBS/2.11.1',
+                      'X) AppleWebKit/605.1.15 (KHTML, like Gecko) miHoYoBBS/2.11.1',
         'x-rpc-client_type': '5',
         'Referer': 'https://webstatic.mihoyo.com/',
     }
+
+
+def mihoyo_verify_verification_headers(cookie: str, request_body: dict):
+    """
+    生成米游社实时便签验证码headers
+        :param cookie: cookie
+        :param request_body: post请求体
+        :return headers
+    """
+    header = {
+        'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS '
+                      'X) AppleWebKit/605.1.15 (KHTML, like Gecko) miHoYoBBS/2.11.1',
+        'Cookie': cookie,
+        'x-rpc-device_id': random_hex(32),
+        'Origin': 'https://webstatic.mihoyo.com',
+        'DS': get_ds(q="", b=request_body),
+        'x-rpc-client_type': '5',
+        'Referer': 'https://webstatic.mihoyo.com',
+        'x-rpc-app_version': '2.11.1',
+        'x-rpc-challenge_path': 'https://api-takumi-record.mihoyo.com/game_record/app/genshin/api/dailyNote'
+    }
+    return header
 
 
 def mihoyo_sign_headers(cookie: str, extra_headers: Optional[dict] = None) -> dict:
@@ -144,7 +167,7 @@ def mihoyo_sign_headers(cookie: str, extra_headers: Optional[dict] = None) -> di
     """
     header = {
         'User_Agent': 'Mozilla/5.0 (Linux; Android 12; Unspecified Device) AppleWebKit/537.36 (KHTML, like Gecko) '
-        'Version/4.0 Chrome/103.0.5060.129 Mobile Safari/537.36 miHoYoBBS/2.35.2',
+                      'Version/4.0 Chrome/103.0.5060.129 Mobile Safari/537.36 miHoYoBBS/2.35.2',
         'Cookie': cookie,
         'x-rpc-device_id': random_hex(32),
         'Origin': 'https://webstatic.mihoyo.com',
@@ -152,7 +175,7 @@ def mihoyo_sign_headers(cookie: str, extra_headers: Optional[dict] = None) -> di
         'DS': get_old_version_ds(mhy_bbs=True),
         'x-rpc-client_type': '5',
         'Referer': 'https://webstatic.mihoyo.com/bbs/event/signin-ys/index.html?bbs_auth_required=true&act_id'
-        '=e202009291139501&utm_source=bbs&utm_medium=mys&utm_campaign=icon',
+                   '=e202009291139501&utm_source=bbs&utm_medium=mys&utm_campaign=icon',
         'x-rpc-app_version': '2.35.2',
     }
     if extra_headers:
@@ -222,7 +245,7 @@ async def check_retcode(data: dict, cookie_info, user_id: str, uid: str) -> bool
 
 
 async def get_cookie(
-    user_id: str, uid: str, check: bool = True, own: bool = False
+        user_id: str, uid: str, check: bool = True, own: bool = False
 ) -> Union[None, PrivateCookie, PublicCookie, CookieCache]:
     """
     获取可用的cookie
@@ -233,14 +256,14 @@ async def get_cookie(
     """
     query = Q(status=1) | Q(status=0) if check else Q(status=1)
     if private_cookie := await PrivateCookie.filter(
-        Q(Q(query) & Q(user_id=user_id) & Q(uid=uid))
+            Q(Q(query) & Q(user_id=user_id) & Q(uid=uid))
     ).first():
         return private_cookie
     elif not own:
         if cache_cookie := await CookieCache.get_or_none(uid=uid):
             return cache_cookie
         elif private_cookie := await PrivateCookie.filter(
-            Q(Q(query) & Q(user_id=user_id))
+                Q(Q(query) & Q(user_id=user_id))
         ).first():
             return private_cookie
         else:
@@ -270,10 +293,10 @@ async def get_bind_game_info(cookie: str, mys_id: str):
 
 
 async def get_mihoyo_public_data(
-    uid: str,
-    user_id: Optional[str],
-    mode: Literal['abyss', 'player_card', 'role_detail'],
-    schedule_type: Optional[str] = '1',
+        uid: str,
+        user_id: Optional[str],
+        mode: Literal['abyss', 'player_card', 'role_detail'],
+        schedule_type: Optional[str] = '1',
 ):
     server_id = 'cn_qd01' if uid[0] == '5' else 'cn_gf01'
     check = True
@@ -319,18 +342,19 @@ async def get_mihoyo_public_data(
 
 
 async def get_mihoyo_private_data(
-    uid: str,
-    user_id: Optional[str],
-    mode: Literal['role_skill', 'month_info', 'daily_note', 'sign_info', 'sign_action'],
-    role_id: Optional[str] = None,
-    month: Optional[str] = None,
+        uid: str,
+        user_id: Optional[str],
+        mode: Literal['role_skill', 'month_info', 'daily_note', 'sign_info', 'sign_action'],
+        role_id: Optional[str] = None,
+        month: Optional[str] = None,
+        geetest_challenge: str = None
 ):
     server_id = 'cn_qd01' if uid[0] == '5' else 'cn_gf01'
     cookie_info = await get_cookie(user_id, uid, True, True)
     if not cookie_info:
         return (
-            '未绑定私人cookie，绑定方法二选一：\n1.通过米游社扫码绑定：\n请发送指令[原神扫码绑定]\n2.获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1\n获取后，使用[ysb cookie]指令绑定'
-            + (f'或前往{config.CookieWeb_url}网页添加绑定' if config.CookieWeb_enable else '')
+                '未绑定私人cookie，绑定方法二选一：\n1.通过米游社扫码绑定：\n请发送指令[原神扫码绑定]\n2.获取cookie的教程：\ndocs.qq.com/doc/DQ3JLWk1vQVllZ2Z1\n获取后，使用[ysb cookie]指令绑定'
+                + (f'或前往{config.CookieWeb_url}网页添加绑定' if config.CookieWeb_enable else '')
         )
     if mode == 'role_skill':
         data = await aiorequests.get(
@@ -351,11 +375,12 @@ async def get_mihoyo_private_data(
             params={"month": month, "bind_uid": uid, "bind_region": server_id},
         )
     elif mode == 'daily_note':
+        headers = mihoyo_headers(q=f'role_id={uid}&server={server_id}', cookie=cookie_info.cookie)
+        if geetest_challenge is not None:
+            headers["x-rpc-challenge"] = geetest_challenge
         data = await aiorequests.get(
             url=DAILY_NOTE_API,
-            headers=mihoyo_headers(
-                q=f'role_id={uid}&server={server_id}', cookie=cookie_info.cookie
-            ),
+            headers=headers,
             params={"server": server_id, "role_id": uid},
         )
     elif mode == 'sign_info':
@@ -368,7 +393,7 @@ async def get_mihoyo_private_data(
                 'Referer': 'https://webstatic.mihoyo.com/',
                 'Cookie': cookie_info.cookie,
                 'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS '
-                'X) AppleWebKit/605.1.15 (KHTML, like Gecko) miHoYoBBS/2.11.1',
+                              'X) AppleWebKit/605.1.15 (KHTML, like Gecko) miHoYoBBS/2.11.1',
             },
             params={'act_id': 'e202009291139501', 'region': server_id, 'uid': uid},
         )
@@ -392,7 +417,7 @@ async def get_sign_reward_list() -> dict:
     headers = {
         'x-rpc-app_version': '2.11.1',
         'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 ('
-        'KHTML, like Gecko) miHoYoBBS/2.11.1',
+                      'KHTML, like Gecko) miHoYoBBS/2.11.1',
         'x-rpc-client_type': '5',
         'Referer': 'https://webstatic.mihoyo.com/',
     }
@@ -442,7 +467,7 @@ async def get_cookie_token_by_stoken(stoken: str, mys_id: str) -> Optional[str]:
 
 
 async def get_authkey_by_stoken(
-    user_id: str, uid: str
+        user_id: str, uid: str
 ) -> Tuple[Optional[str], bool, Optional[PrivateCookie]]:
     """
     根据stoken获取authkey

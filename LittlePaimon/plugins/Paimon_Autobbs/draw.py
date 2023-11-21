@@ -11,12 +11,13 @@ class SignResult(IntEnum):
     SUCCESS = auto()
     DONE = auto()
     FAIL = auto()
+    INVALID = auto()
 
 
 async def draw_result(group_id: int, data: list):
     img = PMImage(await load_image(RESOURCE_BASE_PATH / 'player_card' / 'white_bg.png'))
     success_list = [d for d in data if d['result'] in [SignResult.SUCCESS, SignResult.DONE]]
-    fail_list = [d['uid'] for d in data if d['result'] == SignResult.FAIL]
+    fail_list = [d['uid'] for d in data if d['result'] == SignResult.FAIL or d['uid'] for d in data if d['result'] == SignResult.INVALID]
     same_reward = defaultdict(list)
     for s in success_list:
         same_reward[s['reward']].append(s['uid'])
