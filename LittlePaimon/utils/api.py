@@ -151,7 +151,7 @@ def mihoyo_sign_headers(cookie: str, extra_headers: Optional[dict] = None) -> di
         'X_Requested_With': 'com.mihoyo.hyperion',
         'DS': get_old_version_ds(mhy_bbs=True),
         'x-rpc-client_type': '5',
-        'Referer': 'https://act.mihoyo.com'
+        'Referer': 'https://act.mihoyo.com',
         "x-rpc-signgame":"hk4e",
         'x-rpc-app_version': '2.35.2',
     }
