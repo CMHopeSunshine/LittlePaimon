@@ -35,9 +35,9 @@ DAILY_NOTE_API = (
 GAME_RECORD_API = (
     'https://api-takumi-record.mihoyo.com/game_record/card/wapi/getGameRecordCard'
 )
-SIGN_INFO_API = 'https://api-takumi.mihoyo.com/event/bbs_sign_reward/info'
-SIGN_REWARD_API = 'https://api-takumi.mihoyo.com/event/bbs_sign_reward/home'
-SIGN_ACTION_API = 'https://api-takumi.mihoyo.com/event/bbs_sign_reward/sign'
+SIGN_INFO_API = 'https://api-takumi.mihoyo.com/event/luna/info'
+SIGN_REWARD_API = 'https://api-takumi.mihoyo.com/event/luna/home'
+SIGN_ACTION_API = 'https://api-takumi.mihoyo.com/event/luna/sign'
 AUTHKEY_API = 'https://api-takumi.mihoyo.com/binding/api/genAuthKey'
 STOKEN_API = 'https://api-takumi.mihoyo.com/auth/api/getMultiTokenByLoginTicket'
 COOKIE_TOKEN_API = 'https://api-takumi.mihoyo.com/auth/api/getCookieAccountInfoBySToken'
@@ -147,12 +147,12 @@ def mihoyo_sign_headers(cookie: str, extra_headers: Optional[dict] = None) -> di
         'Version/4.0 Chrome/103.0.5060.129 Mobile Safari/537.36 miHoYoBBS/2.35.2',
         'Cookie': cookie,
         'x-rpc-device_id': random_hex(32),
-        'Origin': 'https://webstatic.mihoyo.com',
+        'Origin': 'https://act.mihoyo.com',
         'X_Requested_With': 'com.mihoyo.hyperion',
         'DS': get_old_version_ds(mhy_bbs=True),
         'x-rpc-client_type': '5',
-        'Referer': 'https://webstatic.mihoyo.com/bbs/event/signin-ys/index.html?bbs_auth_required=true&act_id'
-        '=e202009291139501&utm_source=bbs&utm_medium=mys&utm_campaign=icon',
+        'Referer': 'https://act.mihoyo.com',
+        "x-rpc-signgame":"hk4e",
         'x-rpc-app_version': '2.35.2',
     }
     if extra_headers:
@@ -362,21 +362,22 @@ async def get_mihoyo_private_data(
         data = await aiorequests.get(
             url=SIGN_INFO_API,
             headers={
-                'x-rpc-app_version': '2.11.1',
-                'x-rpc-client_type': '5',
-                'Origin': 'https://webstatic.mihoyo.com',
-                'Referer': 'https://webstatic.mihoyo.com/',
+                #'x-rpc-app_version': '2.11.1',
+                #'x-rpc-client_type': '5',
+                'Origin': 'https://act.mihoyo.com',
+                'Referer': 'https://act.mihoyo.com/',
                 'Cookie': cookie_info.cookie,
+                "x-rpc-signgame":"hk4e",
                 'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS '
-                'X) AppleWebKit/605.1.15 (KHTML, like Gecko) miHoYoBBS/2.11.1',
+                'X) AppleWebKit/605.1.15 (KHTML, like Gecko) miHoYoBBS/2.57.1',
             },
-            params={'act_id': 'e202009291139501', 'region': server_id, 'uid': uid},
+            params={'act_id': 'e202311201442471', 'region': server_id, 'uid': uid},
         )
     elif mode == 'sign_action':
         data = await aiorequests.post(
             url=SIGN_ACTION_API,
             headers=mihoyo_sign_headers(cookie_info.cookie),
-            json={'act_id': 'e202009291139501', 'uid': uid, 'region': server_id},
+            json={'act_id': 'e202311201442471', 'uid': uid, 'region': server_id},
         )
     else:
         data = None
@@ -392,12 +393,13 @@ async def get_sign_reward_list() -> dict:
     headers = {
         'x-rpc-app_version': '2.11.1',
         'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 ('
-        'KHTML, like Gecko) miHoYoBBS/2.11.1',
-        'x-rpc-client_type': '5',
-        'Referer': 'https://webstatic.mihoyo.com/',
+        'KHTML, like Gecko) miHoYoBBS/2.57.1',
+        #'x-rpc-client_type': '5',
+        "x-rpc-signgame":"hk4e",
+        'Referer': 'https://act.mihoyo.com/',
     }
     resp = await aiorequests.get(
-        url=SIGN_REWARD_API, headers=headers, params={'act_id': 'e202009291139501'}
+        url=SIGN_REWARD_API, headers=headers, params={'act_id': 'e202311201442471'}
     )
     data = resp.json()
     nb_logger.debug(data)
