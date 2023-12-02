@@ -311,8 +311,8 @@ class Character(Model):
                 character.region = '未知'
                 character.rarity = 5
                 traveler_skill = role_skill_map['Name'][list(data['skillLevelMap'].keys())[-1]]
-                find_element = re.search(r'[风雷岩草水火冰]', traveler_skill).group()
-                character.element = find_element
+                find_element = re.search(r'[风雷岩草流火冰]', traveler_skill).group()
+                character.element = find_element if find_element != "流" else "水"
                 role_name = find_element + '主'
             else:
                 character.region = role_datas_map[name]['region']
