@@ -473,7 +473,19 @@
     "893": "「秘密藏心间，无人知我名。」",
     "894": "「若非处幽冥，怎知生可贵！」",
     "895": "「我已有觉察，他名即是…！」",
-    "896": "「诸君听我颂，共举爱之杯！」"
+    "896": "「诸君听我颂，共举爱之杯！」",
+    "901": "稳固阵线的魄力",
+    "902": "诱导殉爆的狙击",
+    "903": "娴熟复装的技巧",
+    "904": "多重速射的秘诀",
+    "905": "增量火力的毁伤",
+    "906": "终结罪恶的追缉",
+    "911": "淑女的距离感守则",
+    "912": "总指挥的乘胜追击",
+    "913": "经营家的开阔视野",
+    "914": "铭誓者的绝不姑息",
+    "915": "协商人的坚决谈判",
+    "916": "刺玫会长的灵活手腕"
   },
   "Icon": {
     "21": "UI_Talent_S_Ayaka_01",
@@ -949,6 +961,18 @@
     "893": "UI_Talent_U_Furina_02",
     "894": "UI_Talent_S_Furina_03",
     "895": "UI_Talent_U_Furina_01",
-    "896": "UI_Talent_S_Furina_02"
+    "896": "UI_Talent_S_Furina_02",
+    "901": "UI_Talent_S_Chevreuse_01",
+    "902": "UI_Talent_S_Chevreuse_02",
+    "903": "UI_Talent_U_Chevreuse_01",
+    "904": "UI_Talent_S_Chevreuse_03",
+    "905": "UI_Talent_U_Chevreuse_02",
+    "906": "UI_Talent_S_Chevreuse_04",
+    "911": "UI_Talent_S_Navia_01",
+    "912": "UI_Talent_S_Navia_02",
+    "913": "UI_Talent_U_Navia_01",
+    "914": "UI_Talent_S_Navia_03",
+    "915": "UI_Talent_U_Navia_02",
+    "916": "UI_Talent_S_Navia_04"
   }
 }

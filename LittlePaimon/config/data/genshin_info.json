@@ -2169,6 +2169,32 @@
     },
     "SideIconName": "UI_AvatarIcon_Side_Furina"
   },
+  "10000090": {
+    "SkillOrder": [
+      10901,
+      10902,
+      10905
+    ],
+    "Skills": {
+      "10901": "Skill_A_03",
+      "10902": "Skill_S_Chevreuse_01",
+      "10905": "Skill_E_Chevreuse_01"
+    },
+    "SideIconName": "UI_AvatarIcon_Side_Chevreuse"
+  },
+  "10000091": {
+    "SkillOrder": [
+      10911,
+      10912,
+      10915
+    ],
+    "Skills": {
+      "10911": "Skill_A_04",
+      "10912": "Skill_S_Navia_01",
+      "10915": "Skill_E_Navia_01"
+    },
+    "SideIconName": "UI_AvatarIcon_Side_Navia"
+  },
   "10000005-501": {
     "Element": "None",
     "Consts": [
