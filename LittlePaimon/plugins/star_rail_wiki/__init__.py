@@ -80,9 +80,9 @@ async def sr_wiki_handler(state: T_State, regex_dict: dict = RegexDict()):
     if name:
         state['name'] = Message(name)
     else:
-        data = list(name_map[TYPE_MAP[type]].values())
+        data = [i[0] for i in name_map[TYPE_MAP[type]].values()]
         state['name_list'] = '\n'.join(
-            [' '.join(data[i: i + 3][0]) for i in range(0, len(data), 3)]
+            [' '.join(data[i: i + 3]) for i in range(0, len(data), 3)]
         )
     state['times'] = 1
 
