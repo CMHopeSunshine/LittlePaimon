@@ -1,7 +1,7 @@
 import datetime
 from difflib import get_close_matches
 from re import escape
-from typing import Dict
+from typing import Dict, List
 
 from nonebot import on_regex
 from nonebot.adapters.onebot.v11 import Message, MessageSegment, ActionFailed
@@ -17,6 +17,7 @@ from LittlePaimon.utils.requests import aiorequests
 from LittlePaimon.utils.typing import COMMAND_START_RE
 
 wiki_data: Dict[str, Dict[str, str]] = {}
+name_map: Dict[str, Dict[str, List[str]]] = {}
 last_update_time: datetime.datetime = datetime.datetime.now()
 
 GAME_ALIAS = ['星穹铁道', '星铁', '崩铁', '穹轨', '铁轨', '铁道', escape('*'), '']
@@ -79,9 +80,9 @@ async def sr_wiki_handler(state: T_State, regex_dict: dict = RegexDict()):
     if name:
         state['name'] = Message(name)
     else:
-        data = list(wiki_data[TYPE_MAP[type]].keys())
+        data = list(name_map[TYPE_MAP[type]].values())
         state['name_list'] = '\n'.join(
-            [' '.join(data[i: i + 3]) for i in range(0, len(data), 3)]
+            [' '.join(data[i: i + 3][0]) for i in range(0, len(data), 3)]
         )
     state['times'] = 1
 
@@ -99,18 +100,21 @@ async def sr_wiki_got(matcher: Matcher,
         else:
             state['times'] += 1
             await wiki.reject(f'你要查询谁的{type}呢？', at_sender=True)
-    data = wiki_data[TYPE_MAP[type]]
+    data = name_map[TYPE_MAP[type]]
     matcher.stop_propagation()
-    if matches := get_close_matches(name, data.keys(), cutoff=0.4, n=1):
-        final_name = str(matches[0])
-        try:
-            await wiki.finish(MessageSegment.image(
-                f'{config.github_proxy}https://raw.githubusercontent.com/Nwflower/star-rail-atlas/master{data[final_name]}'.replace(" ", "%20")
-            ))
-        except ActionFailed:
-            await wiki.finish(f'{final_name}的{type}发送失败，可能是网络问题')
-    else:
-        data = list(data.keys())
+    find_flag = False
+    for id_, alias in data.items():
+        if name in alias:
+            find_flag = True
+            data_path = wiki_data[TYPE_MAP[type]][id_]
+            try:
+                await wiki.finish(MessageSegment.image(
+                    f'{config.github_proxy}https://raw.githubusercontent.com/Nwflower/star-rail-atlas/master{data_path}'.replace(" ", "%20")
+                ))
+            except ActionFailed:
+                await wiki.finish(f'{alias[0]}的{type}发送失败，可能是网络问题')
+    if not find_flag:
+        data = [i[0] for i in data.values()]
         msg = '\n'.join(
             [' '.join(data[i: i + 3]) for i in range(0, len(data), 3)]
         )
@@ -121,8 +125,10 @@ async def init_data():
     try:
         resp = await aiorequests.get(
             f'{config.github_proxy}https://raw.githubusercontent.com/Nwflower/star-rail-atlas/master/path.json')
-        data = resp.json()
-        wiki_data.update(data)
+        wiki_data.update(resp.json())
+        resp2 = await aiorequests.get(
+            f'{config.github_proxy}https://raw.githubusercontent.com/Nwflower/star-rail-atlas/master/othername.json')
+        name_map.update(resp2.json())
         global last_update_time
         last_update_time = datetime.datetime.now()
     except Exception:
