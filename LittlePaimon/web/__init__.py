@@ -49,8 +49,7 @@ def init_web():
 
     @app.get("/res/{path:path}")
     async def redirect(path: str):
-        resource = path.split("/")[-1]
-        resource_name, resource_ext = resource.split(".")[0], resource.split(".")[1]
+        resource_name, resource_ext = path.split("/")[-1].rsplit(".", 1)
         return RedirectResponse(
             f"/static/{resource_name}.{resource_ext}", status_code=302
         )
