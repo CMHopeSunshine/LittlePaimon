@@ -49,9 +49,9 @@ def init_web():
 
     @app.get("/res/{path:path}")
     async def redirect(path: str):
-        resource_name, resource_ext = path.split("/")[-1].rsplit(".", 1)
+        resource_name= path.split("/")[-1]
         return RedirectResponse(
-            f"/static/{resource_name}.{resource_ext}", status_code=302
+            f"/static/{resource_name}", status_code=302
         )
 
     @app.get("/LittlePaimon/admin", response_class=HTMLResponse)
