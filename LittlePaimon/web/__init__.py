@@ -49,12 +49,11 @@ def init_web():
 
     @app.get("/res/{path:path}")
     async def redirect(path: str):
-        regex = re.compile(r"\/(?P<name>[^\/]+)\.(?P<ext>[^\/\.]+)$")
-        match = regex.search(path)
-        if match:
-            name = match.group("name")
-            ext = match.group("ext")
-            return RedirectResponse(f"/static/{name}.{ext}", status_code=302)
+        resource = path.split("/")[-1]
+        resource_name, resource_ext = resource.split(".")[0], resource.split(".")[1]
+        return RedirectResponse(
+            f"/static/{resource_name}.{resource_ext}", status_code=302
+        )
 
     @app.get("/LittlePaimon/admin", response_class=HTMLResponse)
     async def admin():
