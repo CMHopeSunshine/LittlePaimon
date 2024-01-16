@@ -6,7 +6,7 @@ from pathlib import Path
 from ssl import SSLCertVerificationError
 from typing import Union
 
-from ruamel import yaml
+from ruamel.yaml import YAML
 
 from .requests import aiorequests
 
@@ -71,8 +71,8 @@ def load_yaml(path: Union[Path, str], encoding: str = 'utf-8'):
     """
     if isinstance(path, str):
         path = Path(path)
-    return yaml.load(path.read_text(encoding=encoding),
-                     Loader=yaml.Loader) if path.exists() else {}
+    yaml=YAML(typ='safe')
+    return yaml.load(path.read_text(encoding=encoding)) if path.exists() else {}
 
 
 def save_yaml(data: dict, path: Union[Path, str] = None, encoding: str = 'utf-8'):
@@ -87,9 +87,7 @@ def save_yaml(data: dict, path: Union[Path, str] = None, encoding: str = 'utf-8'
         path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open('w', encoding=encoding) as f:
+        yaml=YAML(typ='safe')
         yaml.dump(
             data,
-            f,
-            indent=2,
-            Dumper=yaml.RoundTripDumper,
-            allow_unicode=True)
+            f)
