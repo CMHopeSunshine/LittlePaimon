@@ -1,14 +1,17 @@
 from contextlib import asynccontextmanager
 from contextlib import suppress
+from pathlib import Path
 from typing import Optional, Literal, Tuple, Union, List, AsyncGenerator, AsyncIterator
 
 from playwright.async_api import Page, Browser, Playwright, async_playwright, Error
 
 from . import DRIVER
+from .files import load_yaml
 from .logger import logger
 
 _playwright: Optional[Playwright] = None
 _browser: Optional[Browser] = None
+_browser_type = load_yaml(Path() / 'config' / 'browser_cfg.yml')
 
 
 async def init(**kwargs) -> Browser:
@@ -27,7 +30,13 @@ async def init(**kwargs) -> Browser:
 
 async def launch_browser(**kwargs) -> Browser:
     assert _playwright is not None, "Playwright is not initialized"
-    return await _playwright.chromium.launch(**kwargs)
+
+    if _browser_type.get("browser_type") == 'firefox':
+        return await _playwright.firefox.launch(**kwargs)
+    elif _browser_type.get("browser_type") == 'chromium':
+        return await _playwright.chromium.launch(**kwargs)
+    elif _browser_type.get("browser_type") == 'webkit':
+        return await _playwright.webkit.launch(**kwargs)
 
 
 async def get_browser(**kwargs) -> Browser:
@@ -40,8 +49,8 @@ async def install_browser():
 
     from playwright.__main__ import main
 
-    logger.info('Playwright', '正在安装 chromium')
-    sys.argv = ["", "install", "chromium"]
+    logger.info('Playwright', f'正在安装 {_browser_type.get("browser_type")}')
+    sys.argv = ["", "install", f"{_browser_type.get('browser_type')}"]
     with suppress(SystemExit):
         logger.info('Playwright', '正在安装依赖')
         os.system("playwright install-deps")
