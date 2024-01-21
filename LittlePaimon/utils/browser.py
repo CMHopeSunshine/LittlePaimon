@@ -5,13 +5,12 @@ from typing import Optional, Literal, Tuple, Union, List, AsyncGenerator, AsyncI
 from playwright.async_api import Page, Browser, Playwright, async_playwright, Error
 
 from . import DRIVER
-from .files import load_yaml
 from .logger import logger
-from .path import PAIMON_CONFIG
+from LittlePaimon.config import config as bot_config
 
 _playwright: Optional[Playwright] = None
 _browser: Optional[Browser] = None
-_browser_type = load_yaml(PAIMON_CONFIG).get('browser_type')
+_browser_type = bot_config.browser_type
 
 
 async def init(**kwargs) -> Browser:

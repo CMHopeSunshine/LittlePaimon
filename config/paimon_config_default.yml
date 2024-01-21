@@ -25,4 +25,4 @@ CookieWeb地址: http://127.0.0.1:13579/LittlePaimon/cookie
 # 浏览器内核设置
 # 可选 chromium, firefox, webkit
 # 默认使用firefox
-browser_type: firefox
+browser_type: ''
