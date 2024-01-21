@@ -67,7 +67,7 @@
 
 ## | Playwright相关问题
 因部分系统不适用于chromium（谷歌浏览器），故将默认内核改为FireFox
-如需切换，可更改 config/browser_cfg.yml 的默认值
+如需切换，可更改 config/paimon_config_default.yml 的默认值
 
 ## | 常见问题&致谢
 

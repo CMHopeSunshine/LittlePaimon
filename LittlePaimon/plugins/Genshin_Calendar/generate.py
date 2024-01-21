@@ -3,8 +3,9 @@ from os import getcwd
 import jinja2
 from .event import *
 from datetime import datetime, timedelta
-from LittlePaimon.utils.brower import get_new_page
+from LittlePaimon.utils.browser import get_new_page
 
+body = []
 body = []
 weeks = []
 weekList = ['一', '二', '三', '四', '五', '六', '日']
