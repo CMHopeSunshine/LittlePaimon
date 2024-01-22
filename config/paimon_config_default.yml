@@ -21,3 +21,8 @@ CookieWeb地址: http://127.0.0.1:13579/LittlePaimon/cookie
 实时便签检查间隔: 16 # 实时便签检查间隔，单位分钟
 实时便签停止检查开始时间: 0
 实时便签停止检查结束时间: 6 # 处于这个时间段的时候停止检查
+
+# 浏览器内核设置
+# 可选 chromium, firefox, webkit
+# 默认使用firefox
+browser_type: ''

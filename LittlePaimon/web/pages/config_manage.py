@@ -39,6 +39,26 @@ cookie_web_form = Form(
             value='${CookieWeb地址}',
             labelRemark=Remark(shape='circle', content='只是设置对用户显示的CookieWeb地址，要填写实际的地址')
         ),
+        Select(
+            label='浏览器内核',
+            name='浏览器内核',
+            value='${浏览器内核}',
+            labelRemark=Remark(shape='circle', content='用于生成原神日历的浏览器内核'),
+            options=[
+                {
+                    'label': '火狐FireFox',
+                    'value': 'firefox'
+                },
+                {
+                    'label': '谷歌Chormium',
+                    'value': 'chromium'
+                },
+                {
+                    'label': 'WebKit',
+                    'value': 'webkit'
+                }
+            ]
+        ),
         Switch(
             label='是否启用Web端',
             name='启用Web端',

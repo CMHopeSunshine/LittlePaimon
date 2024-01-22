@@ -6,7 +6,7 @@ from nonebot.rule import Rule
 
 from LittlePaimon import SUPERUSERS
 from LittlePaimon.config import config
-from LittlePaimon.utils.brower import screenshot
+from LittlePaimon.utils.browser import screenshot
 
 
 async def permission_check(event: MessageEvent) -> bool:

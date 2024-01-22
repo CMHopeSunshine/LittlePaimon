@@ -50,6 +50,7 @@ class ConfigModel(BaseModel):
     admin_theme: Literal['default', 'antd', 'ang', 'dark'] = Field('default', alias='Web端主题')
 
     command_alias_enable: bool = Field(True, alias='启用命令别名')
+    browser_type: Literal['chromium', 'firefox', 'webkit'] = Field('firefox', alias='浏览器内核')
 
     # 早报60s
     morning_news: str = Field('https://api.vvhan.com/api/60s', alias='早报60s')

@@ -6,9 +6,11 @@ from playwright.async_api import Page, Browser, Playwright, async_playwright, Er
 
 from . import DRIVER
 from .logger import logger
+from LittlePaimon.config import config as bot_config
 
 _playwright: Optional[Playwright] = None
 _browser: Optional[Browser] = None
+_browser_type = bot_config.browser_type
 
 
 async def init(**kwargs) -> Browser:
@@ -27,7 +29,13 @@ async def init(**kwargs) -> Browser:
 
 async def launch_browser(**kwargs) -> Browser:
     assert _playwright is not None, "Playwright is not initialized"
-    return await _playwright.chromium.launch(**kwargs)
+
+    if _browser_type == 'firefox':
+        return await _playwright.firefox.launch(**kwargs)
+    elif _browser_type == 'chromium':
+        return await _playwright.chromium.launch(**kwargs)
+    elif _browser_type == 'webkit':
+        return await _playwright.webkit.launch(**kwargs)
 
 
 async def get_browser(**kwargs) -> Browser:
@@ -40,8 +48,8 @@ async def install_browser():
 
     from playwright.__main__ import main
 
-    logger.info('Playwright', '正在安装 chromium')
-    sys.argv = ["", "install", "chromium"]
+    logger.info('Playwright', f'正在安装 {_browser_type}')
+    sys.argv = ["", "install", f"{_browser_type}"]
     with suppress(SystemExit):
         logger.info('Playwright', '正在安装依赖')
         os.system("playwright install-deps")
