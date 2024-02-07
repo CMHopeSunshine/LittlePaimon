@@ -4,7 +4,7 @@ from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
 from nonebot.plugin import PluginMetadata
 
 from LittlePaimon.utils import logger
-from LittlePaimon.utils.brower import screenshot
+from LittlePaimon.utils.browser import screenshot
 
 __plugin_meta__ = PluginMetadata(
     name='米游社',

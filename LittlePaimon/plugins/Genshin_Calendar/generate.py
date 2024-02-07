@@ -1,9 +1,7 @@
-from os import getcwd
-
 import jinja2
 from .event import *
 from datetime import datetime, timedelta
-from LittlePaimon.utils.brower import get_new_page
+from LittlePaimon.utils.browser import get_new_page
 
 body = []
 weeks = []
@@ -48,10 +46,10 @@ async def generate_day_schedule(server='cn'):
                              'online': f'{datetime.strftime(event["start"], "%m-%d")} ~ {datetime.strftime(event["end"], "%m-%d")}',
                              'color':  event['color'], 'banner': event['banner']})
 
-    content = await template.render_async(body=body, css_path=template_path, week=weeks)
+    content = await template.render_async(body=body,  week=weeks)
 
     async with get_new_page(viewport={'width': 600, 'height': 10}) as page:
-        await page.goto(f'file://{getcwd()}')
+        await page.goto(f'file://{template_path}/calendar.html')
         await page.set_content(content, wait_until='networkidle')
         await page.wait_for_timeout(0.2)
         return await page.screenshot(full_page=True)

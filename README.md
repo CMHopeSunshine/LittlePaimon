@@ -65,6 +65,10 @@
 <img src="https://s1.ax1x.com/2023/02/05/pS6fAG6.jpg" alt="map">
 </details>
 
+## | Playwright相关问题
+因部分系统不适用于chromium（谷歌浏览器），故将默认内核改为FireFox
+如需切换，可更改 config/paimon_config_default.yml 的默认值
+
 ## | 常见问题&致谢
 
 详见[常见问题](https://docs.paimon.cherishmoon.fun/question.html)和[致谢](https://docs.paimon.cherishmoon.fun/thanks.html)。
