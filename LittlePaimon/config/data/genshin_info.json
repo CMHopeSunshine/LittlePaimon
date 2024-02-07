@@ -2195,6 +2195,32 @@
     },
     "SideIconName": "UI_AvatarIcon_Side_Navia"
   },
+  "10000092": {
+    "SkillOrder": [
+      10921,
+      10922,
+      10925
+    ],
+    "Skills": {
+      "10921": "Skill_A_04",
+      "10922": "Skill_S_Gaming_01",
+      "10925": "Skill_E_Gaming_01"
+    },
+    "SideIconName": "UI_AvatarIcon_Side_Gaming"
+  },
+  "10000093": {
+    "SkillOrder": [
+      10931,
+      10932,
+      10935
+    ],
+    "Skills": {
+      "10931": "Skill_A_Catalyst_MD",
+      "10932": "Skill_S_Liuyun_01",
+      "10935": "Skill_E_Liuyun_01"
+    },
+    "SideIconName": "UI_AvatarIcon_Side_Liuyun"
+  },
   "10000005-501": {
     "Element": "None",
     "Consts": [

@@ -31664,5 +31664,15 @@
     "region": "枫丹",
     "star": "5",
     "element": "岩"
+  },
+  "嘉明": {
+    "region": "璃月",
+    "star": 4,
+    "element": "火"
+  },
+  "闲云": {
+    "region": "璃月",
+    "star": 5,
+    "element": "风"
   }
 }
