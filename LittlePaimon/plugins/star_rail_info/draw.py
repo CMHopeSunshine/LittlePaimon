@@ -50,7 +50,12 @@ async def draw_relic(relic: Relic, element: Element) -> PMImage:
     )
     # 主属性值
     await bg.text(
-        "+" + relic.main_affix.display, 328, 123, fm.get("汉仪润圆", 36), "#333333", "right"
+        "+" + relic.main_affix.display,
+        328,
+        123,
+        fm.get("汉仪润圆", 36),
+        "#333333",
+        "right",
     )
     # 副属性
     for i, affix in enumerate(relic.sub_affix):
@@ -58,7 +63,8 @@ async def draw_relic(relic: Relic, element: Element) -> PMImage:
         await bg.text(affix.name, 6, 178 + i * 56, fm.get("汉仪润圆", 36), "#333333")
         # 副属性值
         await bg.text(
-            "+" + affix.display,
+            "+"
+            + (affix.display if affix.name != "速度" else str(round(affix.value, 1))),
             328,
             178 + i * 56,
             fm.get("汉仪润圆", 36),
@@ -88,7 +94,9 @@ async def draw_character(chara: Character, uid: str):
         crop=(338, 146, 886, 1176),
     )
     await bg.paste(pic, (510, 28))
-    await bg.paste(await load_image(PATH / f"立绘边框-{chara.element.name}.png"), (500, 13))
+    await bg.paste(
+        await load_image(PATH / f"立绘边框-{chara.element.name}.png"), (500, 13)
+    )
 
     # 星魂图标
     circle = await load_image(PATH / "星魂圆.png")
@@ -110,10 +118,14 @@ async def draw_character(chara: Character, uid: str):
     )
 
     # 角色名称
-    await bg.text(chara.name, 480, (59, 154), fm.get("汉仪雅酷黑", 72), "white", "right")
+    await bg.text(
+        chara.name, 480, (59, 154), fm.get("汉仪雅酷黑", 72), "white", "right"
+    )
 
     # 属性
-    for i, attr in enumerate(("生命值", "攻击力", "防御力", "速度", "暴击率", "暴击伤害")):
+    for i, attr in enumerate(
+        ("生命值", "攻击力", "防御力", "速度", "暴击率", "暴击伤害")
+    ):
         base = next((a for a in chara.attributes if a.name == attr), None)
         extra = next((a for a in chara.additions if a.name == attr), None)
         if attr in ("暴击率", "暴击伤害"):
@@ -130,8 +142,14 @@ async def draw_character(chara: Character, uid: str):
             )
         else:
             n = "0"
-            total = str(
-                int((base.value if base else 0) + (extra.value if extra else 0))
+            total = (
+                str(int((base.value if base else 0) + (extra.value if extra else 0)))
+                if attr != "速度"
+                else str(
+                    round(
+                        (base.value if base else 0) + (extra.value if extra else 0), 1
+                    )
+                )
             )
 
         await bg.text(
@@ -151,7 +169,9 @@ async def draw_character(chara: Character, uid: str):
             "right",
         )
         await bg.text(
-            "+" + (extra.display if extra else n),
+            ("+" + (extra.display if extra else n))
+            if attr != "速度"
+            else ("+" + str(round(extra.value if extra else 0, 1))),
             483,
             196 + i * 56,
             fm.get("bahnschrift_regular", 24),
@@ -160,7 +180,13 @@ async def draw_character(chara: Character, uid: str):
         )
 
     for i, attr in enumerate(
-        ("效果抵抗", "效果命中", "击破特攻", "能量恢复效率", f"{chara.element.name}属性伤害提高")
+        (
+            "效果抵抗",
+            "效果命中",
+            "击破特攻",
+            "能量恢复效率",
+            f"{chara.element.name}属性伤害提高",
+        )
     ):
         affix = next((a for a in chara.properties if a.name == attr), None)
 
@@ -254,7 +280,11 @@ async def draw_character(chara: Character, uid: str):
     )
 
     # 其他文字
-    await bg.text("CREATED BY LITTLEPAIMON", 20, 1078, fm.get("汉仪雅酷黑", 30), "#252525")
-    await bg.text("数据源 MiHoMo", 1060, 1078, fm.get("汉仪雅酷黑", 30), "#252525", "right")
+    await bg.text(
+        "CREATED BY LITTLEPAIMON", 20, 1078, fm.get("汉仪雅酷黑", 30), "#252525"
+    )
+    await bg.text(
+        "数据源 MiHoMo", 1060, 1078, fm.get("汉仪雅酷黑", 30), "#252525", "right"
+    )
 
     return bg
