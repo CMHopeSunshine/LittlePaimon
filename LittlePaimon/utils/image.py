@@ -92,14 +92,14 @@ class PMImage:
         return int(self.draw.textlength(text, font))
 
     def text_size(self, text: str, font: ImageFont.ImageFont) -> Tuple[int, int]:
-        return self.draw.textsize(text, font)
+        return self.draw.textbbox((0, 0), text, font)[:2]
 
     def text_box_height(self,
                         text: str,
                         width: Tuple[int, int],
                         height: Tuple[int, int],
                         font: ImageFont.ImageFont) -> int:
-        text_height = self.draw.textsize(text, font=font)[1]
+        text_height = self.draw.textbbox((0, 0), text, font)[1]
         width_now = width[0]
         height_now = height[0]
         for c in text:
@@ -217,7 +217,7 @@ class PMImage:
                  height: Tuple[int, int],
                  font: ImageFont.ImageFont,
                  color: Union[str, Tuple[int, int, int, int]] = 'white'):
-        text_height = self.draw.textsize(text, font=font)[1]
+        text_height = self.draw.textbbox((0, 0), text, font)[1]
         width_now = width[0]
         height_now = height[0]
         for c in text:
