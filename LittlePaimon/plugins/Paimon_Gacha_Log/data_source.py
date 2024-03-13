@@ -134,6 +134,7 @@ async def get_gacha_log_data(user_id: str, uid: str):
         '武器祈愿': 0,
         '常驻祈愿': 0,
         '新手祈愿': 0,
+        '集录祈愿': 0
     }
     server_id = 'cn_qd01' if uid[0] == '5' else 'cn_gf01'
     authkey, state, cookie_info = await get_authkey_by_stoken(user_id, uid)

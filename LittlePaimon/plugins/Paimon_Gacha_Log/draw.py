@@ -161,14 +161,14 @@ async def draw_four_star(info: FourStarItem) -> PMImage:
                   'center')
     await bg.text(str(info.num['武器祈愿']), (65, 125), 209, fm.get('bahnschrift_regular', 36, 'Bold'), '#593d99',
                   'center')
-    await bg.text(str(info.num['常驻祈愿'] + info.num['新手祈愿']), (126, 186), 209, fm.get('bahnschrift_regular', 36, 'Bold'),
+    await bg.text(str(info.num['常驻祈愿'] + info.num['新手祈愿'] + info.num['集录祈愿']), (126, 186), 209, fm.get('bahnschrift_regular', 36, 'Bold'),
                   '#3a9381',
                   'center')
     return bg
 
 
 async def draw_four_star_detail(data: List[FourStarItem]):
-    data.sort(key=lambda x: x.num['角色祈愿'] + x.num['武器祈愿'] + x.num['常驻祈愿'] + x.num['新手祈愿'], reverse=True)
+    data.sort(key=lambda x: x.num['角色祈愿'] + x.num['武器祈愿'] + x.num['常驻祈愿'] + x.num['新手祈愿'] + x.num['集录祈愿'], reverse=True)
     bar = await load_image(RESOURCE_BASE_PATH / 'gacha_log' / 'four_star_bar.png')
     total_height = 105 + 260 * math.ceil(len(data) / 5)
     bg = PMImage(size=(1008, total_height), mode='RGBA', color=(255, 255, 255, 0))
@@ -221,8 +221,9 @@ async def draw_gacha_log(user_id: str, uid: str, nickname: Optional[str], signat
         chara_pool_per = round(len(data5['角色祈愿']) / total_five_star_count * 100, 1)
         weapon_pool_per = round(len(data5['武器祈愿']) / total_five_star_count * 100, 1)
         new_pool_per = round((len(data5['常驻祈愿']) + len(data5['新手祈愿'])) / total_five_star_count * 100, 1)
+        jilu_pool_per = round(len(data5['集录祈愿']) / total_five_star_count * 100, 1)
         now_used_width = 56
-        pers = [chara_pool_per, weapon_pool_per, new_pool_per]
+        pers = [chara_pool_per, weapon_pool_per, new_pool_per, jilu_pool_per]
         i = 0
         for per in pers:
             if per >= 3:
