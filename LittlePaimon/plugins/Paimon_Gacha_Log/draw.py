@@ -11,7 +11,7 @@ from .models import GachaLogInfo, FiveStarItem, FourStarItem
 
 avatar_point = [69, 156, 259, 358, 456, 558, 645, 746, 840, 945]
 line_point = [88, 182, 282, 378, 477, 574, 673, 769, 864, 967]
-bar_color = [('#b6d6f2', '#3d6e99'), ('#c8b6f2', '#593d99'), ('#abede0', '#3a9382')]
+bar_color = [('#b6d6f2', '#3d6e99'), ('#c8b6f2', '#593d99'), ('#abede0', '#3a9382'), ("#e3d809", "#646C04")]
 name_level_color = [('#f6b9c9', '#a90d35'), ('#f2cab9', '#ff6f30'), ('#b9d8f2', '#157eaa'), ('#dedede', '#707070')]
 small_avatar_cache = {}
 """
