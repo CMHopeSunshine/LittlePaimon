@@ -2221,6 +2221,19 @@
     },
     "SideIconName": "UI_AvatarIcon_Side_Liuyun"
   },
+  "10000094": {
+    "SkillOrder": [
+      10941,
+      10942,
+      10945
+    ],
+    "Skills": {
+      "10941": "Skill_A_01",
+      "10942": "Skill_S_Chiori_01",
+      "10945": "Skill_E_Chiori_01"
+    },
+    "SideIconName": "UI_AvatarIcon_Side_Chiori"
+  },
   "10000005-501": {
     "Element": "None",
     "Consts": [
