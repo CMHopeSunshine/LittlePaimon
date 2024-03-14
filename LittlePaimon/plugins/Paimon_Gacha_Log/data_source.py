@@ -50,7 +50,10 @@ def load_history_info(user_id: str, uid: str) -> Tuple[GachaLogInfo, bool]:
     """
     file_path = GACHA_LOG / f'gacha_log-{user_id}-{uid}.json'
     if file_path.exists():
-        return GachaLogInfo.parse_obj(load_json(file_path)), True
+        old_gacha_info = load_json(file_path)
+        if "集录祈愿" not in old_gacha_info["item_list"]:
+            old_gacha_info["item_list"]["集录祈愿"] = []
+        return GachaLogInfo.parse_obj(old_gacha_info), True
     else:
         return GachaLogInfo(user_id=user_id,
                             uid=uid,
