@@ -11,7 +11,7 @@ from .models import GachaLogInfo, FiveStarItem, FourStarItem
 
 avatar_point = [69, 156, 259, 358, 456, 558, 645, 746, 840, 945]
 line_point = [88, 182, 282, 378, 477, 574, 673, 769, 864, 967]
-bar_color = [('#b6d6f2', '#3d6e99'), ('#c8b6f2', '#593d99'), ('#abede0', '#3a9382')]
+bar_color = [('#b6d6f2', '#3d6e99'), ('#c8b6f2', '#593d99'), ('#abede0', '#3a9382'), ("#e3d809", "#646C04")]
 name_level_color = [('#f6b9c9', '#a90d35'), ('#f2cab9', '#ff6f30'), ('#b9d8f2', '#157eaa'), ('#dedede', '#707070')]
 small_avatar_cache = {}
 """
@@ -161,14 +161,14 @@ async def draw_four_star(info: FourStarItem) -> PMImage:
                   'center')
     await bg.text(str(info.num['武器祈愿']), (65, 125), 209, fm.get('bahnschrift_regular', 36, 'Bold'), '#593d99',
                   'center')
-    await bg.text(str(info.num['常驻祈愿'] + info.num['新手祈愿']), (126, 186), 209, fm.get('bahnschrift_regular', 36, 'Bold'),
+    await bg.text(str(info.num['常驻祈愿'] + info.num['新手祈愿'] + info.num['集录祈愿']), (126, 186), 209, fm.get('bahnschrift_regular', 36, 'Bold'),
                   '#3a9381',
                   'center')
     return bg
 
 
 async def draw_four_star_detail(data: List[FourStarItem]):
-    data.sort(key=lambda x: x.num['角色祈愿'] + x.num['武器祈愿'] + x.num['常驻祈愿'] + x.num['新手祈愿'], reverse=True)
+    data.sort(key=lambda x: x.num['角色祈愿'] + x.num['武器祈愿'] + x.num['常驻祈愿'] + x.num['新手祈愿'] + x.num['集录祈愿'], reverse=True)
     bar = await load_image(RESOURCE_BASE_PATH / 'gacha_log' / 'four_star_bar.png')
     total_height = 105 + 260 * math.ceil(len(data) / 5)
     bg = PMImage(size=(1008, total_height), mode='RGBA', color=(255, 255, 255, 0))
@@ -221,8 +221,9 @@ async def draw_gacha_log(user_id: str, uid: str, nickname: Optional[str], signat
         chara_pool_per = round(len(data5['角色祈愿']) / total_five_star_count * 100, 1)
         weapon_pool_per = round(len(data5['武器祈愿']) / total_five_star_count * 100, 1)
         new_pool_per = round((len(data5['常驻祈愿']) + len(data5['新手祈愿'])) / total_five_star_count * 100, 1)
+        jilu_pool_per = round(len(data5['集录祈愿']) / total_five_star_count * 100, 1)
         now_used_width = 56
-        pers = [chara_pool_per, weapon_pool_per, new_pool_per]
+        pers = [chara_pool_per, weapon_pool_per, new_pool_per, jilu_pool_per]
         i = 0
         for per in pers:
             if per >= 3:

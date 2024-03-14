@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 from LittlePaimon.utils.alias import get_chara_icon, get_weapon_icon
 
-GACHA_TYPE_LIST = {'100': '新手祈愿', '200': '常驻祈愿', '302': '武器祈愿', '301': '角色祈愿', '400': '角色祈愿'}
+GACHA_TYPE_LIST = {'100': '新手祈愿', '200': '常驻祈愿', '302': '武器祈愿', '301': '角色祈愿', '400': '角色祈愿', '500': '集录祈愿'}
 
 
 class FiveStarItem(BaseModel):
@@ -23,7 +23,8 @@ class FourStarItem(BaseModel):
         '角色祈愿': 0,
         '武器祈愿': 0,
         '常驻祈愿': 0,
-        '新手祈愿': 0}
+        '新手祈愿': 0,
+        '集录祈愿': 0}
 
 
 class GachaItem(BaseModel):
@@ -44,6 +45,7 @@ class GachaLogInfo(BaseModel):
         '武器祈愿': [],
         '常驻祈愿': [],
         '新手祈愿': [],
+        '集录祈愿': []
     }
 
     def get_record_time(self) -> Dict[str, Tuple[datetime.datetime, datetime.datetime]]:
@@ -51,7 +53,8 @@ class GachaLogInfo(BaseModel):
             '角色祈愿': (self.item_list['角色祈愿'][0].time, self.item_list['角色祈愿'][-1].time) if self.item_list['角色祈愿'] else (None, None),
             '武器祈愿': (self.item_list['武器祈愿'][0].time, self.item_list['武器祈愿'][-1].time) if self.item_list['武器祈愿'] else (None, None),
             '常驻祈愿': (self.item_list['常驻祈愿'][0].time, self.item_list['常驻祈愿'][-1].time) if self.item_list['常驻祈愿'] else (None, None),
-            '新手祈愿': (self.item_list['新手祈愿'][0].time, self.item_list['新手祈愿'][-1].time) if self.item_list['新手祈愿'] else (None, None)
+            '新手祈愿': (self.item_list['新手祈愿'][0].time, self.item_list['新手祈愿'][-1].time) if self.item_list['新手祈愿'] else (None, None),
+            '集录祈愿': (self.item_list['集录祈愿'][0].time, self.item_list['集录祈愿'][-1].time) if self.item_list['集录祈愿'] else (None, None),
         }
 
     def get_statistics(self) -> Tuple[Dict[str, List[FiveStarItem]], Dict[str, FourStarItem],  Dict[str, int]]:
@@ -60,6 +63,7 @@ class GachaLogInfo(BaseModel):
             '武器祈愿': [],
             '常驻祈愿': [],
             '新手祈愿': [],
+            '集录祈愿': []
         }
         gacha_data_four: Dict[str, FourStarItem] = {}
         gacha_not_out: Dict[str, int] = {}
