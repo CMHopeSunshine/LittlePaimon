@@ -503,7 +503,13 @@
     "943": "缀锦四分",
     "944": "衣裁三礼",
     "945": "绫羽二重",
-    "946": "万理一空"
+    "946": "万理一空",
+    "961": "「所有的仇与债皆由我偿…」",
+    "962": "「所有的赏与罚皆自我出…」",
+    "963": "「你将成为我们新的家人…」",
+    "964": "「此后，你们须相爱相护…」",
+    "965": "「我们已孑然一身，与死无异…」",
+    "966": "「自此以后，我们将共飨新生。」"
   },
   "Icon": {
     "21": "UI_Talent_S_Ayaka_01",
@@ -1009,6 +1015,12 @@
     "943": "UI_Talent_U_Chiori_01",
     "944": "UI_Talent_S_Chiori_02",
     "945": "UI_Talent_U_Chiori_02",
-    "946": "UI_Talent_S_Chiori_04"
+    "946": "UI_Talent_S_Chiori_04",
+    "961": "UI_Talent_S_Arlecchino_01",
+    "962": "UI_Talent_S_Arlecchino_02",
+    "963": "UI_Talent_U_Arlecchino_01",
+    "964": "UI_Talent_S_Arlecchino_03",
+    "965": "UI_Talent_U_Arlecchino_02",
+    "966": "UI_Talent_S_Arlecchino_04"
   }
 }
