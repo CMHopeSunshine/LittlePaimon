@@ -17,7 +17,7 @@ from LittlePaimon.utils.path import GACHA_LOG
 from .draw import draw_gacha_log
 from .models import GachaItem, GachaLogInfo, GACHA_TYPE_LIST
 
-GACHA_LOG_API = 'https://hk4e-api.mihoyo.com/event/gacha_info/api/getGachaLog'
+GACHA_LOG_API = 'https://public-operation-hk4e.mihoyo.com/gacha_info/api/getGachaLog'
 HEADERS: Dict[str, str] = {
     'x-rpc-app_version': '2.11.1',
     'User-Agent':        'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 ('
