@@ -18,6 +18,7 @@ from LittlePaimon.utils.api import get_authkey_by_stoken
 from LittlePaimon.utils.message import CommandPlayer, CommandUID
 
 from .data_source import (
+    GACHA_LOG_API,
     create_import_command,
     gacha_log_to_UIGF,
     get_gacha_log_data,
@@ -182,16 +183,16 @@ async def _(bot: Bot, event: MessageEvent, uid: str = CommandUID()):
     authkey, state, _ = await get_authkey_by_stoken(str(event.user_id), uid)
     if not state:
         return authkey
-    if authkey == {}:
+    if not authkey:
         await gacha_url.finish(authkey, at_sender=True)
     region = "cn_qd01" if uid[0] == "5" else "cn_gf01"
     url = (
-        f"https://hk4e-api.mihoyo.com/event/gacha_info/api/getGachaLog?"
+        f"{GACHA_LOG_API}?"
         f"authkey_ver=1&sign_type=2&auth_appid=webview_gacha&init_type=301&"
         f"gacha_id=fecafa7b6560db5f3182222395d88aaa6aaac1bc"
         f"&timestamp={int(time.time())}"
         f"&lang=zh-cn&device_type=mobile&plat_type=ios&region={region}"
-        f"&authkey={quote(authkey,'utf-8')}"
+        f"&authkey={quote(authkey,encoding='utf-8')}"
         f"&game_biz=hk4e_cn&gacha_type=301&page=1&size=5&end_id=0"
     )
     msgs = [
