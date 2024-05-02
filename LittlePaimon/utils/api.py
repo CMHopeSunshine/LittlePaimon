@@ -489,7 +489,6 @@ async def get_authkey_by_stoken(
         },
     )
     data = data.json()
-    print(data)
     if data.get('data') is not None and 'authkey' in data['data']:
         return data['data']['authkey'], True, cookie_info
     else:
