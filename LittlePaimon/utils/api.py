@@ -106,9 +106,9 @@ def get_old_version_ds(mhy_bbs: bool = False) -> str:
     生成米游社旧版本headers的ds_token
     """
     if mhy_bbs:
-        s = 'N50pqm7FSy2AkFz2B3TqtuZMJ5TOl3Ep'
+        s = "1OJyMNCqFlstEQqqMOv0rKCIdTOoJhNt"
     else:
-        s = 'z8DRIUjNDT7IT5IZXvrUAxyupA1peND9'
+        s = "AcpNVhfh0oedCobdCyFV8EE1jMOVDy9q"
     t = str(int(time.time()))
     r = ''.join(random.sample(string.ascii_lowercase + string.digits, 6))
     c = md5(f"salt={s}&t={t}&r={r}")
@@ -465,18 +465,18 @@ async def get_authkey_by_stoken(
     if not cookie_info.stoken:
         return 'cookie中没有stoken字段，请重新绑定', False, cookie_info
     headers = {
-        'Cookie': cookie_info.stoken,
-        'DS': get_old_version_ds(True),
-        'User-Agent': 'okhttp/4.8.0',
-        'x-rpc-app_version': '2.35.2',
-        'x-rpc-sys_version': '12',
-        'x-rpc-client_type': '5',
-        'x-rpc-channel': 'mihoyo',
-        'x-rpc-device_id': random_hex(32),
-        'x-rpc-device_name': random_text(random.randint(1, 10)),
-        'x-rpc-device_model': 'Mi 10',
-        'Referer': 'https://app.mihoyo.com',
-        'Host': 'api-takumi.mihoyo.com',
+        "Cookie": cookie_info.stoken,
+        "DS": get_old_version_ds(True),
+        "User-Agent": "okhttp/4.8.0",
+        "x-rpc-app_version": "2.60.1",
+        "x-rpc-sys_version": "12",
+        "x-rpc-client_type": "5",
+        "x-rpc-channel": "mihoyo",
+        "x-rpc-device_id": random_hex(32),
+        "x-rpc-device_name": random_text(random.randint(1, 10)),
+        "x-rpc-device_model": "Mi 10",
+        "Referer": "https://app.mihoyo.com",
+        "Host": "api-takumi.mihoyo.com",
     }
     data = await aiorequests.post(
         url=AUTHKEY_API,
