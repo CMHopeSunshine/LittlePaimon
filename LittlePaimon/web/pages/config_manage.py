@@ -378,8 +378,8 @@ other_form = Form(
                     'value': 'https://ghproxy.com/'
                 },
                 {
-                    'label': 'github.cherishmoon.fun代理',
-                    'value': 'https://github.cherishmoon.fun/'
+                    'label': 'github.cherishmoon.top代理',
+                    'value': 'https://github.cherishmoon.top/'
                 },
                 {
                     'label': 'github.91chi.fun代理',

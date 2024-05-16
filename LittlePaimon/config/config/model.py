@@ -55,7 +55,7 @@ class ConfigModel(BaseModel):
     # 早报60s
     morning_news: str = Field('https://api.vvhan.com/api/60s', alias='早报60s')
 
-    github_proxy: str = Field('https://github.cherishmoon.fun/', alias='github资源地址')
+    github_proxy: str = Field('https://github.cherishmoon.top/', alias='github资源地址')
 
     @property
     def alias_dict(self):
