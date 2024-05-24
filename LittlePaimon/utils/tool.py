@@ -93,13 +93,13 @@ async def check_resource():
             len(list((RESOURCE_BASE_PATH / 'LittlePaimon').rglob('*'))) >= 50):
         try:
             await aiorequests.download(
-                url=f'{config.github_proxy}https://raw.githubusercontent.com/CMHopeSunshine/LittlePaimonRes/main/resources.zip',
+                url=f'{config.github_proxy}https://github.com/CMHopeSunshine/LittlePaimonRes/raw/main/resources.zip',
                 save_path=RESOURCE_BASE_PATH / '小派蒙基础资源.zip')
             zipfile.ZipFile(RESOURCE_BASE_PATH / '小派蒙基础资源.zip').extractall(RESOURCE_BASE_PATH)
             (RESOURCE_BASE_PATH / '小派蒙基础资源.zip').unlink()
 
             await aiorequests.download(
-                url=f'{config.github_proxy}https://raw.githubusercontent.com/CMHopeSunshine/GenshinWikiMap/master/resources/genshin_resources.zip',
+                url=f'{config.github_proxy}https://github.com/CMHopeSunshine/GenshinWikiMap/raw/master/resources/genshin_resources.zip',
                 save_path=RESOURCE_BASE_PATH / '原神图标资源.zip')
             zipfile.ZipFile(RESOURCE_BASE_PATH / '原神图标资源.zip').extractall(RESOURCE_BASE_PATH / 'LittlePaimon')
             (RESOURCE_BASE_PATH / '原神图标资源.zip').unlink()
@@ -110,7 +110,7 @@ async def check_resource():
         if not (RESOURCE_BASE_PATH / 'LittlePaimon' / 'star_rail').is_dir():
             try:
                 await aiorequests.download(
-                    url=f'{config.github_proxy}https://raw.githubusercontent.com/CMHopeSunshine/LittlePaimonRes/main/star_rail.zip',
+                    url=f'{config.github_proxy}https://github.com/CMHopeSunshine/LittlePaimonRes/raw/main/star_rail.zip',
                     save_path=RESOURCE_BASE_PATH / 'star_rail.zip')
                 zipfile.ZipFile(RESOURCE_BASE_PATH / 'star_rail.zip').extractall(RESOURCE_BASE_PATH / 'LittlePaimon' / 'star_rail')
                 (RESOURCE_BASE_PATH / 'star_rail.zip').unlink()
