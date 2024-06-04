@@ -9,11 +9,7 @@
       "UI_Talent_U_Ayaka_01",
       "UI_Talent_S_Ayaka_04"
     ],
-    "SkillOrder": [
-      10024,
-      10018,
-      10019
-    ],
+    "SkillOrder": [10024, 10018, 10019],
     "Skills": {
       "10018": "Skill_S_Ayaka_01",
       "10019": "Skill_E_Ayaka",
@@ -46,11 +42,7 @@
       "UI_Talent_U_Qin_01",
       "UI_Talent_S_Qin_04"
     ],
-    "SkillOrder": [
-      10031,
-      10033,
-      10034
-    ],
+    "SkillOrder": [10031, 10033, 10034],
     "Skills": {
       "10031": "Skill_A_01",
       "10033": "Skill_S_Qin_02",
@@ -89,11 +81,7 @@
       "UI_Talent_U_PlayerWind_01",
       "UI_Talent_S_PlayerWind_04"
     ],
-    "SkillOrder": [
-      100543,
-      10067,
-      10068
-    ],
+    "SkillOrder": [100543, 10067, 10068],
     "Skills": {
       "10067": "Skill_S_PlayerWind_01",
       "10068": "Skill_E_PlayerWind_01",
@@ -118,11 +106,7 @@
       "UI_Talent_U_Lisa_01",
       "UI_Talent_S_Lisa_04"
     ],
-    "SkillOrder": [
-      10060,
-      10061,
-      10062
-    ],
+    "SkillOrder": [10060, 10061, 10062],
     "Skills": {
       "10060": "Skill_A_Catalyst_MD",
       "10061": "Skill_S_Lisa_01",
@@ -155,11 +139,7 @@
       "UI_Talent_U_PlayerWind_01",
       "UI_Talent_S_PlayerWind_04"
     ],
-    "SkillOrder": [
-      100553,
-      10067,
-      10068
-    ],
+    "SkillOrder": [100553, 10067, 10068],
     "Skills": {
       "10067": "Skill_S_PlayerWind_01",
       "10068": "Skill_E_PlayerWind_01",
@@ -184,11 +164,7 @@
       "UI_Talent_U_Barbara_01",
       "UI_Talent_S_Barbara_04"
     ],
-    "SkillOrder": [
-      10070,
-      10071,
-      10072
-    ],
+    "SkillOrder": [10070, 10071, 10072],
     "Skills": {
       "10070": "Skill_A_Catalyst_MD",
       "10071": "Skill_S_Barbara_01",
@@ -221,11 +197,7 @@
       "UI_Talent_U_Kaeya_02",
       "UI_Talent_S_Kaeya_04"
     ],
-    "SkillOrder": [
-      10073,
-      10074,
-      10075
-    ],
+    "SkillOrder": [10073, 10074, 10075],
     "Skills": {
       "10073": "Skill_A_01",
       "10074": "Skill_S_Kaeya_01",
@@ -250,11 +222,7 @@
       "UI_Talent_U_Diluc_02",
       "UI_Talent_S_Diluc_04"
     ],
-    "SkillOrder": [
-      10160,
-      10161,
-      10165
-    ],
+    "SkillOrder": [10160, 10161, 10165],
     "Skills": {
       "10160": "Skill_A_04",
       "10161": "Skill_S_Diluc_01_01",
@@ -287,11 +255,7 @@
       "UI_Talent_U_Razor_01",
       "UI_Talent_S_Razor_04"
     ],
-    "SkillOrder": [
-      10201,
-      10202,
-      10203
-    ],
+    "SkillOrder": [10201, 10202, 10203],
     "Skills": {
       "10201": "Skill_A_04",
       "10202": "Skill_S_Razor_01",
@@ -316,11 +280,7 @@
       "UI_Talent_U_Ambor_01",
       "UI_Talent_S_Ambor_04"
     ],
-    "SkillOrder": [
-      10041,
-      10032,
-      10017
-    ],
+    "SkillOrder": [10041, 10032, 10017],
     "Skills": {
       "10017": "Skill_E_Ambor",
       "10032": "Skill_S_Ambor_01",
@@ -353,11 +313,7 @@
       "UI_Talent_U_Venti_01",
       "UI_Talent_S_Venti_04"
     ],
-    "SkillOrder": [
-      10221,
-      10224,
-      10225
-    ],
+    "SkillOrder": [10221, 10224, 10225],
     "Skills": {
       "10221": "Skill_A_02",
       "10224": "Skill_S_Venti_01",
@@ -382,11 +338,7 @@
       "UI_Talent_U_Xiangling_01",
       "UI_Talent_S_Xiangling_04"
     ],
-    "SkillOrder": [
-      10231,
-      10232,
-      10235
-    ],
+    "SkillOrder": [10231, 10232, 10235],
     "Skills": {
       "10231": "Skill_A_03",
       "10232": "Skill_S_Xiangling_01",
@@ -411,11 +363,7 @@
       "UI_Talent_U_Beidou_02",
       "UI_Talent_S_Beidou_04"
     ],
-    "SkillOrder": [
-      10241,
-      10242,
-      10245
-    ],
+    "SkillOrder": [10241, 10242, 10245],
     "Skills": {
       "10241": "Skill_A_04",
       "10242": "Skill_S_Beidou_01",
@@ -440,11 +388,7 @@
       "UI_Talent_U_Xingqiu_02",
       "UI_Talent_S_Xingqiu_04"
     ],
-    "SkillOrder": [
-      10381,
-      10382,
-      10385
-    ],
+    "SkillOrder": [10381, 10382, 10385],
     "Skills": {
       "10381": "Skill_A_01",
       "10382": "Skill_S_Xingqiu_01",
@@ -469,11 +413,7 @@
       "UI_Talent_U_Xiao_02",
       "UI_Talent_S_Xiao_04"
     ],
-    "SkillOrder": [
-      10261,
-      10262,
-      10265
-    ],
+    "SkillOrder": [10261, 10262, 10265],
     "Skills": {
       "10261": "Skill_A_03",
       "10262": "Skill_S_Xiao_01",
@@ -498,11 +438,7 @@
       "UI_Talent_U_Ningguang_01",
       "UI_Talent_S_Ningguang_04"
     ],
-    "SkillOrder": [
-      10271,
-      10272,
-      10274
-    ],
+    "SkillOrder": [10271, 10272, 10274],
     "Skills": {
       "10271": "Skill_A_Catalyst_MD",
       "10272": "Skill_S_Ningguang_01",
@@ -535,11 +471,7 @@
       "UI_Talent_U_Klee_02",
       "UI_Talent_S_Klee_04"
     ],
-    "SkillOrder": [
-      10291,
-      10292,
-      10295
-    ],
+    "SkillOrder": [10291, 10292, 10295],
     "Skills": {
       "10291": "Skill_A_Catalyst_MD",
       "10292": "Skill_S_Klee_01",
@@ -564,11 +496,7 @@
       "UI_Talent_U_Zhongli_02",
       "UI_Talent_S_Zhongli_04"
     ],
-    "SkillOrder": [
-      10301,
-      10302,
-      10303
-    ],
+    "SkillOrder": [10301, 10302, 10303],
     "Skills": {
       "10301": "Skill_A_03",
       "10302": "Skill_S_Zhongli_01",
@@ -593,11 +521,7 @@
       "UI_Talent_U_Fischl_02",
       "UI_Talent_S_Fischl_04"
     ],
-    "SkillOrder": [
-      10311,
-      10312,
-      10313
-    ],
+    "SkillOrder": [10311, 10312, 10313],
     "Skills": {
       "10311": "Skill_A_02",
       "10312": "Skill_S_Fischl_01",
@@ -630,11 +554,7 @@
       "UI_Talent_U_Bennett_02",
       "UI_Talent_S_Bennett_04"
     ],
-    "SkillOrder": [
-      10321,
-      10322,
-      10323
-    ],
+    "SkillOrder": [10321, 10322, 10323],
     "Skills": {
       "10321": "Skill_A_01",
       "10322": "Skill_S_Bennett_01",
@@ -659,11 +579,7 @@
       "UI_Talent_U_Tartaglia_02",
       "UI_Talent_S_Tartaglia_04"
     ],
-    "SkillOrder": [
-      10331,
-      10332,
-      10333
-    ],
+    "SkillOrder": [10331, 10332, 10333],
     "Skills": {
       "10331": "Skill_A_02",
       "10332": "Skill_S_Tartaglia_01",
@@ -688,11 +604,7 @@
       "UI_Talent_U_Noel_02",
       "UI_Talent_S_Noel_04"
     ],
-    "SkillOrder": [
-      10341,
-      10342,
-      10343
-    ],
+    "SkillOrder": [10341, 10342, 10343],
     "Skills": {
       "10341": "Skill_A_04",
       "10342": "Skill_S_Noel_01",
@@ -717,11 +629,7 @@
       "UI_Talent_U_Qiqi_02",
       "UI_Talent_S_Qiqi_04"
     ],
-    "SkillOrder": [
-      10351,
-      10352,
-      10353
-    ],
+    "SkillOrder": [10351, 10352, 10353],
     "Skills": {
       "10351": "Skill_A_01",
       "10352": "Skill_S_Qiqi_01",
@@ -746,11 +654,7 @@
       "UI_Talent_U_Chongyun_02",
       "UI_Talent_S_Chongyun_04"
     ],
-    "SkillOrder": [
-      10401,
-      10402,
-      10403
-    ],
+    "SkillOrder": [10401, 10402, 10403],
     "Skills": {
       "10401": "Skill_A_04",
       "10402": "Skill_S_Chongyun_01",
@@ -775,11 +679,7 @@
       "UI_Talent_U_Ganyu_02",
       "UI_Talent_S_Ganyu_04"
     ],
-    "SkillOrder": [
-      10371,
-      10372,
-      10373
-    ],
+    "SkillOrder": [10371, 10372, 10373],
     "Skills": {
       "10371": "Skill_A_02",
       "10372": "Skill_S_Ganyu_01",
@@ -804,11 +704,7 @@
       "UI_Talent_U_Albedo_02",
       "UI_Talent_S_Albedo_04"
     ],
-    "SkillOrder": [
-      10386,
-      10387,
-      10388
-    ],
+    "SkillOrder": [10386, 10387, 10388],
     "Skills": {
       "10386": "Skill_A_01",
       "10387": "Skill_S_Albedo_01",
@@ -833,11 +729,7 @@
       "UI_Talent_U_Diona_02",
       "UI_Talent_S_Diona_04"
     ],
-    "SkillOrder": [
-      10391,
-      10392,
-      10395
-    ],
+    "SkillOrder": [10391, 10392, 10395],
     "Skills": {
       "10391": "Skill_A_02",
       "10392": "Skill_S_Diona_01",
@@ -862,11 +754,7 @@
       "UI_Talent_U_Mona_02",
       "UI_Talent_S_Mona_04"
     ],
-    "SkillOrder": [
-      10411,
-      10412,
-      10415
-    ],
+    "SkillOrder": [10411, 10412, 10415],
     "Skills": {
       "10411": "Skill_A_Catalyst_MD",
       "10412": "Skill_S_Mona_01",
@@ -899,11 +787,7 @@
       "UI_Talent_U_Keqing_02",
       "UI_Talent_S_Keqing_04"
     ],
-    "SkillOrder": [
-      10421,
-      10422,
-      10425
-    ],
+    "SkillOrder": [10421, 10422, 10425],
     "Skills": {
       "10421": "Skill_A_01",
       "10422": "Skill_S_Keqing_01",
@@ -936,11 +820,7 @@
       "UI_Talent_U_Sucrose_02",
       "UI_Talent_S_Sucrose_04"
     ],
-    "SkillOrder": [
-      10431,
-      10432,
-      10435
-    ],
+    "SkillOrder": [10431, 10432, 10435],
     "Skills": {
       "10431": "Skill_A_Catalyst_MD",
       "10432": "Skill_S_Sucrose_01",
@@ -965,11 +845,7 @@
       "UI_Talent_U_Xinyan_02",
       "UI_Talent_S_Xinyan_04"
     ],
-    "SkillOrder": [
-      10441,
-      10442,
-      10443
-    ],
+    "SkillOrder": [10441, 10442, 10443],
     "Skills": {
       "10441": "Skill_A_04",
       "10442": "Skill_S_Xinyan_01",
@@ -994,11 +870,7 @@
       "UI_Talent_U_Rosaria_02",
       "UI_Talent_S_Rosaria_04"
     ],
-    "SkillOrder": [
-      10451,
-      10452,
-      10453
-    ],
+    "SkillOrder": [10451, 10452, 10453],
     "Skills": {
       "10451": "Skill_A_03",
       "10452": "Skill_S_Rosaria_01",
@@ -1031,11 +903,7 @@
       "UI_Talent_U_Hutao_02",
       "UI_Talent_S_Hutao_04"
     ],
-    "SkillOrder": [
-      10461,
-      10462,
-      10463
-    ],
+    "SkillOrder": [10461, 10462, 10463],
     "Skills": {
       "10461": "Skill_A_03",
       "10462": "Skill_S_Hutao_01",
@@ -1060,11 +928,7 @@
       "UI_Talent_U_Kazuha_02",
       "UI_Talent_S_Kazuha_04"
     ],
-    "SkillOrder": [
-      10471,
-      10472,
-      10475
-    ],
+    "SkillOrder": [10471, 10472, 10475],
     "Skills": {
       "10471": "Skill_A_01",
       "10472": "Skill_S_Kazuha_01",
@@ -1089,11 +953,7 @@
       "UI_Talent_U_Feiyan_02",
       "UI_Talent_S_Feiyan_04"
     ],
-    "SkillOrder": [
-      10481,
-      10482,
-      10485
-    ],
+    "SkillOrder": [10481, 10482, 10485],
     "Skills": {
       "10481": "Skill_A_Catalyst_MD",
       "10482": "Skill_S_Feiyan_01",
@@ -1118,11 +978,7 @@
       "UI_Talent_U_Yoimiya_02",
       "UI_Talent_S_Yoimiya_04"
     ],
-    "SkillOrder": [
-      10491,
-      10492,
-      10495
-    ],
+    "SkillOrder": [10491, 10492, 10495],
     "Skills": {
       "10491": "Skill_A_02",
       "10492": "Skill_S_Yoimiya_01",
@@ -1147,11 +1003,7 @@
       "UI_Talent_U_Tohma_02",
       "UI_Talent_S_Tohma_04"
     ],
-    "SkillOrder": [
-      10501,
-      10502,
-      10505
-    ],
+    "SkillOrder": [10501, 10502, 10505],
     "Skills": {
       "10501": "Skill_A_03",
       "10502": "Skill_S_Tohma_01",
@@ -1176,11 +1028,7 @@
       "UI_Talent_U_Eula_02",
       "UI_Talent_S_Eula_04"
     ],
-    "SkillOrder": [
-      10511,
-      10512,
-      10515
-    ],
+    "SkillOrder": [10511, 10512, 10515],
     "Skills": {
       "10511": "Skill_A_04",
       "10512": "Skill_S_Eula_01",
@@ -1205,11 +1053,7 @@
       "UI_Talent_U_Shougun_01",
       "UI_Talent_S_Shougun_04"
     ],
-    "SkillOrder": [
-      10521,
-      10522,
-      10525
-    ],
+    "SkillOrder": [10521, 10522, 10525],
     "Skills": {
       "10521": "Skill_A_03",
       "10522": "Skill_S_Shougun_01",
@@ -1234,11 +1078,7 @@
       "UI_Talent_U_Sayu_01",
       "UI_Talent_S_Sayu_04"
     ],
-    "SkillOrder": [
-      10531,
-      10532,
-      10535
-    ],
+    "SkillOrder": [10531, 10532, 10535],
     "Skills": {
       "10531": "Skill_A_04",
       "10532": "Skill_S_Sayu_01",
@@ -1263,11 +1103,7 @@
       "UI_Talent_U_Kokomi_01",
       "UI_Talent_S_Kokomi_04"
     ],
-    "SkillOrder": [
-      10541,
-      10542,
-      10545
-    ],
+    "SkillOrder": [10541, 10542, 10545],
     "Skills": {
       "10541": "Skill_A_Catalyst_MD",
       "10542": "Skill_S_Kokomi_01",
@@ -1292,11 +1128,7 @@
       "UI_Talent_U_Gorou_02",
       "UI_Talent_S_Gorou_04"
     ],
-    "SkillOrder": [
-      10551,
-      10552,
-      10555
-    ],
+    "SkillOrder": [10551, 10552, 10555],
     "Skills": {
       "10551": "Skill_A_02",
       "10552": "Skill_S_Gorou_01",
@@ -1321,11 +1153,7 @@
       "UI_Talent_U_Sara_01",
       "UI_Talent_S_Sara_04"
     ],
-    "SkillOrder": [
-      10561,
-      10562,
-      10565
-    ],
+    "SkillOrder": [10561, 10562, 10565],
     "Skills": {
       "10561": "Skill_A_02",
       "10562": "Skill_S_Sara_01",
@@ -1350,11 +1178,7 @@
       "UI_Talent_U_Itto_02",
       "UI_Talent_S_Itto_04"
     ],
-    "SkillOrder": [
-      10571,
-      10572,
-      10575
-    ],
+    "SkillOrder": [10571, 10572, 10575],
     "Skills": {
       "10571": "Skill_A_04",
       "10572": "Skill_S_Itto_01",
@@ -1379,11 +1203,7 @@
       "UI_Talent_U_Yae_02",
       "UI_Talent_S_Yae_04"
     ],
-    "SkillOrder": [
-      10581,
-      10582,
-      10585
-    ],
+    "SkillOrder": [10581, 10582, 10585],
     "Skills": {
       "10581": "Skill_A_Catalyst_MD",
       "10582": "Skill_S_Yae_01",
@@ -1408,11 +1228,7 @@
       "UI_Talent_U_Heizo_02",
       "UI_Talent_S_Heizo_04"
     ],
-    "SkillOrder": [
-      10591,
-      10592,
-      10595
-    ],
+    "SkillOrder": [10591, 10592, 10595],
     "Skills": {
       "10591": "Skill_A_Catalyst_MD",
       "10592": "Skill_S_Heizo_01",
@@ -1437,11 +1253,7 @@
       "UI_Talent_U_Yelan_02",
       "UI_Talent_S_Yelan_04"
     ],
-    "SkillOrder": [
-      10606,
-      10607,
-      10610
-    ],
+    "SkillOrder": [10606, 10607, 10610],
     "Skills": {
       "10606": "Skill_A_02",
       "10607": "Skill_S_Yelan_01",
@@ -1456,12 +1268,8 @@
     "SideIconName": "UI_AvatarIcon_Side_Yelan",
     "QualityType": "QUALITY_ORANGE"
   },
-  "10000061":{
-    "SkillOrder": [
-      10611,
-      10612,
-      10615
-    ],
+  "10000061": {
+    "SkillOrder": [10611, 10612, 10615],
     "Skills": {
       "10611": "Skill_A_01",
       "10612": "Skill_S_Momoka_01",
@@ -1479,11 +1287,7 @@
       "UI_Talent_S_Aloy_Lock",
       "UI_Talent_S_Aloy_Lock"
     ],
-    "SkillOrder": [
-      10621,
-      10622,
-      10625
-    ],
+    "SkillOrder": [10621, 10622, 10625],
     "Skills": {
       "10621": "Skill_A_02",
       "10622": "Skill_S_Aloy_01",
@@ -1508,11 +1312,7 @@
       "UI_Talent_U_Shenhe_02",
       "UI_Talent_S_Shenhe_04"
     ],
-    "SkillOrder": [
-      10631,
-      10632,
-      10635
-    ],
+    "SkillOrder": [10631, 10632, 10635],
     "Skills": {
       "10631": "Skill_A_03",
       "10632": "Skill_S_Shenhe_01",
@@ -1537,11 +1337,7 @@
       "UI_Talent_U_Yunjin_02",
       "UI_Talent_S_Yunjin_04"
     ],
-    "SkillOrder": [
-      10641,
-      10642,
-      10643
-    ],
+    "SkillOrder": [10641, 10642, 10643],
     "Skills": {
       "10641": "Skill_A_03",
       "10642": "Skill_S_Yunjin_01",
@@ -1566,11 +1362,7 @@
       "UI_Talent_U_Shinobu_02",
       "UI_Talent_S_Shinobu_04"
     ],
-    "SkillOrder": [
-      10651,
-      10652,
-      10655
-    ],
+    "SkillOrder": [10651, 10652, 10655],
     "Skills": {
       "10651": "Skill_A_01",
       "10652": "Skill_S_Shinobu_01",
@@ -1595,11 +1387,7 @@
       "UI_Talent_U_Ayato_01",
       "UI_Talent_S_Ayato_04"
     ],
-    "SkillOrder": [
-      10661,
-      10662,
-      10665
-    ],
+    "SkillOrder": [10661, 10662, 10665],
     "Skills": {
       "10661": "Skill_A_01",
       "10662": "Skill_S_Ayato_01",
@@ -1624,11 +1412,7 @@
       "UI_Talent_U_Collei_01",
       "UI_Talent_S_Collei_04"
     ],
-    "SkillOrder": [
-      10671,
-      10672,
-      10675
-    ],
+    "SkillOrder": [10671, 10672, 10675],
     "Skills": {
       "10671": "Skill_A_02",
       "10672": "Skill_S_Collei_01",
@@ -1653,11 +1437,7 @@
       "UI_Talent_U_Dori_01",
       "UI_Talent_S_Dori_04"
     ],
-    "SkillOrder": [
-      10681,
-      10682,
-      10685
-    ],
+    "SkillOrder": [10681, 10682, 10685],
     "Skills": {
       "10681": "Skill_A_04",
       "10682": "Skill_S_Dori_01",
@@ -1682,11 +1462,7 @@
       "UI_Talent_U_Tighnari_02",
       "UI_Talent_S_Tighnari_04"
     ],
-    "SkillOrder": [
-      10691,
-      10692,
-      10695
-    ],
+    "SkillOrder": [10691, 10692, 10695],
     "Skills": {
       "10691": "Skill_A_02",
       "10692": "Skill_S_Tighnari_01",
@@ -1711,11 +1487,7 @@
       "UI_Talent_U_Nilou_02",
       "UI_Talent_S_Nilou_04"
     ],
-    "SkillOrder": [
-      10701,
-      10702,
-      10705
-    ],
+    "SkillOrder": [10701, 10702, 10705],
     "Skills": {
       "10701": "Skill_A_01",
       "10702": "Skill_S_Nilou_01",
@@ -1740,11 +1512,7 @@
       "UI_Talent_U_Cyno_02",
       "UI_Talent_S_Cyno_04"
     ],
-    "SkillOrder": [
-      10711,
-      10712,
-      10715
-    ],
+    "SkillOrder": [10711, 10712, 10715],
     "Skills": {
       "10711": "Skill_A_03",
       "10712": "Skill_S_Cyno_01",
@@ -1769,11 +1537,7 @@
       "UI_Talent_U_Candace_02",
       "UI_Talent_S_Candace_04"
     ],
-    "SkillOrder": [
-      10721,
-      10722,
-      10725
-    ],
+    "SkillOrder": [10721, 10722, 10725],
     "Skills": {
       "10721": "Skill_A_03",
       "10722": "Skill_S_Candace_01",
@@ -1798,11 +1562,7 @@
       "UI_Talent_U_Nahida_02",
       "UI_Talent_S_Nahida_04"
     ],
-    "SkillOrder": [
-      10731,
-      10732,
-      10735
-    ],
+    "SkillOrder": [10731, 10732, 10735],
     "Skills": {
       "10731": "Skill_A_Catalyst_MD",
       "10732": "Skill_S_Nahida_01",
@@ -1827,11 +1587,7 @@
       "UI_Talent_U_Layla_02",
       "UI_Talent_S_Layla_04"
     ],
-    "SkillOrder": [
-      10741,
-      10742,
-      10745
-    ],
+    "SkillOrder": [10741, 10742, 10745],
     "Skills": {
       "10741": "Skill_A_01",
       "10742": "Skill_S_Layla_01",
@@ -1856,11 +1612,7 @@
       "UI_Talent_U_Wanderer_01",
       "UI_Talent_S_Wanderer_04"
     ],
-    "SkillOrder": [
-      10751,
-      10752,
-      10755
-    ],
+    "SkillOrder": [10751, 10752, 10755],
     "Skills": {
       "10751": "Skill_A_Catalyst_MD",
       "10752": "Skill_S_Wanderer_01",
@@ -1885,11 +1637,7 @@
       "UI_Talent_U_Faruzan_02",
       "UI_Talent_S_Faruzan_04"
     ],
-    "SkillOrder": [
-      10761,
-      10762,
-      10765
-    ],
+    "SkillOrder": [10761, 10762, 10765],
     "Skills": {
       "10761": "Skill_A_02",
       "10762": "Skill_S_Faruzan_01",
@@ -1914,11 +1662,7 @@
       "UI_Talent_U_Yaoyao_02",
       "UI_Talent_S_Yaoyao_04"
     ],
-    "SkillOrder": [
-      10771,
-      10772,
-      10775
-    ],
+    "SkillOrder": [10771, 10772, 10775],
     "Skills": {
       "10771": "Skill_A_03",
       "10772": "Skill_S_Yaoyao_01",
@@ -1943,11 +1687,7 @@
       "UI_Talent_U_Alhatham_02",
       "UI_Talent_S_Alhatham_04"
     ],
-    "SkillOrder": [
-      10781,
-      10782,
-      10785
-    ],
+    "SkillOrder": [10781, 10782, 10785],
     "Skills": {
       "10781": "Skill_A_01",
       "10782": "Skill_S_Alhatham_01",
@@ -1972,11 +1712,7 @@
       "UI_Talent_U_Dehya_02",
       "UI_Talent_S_Dehya_04"
     ],
-    "SkillOrder": [
-      10791,
-      10792,
-      10795
-    ],
+    "SkillOrder": [10791, 10792, 10795],
     "Skills": {
       "10791": "Skill_A_04",
       "10792": "Skill_S_Dehya_01",
@@ -2001,11 +1737,7 @@
       "UI_Talent_U_Mika_02",
       "UI_Talent_S_Mika_04"
     ],
-    "SkillOrder": [
-      10801,
-      10802,
-      10805
-    ],
+    "SkillOrder": [10801, 10802, 10805],
     "Skills": {
       "10801": "Skill_A_03",
       "10802": "Skill_S_Mika_01",
@@ -2030,11 +1762,7 @@
       "UI_Talent_U_Kaveh_01",
       "UI_Talent_S_Kaveh_04"
     ],
-    "SkillOrder": [
-      10811,
-      10812,
-      10815
-    ],
+    "SkillOrder": [10811, 10812, 10815],
     "Skills": {
       "10811": "Skill_A_04",
       "10812": "Skill_S_Kaveh_01",
@@ -2059,11 +1787,7 @@
       "UI_Talent_U_Baizhuer_02",
       "UI_Talent_S_Baizhuer_04"
     ],
-    "SkillOrder": [
-      10821,
-      10822,
-      10825
-    ],
+    "SkillOrder": [10821, 10822, 10825],
     "Skills": {
       "10821": "Skill_A_Catalyst_MD",
       "10822": "Skill_S_Baizhuer_01",
@@ -2079,189 +1803,409 @@
     "QualityType": "QUALITY_ORANGE"
   },
   "10000083": {
-    "SkillOrder": [
-      10831,
-      10832,
-      10835
+    "Element": "Wind",
+    "NameTextMapHash": 1225226258,
+    "QualityType": "QUALITY_PURPLE",
+    "SideIconName": "UI_AvatarIcon_Side_Linette",
+    "Consts": [
+      "UI_Talent_S_Linette_01",
+      "UI_Talent_S_Linette_02",
+      "UI_Talent_U_Linette_01",
+      "UI_Talent_S_Linette_03",
+      "UI_Talent_U_Linette_02",
+      "UI_Talent_S_Linette_04"
     ],
+    "SkillOrder": [10831, 10832, 10835],
     "Skills": {
       "10831": "Skill_A_01",
       "10832": "Skill_S_Linette_01",
       "10835": "Skill_E_Linette_01"
     },
-    "SideIconName": "UI_AvatarIcon_Side_Linette"
+    "ProudMap": {
+      "10831": 8331,
+      "10832": 8332,
+      "10835": 8339
+    }
   },
   "10000084": {
-    "SkillOrder": [
-      10841,
-      10842,
-      10845
+    "Element": "Fire",
+    "NameTextMapHash": 2472444970,
+    "QualityType": "QUALITY_ORANGE",
+    "SideIconName": "UI_AvatarIcon_Side_Liney",
+    "Consts": [
+      "UI_Talent_S_Liney_01",
+      "UI_Talent_S_Liney_03",
+      "UI_Talent_U_Liney_01",
+      "UI_Talent_S_Liney_02",
+      "UI_Talent_U_Liney_02",
+      "UI_Talent_S_Liney_04"
     ],
+    "SkillOrder": [10841, 10842, 10845],
     "Skills": {
       "10841": "Skill_A_02",
       "10842": "Skill_S_Liney_01",
       "10845": "Skill_E_Liney_01"
     },
-    "SideIconName": "UI_AvatarIcon_Side_Liney"
+    "ProudMap": {
+      "10841": 8431,
+      "10842": 8432,
+      "10845": 8439
+    }
   },
   "10000085": {
-    "SkillOrder": [
-      10851,
-      10852,
-      10855
+    "Element": "Ice",
+    "NameTextMapHash": 4201964354,
+    "QualityType": "QUALITY_PURPLE",
+    "SideIconName": "UI_AvatarIcon_Side_Freminet",
+    "Consts": [
+      "UI_Talent_S_Freminet_01",
+      "UI_Talent_S_Freminet_02",
+      "UI_Talent_U_Freminet_01",
+      "UI_Talent_S_Freminet_03",
+      "UI_Talent_U_Freminet_02",
+      "UI_Talent_S_Freminet_04"
     ],
+    "SkillOrder": [10851, 10852, 10855],
     "Skills": {
       "10851": "Skill_A_04",
       "10852": "Skill_S_Freminet_01",
       "10855": "Skill_E_Freminet_01"
     },
-    "SideIconName": "UI_AvatarIcon_Side_Freminet"
+    "ProudMap": {
+      "10851": 8531,
+      "10852": 8532,
+      "10855": 8539
+    }
   },
   "10000086": {
-    "SkillOrder": [
-      10861,
-      10862,
-      10865
+    "Element": "Ice",
+    "NameTextMapHash": 370151050,
+    "QualityType": "QUALITY_ORANGE",
+    "SideIconName": "UI_AvatarIcon_Side_Wriothesley",
+    "Consts": [
+      "UI_Talent_S_Wriothesley_01",
+      "UI_Talent_S_Wriothesley_02",
+      "UI_Talent_U_Wriothesley_01",
+      "UI_Talent_S_Wriothesley_03",
+      "UI_Talent_U_Wriothesley_02",
+      "UI_Talent_S_Wriothesley_04"
     ],
+    "SkillOrder": [10861, 10862, 10865],
     "Skills": {
       "10861": "Skill_A_Catalyst_MD",
       "10862": "Skill_S_Wriothesley_01",
       "10865": "Skill_E_Wriothesley_01"
     },
-    "SideIconName": "UI_AvatarIcon_Side_Wriothesley"
+    "ProudMap": {
+      "10861": 8631,
+      "10862": 8632,
+      "10865": 8639
+    }
   },
   "10000087": {
-    "SkillOrder": [
-      10871,
-      10872,
-      10875
+    "Element": "Water",
+    "NameTextMapHash": 1504902330,
+    "QualityType": "QUALITY_ORANGE",
+    "SideIconName": "UI_AvatarIcon_Side_Neuvillette",
+    "Consts": [
+      "UI_Talent_S_Neuvillette_01",
+      "UI_Talent_S_Neuvillette_02",
+      "UI_Talent_U_Neuvillette_01",
+      "UI_Talent_S_Neuvillette_03",
+      "UI_Talent_U_Neuvillette_02",
+      "UI_Talent_S_Neuvillette_04"
     ],
+    "SkillOrder": [10871, 10872, 10875],
     "Skills": {
       "10871": "Skill_A_Catalyst_MD",
       "10872": "Skill_S_Neuvillette_01",
       "10875": "Skill_E_Neuvillette_01"
     },
-    "SideIconName": "UI_AvatarIcon_Side_Neuvillette"
+    "ProudMap": {
+      "10871": 8731,
+      "10872": 8732,
+      "10875": 8739
+    }
   },
   "10000088": {
-    "SkillOrder": [
-      10881,
-      10882,
-      10885
+    "Element": "Ice",
+    "NameTextMapHash": 3831162130,
+    "QualityType": "QUALITY_PURPLE",
+    "SideIconName": "UI_AvatarIcon_Side_Charlotte",
+    "Consts": [
+      "UI_Talent_S_Charlotte_01",
+      "UI_Talent_S_Charlotte_02",
+      "UI_Talent_U_Charlotte_01",
+      "UI_Talent_S_Charlotte_03",
+      "UI_Talent_U_Charlotte_02",
+      "UI_Talent_S_Charlotte_04"
     ],
+    "SkillOrder": [10881, 10882, 10885],
     "Skills": {
       "10881": "Skill_A_Catalyst_MD",
       "10882": "Skill_S_Charlotte_01",
       "10885": "Skill_E_Charlotte_01"
     },
-    "SideIconName": "UI_AvatarIcon_Side_Charlotte"
+    "ProudMap": {
+      "10881": 8831,
+      "10882": 8832,
+      "10885": 8839
+    }
   },
   "10000089": {
-    "SkillOrder": [
-      10891,
-      10892,
-      10895
+    "Element": "Water",
+    "NameTextMapHash": 2180900234,
+    "QualityType": "QUALITY_ORANGE",
+    "SideIconName": "UI_AvatarIcon_Side_Furina",
+    "Consts": [
+      "UI_Talent_S_Furina_01",
+      "UI_Talent_S_Furina_04",
+      "UI_Talent_U_Furina_02",
+      "UI_Talent_S_Furina_03",
+      "UI_Talent_U_Furina_01",
+      "UI_Talent_S_Furina_02"
     ],
+    "SkillOrder": [10891, 10892, 10895],
     "Skills": {
       "10891": "Skill_A_01",
       "10892": "Skill_S_Furina_01",
       "10895": "Skill_E_Furina_01"
     },
-    "SideIconName": "UI_AvatarIcon_Side_Furina"
+    "ProudMap": {
+      "10891": 8931,
+      "10892": 8932,
+      "10895": 8939
+    }
   },
   "10000090": {
-    "SkillOrder": [
-      10901,
-      10902,
-      10905
+    "Element": "Fire",
+    "NameTextMapHash": 540313842,
+    "QualityType": "QUALITY_PURPLE",
+    "SideIconName": "UI_AvatarIcon_Side_Chevreuse",
+    "Consts": [
+      "UI_Talent_S_Chevreuse_01",
+      "UI_Talent_S_Chevreuse_02",
+      "UI_Talent_U_Chevreuse_01",
+      "UI_Talent_S_Chevreuse_03",
+      "UI_Talent_U_Chevreuse_02",
+      "UI_Talent_S_Chevreuse_04"
     ],
+    "SkillOrder": [10901, 10902, 10905],
     "Skills": {
       "10901": "Skill_A_03",
       "10902": "Skill_S_Chevreuse_01",
       "10905": "Skill_E_Chevreuse_01"
     },
-    "SideIconName": "UI_AvatarIcon_Side_Chevreuse"
+    "ProudMap": {
+      "10901": 9031,
+      "10902": 9032,
+      "10905": 9039
+    }
   },
   "10000091": {
-    "SkillOrder": [
-      10911,
-      10912,
-      10915
+    "Element": "Rock",
+    "NameTextMapHash": 2877588578,
+    "QualityType": "QUALITY_ORANGE",
+    "SideIconName": "UI_AvatarIcon_Side_Navia",
+    "Consts": [
+      "UI_Talent_S_Navia_01",
+      "UI_Talent_S_Navia_02",
+      "UI_Talent_U_Navia_01",
+      "UI_Talent_S_Navia_03",
+      "UI_Talent_U_Navia_02",
+      "UI_Talent_S_Navia_04"
     ],
+    "SkillOrder": [10911, 10912, 10915],
     "Skills": {
       "10911": "Skill_A_04",
       "10912": "Skill_S_Navia_01",
       "10915": "Skill_E_Navia_01"
     },
-    "SideIconName": "UI_AvatarIcon_Side_Navia"
+    "ProudMap": {
+      "10911": 9131,
+      "10912": 9132,
+      "10915": 9139
+    }
   },
   "10000092": {
-    "SkillOrder": [
-      10921,
-      10922,
-      10925
+    "Element": "Fire",
+    "NameTextMapHash": 2822240322,
+    "QualityType": "QUALITY_PURPLE",
+    "SideIconName": "UI_AvatarIcon_Side_Gaming",
+    "Consts": [
+      "UI_Talent_S_Gaming_01",
+      "UI_Talent_S_Gaming_02",
+      "UI_Talent_U_Gaming_01",
+      "UI_Talent_S_Gaming_03",
+      "UI_Talent_U_Gaming_02",
+      "UI_Talent_S_Gaming_04"
     ],
+    "SkillOrder": [10921, 10922, 10925],
     "Skills": {
       "10921": "Skill_A_04",
       "10922": "Skill_S_Gaming_01",
       "10925": "Skill_E_Gaming_01"
     },
-    "SideIconName": "UI_AvatarIcon_Side_Gaming"
+    "ProudMap": {
+      "10921": 9231,
+      "10922": 9232,
+      "10925": 9239
+    }
   },
   "10000093": {
-    "SkillOrder": [
-      10931,
-      10932,
-      10935
+    "Element": "Wind",
+    "NameTextMapHash": 3648220770,
+    "QualityType": "QUALITY_ORANGE",
+    "SideIconName": "UI_AvatarIcon_Side_Liuyun",
+    "Consts": [
+      "UI_Talent_S_Liuyun_01",
+      "UI_Talent_S_Liuyun_02",
+      "UI_Talent_U_Liuyun_02",
+      "UI_Talent_S_Liuyun_03",
+      "UI_Talent_U_Liuyun_01",
+      "UI_Talent_S_Liuyun_04"
     ],
+    "SkillOrder": [10931, 10932, 10935],
     "Skills": {
       "10931": "Skill_A_Catalyst_MD",
       "10932": "Skill_S_Liuyun_01",
       "10935": "Skill_E_Liuyun_01"
     },
-    "SideIconName": "UI_AvatarIcon_Side_Liuyun"
+    "ProudMap": {
+      "10931": 9331,
+      "10932": 9332,
+      "10935": 9339
+    }
   },
   "10000094": {
-    "SkillOrder": [
-      10941,
-      10942,
-      10945
+    "Element": "Rock",
+    "NameTextMapHash": 1944606922,
+    "QualityType": "QUALITY_ORANGE",
+    "SideIconName": "UI_AvatarIcon_Side_Chiori",
+    "Consts": [
+      "UI_Talent_S_Chiori_01",
+      "UI_Talent_S_Chiori_03",
+      "UI_Talent_U_Chiori_01",
+      "UI_Talent_S_Chiori_02",
+      "UI_Talent_U_Chiori_02",
+      "UI_Talent_S_Chiori_04"
     ],
+    "SkillOrder": [10941, 10942, 10945],
     "Skills": {
       "10941": "Skill_A_01",
       "10942": "Skill_S_Chiori_01",
       "10945": "Skill_E_Chiori_01"
     },
-    "SideIconName": "UI_AvatarIcon_Side_Chiori"
+    "ProudMap": {
+      "10941": 9431,
+      "10942": 9432,
+      "10945": 9439
+    }
+  },
+  "10000095": {
+    "Element": "Water",
+    "NameTextMapHash": 781488962,
+    "QualityType": "QUALITY_ORANGE",
+    "SideIconName": "UI_AvatarIcon_Side_Sigewinne",
+    "Consts": [
+      "UI_Talent_S_Sigewinne_01",
+      "UI_Talent_S_Sigewinne_02",
+      "UI_Talent_U_Sigewinne_01",
+      "UI_Talent_S_Sigewinne_03",
+      "UI_Talent_U_Sigewinne_02",
+      "UI_Talent_S_Sigewinne_04"
+    ],
+    "SkillOrder": [10951, 10952, 10955],
+    "Skills": {
+      "10951": "Skill_A_02",
+      "10952": "Skill_S_Sigewinne_01",
+      "10955": "Skill_E_Sigewinne_01"
+    },
+    "ProudMap": {
+      "10951": 9531,
+      "10952": 9532,
+      "10955": 9539
+    }
   },
   "10000096": {
-    "SkillOrder": [
-      10941,
-      10942,
-      10945
+    "Element": "Fire",
+    "NameTextMapHash": 167199474,
+    "QualityType": "QUALITY_ORANGE",
+    "SideIconName": "UI_AvatarIcon_Side_Arlecchino",
+    "Consts": [
+      "UI_Talent_S_Arlecchino_01",
+      "UI_Talent_S_Arlecchino_02",
+      "UI_Talent_U_Arlecchino_01",
+      "UI_Talent_S_Arlecchino_03",
+      "UI_Talent_U_Arlecchino_02",
+      "UI_Talent_S_Arlecchino_04"
     ],
+    "SkillOrder": [10961, 10962, 10965],
     "Skills": {
-      "10941": "Skill_A_03",
-      "10942": "Skill_S_Arlecchino_01",
-      "10945": "Skill_E_Arlecchino_01"
+      "10961": "Skill_A_03",
+      "10962": "Skill_S_Arlecchino_01",
+      "10965": "Skill_E_Arlecchino_01"
     },
-    "SideIconName": "UI_AvatarIcon_Side_Arlecchino"
+    "ProudMap": {
+      "10961": 9631,
+      "10962": 9632,
+      "10965": 9639
+    }
+  },
+  "10000097": {
+    "Element": "Electric",
+    "NameTextMapHash": 1431322346,
+    "QualityType": "QUALITY_PURPLE",
+    "SideIconName": "UI_AvatarIcon_Side_Sethos",
+    "Consts": [
+      "UI_Talent_S_Sethos_01",
+      "UI_Talent_S_Sethos_02",
+      "UI_Talent_U_Sethos_01",
+      "UI_Talent_S_Sethos_03",
+      "UI_Talent_U_Sethos_02",
+      "UI_Talent_S_Sethos_04"
+    ],
+    "SkillOrder": [10971, 10972, 10975],
+    "Skills": {
+      "10971": "Skill_A_02",
+      "10972": "Skill_S_Sethos_01",
+      "10975": "Skill_E_Sethos_01"
+    },
+    "ProudMap": {
+      "10971": 9731,
+      "10972": 9732,
+      "10975": 9739
+    }
+  },
+  "10000098": {
+    "Element": "Electric",
+    "NameTextMapHash": 2745369298,
+    "QualityType": "QUALITY_ORANGE",
+    "SideIconName": "UI_AvatarIcon_Side_Clorinde",
+    "Consts": [
+      "UI_Talent_S_Clorinde_01",
+      "UI_Talent_S_Clorinde_02",
+      "UI_Talent_U_Clorinde_02",
+      "UI_Talent_S_Clorinde_03",
+      "UI_Talent_U_Clorinde_01",
+      "UI_Talent_S_Clorinde_04"
+    ],
+    "SkillOrder": [10981, 10982, 10985],
+    "Skills": {
+      "10981": "Skill_A_01",
+      "10982": "Skill_S_Clorinde_01",
+      "10985": "Skill_E_Clorinde_01"
+    },
+    "ProudMap": {
+      "10981": 9831,
+      "10982": 9832,
+      "10985": 9839
+    }
   },
   "10000005-501": {
     "Element": "None",
-    "Consts": [
-      "None",
-      "None",
-      "None",
-      "None",
-      "None",
-      "None"
-    ],
-    "SkillOrder": [
-      100540,
-      10067,
-      10068
-    ],
+    "Consts": ["None", "None", "None", "None", "None", "None"],
+    "SkillOrder": [100540, 10067, 10068],
     "Skills": {
       "10067": "None",
       "10068": "None",
@@ -2278,11 +2222,7 @@
   },
   "10000005-502": {},
   "10000005-503": {
-    "SkillOrder": [
-      100542,
-      10087,
-      10088
-    ],
+    "SkillOrder": [100542, 10087, 10088],
     "Skills": {
       "10087": "Skill_S_PlayerWater_01",
       "10088": "Skill_E_PlayerWater_01",
@@ -2300,11 +2240,7 @@
       "UI_Talent_U_PlayerWind_01",
       "UI_Talent_S_PlayerWind_04"
     ],
-    "SkillOrder": [
-      100543,
-      10067,
-      10068
-    ],
+    "SkillOrder": [100543, 10067, 10068],
     "Skills": {
       "10067": "Skill_S_PlayerWind_01",
       "10068": "Skill_E_PlayerWind_01",
@@ -2330,11 +2266,7 @@
       "UI_Talent_U_PlayerRock_01",
       "UI_Talent_S_PlayerRock_04"
     ],
-    "SkillOrder": [
-      100545,
-      10077,
-      10078
-    ],
+    "SkillOrder": [100545, 10077, 10078],
     "Skills": {
       "10077": "Skill_S_PlayerRock_01",
       "10078": "Skill_E_PlayerRock_01",
@@ -2359,11 +2291,7 @@
       "UI_Talent_U_PlayerElectric_02",
       "UI_Talent_S_PlayerElectric_04"
     ],
-    "SkillOrder": [
-      100546,
-      10602,
-      10605
-    ],
+    "SkillOrder": [100546, 10602, 10605],
     "Skills": {
       "10602": "Skill_S_PlayerElectric_01",
       "10605": "Skill_E_PlayerElectric_01",
@@ -2388,11 +2316,7 @@
       "UI_Talent_S_PlayerGrass_05",
       "UI_Talent_S_PlayerGrass_06"
     ],
-    "SkillOrder": [
-      100547,
-      10117,
-      10118
-    ],
+    "SkillOrder": [100547, 10117, 10118],
     "Skills": {
       "10117": "Skill_E_PlayerGrass_01",
       "10118": "Skill_S_PlayerGrass_01",
@@ -2409,19 +2333,8 @@
   },
   "10000007-701": {
     "Element": "None",
-    "Consts": [
-      "None",
-      "None",
-      "None",
-      "None",
-      "None",
-      "None"
-    ],
-    "SkillOrder": [
-      100550,
-      10067,
-      10068
-    ],
+    "Consts": ["None", "None", "None", "None", "None", "None"],
+    "SkillOrder": [100550, 10067, 10068],
     "Skills": {
       "10067": "None",
       "10068": "None",
@@ -2438,11 +2351,7 @@
   },
   "10000007-702": {},
   "10000007-703": {
-    "SkillOrder": [
-      100552,
-      10087,
-      10088
-    ],
+    "SkillOrder": [100552, 10087, 10088],
     "Skills": {
       "10087": "Skill_S_PlayerWater_01",
       "10088": "Skill_E_PlayerWater_01",
@@ -2460,11 +2369,7 @@
       "UI_Talent_U_PlayerWind_01",
       "UI_Talent_S_PlayerWind_04"
     ],
-    "SkillOrder": [
-      100553,
-      10067,
-      10068
-    ],
+    "SkillOrder": [100553, 10067, 10068],
     "Skills": {
       "10067": "Skill_S_PlayerWind_01",
       "10068": "Skill_E_PlayerWind_01",
@@ -2490,11 +2395,7 @@
       "UI_Talent_U_PlayerRock_01",
       "UI_Talent_S_PlayerRock_04"
     ],
-    "SkillOrder": [
-      100555,
-      10077,
-      10078
-    ],
+    "SkillOrder": [100555, 10077, 10078],
     "Skills": {
       "10077": "Skill_S_PlayerRock_01",
       "10078": "Skill_E_PlayerRock_01",
@@ -2519,11 +2420,7 @@
       "UI_Talent_U_PlayerElectric_02",
       "UI_Talent_S_PlayerElectric_04"
     ],
-    "SkillOrder": [
-      100556,
-      10602,
-      10605
-    ],
+    "SkillOrder": [100556, 10602, 10605],
     "Skills": {
       "10602": "Skill_S_PlayerElectric_01",
       "10605": "Skill_E_PlayerElectric_01",
@@ -2548,11 +2445,7 @@
       "UI_Talent_S_PlayerGrass_05",
       "UI_Talent_S_PlayerGrass_06"
     ],
-    "SkillOrder": [
-      100557,
-      10117,
-      10118
-    ],
+    "SkillOrder": [100557, 10117, 10118],
     "Skills": {
       "10117": "Skill_E_PlayerGrass_01",
       "10118": "Skill_S_PlayerGrass_01",
