@@ -527,7 +527,13 @@
     "983": "「我将铭记白昼的誓言」",
     "984": "「铭记泪，生命与仁爱」",
     "985": "「也铭记黎明终将到来」",
-    "986": "「为此，勿将希望弃扬」"
+    "986": "「为此，勿将希望弃扬」",
+    "991": "淡香浸析",
+    "992": "湖光顶调",
+    "993": "郁馥臻萃",
+    "994": "柔灯心韵",
+    "995": "纯露凝芳",
+    "996": "茉洁香迹"
   },
   "Icon": {
     "21": "UI_Talent_S_Ayaka_01",
@@ -1057,6 +1063,12 @@
     "983": "UI_Talent_U_Clorinde_02",
     "984": "UI_Talent_S_Clorinde_03",
     "985": "UI_Talent_U_Clorinde_01",
-    "986": "UI_Talent_S_Clorinde_04"
+    "986": "UI_Talent_S_Clorinde_04",
+    "991": "UI_Talent_S_Emilie_01",
+    "992": "UI_Talent_S_Emilie_02",
+    "993": "UI_Talent_U_Emilie_01",
+    "994": "UI_Talent_S_Emilie_03",
+    "995": "UI_Talent_U_Emilie_02",
+    "996": "UI_Talent_S_Emilie_04"
   }
 }
