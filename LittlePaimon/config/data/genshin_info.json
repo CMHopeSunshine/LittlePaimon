@@ -2585,6 +2585,122 @@
     "SideIconName": "UI_AvatarIcon_Side_Emilie",
     "QualityType": "QUALITY_ORANGE"
   },
+  "10000100": {
+    "Element": "Rock",
+    "Consts": [
+      "UI_Talent_S_Kachina_01",
+      "UI_Talent_S_Kachina_02",
+      "UI_Talent_U_Kachina_01",
+      "UI_Talent_S_Kachina_03",
+      "UI_Talent_U_Kachina_02",
+      "UI_Talent_S_Kachina_04"
+    ],
+    "SkillOrder": [
+      11001,
+      11002,
+      11005
+    ],
+    "Skills": {
+      "11001": "Skill_A_03",
+      "11002": "Skill_S_Kachina_01",
+      "11005": "Skill_E_Kachina_01"
+    },
+    "ProudMap": {
+      "11001": 10031,
+      "11002": 10032,
+      "11005": 10039
+    },
+    "NameTextMapHash": 2531816890,
+    "SideIconName": "UI_AvatarIcon_Side_Kachina",
+    "QualityType": "QUALITY_PURPLE"
+  },
+  "10000101": {
+    "Element": "Grass",
+    "Consts": [
+      "UI_Talent_S_Kinich_01",
+      "UI_Talent_S_Kinich_02",
+      "UI_Talent_U_Kinich_01",
+      "UI_Talent_S_Kinich_03",
+      "UI_Talent_U_Kinich_02",
+      "UI_Talent_S_Kinich_04"
+    ],
+    "SkillOrder": [
+      11011,
+      11012,
+      11015
+    ],
+    "Skills": {
+      "11011": "Skill_A_04",
+      "11012": "Skill_S_Kinich_01",
+      "11015": "Skill_E_Kinich_01"
+    },
+    "ProudMap": {
+      "11011": 10131,
+      "11012": 10132,
+      "11015": 10139
+    },
+    "NameTextMapHash": 4172712634,
+    "SideIconName": "UI_AvatarIcon_Side_Kinich",
+    "QualityType": "QUALITY_ORANGE"
+  },
+  "10000102": {
+    "Element": "Water",
+    "Consts": [
+      "UI_Talent_S_Mualani_01",
+      "UI_Talent_S_Mualani_02",
+      "UI_Talent_U_Mualani_01",
+      "UI_Talent_S_Mualani_03",
+      "UI_Talent_U_Mualani_02",
+      "UI_Talent_S_Mualani_04"
+    ],
+    "SkillOrder": [
+      30000,
+      30002,
+      30007
+    ],
+    "Skills": {
+      "30000": "Skill_A_Catalyst_MD",
+      "30002": "Skill_S_Mualani_01",
+      "30007": "Skill_E_Mualani_01"
+    },
+    "ProudMap": {
+      "30000": 10231,
+      "30002": 10232,
+      "30007": 10239
+    },
+    "NameTextMapHash": 3949670506,
+    "SideIconName": "UI_AvatarIcon_Side_Mualani",
+    "QualityType": "QUALITY_ORANGE"
+  },
+  "11000046": {
+    "Element": "Ice",
+    "Consts": [
+      "UI_Talent_S_Kaeya_01",
+      "UI_Talent_S_Kaeya_02",
+      "UI_Talent_U_Kaeya_01",
+      "UI_Talent_S_Kaeya_03",
+      "UI_Talent_U_Kaeya_02",
+      "UI_Talent_S_Kaeya_04"
+    ],
+    "SkillOrder": [
+      10073,
+      10074,
+      10075
+    ],
+    "Skills": {
+      "10073": "Skill_A_01",
+      "10074": "Skill_S_Kaeya_01",
+      "10075": "Skill_E_Kaeya_01"
+    },
+    "ProudMap": {
+      "10073": 1531,
+      "10074": 1532,
+      "10075": 1539
+    },
+    "NameTextMapHash": 3986000746,
+    "SideIconName": "UI_AvatarIcon_Side_Qin",
+    "QualityType": "QUALITY_PURPLE"
+  },
   "10000005-501": {
     "Element": "None",
     "Consts": [

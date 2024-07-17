@@ -31494,5 +31494,20 @@
     "region": "枫丹",
     "star": 5,
     "element": "草"
+  },
+  "卡齐娜": {
+    "region": "纳塔",
+    "star": 4,
+    "element": "岩"
+  },
+  "基尼奇": {
+    "region": "纳塔",
+    "star": 5,
+    "element": "草"
+  },
+  "玛拉妮": {
+    "region": "纳塔",
+    "star": 5,
+    "element": "水"
   }
 }
