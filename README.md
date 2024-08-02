@@ -22,7 +22,7 @@
 
 ## 丨文档
 
-因某些原因，文档地址暂时无法访问，请静待后续更新...
+> [文档地址](docs.paimon.cherishmoon.top)
 
 ## | 功能示例
 <details>
@@ -71,7 +71,7 @@
 
 ## | 常见问题&致谢
 
-详见[常见问题](https://docs.paimon.cherishmoon.fun/question.html)和[致谢](https://docs.paimon.cherishmoon.fun/thanks.html)。
+详见[常见问题](https://docs.paimon.cherishmoon.top/question.html)和[致谢](https://docs.paimon.cherishmoon.top/thanks.html)。
 
 
 ## | 其他

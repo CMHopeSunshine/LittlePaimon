@@ -375,15 +375,15 @@ other_form = Form(
             options=[
                 {
                     'label': 'ghproxy.com代理',
-                    'value': 'https://ghproxy.com/'
+                    'value': 'https://mirror.ghproxy.com/'
                 },
                 {
-                    'label': 'github.cherishmoon.fun代理',
-                    'value': 'https://github.cherishmoon.fun/'
+                    'label': 'github.cherishmoon.top代理',
+                    'value': 'https://github.cherishmoon.top/'
                 },
                 {
-                    'label': 'github.91chi.fun代理',
-                    'value': 'https://github.91chi.fun/'
+                    'label': 'github.moeyy.xyz代理',
+                    'value': 'https://github.moeyy.xyz/'
                 },
                 {
                     'label': 'github原地址',

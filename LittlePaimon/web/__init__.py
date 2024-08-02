@@ -27,7 +27,7 @@ responseAdaptor(api, payload, query, request, response) {
 """
 
 icon_path = "https://s1.ax1x.com/2023/02/05/pS62DJK.png"
-cdn = "https://npm.onmicrosoft.cn"
+cdn = "https://unpkg.com"
 
 
 @DRIVER.on_startup

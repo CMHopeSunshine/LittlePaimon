@@ -17,7 +17,7 @@ from LittlePaimon.utils.path import GACHA_LOG
 from .draw import draw_gacha_log
 from .models import GachaItem, GachaLogInfo, GACHA_TYPE_LIST
 
-GACHA_LOG_API = 'https://hk4e-api.mihoyo.com/event/gacha_info/api/getGachaLog'
+GACHA_LOG_API = 'https://public-operation-hk4e.mihoyo.com/gacha_info/api/getGachaLog'
 HEADERS: Dict[str, str] = {
     'x-rpc-app_version': '2.11.1',
     'User-Agent':        'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 ('
@@ -50,7 +50,10 @@ def load_history_info(user_id: str, uid: str) -> Tuple[GachaLogInfo, bool]:
     """
     file_path = GACHA_LOG / f'gacha_log-{user_id}-{uid}.json'
     if file_path.exists():
-        return GachaLogInfo.parse_obj(load_json(file_path)), True
+        old_gacha_info = load_json(file_path)
+        if "集录祈愿" not in old_gacha_info["item_list"]:
+            old_gacha_info["item_list"]["集录祈愿"] = []
+        return GachaLogInfo.parse_obj(old_gacha_info), True
     else:
         return GachaLogInfo(user_id=user_id,
                             uid=uid,
@@ -134,6 +137,7 @@ async def get_gacha_log_data(user_id: str, uid: str):
         '武器祈愿': 0,
         '常驻祈愿': 0,
         '新手祈愿': 0,
+        '集录祈愿': 0
     }
     server_id = 'cn_qd01' if uid[0] == '5' else 'cn_gf01'
     authkey, state, cookie_info = await get_authkey_by_stoken(user_id, uid)

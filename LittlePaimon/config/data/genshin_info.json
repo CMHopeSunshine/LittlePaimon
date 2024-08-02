@@ -15,14 +15,14 @@
       10019
     ],
     "Skills": {
+      "10024": "Skill_A_01",
       "10018": "Skill_S_Ayaka_01",
-      "10019": "Skill_E_Ayaka",
-      "10024": "Skill_A_01"
+      "10019": "Skill_E_Ayaka"
     },
     "ProudMap": {
+      "10024": 231,
       "10018": 232,
-      "10019": 239,
-      "10024": 231
+      "10019": 239
     },
     "NameTextMapHash": 1006042610,
     "SideIconName": "UI_AvatarIcon_Side_Ayaka",
@@ -79,35 +79,6 @@
       }
     }
   },
-  "10000005": {
-    "Element": "Wind",
-    "Consts": [
-      "UI_Talent_S_PlayerWind_01",
-      "UI_Talent_S_PlayerWind_02",
-      "UI_Talent_U_PlayerWind_02",
-      "UI_Talent_S_PlayerWind_03",
-      "UI_Talent_U_PlayerWind_01",
-      "UI_Talent_S_PlayerWind_04"
-    ],
-    "SkillOrder": [
-      100543,
-      10067,
-      10068
-    ],
-    "Skills": {
-      "10067": "Skill_S_PlayerWind_01",
-      "10068": "Skill_E_PlayerWind_01",
-      "100543": "Skill_A_01"
-    },
-    "NameTextMapHash": 1533656818,
-    "ProudMap": {
-      "10067": 732,
-      "10068": 739,
-      "100543": 730
-    },
-    "SideIconName": "UI_AvatarIcon_Side_PlayerBoy",
-    "QualityType": "QUALITY_ORANGE"
-  },
   "10000006": {
     "Element": "Electric",
     "Consts": [
@@ -144,35 +115,6 @@
         "avatarId": 10000006
       }
     }
-  },
-  "10000007": {
-    "Element": "Wind",
-    "Consts": [
-      "UI_Talent_S_PlayerWind_01",
-      "UI_Talent_S_PlayerWind_02",
-      "UI_Talent_U_PlayerWind_02",
-      "UI_Talent_S_PlayerWind_03",
-      "UI_Talent_U_PlayerWind_01",
-      "UI_Talent_S_PlayerWind_04"
-    ],
-    "SkillOrder": [
-      100553,
-      10067,
-      10068
-    ],
-    "Skills": {
-      "10067": "Skill_S_PlayerWind_01",
-      "10068": "Skill_E_PlayerWind_01",
-      "100553": "Skill_A_01"
-    },
-    "NameTextMapHash": 3816664530,
-    "ProudMap": {
-      "10067": 732,
-      "10068": 739,
-      "100553": 731
-    },
-    "SideIconName": "UI_AvatarIcon_Side_PlayerGirl",
-    "QualityType": "QUALITY_ORANGE"
   },
   "10000014": {
     "Element": "Water",
@@ -238,7 +180,15 @@
     },
     "NameTextMapHash": 4119663210,
     "SideIconName": "UI_AvatarIcon_Side_Kaeya",
-    "QualityType": "QUALITY_PURPLE"
+    "QualityType": "QUALITY_PURPLE",
+    "Costumes": {
+      "201501": {
+        "sideIconName": "UI_AvatarIcon_Side_KaeyaCostumeDancer",
+        "icon": "UI_AvatarIcon_KaeyaCostumeDancer",
+        "art": "UI_Costume_KaeyaCostumeDancer",
+        "avatarId": 10000015
+      }
+    }
   },
   "10000016": {
     "Element": "Fire",
@@ -322,14 +272,14 @@
       10017
     ],
     "Skills": {
-      "10017": "Skill_E_Ambor",
+      "10041": "Skill_A_02",
       "10032": "Skill_S_Ambor_01",
-      "10041": "Skill_A_02"
+      "10017": "Skill_E_Ambor"
     },
     "ProudMap": {
-      "10017": 2139,
+      "10041": 2131,
       "10032": 2132,
-      "10041": 2131
+      "10017": 2139
     },
     "NameTextMapHash": 1966438658,
     "SideIconName": "UI_AvatarIcon_Side_Ambor",
@@ -457,7 +407,15 @@
     },
     "NameTextMapHash": 4197635682,
     "SideIconName": "UI_AvatarIcon_Side_Xingqiu",
-    "QualityType": "QUALITY_PURPLE"
+    "QualityType": "QUALITY_PURPLE",
+    "Costumes": {
+      "202501": {
+        "sideIconName": "UI_AvatarIcon_Side_XingqiuCostumeBamboo",
+        "icon": "UI_AvatarIcon_XingqiuCostumeBamboo",
+        "art": "UI_Costume_XingqiuCostumeBamboo",
+        "avatarId": 10000025
+      }
+    }
   },
   "10000026": {
     "Element": "Wind",
@@ -552,7 +510,15 @@
     },
     "NameTextMapHash": 3339083250,
     "SideIconName": "UI_AvatarIcon_Side_Klee",
-    "QualityType": "QUALITY_ORANGE"
+    "QualityType": "QUALITY_ORANGE",
+    "Costumes": {
+      "202901": {
+        "sideIconName": "UI_AvatarIcon_Side_KleeCostumeWitch",
+        "icon": "UI_AvatarIcon_KleeCostumeWitch",
+        "art": "UI_Costume_KleeCostumeWitch",
+        "avatarId": 10000029
+      }
+    }
   },
   "10000030": {
     "Element": "Rock",
@@ -792,7 +758,15 @@
     },
     "NameTextMapHash": 2679781122,
     "SideIconName": "UI_AvatarIcon_Side_Ganyu",
-    "QualityType": "QUALITY_ORANGE"
+    "QualityType": "QUALITY_ORANGE",
+    "Costumes": {
+      "203701": {
+        "sideIconName": "UI_AvatarIcon_Side_GanyuCostumeYu",
+        "icon": "UI_AvatarIcon_GanyuCostumeYu",
+        "art": "UI_Costume_GanyuCostumeYu",
+        "avatarId": 10000037
+      }
+    }
   },
   "10000038": {
     "Element": "Rock",
@@ -1456,7 +1430,16 @@
     "SideIconName": "UI_AvatarIcon_Side_Yelan",
     "QualityType": "QUALITY_ORANGE"
   },
-  "10000061":{
+  "10000061": {
+    "Element": "Grass",
+    "Consts": [
+      "UI_Talent_S_Momoka_01",
+      "UI_Talent_S_Momoka_02",
+      "UI_Talent_U_Momoka_01",
+      "UI_Talent_S_Momoka_04",
+      "UI_Talent_U_Momoka_02",
+      "UI_Talent_S_Momoka_03"
+    ],
     "SkillOrder": [
       10611,
       10612,
@@ -1467,7 +1450,22 @@
       "10612": "Skill_S_Momoka_01",
       "10615": "Skill_E_Momoka_01"
     },
-    "SideIconName": "UI_AvatarIcon_Side_Momoka"
+    "ProudMap": {
+      "10611": 6131,
+      "10612": 6132,
+      "10615": 6139
+    },
+    "NameTextMapHash": 1456643042,
+    "SideIconName": "UI_AvatarIcon_Side_Momoka",
+    "QualityType": "QUALITY_PURPLE",
+    "Costumes": {
+      "206101": {
+        "sideIconName": "UI_AvatarIcon_Side_MomokaCostumeErrantry",
+        "icon": "UI_AvatarIcon_MomokaCostumeErrantry",
+        "art": "UI_Costume_MomokaCostumeErrantry",
+        "avatarId": 10000061
+      }
+    }
   },
   "10000062": {
     "Element": "Ice",
@@ -1525,7 +1523,15 @@
     },
     "NameTextMapHash": 334242634,
     "SideIconName": "UI_AvatarIcon_Side_Shenhe",
-    "QualityType": "QUALITY_ORANGE"
+    "QualityType": "QUALITY_ORANGE",
+    "Costumes": {
+      "206301": {
+        "sideIconName": "UI_AvatarIcon_Side_ShenheCostumeDai",
+        "icon": "UI_AvatarIcon_ShenheCostumeDai",
+        "art": "UI_Costume_ShenheCostumeDai",
+        "avatarId": 10000063
+      }
+    }
   },
   "10000064": {
     "Element": "Rock",
@@ -1728,7 +1734,15 @@
     },
     "NameTextMapHash": 3850149970,
     "SideIconName": "UI_AvatarIcon_Side_Nilou",
-    "QualityType": "QUALITY_ORANGE"
+    "QualityType": "QUALITY_ORANGE",
+    "Costumes": {
+      "207001": {
+        "sideIconName": "UI_AvatarIcon_Side_NilouCostumeFairy",
+        "icon": "UI_AvatarIcon_NilouCostumeFairy",
+        "art": "UI_Costume_NilouCostumeFairy",
+        "avatarId": 10000070
+      }
+    }
   },
   "10000071": {
     "Element": "Electric",
@@ -2079,6 +2093,15 @@
     "QualityType": "QUALITY_ORANGE"
   },
   "10000083": {
+    "Element": "Wind",
+    "Consts": [
+      "UI_Talent_S_Linette_01",
+      "UI_Talent_S_Linette_02",
+      "UI_Talent_U_Linette_01",
+      "UI_Talent_S_Linette_03",
+      "UI_Talent_U_Linette_02",
+      "UI_Talent_S_Linette_04"
+    ],
     "SkillOrder": [
       10831,
       10832,
@@ -2089,9 +2112,25 @@
       "10832": "Skill_S_Linette_01",
       "10835": "Skill_E_Linette_01"
     },
-    "SideIconName": "UI_AvatarIcon_Side_Linette"
+    "ProudMap": {
+      "10831": 8331,
+      "10832": 8332,
+      "10835": 8339
+    },
+    "NameTextMapHash": 1225226258,
+    "SideIconName": "UI_AvatarIcon_Side_Linette",
+    "QualityType": "QUALITY_PURPLE"
   },
   "10000084": {
+    "Element": "Fire",
+    "Consts": [
+      "UI_Talent_S_Liney_01",
+      "UI_Talent_S_Liney_03",
+      "UI_Talent_U_Liney_01",
+      "UI_Talent_S_Liney_02",
+      "UI_Talent_U_Liney_02",
+      "UI_Talent_S_Liney_04"
+    ],
     "SkillOrder": [
       10841,
       10842,
@@ -2102,9 +2141,25 @@
       "10842": "Skill_S_Liney_01",
       "10845": "Skill_E_Liney_01"
     },
-    "SideIconName": "UI_AvatarIcon_Side_Liney"
+    "ProudMap": {
+      "10841": 8431,
+      "10842": 8432,
+      "10845": 8439
+    },
+    "NameTextMapHash": 2472444970,
+    "SideIconName": "UI_AvatarIcon_Side_Liney",
+    "QualityType": "QUALITY_ORANGE"
   },
   "10000085": {
+    "Element": "Ice",
+    "Consts": [
+      "UI_Talent_S_Freminet_01",
+      "UI_Talent_S_Freminet_02",
+      "UI_Talent_U_Freminet_01",
+      "UI_Talent_S_Freminet_03",
+      "UI_Talent_U_Freminet_02",
+      "UI_Talent_S_Freminet_04"
+    ],
     "SkillOrder": [
       10851,
       10852,
@@ -2115,9 +2170,25 @@
       "10852": "Skill_S_Freminet_01",
       "10855": "Skill_E_Freminet_01"
     },
-    "SideIconName": "UI_AvatarIcon_Side_Freminet"
+    "ProudMap": {
+      "10851": 8531,
+      "10852": 8532,
+      "10855": 8539
+    },
+    "NameTextMapHash": 4201964354,
+    "SideIconName": "UI_AvatarIcon_Side_Freminet",
+    "QualityType": "QUALITY_PURPLE"
   },
   "10000086": {
+    "Element": "Ice",
+    "Consts": [
+      "UI_Talent_S_Wriothesley_01",
+      "UI_Talent_S_Wriothesley_02",
+      "UI_Talent_U_Wriothesley_01",
+      "UI_Talent_S_Wriothesley_03",
+      "UI_Talent_U_Wriothesley_02",
+      "UI_Talent_S_Wriothesley_04"
+    ],
     "SkillOrder": [
       10861,
       10862,
@@ -2128,9 +2199,25 @@
       "10862": "Skill_S_Wriothesley_01",
       "10865": "Skill_E_Wriothesley_01"
     },
-    "SideIconName": "UI_AvatarIcon_Side_Wriothesley"
+    "ProudMap": {
+      "10861": 8631,
+      "10862": 8632,
+      "10865": 8639
+    },
+    "NameTextMapHash": 370151050,
+    "SideIconName": "UI_AvatarIcon_Side_Wriothesley",
+    "QualityType": "QUALITY_ORANGE"
   },
   "10000087": {
+    "Element": "Water",
+    "Consts": [
+      "UI_Talent_S_Neuvillette_01",
+      "UI_Talent_S_Neuvillette_02",
+      "UI_Talent_U_Neuvillette_01",
+      "UI_Talent_S_Neuvillette_03",
+      "UI_Talent_U_Neuvillette_02",
+      "UI_Talent_S_Neuvillette_04"
+    ],
     "SkillOrder": [
       10871,
       10872,
@@ -2141,9 +2228,25 @@
       "10872": "Skill_S_Neuvillette_01",
       "10875": "Skill_E_Neuvillette_01"
     },
-    "SideIconName": "UI_AvatarIcon_Side_Neuvillette"
+    "ProudMap": {
+      "10871": 8731,
+      "10872": 8732,
+      "10875": 8739
+    },
+    "NameTextMapHash": 1504902330,
+    "SideIconName": "UI_AvatarIcon_Side_Neuvillette",
+    "QualityType": "QUALITY_ORANGE"
   },
   "10000088": {
+    "Element": "Ice",
+    "Consts": [
+      "UI_Talent_S_Charlotte_01",
+      "UI_Talent_S_Charlotte_02",
+      "UI_Talent_U_Charlotte_01",
+      "UI_Talent_S_Charlotte_03",
+      "UI_Talent_U_Charlotte_02",
+      "UI_Talent_S_Charlotte_04"
+    ],
     "SkillOrder": [
       10881,
       10882,
@@ -2154,9 +2257,25 @@
       "10882": "Skill_S_Charlotte_01",
       "10885": "Skill_E_Charlotte_01"
     },
-    "SideIconName": "UI_AvatarIcon_Side_Charlotte"
+    "ProudMap": {
+      "10881": 8831,
+      "10882": 8832,
+      "10885": 8839
+    },
+    "NameTextMapHash": 3831162130,
+    "SideIconName": "UI_AvatarIcon_Side_Charlotte",
+    "QualityType": "QUALITY_PURPLE"
   },
   "10000089": {
+    "Element": "Water",
+    "Consts": [
+      "UI_Talent_S_Furina_01",
+      "UI_Talent_S_Furina_04",
+      "UI_Talent_U_Furina_02",
+      "UI_Talent_S_Furina_03",
+      "UI_Talent_U_Furina_01",
+      "UI_Talent_S_Furina_02"
+    ],
     "SkillOrder": [
       10891,
       10892,
@@ -2167,9 +2286,25 @@
       "10892": "Skill_S_Furina_01",
       "10895": "Skill_E_Furina_01"
     },
-    "SideIconName": "UI_AvatarIcon_Side_Furina"
+    "ProudMap": {
+      "10891": 8931,
+      "10892": 8932,
+      "10895": 8939
+    },
+    "NameTextMapHash": 2180900234,
+    "SideIconName": "UI_AvatarIcon_Side_Furina",
+    "QualityType": "QUALITY_ORANGE"
   },
   "10000090": {
+    "Element": "Fire",
+    "Consts": [
+      "UI_Talent_S_Chevreuse_01",
+      "UI_Talent_S_Chevreuse_02",
+      "UI_Talent_U_Chevreuse_01",
+      "UI_Talent_S_Chevreuse_03",
+      "UI_Talent_U_Chevreuse_02",
+      "UI_Talent_S_Chevreuse_04"
+    ],
     "SkillOrder": [
       10901,
       10902,
@@ -2180,9 +2315,25 @@
       "10902": "Skill_S_Chevreuse_01",
       "10905": "Skill_E_Chevreuse_01"
     },
-    "SideIconName": "UI_AvatarIcon_Side_Chevreuse"
+    "ProudMap": {
+      "10901": 9031,
+      "10902": 9032,
+      "10905": 9039
+    },
+    "NameTextMapHash": 540313842,
+    "SideIconName": "UI_AvatarIcon_Side_Chevreuse",
+    "QualityType": "QUALITY_PURPLE"
   },
   "10000091": {
+    "Element": "Rock",
+    "Consts": [
+      "UI_Talent_S_Navia_01",
+      "UI_Talent_S_Navia_02",
+      "UI_Talent_U_Navia_01",
+      "UI_Talent_S_Navia_03",
+      "UI_Talent_U_Navia_02",
+      "UI_Talent_S_Navia_04"
+    ],
     "SkillOrder": [
       10911,
       10912,
@@ -2193,7 +2344,246 @@
       "10912": "Skill_S_Navia_01",
       "10915": "Skill_E_Navia_01"
     },
-    "SideIconName": "UI_AvatarIcon_Side_Navia"
+    "ProudMap": {
+      "10911": 9131,
+      "10912": 9132,
+      "10915": 9139
+    },
+    "NameTextMapHash": 2877588578,
+    "SideIconName": "UI_AvatarIcon_Side_Navia",
+    "QualityType": "QUALITY_ORANGE"
+  },
+  "10000092": {
+    "Element": "Fire",
+    "Consts": [
+      "UI_Talent_S_Gaming_01",
+      "UI_Talent_S_Gaming_02",
+      "UI_Talent_U_Gaming_01",
+      "UI_Talent_S_Gaming_03",
+      "UI_Talent_U_Gaming_02",
+      "UI_Talent_S_Gaming_04"
+    ],
+    "SkillOrder": [
+      10921,
+      10922,
+      10925
+    ],
+    "Skills": {
+      "10921": "Skill_A_04",
+      "10922": "Skill_S_Gaming_01",
+      "10925": "Skill_E_Gaming_01"
+    },
+    "ProudMap": {
+      "10921": 9231,
+      "10922": 9232,
+      "10925": 9239
+    },
+    "NameTextMapHash": 2822240322,
+    "SideIconName": "UI_AvatarIcon_Side_Gaming",
+    "QualityType": "QUALITY_PURPLE"
+  },
+  "10000093": {
+    "Element": "Wind",
+    "Consts": [
+      "UI_Talent_S_Liuyun_01",
+      "UI_Talent_S_Liuyun_02",
+      "UI_Talent_U_Liuyun_02",
+      "UI_Talent_S_Liuyun_03",
+      "UI_Talent_U_Liuyun_01",
+      "UI_Talent_S_Liuyun_04"
+    ],
+    "SkillOrder": [
+      10931,
+      10932,
+      10935
+    ],
+    "Skills": {
+      "10931": "Skill_A_Catalyst_MD",
+      "10932": "Skill_S_Liuyun_01",
+      "10935": "Skill_E_Liuyun_01"
+    },
+    "ProudMap": {
+      "10931": 9331,
+      "10932": 9332,
+      "10935": 9339
+    },
+    "NameTextMapHash": 3648220770,
+    "SideIconName": "UI_AvatarIcon_Side_Liuyun",
+    "QualityType": "QUALITY_ORANGE"
+  },
+  "10000094": {
+    "Element": "Rock",
+    "Consts": [
+      "UI_Talent_S_Chiori_01",
+      "UI_Talent_S_Chiori_03",
+      "UI_Talent_U_Chiori_01",
+      "UI_Talent_S_Chiori_02",
+      "UI_Talent_U_Chiori_02",
+      "UI_Talent_S_Chiori_04"
+    ],
+    "SkillOrder": [
+      10941,
+      10942,
+      10945
+    ],
+    "Skills": {
+      "10941": "Skill_A_01",
+      "10942": "Skill_S_Chiori_01",
+      "10945": "Skill_E_Chiori_01"
+    },
+    "ProudMap": {
+      "10941": 9431,
+      "10942": 9432,
+      "10945": 9439
+    },
+    "NameTextMapHash": 1944606922,
+    "SideIconName": "UI_AvatarIcon_Side_Chiori",
+    "QualityType": "QUALITY_ORANGE"
+  },
+  "10000095": {
+    "Element": "Water",
+    "Consts": [
+      "UI_Talent_S_Sigewinne_01",
+      "UI_Talent_S_Sigewinne_02",
+      "UI_Talent_U_Sigewinne_01",
+      "UI_Talent_S_Sigewinne_03",
+      "UI_Talent_U_Sigewinne_02",
+      "UI_Talent_S_Sigewinne_04"
+    ],
+    "SkillOrder": [
+      10951,
+      10952,
+      10955
+    ],
+    "Skills": {
+      "10951": "Skill_A_02",
+      "10952": "Skill_S_Sigewinne_01",
+      "10955": "Skill_E_Sigewinne_01"
+    },
+    "ProudMap": {
+      "10951": 9531,
+      "10952": 9532,
+      "10955": 9539
+    },
+    "NameTextMapHash": 781488962,
+    "SideIconName": "UI_AvatarIcon_Side_Sigewinne",
+    "QualityType": "QUALITY_ORANGE"
+  },
+  "10000096": {
+    "Element": "Fire",
+    "Consts": [
+      "UI_Talent_S_Arlecchino_01",
+      "UI_Talent_S_Arlecchino_02",
+      "UI_Talent_U_Arlecchino_01",
+      "UI_Talent_S_Arlecchino_03",
+      "UI_Talent_U_Arlecchino_02",
+      "UI_Talent_S_Arlecchino_04"
+    ],
+    "SkillOrder": [
+      10961,
+      10962,
+      10965
+    ],
+    "Skills": {
+      "10961": "Skill_A_03",
+      "10962": "Skill_S_Arlecchino_01",
+      "10965": "Skill_E_Arlecchino_01"
+    },
+    "ProudMap": {
+      "10961": 9631,
+      "10962": 9632,
+      "10965": 9639
+    },
+    "NameTextMapHash": 167199474,
+    "SideIconName": "UI_AvatarIcon_Side_Arlecchino",
+    "QualityType": "QUALITY_ORANGE"
+  },
+  "10000097": {
+    "Element": "Electric",
+    "Consts": [
+      "UI_Talent_S_Sethos_01",
+      "UI_Talent_S_Sethos_02",
+      "UI_Talent_U_Sethos_01",
+      "UI_Talent_S_Sethos_03",
+      "UI_Talent_U_Sethos_02",
+      "UI_Talent_S_Sethos_04"
+    ],
+    "SkillOrder": [
+      10971,
+      10972,
+      10975
+    ],
+    "Skills": {
+      "10971": "Skill_A_02",
+      "10972": "Skill_S_Sethos_01",
+      "10975": "Skill_E_Sethos_01"
+    },
+    "ProudMap": {
+      "10971": 9731,
+      "10972": 9732,
+      "10975": 9739
+    },
+    "NameTextMapHash": 1431322346,
+    "SideIconName": "UI_AvatarIcon_Side_Sethos",
+    "QualityType": "QUALITY_PURPLE"
+  },
+  "10000098": {
+    "Element": "Electric",
+    "Consts": [
+      "UI_Talent_S_Clorinde_01",
+      "UI_Talent_S_Clorinde_02",
+      "UI_Talent_U_Clorinde_02",
+      "UI_Talent_S_Clorinde_03",
+      "UI_Talent_U_Clorinde_01",
+      "UI_Talent_S_Clorinde_04"
+    ],
+    "SkillOrder": [
+      10981,
+      10982,
+      10985
+    ],
+    "Skills": {
+      "10981": "Skill_A_01",
+      "10982": "Skill_S_Clorinde_01",
+      "10985": "Skill_E_Clorinde_01"
+    },
+    "ProudMap": {
+      "10981": 9831,
+      "10982": 9832,
+      "10985": 9839
+    },
+    "NameTextMapHash": 2745369298,
+    "SideIconName": "UI_AvatarIcon_Side_Clorinde",
+    "QualityType": "QUALITY_ORANGE"
+  },
+  "10000099": {
+    "Element": "Grass",
+    "Consts": [
+      "UI_Talent_S_Emilie_01",
+      "UI_Talent_S_Emilie_02",
+      "UI_Talent_U_Emilie_01",
+      "UI_Talent_S_Emilie_03",
+      "UI_Talent_U_Emilie_02",
+      "UI_Talent_S_Emilie_04"
+    ],
+    "SkillOrder": [
+      10991,
+      10992,
+      10995
+    ],
+    "Skills": {
+      "10991": "Skill_A_03",
+      "10992": "Skill_S_Emilie_01",
+      "10995": "Skill_E_Emilie_01"
+    },
+    "ProudMap": {
+      "10991": 9931,
+      "10992": 9932,
+      "10995": 9939
+    },
+    "NameTextMapHash": 1705786122,
+    "SideIconName": "UI_AvatarIcon_Side_Emilie",
+    "QualityType": "QUALITY_ORANGE"
   },
   "10000005-501": {
     "Element": "None",
