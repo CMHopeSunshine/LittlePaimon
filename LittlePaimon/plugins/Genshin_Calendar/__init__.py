@@ -1,3 +1,5 @@
+from typing import Optional
+
 from nonebot import get_bot, on_command
 from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
 from nonebot.plugin import PluginMetadata
@@ -5,7 +7,7 @@ from nonebot.plugin import PluginMetadata
 from LittlePaimon.database import GeneralSub
 from LittlePaimon.utils import scheduler, logger, DRIVER, SUPERUSERS
 from LittlePaimon.utils.message import CommandObjectID, CommandSwitch, CommandTime
-from .generate import *
+from .draw_calendar import *
 
 __plugin_meta__ = PluginMetadata(
     name="原神日历",
@@ -28,7 +30,7 @@ calendar = on_command('原神日历', aliases={'原神日程', '活动日历'}, 
 @calendar.handle()
 async def _(event: MessageEvent, sub_id=CommandObjectID(), switch=CommandSwitch(), sub_time=CommandTime()):
     if switch is None:
-        im = await generate_day_schedule('cn')
+        im = await generate_day_schedule('cn', viewport={"width": 600, "height": 10})
         await calendar.finish(MessageSegment.image(im))
     else:
         if event.sender.role not in ['admin', 'owner'] and event.user_id not in SUPERUSERS:
@@ -74,7 +76,7 @@ async def send_calendar(sub_id: int, sub_type: str, extra_id: Optional[int]):
         else:
             api = 'send_group_msg'
             data = {'group_id': sub_id}
-        im = await generate_day_schedule('cn')
+        im = await generate_day_schedule('cn', viewport={"width": 600, "height": 10})
         data['message'] = MessageSegment.image(im)
         await get_bot().call_api(api, **data)
         logger.info('原神日历', '', {sub_type: sub_id}, '推送成功', True)

@@ -84,7 +84,7 @@ def generate_qrcode(url):
 
 async def create_login_data():
     device_id = ''.join(random.choices((ascii_letters + digits), k=64))
-    app_id = '4'
+    app_id = '1'
     data = {'app_id': app_id,
             'device': device_id}
     res = await aiorequests.post('https://hk4e-sdk.mihoyo.com/hk4e_cn/combo/panda/qrcode/fetch?',
@@ -102,6 +102,9 @@ async def check_login(login_data: dict):
             'ticket': login_data['ticket'],
             'device': login_data['device']}
     res = await aiorequests.post('https://hk4e-sdk.mihoyo.com/hk4e_cn/combo/panda/qrcode/query?',
+                                 headers={
+                                     'x-rpc-device_id': login_data['device']
+                                 },
                                  json=data)
     return res.json()
 
@@ -151,7 +154,7 @@ async def check_qrcode():
             send_msg = None
             status_data = await check_login(data)
             if status_data['retcode'] != 0:
-                send_msg = '绑定二维码已过期，请重新发送扫码绑定指令'
+                send_msg = status_data['message']
                 running_login_data.pop(user_id)
             elif status_data['data']['stat'] == 'Confirmed':
                 game_token = json.loads(status_data['data']['payload']['raw'])
