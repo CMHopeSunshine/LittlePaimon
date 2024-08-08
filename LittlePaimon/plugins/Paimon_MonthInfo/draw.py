@@ -49,14 +49,14 @@ async def draw_monthinfo_card(data: dict):
 
     await img.paste(circle, (50, 550))
     color = {'每日活跃': '#BD9A5A', '深境螺旋': '#739970', '活动奖励': '#5A7EA0', '邮件奖励': '#7A6CA7', '冒险奖励': '#D56564',
-             '任务奖励': '#70B1B3', '其他': '#73A8C7'}
+             '幻想剧诗': '#4700b3', '任务奖励': '#70B1B3', '其他': '#73A8C7'}
     per_list = [x['percent'] for x in data['month_data']['group_by']]
     name_list = [x['action'] for x in data['month_data']['group_by']]
     num_list = [x['num'] for x in data['month_data']['group_by']]
     color_list = [color[x] for x in name_list]
     await img.draw_ring((378, 378), (-12, 489), 0.29, per_list, color_list)
     # 百分比描述
-    h = 550
+    h = 535
     for name in name_list:
         await img.draw_rectangle((330, h, 340, h + 10), color=color[name])
         await img.text(name, 345, h - 6, fm.get('msyh.ttc', 17), '#27384C')
