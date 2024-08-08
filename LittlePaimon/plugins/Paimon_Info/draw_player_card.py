@@ -45,7 +45,6 @@ async def draw_weapon_icon(weapon: Weapon, size: Tuple[int, int] = (65, 65)) -> 
 async def draw_character_card(info: Character) -> Optional[PMImage]:
     if info is None:
         return None
-    print(info)
     # 头像
     avatar = PMImage(await load_image(RESOURCE_BASE_PATH / 'avatar' / f'{get_chara_icon(name=info.name)}.png'))
     await avatar.to_circle('circle')
