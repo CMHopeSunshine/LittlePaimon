@@ -112,6 +112,7 @@ class GenshinInfoManager:
             :return: 更新结果
         """
         data = await get_mihoyo_public_data(self.uid, self.user_id, 'player_card')
+
         if not isinstance(data, dict):
             return data
         elif data['retcode'] == 1034:
