@@ -1,5 +1,4 @@
 from LittlePaimon.utils import __version__
-from LittlePaimon.config import config
 from amis import (
     Page,
     PageSchema,
@@ -69,7 +68,6 @@ log_page = Log(
     source={
         'method': 'get',
         'url': '/LittlePaimon/api/log?level=${log_level | raw}&num=${log_num | raw}',
-        'headers': {'token': config.secret_key[:16]},
     },
 )
 
@@ -95,7 +93,6 @@ cmd_input = Form(
                         source={
                             'method': 'get',
                             'url': '/LittlePaimon/api/run_cmd?cmd=${command | raw}',
-                            'headers': {'token': config.secret_key[:16]},
                         },
                     ),
                 ),

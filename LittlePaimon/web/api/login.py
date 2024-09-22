@@ -25,10 +25,13 @@ async def login(user: UserModel):
             'msg':    '登录失败，请确认用户ID和密码无误'
         }
     token = create_token(user.user_id)
-    return {
+    data = {
         'status': 0,
         'msg':    '登录成功',
         'data':   {
             'token': token
         }
     }
+    response = JSONResponse(content=data)
+    response.set_cookie(key="token_ck", value=token, expires=3600)
+    return response
