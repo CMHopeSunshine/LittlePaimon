@@ -2672,6 +2672,64 @@
     "SideIconName": "UI_AvatarIcon_Side_Mualani",
     "QualityType": "QUALITY_ORANGE"
   },
+  "10000103": {
+    "Element": "Rock",
+    "Consts": [
+      "UI_Talent_S_Xilonen_01",
+      "UI_Talent_S_Xilonen_02",
+      "UI_Talent_U_Xilonen_01",
+      "UI_Talent_S_Xilonen_03",
+      "UI_Talent_U_Xilonen_02",
+      "UI_Talent_S_Xilonen_04"
+    ],
+    "SkillOrder": [
+      11031,
+      11032,
+      11035
+    ],
+    "Skills": {
+      "11031": "Skill_A_01",
+      "11032": "Skill_S_Xilonen_01",
+      "11035": "Skill_E_Xilonen_01"
+    },
+    "ProudMap": {
+      "11031": 10331,
+      "11032": 10332,
+      "11035": 10339
+    },
+    "NameTextMapHash": 2515292882,
+    "SideIconName": "UI_AvatarIcon_Side_Xilonen",
+    "QualityType": "QUALITY_ORANGE"
+  },
+  "10000901": {
+    "Element": "Fire",
+    "Consts": [
+      "UI_Talent_S_Xiangling_01",
+      "UI_Talent_S_Xiangling_02",
+      "UI_Talent_U_Xiangling_02",
+      "UI_Talent_S_Xiangling_03",
+      "UI_Talent_U_Xiangling_01",
+      "UI_Talent_S_Xiangling_04"
+    ],
+    "SkillOrder": [
+      10231,
+      10232,
+      10235
+    ],
+    "Skills": {
+      "10231": "Skill_A_03",
+      "10232": "Skill_S_Xiangling_01",
+      "10235": "Skill_E_Xiangling_01"
+    },
+    "ProudMap": {
+      "10231": 2331,
+      "10232": 2332,
+      "10235": 2339
+    },
+    "NameTextMapHash": 3293134650,
+    "SideIconName": "UI_AvatarIcon_Side_Mavuika",
+    "QualityType": "QUALITY_ORANGE"
+  },
   "11000046": {
     "Element": "Ice",
     "Consts": [

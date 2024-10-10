@@ -551,7 +551,13 @@
     "1023": "在欢乐海上冲浪",
     "1024": "鲨鲨主食是豚豚。",
     "1025": "同款冲浪板有售！",
-    "1026": "「流泉之众」的精神"
+    "1026": "「流泉之众」的精神",
+    "1031": "献予慵眠的休假日",
+    "1032": "献予灼原的五重奏",
+    "1033": "献予日炎的巡行式",
+    "1034": "献予午后的花之梦",
+    "1035": "献予夕暮的转格调",
+    "1036": "献予永夜的狂欢舞"
   },
   "Icon": {
     "21": "UI_Talent_S_Ayaka_01",
@@ -1105,6 +1111,12 @@
     "1023": "UI_Talent_U_Mualani_01",
     "1024": "UI_Talent_S_Mualani_03",
     "1025": "UI_Talent_U_Mualani_02",
-    "1026": "UI_Talent_S_Mualani_04"
+    "1026": "UI_Talent_S_Mualani_04",
+    "1031": "UI_Talent_S_Xilonen_01",
+    "1032": "UI_Talent_S_Xilonen_02",
+    "1033": "UI_Talent_U_Xilonen_01",
+    "1034": "UI_Talent_S_Xilonen_03",
+    "1035": "UI_Talent_U_Xilonen_02",
+    "1036": "UI_Talent_S_Xilonen_04"
   }
 }
