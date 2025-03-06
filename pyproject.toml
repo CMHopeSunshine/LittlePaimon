@@ -7,7 +7,6 @@ license = "AGPL"
 
 [[tool.poetry.source]]
 name = "aliyun"
-default = true
 url = "https://mirrors.aliyun.com/pypi/simple/"
 
 [tool.poetry.dependencies]
