@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from pydantic import BaseModel, validator
+from pydantic import field_validator, BaseModel
 
 
 class Member(BaseModel):
@@ -12,9 +12,10 @@ class Member(BaseModel):
 class TeamRate(BaseModel):
     rate: float
     formation: List[Member]
-    ownerNum: Optional[int]
+    ownerNum: Optional[int] = None
 
-    @validator('rate', pre=True)
+    @field_validator('rate', mode="before")
+    @classmethod
     def str2float(cls, v):
         return float(v.replace('%', '')) / 100.0 if isinstance(v, str) else v
 

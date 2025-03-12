@@ -3,7 +3,7 @@ from __future__ import annotations
 from enum import IntEnum
 from typing import List, Tuple, Optional, NamedTuple
 
-from pydantic import HttpUrl, BaseModel, validator
+from pydantic import field_validator, HttpUrl, BaseModel
 
 
 class MapID(IntEnum):
@@ -71,7 +71,8 @@ class Maps(BaseModel):
     total_size: List[int]
     padding: List[int]
 
-    @validator("slices", pre=True)
+    @field_validator("slices", mode="before")
+    @classmethod
     def slices_to_list(cls, v):
         urls: List[str] = []
         for i in v:
@@ -87,10 +88,11 @@ class MapInfo(BaseModel):
     detail: Maps
     node_type: int
     children: list
-    icon: Optional[HttpUrl]
-    ch_ext: Optional[str]
+    icon: Optional[HttpUrl] = None
+    ch_ext: Optional[str] = None
 
-    @validator("detail", pre=True)
+    @field_validator("detail", mode="before")
+    @classmethod
     def detail_str_to_maps(cls, v):
         return Maps.parse_raw(v)
 
@@ -173,15 +175,17 @@ class PageLabel(BaseModel):
     map_id: int
     jump_url: str
     jump_type: str
-    center: Optional[Tuple[float, float]]
-    zoom: Optional[float]
+    center: Optional[Tuple[float, float]] = None
+    zoom: Optional[float] = None
 
-    @validator("center", pre=True)
+    @field_validator("center", mode="before")
+    @classmethod
     def center_str_to_tuple(cls, v: str) -> Optional[Tuple[float, float]]:
         if v and (splitted := v.split(",")):
             return tuple(map(float, splitted))
 
-    @validator("zoom", pre=True)
+    @field_validator("zoom", mode="before")
+    @classmethod
     def zoom_str_to_float(cls, v: str):
         if v:
             return float(v)

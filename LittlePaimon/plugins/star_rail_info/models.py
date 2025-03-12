@@ -65,7 +65,7 @@ class Skill(BaseModel):
     name: str
     level: int
     max_level: int
-    element: Optional[Element]
+    element: Optional[Element] = None
     type: SkillType
     type_text: str
     effect: str
