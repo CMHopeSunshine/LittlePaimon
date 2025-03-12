@@ -1,7 +1,7 @@
 import re
 from typing import Literal, List
 
-from pydantic import BaseModel, parse_raw_as
+from pydantic.v1 import BaseModel, parse_raw_as
 
 try:
     import ujson as json

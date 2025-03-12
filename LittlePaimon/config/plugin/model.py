@@ -6,9 +6,9 @@ from pydantic import BaseModel
 class MatcherInfo(BaseModel):
     pm_name: str
     """命令名称"""
-    pm_description: Optional[str]
+    pm_description: Optional[str] = None
     """命令描述"""
-    pm_usage: Optional[str]
+    pm_usage: Optional[str] = None
     """命令用法"""
     pm_priority: int = 99
     """命令优先级"""
@@ -21,11 +21,11 @@ class PluginInfo(BaseModel):
     """插件名称"""
     module_name: str
     """插件模块名称"""
-    description: Optional[str]
+    description: Optional[str] = None
     """插件描述"""
-    usage: Optional[str]
+    usage: Optional[str] = None
     """插件用法"""
-    status: Optional[bool]
+    status: Optional[bool] = None
     """插件状态（无用项）"""
     show: bool = True
     """是否展示"""

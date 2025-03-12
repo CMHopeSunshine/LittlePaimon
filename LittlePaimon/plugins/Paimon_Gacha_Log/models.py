@@ -10,14 +10,14 @@ GACHA_TYPE_LIST = {'100': '新手祈愿', '200': '常驻祈愿', '302': '武器�
 
 class FiveStarItem(BaseModel):
     name: str
-    icon: Optional[str]
+    icon: Optional[str] = None
     count: int
     type: str
 
 
 class FourStarItem(BaseModel):
     name: str
-    icon: Optional[str]
+    icon: Optional[str] = None
     type: str
     num: Dict[str, int] = {
         '角色祈愿': 0,

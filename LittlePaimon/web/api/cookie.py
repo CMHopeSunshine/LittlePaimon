@@ -14,12 +14,12 @@ route = APIRouter()
 
 
 class BindCookie(BaseModel):
-    id: Optional[int]
-    user_id: Optional[int]
-    uid: Optional[int]
-    mys_id: Optional[int]
+    id: Optional[int] = None
+    user_id: Optional[int] = None
+    uid: Optional[int] = None
+    mys_id: Optional[int] = None
     cookie: str
-    stoken: Optional[str]
+    stoken: Optional[str] = None
 
 
 
